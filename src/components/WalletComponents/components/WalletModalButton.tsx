@@ -1,9 +1,9 @@
-import { useWallet } from '@solana/wallet-adapter-react';
 import React, { FC, MouseEvent, useCallback } from 'react';
 import JupButton from 'src/components/JupButton';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { connecting } = useWallet();
+  const { connecting } = useWalletPassThrough();
 
   const handleClick = useCallback(
     (event: MouseEvent<HTMLButtonElement>) => {

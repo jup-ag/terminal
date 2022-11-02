@@ -1,10 +1,10 @@
-import { useWallet } from '@solana/wallet-adapter-react';
 import React from 'react';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 import JupButton from './JupButton';
 
 const WalletConnectButton: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { wallet, connect, connecting } = useWallet();
+  const { wallet, connect, connecting } = useWalletPassThrough();
 
   const onClick = () => {
     if (wallet) connect();

@@ -1,15 +1,16 @@
 
 import BN from 'bn.js'
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import { AccountInfo } from '@solana/web3.js';
 import { useEffect, useState } from 'react';
 
 import { IAccountsBalance } from '../contexts/accounts';
 
 import { fromLamports } from '../misc/utils';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 const useNativeAccount = (): IAccountsBalance => {
-  const { publicKey } = useWallet();
+  const { publicKey } = useWalletPassThrough();
   const { connection } = useConnection();
   const [nativeAccount, setNativeAccount] = useState<AccountInfo<Buffer>>();
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext'
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import JupButton from '../JupButton';
@@ -12,14 +13,28 @@ const SwappingScreen = () => {
     toTokenInfo,
     lastSwapResult,
     reset,
+    jupiter: {
+      refresh,
+    }
   } = useSwapContext();
+  const { setScreen } = useScreenState();
 
   const [status, setStatus] = useState<'error' | 'success' | 'loading'>('loading');
   const [txid, setTxid] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
+  const onGoBack = () => {
+    reset();
+    setStatus('loading')
+    setErrorMessage('');
+    setScreen('Initial');
+    refresh();
+  }
+  
   useEffect(() => {
     if (lastSwapResult && 'error' in lastSwapResult) {
       setStatus('error');
+      setErrorMessage(lastSwapResult.error?.message || '');
       return;
     } else if (lastSwapResult && 'txid' in lastSwapResult) {
       setStatus('success');
@@ -35,8 +50,23 @@ const SwappingScreen = () => {
   const Content = () => {
     if (status === 'loading') {
       return (
-        <div>
+        <div className='flex flex-col px-5 w-full items-center justify-center mt-24 text-center'>
+          <p className='text-lg font-semibold'>Performing Swap</p>
+          <p className='mt-4'>Please approve the transaction <br/> on your wallet.</p>
           <Spinner width={120} height={120} />
+        </div>
+      )
+    }
+
+    if (status === 'error') {
+      return (
+        <div className='flex flex-col px-5 w-full items-center justify-center mt-24'>
+          <p className='text-lg font-semibold'>Error performing swap</p>
+          {errorMessage ? <p className='mt-4'>{errorMessage}</p> : null}
+
+          <JupButton className='px-4 mt-12' size='md' onClick={onGoBack}>
+            Go back
+          </JupButton>
         </div>
       )
     }

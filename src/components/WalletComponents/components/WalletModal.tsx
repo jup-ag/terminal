@@ -1,12 +1,11 @@
-import React, { FC, MouseEvent, ReactNode } from 'react';
+import React, { FC, MouseEvent } from 'react';
 import { WalletListItem } from './WalletListItem';
-import { Adapter, WalletName, WalletReadyState } from '@solana/wallet-adapter-base';
+import { Adapter, WalletReadyState } from '@solana/wallet-adapter-base';
 
 import GlassBox from '../../GlassBox/GlassBox';
-import { useToggle } from 'react-use';
 
 import CloseIcon from 'src/icons/CloseIcon';
-import { useWallet, Wallet, WalletContextState } from '@solana/wallet-adapter-react';
+import { useWallet, WalletContextState } from '@solana/wallet-adapter-react';
 
 const PRIORITISE: {
   [value in WalletReadyState]: number;

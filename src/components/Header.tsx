@@ -1,5 +1,5 @@
-import { useWallet } from '@solana/wallet-adapter-react';
 import React, { useMemo } from 'react';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 import JupiterLogo from '../icons/JupiterLogo';
 
@@ -7,7 +7,7 @@ import { WalletButton } from './WalletComponents';
 import WalletConnectButton from './WalletConnectButton';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { wallet } = useWallet();
+  const { wallet } = useWalletPassThrough();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,

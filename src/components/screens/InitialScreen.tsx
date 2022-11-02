@@ -1,22 +1,17 @@
-import { SwapMode, useJupiter } from '@jup-ag/react-hook';
 
 import { TokenInfo } from '@solana/spl-token-registry';
-import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
-import JSBI from 'jsbi';
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { WRAPPED_SOL_MINT } from '../../constants';
 
 import Form from '../../components/Form';
 import FormPairSelector from '../../components/FormPairSelector';
 import { useAccounts } from '../../contexts/accounts';
-import { fromLamports, toLamports } from '../../misc/utils';
 import { useTokenContext } from '../../contexts/TokenContextProvider';
 import { WalletModal } from 'src/components/WalletComponents/components/WalletModal';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 interface Props {
   mint: PublicKey;
@@ -27,29 +22,14 @@ interface Props {
 
 
 const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props) => {
-  const { wallet } = useWallet();
+  const { wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
   const {
     form,
     setForm,
-    errors,
     setErrors,
-    fromTokenInfo,
-    toTokenInfo,
-    outputRoute,
-    // onSubmit,
-    jupiter: {
-      routes: swapRoutes,
-      allTokenMints,
-      routeMap,
-      exchange,
-      loading: loadingQuotes,
-      refresh,
-      lastRefreshTimestamp,
-      error,
-    }
-  } = useSwapContext();
+    outputRoute, jupiter: { loading } } = useSwapContext();
   const { setScreen } = useScreenState();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
@@ -71,7 +51,8 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
       !form.fromMint ||
       !form.toMint ||
       !form.toValue ||
-      !outputRoute
+      !outputRoute ||
+      loading
     )
       return true;
     if (Number(form.fromValue) > balance) {
@@ -95,7 +76,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     }));
     setIsFormPairSelectorOpen(false);
   }, []);
-  
+
   const availableMints: TokenInfo[] = useMemo(() => {
     if (Object.keys(accounts).length === 0) return [];
 
@@ -116,16 +97,10 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
       {/* Body */}
       <form onSubmit={onSubmitToConfirmation}>
         <Form
-          fromTokenInfo={fromTokenInfo}
-          toTokenInfo={toTokenInfo}
-          form={form}
-          errors={errors}
-          setForm={setForm}
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
           setIsFormPairSelectorOpen={setIsFormPairSelectorOpen}
           setIsWalletModalOpen={setIsWalletModalOpen}
-          outputRoute={outputRoute}
         />
       </form>
 

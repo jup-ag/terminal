@@ -1,8 +1,9 @@
 import BN from 'bn.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
+import { useWalletPassThrough } from './WalletPassthroughProvider';
 
 export interface IAccountsBalance {
   balance: number;
@@ -49,7 +50,7 @@ const AccountContext = React.createContext<IAccountContext>({
 });
 
 const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
-  const { publicKey } = useWallet();
+  const { publicKey } = useWalletPassThrough();
   const { connection } = useConnection();
 
   const [accounts, setAccounts] = useState<Record<string, IAccountsBalance>>(

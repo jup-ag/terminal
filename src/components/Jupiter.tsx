@@ -1,6 +1,6 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
 
-import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { useConnection } from '@solana/wallet-adapter-react';
 
 import React, { useMemo, useState } from 'react';
 import { WRAPPED_SOL_MINT } from '../constants';
@@ -14,10 +14,11 @@ import ConfirmationScreen from './screens/ConfirmationScreen';
 import { SwapContextProvider } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import SwappingScreen from './screens/SwappingScreen';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 
 const Content = () => {
-  const { screen, setScreen } = useScreenState();
+  const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   const onClose = () => {
@@ -50,7 +51,7 @@ const Content = () => {
 }
 
 const JupiterApp = () => {
-  const { wallet } = useWallet();
+  const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [

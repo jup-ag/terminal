@@ -1,12 +1,9 @@
-import { RouteInfo } from '@jup-ag/react-hook';
-import { TokenInfo } from '@solana/spl-token-registry';
-import { useWallet } from '@solana/wallet-adapter-react';
-
 import {
   ChangeEvent,
   Dispatch,
   SetStateAction,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -28,33 +25,44 @@ import Collapse from '.';
 import Tooltip from './Tooltip';
 import InfoIcon from '../icons/InfoIcon';
 import { WRAPPED_SOL_MINT } from '../constants';
-import { IForm } from 'src/contexts/SwapContext';
+import { useSwapContext } from 'src/contexts/SwapContext';
+import useTimeDiff from './useTimeDiff/useTimeDiff';
+import SpinnerProgress from './SpinnerProgress/SpinnerProgress';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 const Form: React.FC<{
-  fromTokenInfo?: TokenInfo | null;
-  toTokenInfo?: TokenInfo | null;
-  form: IForm;
-  errors: Record<string, { title: string; message: string }>;
-  setForm: Dispatch<SetStateAction<IForm>>;
   onSubmit: () => void;
   isDisabled: boolean;
   setIsFormPairSelectorOpen: Dispatch<SetStateAction<boolean>>;
   setIsWalletModalOpen(toggle: boolean): void
-  outputRoute?: RouteInfo;
 }> = ({
-  fromTokenInfo,
-  toTokenInfo,
-  form,
-  errors,
-  setForm,
   onSubmit,
   isDisabled,
   setIsFormPairSelectorOpen,
   setIsWalletModalOpen,
-  outputRoute,
 }) => {
-    const { connect, wallet } = useWallet();
+    const { connect, wallet } = useWalletPassThrough();
     const { accounts } = useAccounts();
+    const {
+      form,
+      setForm,
+      errors,
+      fromTokenInfo,
+      toTokenInfo,
+      outputRoute,
+      jupiter: {
+        loading,
+        refresh,
+      }
+    } = useSwapContext();
+    const [hasExpired, timeDiff] = useTimeDiff();
+
+    useEffect(() => {
+      if (hasExpired) {
+        refresh();
+      }
+    }, [hasExpired])
+    
 
     const onConnectWallet = () => {
       if (wallet) connect();
@@ -119,6 +127,10 @@ const Form: React.FC<{
 
     return (
       <div className="h-full mt-4 mx-5 flex flex-col items-center justify-center">
+        <div className='flex w-full justify-end mb-2'>
+          <SpinnerProgress percentage={timeDiff} strokeColor="lightgrey" strokeBgColor={'black'} />
+        </div>
+        
         <div className="w-full rounded-xl bg-white/75 dark:bg-white dark:bg-opacity-5 shadow-lg flex flex-col p-4 pb-2">
           <div className="flex-col">
             <div className="flex justify-between items-end pb-3 text-xs text-gray-400">
@@ -286,7 +298,7 @@ const Form: React.FC<{
             onClick={onSubmit}
             disabled={isDisabled}
           >
-            Swap
+            {loading ? 'Loading...' : 'Swap'}
           </JupButton>
         )}
 

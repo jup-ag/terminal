@@ -1,14 +1,13 @@
-import { useWallet } from '@solana/wallet-adapter-react';
-
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { CurrentUserBadge } from '../CurrentUserBadge';
 
 
 import { WalletModalButton } from './components/WalletModalButton';
 
 export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { publicKey, connected, connecting, disconnect } = useWallet();
+  const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
   const { screen } = useScreenState();

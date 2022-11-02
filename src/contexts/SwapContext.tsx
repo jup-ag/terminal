@@ -1,13 +1,13 @@
 import { RouteInfo, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
 import { useTokenContext } from './TokenContextProvider';
+import { useWalletPassThrough } from './WalletPassthroughProvider';
 
 export interface IForm {
   fromMint: string;
@@ -36,7 +36,7 @@ export interface ISwapContext {
 export const initialSwapContext = {
   form: {
     fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: '',
+    toMint: WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
   },
@@ -69,7 +69,7 @@ export function useSwapContext(): ISwapContext {
 
 export const SwapContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { tokenMap } = useTokenContext()
-  const { wallet } = useWallet();
+  const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,
   ]);
@@ -152,7 +152,6 @@ export const SwapContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
   const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
   const onSubmit = useCallback(async () => {
-    console.log({ walletPublicKey, adapter: wallet, outputRoute })
     if (!walletPublicKey || !wallet?.adapter || !outputRoute) {
       return null;
     }

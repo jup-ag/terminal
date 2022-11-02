@@ -1,33 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useScreenState } from 'src/contexts/ScreenProvider'
 import { useSwapContext } from 'src/contexts/SwapContext'
-import { ROUTE_CACHE_DURATION } from 'src/misc/constants'
 import FormError from '../FormError'
 import JupButton from '../JupButton'
 import SpinnerProgress from '../SpinnerProgress/SpinnerProgress'
 import TokenIcon from '../TokenIcon'
+import useTimeDiff from '../useTimeDiff/useTimeDiff'
 
 const ConfirmationScreen = () => {
   const {
     form,
-    setForm,
-    errors,
-    setErrors,
     fromTokenInfo,
     toTokenInfo,
-    outputRoute,
     onSubmit: onSubmitJupiter,
     jupiter: {
-      routes: swapRoutes,
-      allTokenMints,
-      routeMap,
-      exchange,
-      loading: loadingQuotes,
       refresh,
-      lastRefreshTimestamp,
-      error,
     }
   } = useSwapContext();
+  const [hasExpired, timeDiff] = useTimeDiff();
 
   const { setScreen } = useScreenState();
 
@@ -35,28 +25,26 @@ const ConfirmationScreen = () => {
     refresh();
     setScreen('Initial');
   }
-  const onSubmit = () => { 
+  const onSubmit = () => {
     setScreen('Swapping');
     onSubmitJupiter();
   }
 
-  const [hasExpired, setHasExpired] = React.useState(false);
-  const [timeDiff, setTimeDiff] = useState(0);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const value = Date.now() > (lastRefreshTimestamp + ROUTE_CACHE_DURATION);
-
-      const elapsedSeconds = (Date.now() - (lastRefreshTimestamp + ROUTE_CACHE_DURATION)) / 1_000;
-      setTimeDiff(elapsedSeconds / (ROUTE_CACHE_DURATION / 1_000) * 100)
-      setHasExpired(value);
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, [lastRefreshTimestamp])
-
   return (
     <div className='flex flex-col items-center mt-4'>
-      <span className='text-lg font-semibold'>Review Order</span>
+      <div className='px-5 flex w-full items-center justify-between'>
+        <div className='flex flex-1'>
+          <div className='flex items-center justify-center border border-black/50 rounded-full p-1.5 cursor-pointer' onClick={onGoBack}>
+            <svg width="10" height="10" viewBox="0 0 8 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 1L1 7L7 13" stroke="#1A202C" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+        </div>
+
+        <span className='text-lg font-semibold flex-1'>Review Order</span>
+
+        <div className='flex-1' />
+      </div>
 
       <div className="h-full mt-4 mx-5 flex flex-col items-center justify-center">
         <div className="w-full rounded-xl bg-white/75 dark:bg-white dark:bg-opacity-5 shadow-lg flex flex-col p-4 pb-2">

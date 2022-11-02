@@ -1,9 +1,9 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import { useWallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import React, { createRef, memo, useEffect, useMemo, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { areEqual, FixedSizeList, ListChildComponentProps } from 'react-window';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 import { useAccounts } from '../contexts/accounts';
 import CloseIcon from '../icons/CloseIcon';
@@ -64,7 +64,7 @@ const FormPairSelector = ({
   onClose: () => void;
   tokenInfos: TokenInfo[];
 }) => {
-  const { wallet, connect } = useWallet();
+  const { wallet, connect } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,
   ]);
