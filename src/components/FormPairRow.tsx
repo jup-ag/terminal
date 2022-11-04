@@ -1,6 +1,6 @@
-import { WRAPPED_SOL_MINT } from '@project-serum/serum/lib/token-instructions';
 import { TokenInfo } from '@solana/spl-token-registry';
 import React, { CSSProperties } from 'react';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 import CoinBalance from './Coinbalance';
 import { PAIR_ROW_HEIGHT } from './FormPairSelector';

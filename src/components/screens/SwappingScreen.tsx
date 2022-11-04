@@ -45,6 +45,7 @@ const SwappingScreen = () => {
   const onClose = () => {
     window.Jupiter.close();
     reset();
+    setScreen('Initial');
   }
 
   const Content = () => {

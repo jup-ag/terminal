@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build-tsup": "tsup ./src/widget.tsx --format commonjs"
   },
   "dependencies": {
     "@jup-ag/math": "3.0.0-beta.1",
@@ -52,6 +53,7 @@
     "@types/react-window": "~1.8.5",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
+    "tsup": "^6.3.0",
     "typescript": "4.8.4"
   }
 }
