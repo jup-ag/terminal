@@ -2,6 +2,7 @@ const path = require("path");
 // Polyfill all the node stuff
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 module.exports = {
   mode: "production",
@@ -70,4 +71,9 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     publicPath: "/dist/",
   },
+  optimization: {
+    minimizer: [
+      new CssMinimizerPlugin(),
+    ]
+  }
 };

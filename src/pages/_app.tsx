@@ -12,6 +12,7 @@ import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 
 import 'tailwindcss/tailwind.css';
+import '../styles/app.css';
 import '../styles/globals.css';
 
 import { Jupiter } from '../index';

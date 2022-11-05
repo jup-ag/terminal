@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build-widget": "webpack"
+    "build-widget": "NODE_ENV=production webpack"
   },
   "dependencies": {
     "@jup-ag/math": "3.0.0-beta.1",
@@ -62,6 +62,8 @@
     "@types/react-window": "~1.8.5",
     "browserify-fs": "^1.0.0",
     "css-loader": "^6.7.1",
+    "css-minimizer-webpack-plugin": "^4.2.2",
+    "cssnano": "^5.1.14",
     "eslint": "8.26.0",
     "eslint-config-next": "13.0.0",
     "mini-css-extract-plugin": "^2.6.1",
