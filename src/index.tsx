@@ -1,37 +1,12 @@
-import React, { CSSProperties, useMemo } from "react";
-import { createRoot, Root } from "react-dom/client";
+import React, {  } from "react";
+import { createRoot } from "react-dom/client";
 import JupiterApp from "./components/Jupiter";
 import { ContextProvider } from "./contexts/ContextProvider";
 import { ScreenProvider } from "./contexts/ScreenProvider";
 import { TokenContextProvider } from "./contexts/TokenContextProvider";
 import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 
-import { Wallet } from "@solana/wallet-adapter-react";
-import "tailwindcss/tailwind.css";
-import "src/styles/globals.css";
-
-declare global {
-  interface Window {
-    Jupiter: JupiterEmbed;
-  }
-}
-
-interface IInit {
-  passThroughWallet?: Wallet | null;
-  containerStyles?: { zIndex: CSSProperties["zIndex"] };
-}
-
-interface JupiterEmbed {
-  containerId: string;
-  _instance: React.ReactNode;
-  passThroughWallet: Wallet | null;
-  init: ({
-    passThroughWallet,
-    containerStyles,
-  }: IInit) => void;
-  close: () => void;
-  root: Root | null;
-}
+import { IInit, JupiterEmbed } from "./types";
 
 const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['containerStyles'] }) => {
   const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.

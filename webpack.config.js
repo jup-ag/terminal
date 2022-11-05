@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   mode: "production",
   entry: {
-    Jupiter: "./src/index.tsx",
+    Jupiter: "./src/widget/index.tsx",
   },
   cache: {
     type: "filesystem",
@@ -20,7 +20,17 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              // To compile for client
+              compilerOptions: {
+                "jsx": "react-jsx",
+              },
+            }
+          }
+        ],
         exclude: /node_modules/,
       },
       {

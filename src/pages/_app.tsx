@@ -14,13 +14,18 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 import 'tailwindcss/tailwind.css';
 import '../styles/globals.css';
 
+import { Jupiter } from '../index';
+
+if (typeof window !== 'undefined') {
+  window.Jupiter = Jupiter
+}
+
 const InitJupWithWallet: FC<{ wallet: Wallet | null }> = ({ wallet }) => {
   const initWithWallet = () => {
     if (!wallet) return;
 
     window.Jupiter.init({
       passThroughWallet: wallet,
-      containerId: 'jupiter-instance'
     });
   }
 
@@ -63,9 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
   // TODO: Init configurable endpoints
 
   const initWithoutWallet = () => {
-    window.Jupiter.init({
-      containerId: 'jupiter-instance'
-    });
+    window.Jupiter.init({});
   }
 
   return (
