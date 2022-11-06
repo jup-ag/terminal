@@ -1,34 +1,104 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Jupiter Embed
 
-## Getting Started
+Jupiter Embed is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
+## Jupiter Embed allow two mode of operation,
+
+## Mode 1: Wallet passthrough
+
+If your user have connected their wallet via your dApp, you may passthrough the wallet instance via the `init({ passThroughWallet: wallet })`.
+
+```jsx
+const App = () => {
+  const { wallet } = useWallet();
+
+  const initJupiter = () => {
+    if (wallet) {
+      window.Jupiter.init({
+        endpoint,
+        passThroughWallet: wallet,
+      });
+    }
+  };
+};
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Mode 2: Built-in wallet
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+If your user is not connected, Jupiter Embed have several built-in wallets that user can connect and perform swap directly.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+---
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Getting started
 
-## Learn More
+## Integrating the widget
 
-To learn more about Next.js, take a look at the following resources:
+In your document, link embed's `main.js` and `main.css`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+<head>
+  <script src={`/JupiterEmbed/main.js`}></script>
+  <link rel="stylesheet" href={`/JupiterEmbed/main.css`} />
+</head>
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Init / Show the widget
 
-## Deploy on Vercel
+```tsx
+const App = () => {
+  const { wallet } = useWallet();
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  const initJupiter = () => {
+    if (wallet) {
+      // We do not recommend using a public RPC due to 429 rate limits.
+      window.Jupiter.init({
+        endpoint: "https://api.mainnet-beta.solana.com",
+        passThroughWallet: wallet,
+      });
+    }
+  };
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  const initJupiterWithoutWallet = () => {
+    if (wallet) {
+      window.Jupiter.init({ endpoint: "https://api.mainnet-beta.solana.com" });
+    }
+  };
+
+  return (
+    <div>
+      <button type="button" onClick={initJupiter}>
+        Open Jupiter with In-App
+      </button>
+      <button type="button" onClick={initJupiterWithoutWallet}>
+        Open Jupiter with Built-in
+      </button>
+    </div>
+  );
+};
+```
+
+## Hide / Close
+
+\*Note: To reduce RPC usage incurred on startup, whenever `close()` is called, the rendered instance will be added with a `hidden` class, and subsequent `init()` call will remove the `hidden` class.
+
+```tsx
+window.Jupiter.close();
+```
+
+## Customising styles
+  - Custom zIndex
+  ```tsx
+  window.Jupiter.init({
+    // ...
+    containerStyles: { zIndex: 100 },
+  });
+  ```
+
+---
+
+## Known issue
+
+- Wallet passthrough supports does not work for Solflare
+  - Jupiter Embed currently prompts the user to connect their Solflare wallet again, to perform swap.
