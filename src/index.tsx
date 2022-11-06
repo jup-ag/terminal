@@ -8,7 +8,7 @@ import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 
 import { IInit, JupiterEmbed } from "./types";
 
-const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['containerStyles'] }) => {
+const renderJupiterApp = ({ endpoint, containerStyles }: { endpoint: string, containerStyles: IInit['containerStyles'] }) => {
   const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.
 
   return (
@@ -16,7 +16,7 @@ const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['contain
       style={{ zIndex }}
       className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50"
     >
-      <ContextProvider customEndpoint={"https://mango.rpcpool.com"}>
+      <ContextProvider customEndpoint={endpoint}>
         <WalletPassthroughProvider>
           <TokenContextProvider>
             <ScreenProvider>
@@ -31,7 +31,7 @@ const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['contain
 const containerId = "jupiter-embed";
 
 const init: JupiterEmbed["init"] = (props) => {
-  const { passThroughWallet, containerStyles } = props || { passThroughWallet: undefined, containerStyles: undefined };
+  const { endpoint, passThroughWallet, containerStyles } = props;
 
   const targetDiv = document.createElement("div");
   const instanceExist = document.getElementById(containerId);
@@ -46,7 +46,7 @@ const init: JupiterEmbed["init"] = (props) => {
     window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
     instanceExist?.remove();
-    window.Jupiter.init({ passThroughWallet });
+    window.Jupiter.init({ endpoint: 'https://mango.rpcpool.com', passThroughWallet });
     return;
   }
 
@@ -64,7 +64,7 @@ const init: JupiterEmbed["init"] = (props) => {
   window.Jupiter.root = root;
 
   const element =
-    window.Jupiter._instance || renderJupiterApp({ containerStyles });
+    window.Jupiter._instance || renderJupiterApp({ endpoint, containerStyles });
   root.render(element);
   window.Jupiter._instance = element;
 };

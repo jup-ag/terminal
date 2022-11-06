@@ -26,6 +26,7 @@ const InitJupWithWallet: FC<{ wallet: Wallet | null }> = ({ wallet }) => {
     if (!wallet) return;
 
     window.Jupiter.init({
+      endpoint: "https://mango.rpcpool.com",
       passThroughWallet: wallet,
     });
   }
@@ -69,7 +70,9 @@ export default function App({ Component, pageProps }: AppProps) {
   // TODO: Init configurable endpoints
 
   const initWithoutWallet = () => {
-    window.Jupiter.init();
+    window.Jupiter.init({
+      endpoint: 'https://mango.rpcpool.com'
+    });
   }
 
   return (
