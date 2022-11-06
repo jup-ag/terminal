@@ -20,7 +20,7 @@ const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['contain
         <WalletPassthroughProvider>
           <TokenContextProvider>
             <ScreenProvider>
-              <JupiterApp />
+              <JupiterApp containerStyles={{ zIndex }} />
             </ScreenProvider>
           </TokenContextProvider>
         </WalletPassthroughProvider>
@@ -30,12 +30,11 @@ const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['contain
 };
 const containerId = "jupiter-embed";
 
-const init: JupiterEmbed["init"] = ({
-  passThroughWallet = null,
-  containerStyles,
-}) => {
-  const targetDiv =
-    document.getElementById(containerId) ?? document.createElement("div");
+const init: JupiterEmbed["init"] = (props) => {
+  const { passThroughWallet, containerStyles } = props || { passThroughWallet: undefined, containerStyles: undefined };
+
+  const targetDiv = document.createElement("div");
+  const instanceExist = document.getElementById(containerId);
 
   const addedPassThrough =
     !window.Jupiter.passThroughWallet && passThroughWallet;
@@ -46,12 +45,15 @@ const init: JupiterEmbed["init"] = ({
   if (addedPassThrough || removedPassThrough) {
     window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
+    instanceExist?.remove();
     window.Jupiter.init({ passThroughWallet });
+    return;
   }
 
-  if (window.Jupiter._instance) {
-    targetDiv.classList.remove("hidden");
-    targetDiv.classList.add("block");
+  // If there's existing instance, just show it
+  if (instanceExist) {
+    instanceExist.classList.remove("hidden");
+    instanceExist.classList.add("block");
     return;
   }
 
@@ -64,21 +66,17 @@ const init: JupiterEmbed["init"] = ({
   const element =
     window.Jupiter._instance || renderJupiterApp({ containerStyles });
   root.render(element);
-  window.Jupiter.containerId = containerId;
   window.Jupiter._instance = element;
 };
 
 const close: JupiterEmbed["close"] = () => {
-  if (Jupiter._instance) {
-    const targetDiv = document.getElementById(window.Jupiter.containerId);
-    if (targetDiv) {
-      targetDiv.classList.add("hidden");
-    }
+  const targetDiv = document.getElementById(containerId);
+  if (targetDiv) {
+    targetDiv.classList.add("hidden");
   }
 };
 
 const Jupiter: JupiterEmbed = {
-  containerId: "",
   _instance: null,
   passThroughWallet: null,
   root: null,

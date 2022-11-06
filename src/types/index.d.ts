@@ -10,13 +10,12 @@ export interface IInit {
 }
 
 export interface JupiterEmbed {
-  containerId: string;
   _instance: React.ReactNode;
   passThroughWallet: Wallet | null;
   init: ({
     passThroughWallet,
     containerStyles,
-  }: IInit) => void;
+  }?: IInit) => void;
   close: () => void;
   root: Root | null;
 }

@@ -69,7 +69,7 @@ export default function App({ Component, pageProps }: AppProps) {
   // TODO: Init configurable endpoints
 
   const initWithoutWallet = () => {
-    window.Jupiter.init({});
+    window.Jupiter.init();
   }
 
   return (

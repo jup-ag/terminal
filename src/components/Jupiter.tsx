@@ -15,9 +15,10 @@ import { SwapContextProvider } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import SwappingScreen from './screens/SwappingScreen';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { IInit } from 'src/types';
 
 
-const Content = () => {
+const Content = ({ containerStyles }: { containerStyles: IInit['containerStyles'] }) => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
@@ -25,9 +26,10 @@ const Content = () => {
     window.Jupiter.close();
   }
 
+  const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.
   return (
     <div>
-      <div className="flex flex-col h-screen max-h-[90vh] md:max-h-[600px] max-w-[448px] overflow-auto text-black relative bg-[#F3F5F6] rounded-lg z-50">
+      <div style={{ zIndex }} className="flex flex-col h-screen max-h-[90vh] md:max-h-[600px] max-w-[448px] overflow-auto text-black relative bg-[#F3F5F6] rounded-lg">
         {/* Header */}
         <Header setIsWalletModalOpen={setIsWalletModalOpen} />
 
@@ -45,12 +47,12 @@ const Content = () => {
         </div>
       </div>
 
-      <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0 z-1" />
+      <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0" />
     </div>
   )
 }
 
-const JupiterApp = () => {
+const JupiterApp = ({ containerStyles }: { containerStyles: IInit['containerStyles'] }) => {
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -68,7 +70,7 @@ const JupiterApp = () => {
         userPublicKey={walletPublicKey || undefined}
       >
         <SwapContextProvider>
-          <Content />
+          <Content containerStyles={containerStyles} />
         </SwapContextProvider>
       </JupiterProvider>
     </AccountsProvider>

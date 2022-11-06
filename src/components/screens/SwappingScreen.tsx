@@ -51,7 +51,7 @@ const SwappingScreen = () => {
   const Content = () => {
     if (status === 'loading') {
       return (
-        <div className='flex flex-col px-5 w-full items-center justify-center mt-24 text-center'>
+        <div className='flex flex-col px-5 w-full items-center justify-center mt-24 text-center text-black'>
           <p className='text-lg font-semibold'>Performing Swap</p>
           <p className='mt-4'>Please approve the transaction <br/> on your wallet.</p>
           <Spinner width={120} height={120} />
