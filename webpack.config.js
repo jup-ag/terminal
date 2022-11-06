@@ -61,6 +61,7 @@ module.exports = {
     alias: {
       src: path.resolve(__dirname, "src"),
       public: path.resolve(__dirname, "public"),
+      './../tokens/solana.tokenlist.json': false
     },
   },
   target: "web",
@@ -73,7 +74,9 @@ module.exports = {
   },
   optimization: {
     minimizer: [
+      '...', // Include existing minimizer.
       new CssMinimizerPlugin(),
-    ]
+    ],
+    minimize: true,
   }
 };

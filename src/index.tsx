@@ -14,7 +14,7 @@ const renderJupiterApp = ({ containerStyles }: { containerStyles: IInit['contain
   return (
     <div
       style={{ zIndex }}
-      className="absolute top-0 w-screen h-screen flex items-center justify-center bg-black/50"
+      className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50"
     >
       <ContextProvider customEndpoint={"https://mango.rpcpool.com"}>
         <WalletPassthroughProvider>
