@@ -68,7 +68,7 @@ const FormPairSelector = ({
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,
   ]);
-  const { accounts } = useAccounts();
+  const { accounts, loading: accountsLoading } = useAccounts();
 
   // We do not support search yet
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
@@ -81,14 +81,6 @@ const FormPairSelector = ({
   }, [accounts, tokenInfos]);
 
   const listRef = createRef<FixedSizeList>();
-
-  // Initial token loading
-  const [initialLoading, setInitialLoading] = useState(true);
-  useEffect(() => {
-    if (initialLoading && searchResult && searchResult.length > 0) {
-      setInitialLoading(false);
-    }
-  }, [searchResult]);
 
   if (!walletPublicKey) {
     return (
@@ -147,7 +139,7 @@ const FormPairSelector = ({
           </AutoSizer>
         )}
 
-        {initialLoading ? (
+        {accountsLoading ? (
           <div className="mt-4 mb-4 text-center dark:text-white-50 text-black-50">
             <span>Loading tokens...</span>
           </div>

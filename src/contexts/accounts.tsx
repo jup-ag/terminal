@@ -14,6 +14,7 @@ export interface IAccountsBalance {
 
 interface IAccountContext {
   accounts: Record<string, IAccountsBalance>;
+  loading: boolean;
 }
 
 interface ParsedTokenData {
@@ -47,12 +48,14 @@ interface ParsedTokenData {
 
 const AccountContext = React.createContext<IAccountContext>({
   accounts: {},
+  loading: true,
 });
 
 const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { publicKey } = useWalletPassThrough();
   const { connection } = useConnection();
 
+  const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<Record<string, IAccountsBalance>>(
     {},
   );
@@ -79,11 +82,14 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         }, {} as Record<string, IAccountsBalance>);
 
         setAccounts(reducedResult);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, [publicKey]);
 
   return (
-    <AccountContext.Provider value={{ accounts }}>
+    <AccountContext.Provider value={{ accounts, loading, }}>
       {children}
     </AccountContext.Provider>
   );

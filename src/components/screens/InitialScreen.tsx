@@ -42,7 +42,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
 
   // TODO: Dedupe the balance
   const balance = useMemo(() => {
-    return form.fromMint ? accounts[form.fromMint]?.balance : 0;
+    return form.fromMint ? (accounts[form.fromMint]?.balance || 0) : 0;
   }, [walletPublicKey, accounts, form.fromMint]);
 
   const isDisabled = useMemo(() => {
@@ -55,6 +55,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
       loading
     )
       return true;
+
     if (Number(form.fromValue) > balance) {
       setErrors({
         fromValue: { title: 'Insufficient balance', message: '' },
