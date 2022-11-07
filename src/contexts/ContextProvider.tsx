@@ -17,11 +17,11 @@ import { AutoConnectProvider, useAutoConnect } from './AutoConnectProvider';
 import { notify } from "../utils/notifications";
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
 
-const WalletContextProvider: FC<{ customEndpoint?: string, children: ReactNode }> = ({ customEndpoint, children }) => {
+const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
   const { autoConnect } = useAutoConnect();
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
-  const endpoint = useMemo(() => customEndpoint ?? clusterApiUrl(network), [network]);
+  const selectedEndpoint = useMemo(() => endpoint ?? clusterApiUrl(network), [network])
 
   const wallets = useMemo(
     () => [
@@ -46,8 +46,7 @@ const WalletContextProvider: FC<{ customEndpoint?: string, children: ReactNode }
   );
 
   return (
-    // TODO: updates needed for updating and referencing endpoint: wallet adapter rework
-    <ConnectionProvider endpoint={endpoint}>
+    <ConnectionProvider endpoint={selectedEndpoint}>
       <WalletProvider wallets={wallets} onError={onError} autoConnect={autoConnect}>
         {children}
       </WalletProvider>
@@ -55,12 +54,12 @@ const WalletContextProvider: FC<{ customEndpoint?: string, children: ReactNode }
   );
 };
 
-export const ContextProvider: FC<{ customEndpoint?: string, children: ReactNode }> = ({ customEndpoint, children }) => {
+export const ContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
   return (
     <>
       <NetworkConfigurationProvider>
         <AutoConnectProvider>
-          <WalletContextProvider customEndpoint={customEndpoint}>{children}</WalletContextProvider>
+          <WalletContextProvider endpoint={endpoint}>{children}</WalletContextProvider>
         </AutoConnectProvider>
       </NetworkConfigurationProvider>
     </>

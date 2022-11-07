@@ -16,31 +16,43 @@ import '../styles/app.css';
 import '../styles/globals.css';
 
 import { Jupiter } from '../index';
+import { IInit } from 'src/types';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 if (typeof window !== 'undefined') {
   window.Jupiter = Jupiter
 }
 
-const InitJupWithWallet: FC<{ wallet: Wallet | null }> = ({ wallet }) => {
+const InitJupWithWallet: FC<{ mode: IInit['mode'], wallet: Wallet | null }> = ({ mode = 'default', wallet }) => {
   const initWithWallet = () => {
     if (!wallet) return;
 
-    window.Jupiter.init({
-      endpoint: "https://mango.rpcpool.com",
-      passThroughWallet: wallet,
-    });
+    if (mode === 'default') {
+      window.Jupiter.init({
+        mode,
+        endpoint: "https://mango.rpcpool.com",
+        passThroughWallet: wallet,
+      });
+    } else if (mode === 'outputOnly') {
+      window.Jupiter.init({
+        mode,
+        mint: WRAPPED_SOL_MINT.toString(),
+        endpoint: 'https://mango.rpcpool.com',
+        passThroughWallet: wallet,
+      });
+    }
   }
 
   return (
-    <JupButton onClick={initWithWallet}>
+    <JupButton onClick={() => initWithWallet()}>
       Init Jupiter (with wallet connected)
     </JupButton>
   )
 }
 
-const WithAppWallet = () => {
+const WithAppWallet = ({ mode = 'default' }: { mode: IInit['mode'] }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
-  
+
   useEffect(() => {
     const fakeWallet: Wallet = {
       adapter: new UnsafeBurnerWalletAdapter(),
@@ -61,37 +73,60 @@ const WithAppWallet = () => {
         </div>
       </div>
 
-      <InitJupWithWallet wallet={wallet} />
+      <InitJupWithWallet mode={mode} wallet={wallet} />
     </div>
   )
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  // TODO: Init configurable endpoints
-
-  const initWithoutWallet = () => {
-    window.Jupiter.init({
-      endpoint: 'https://mango.rpcpool.com'
-    });
-  }
-
   return (
     <div className='flex flex-col h-screen w-screen items-center justify-center'>
       <h1 className='text-2xl'>Jupiter Embed App</h1>
 
-      <div className='mt-10'>
-        <div className='mt-10 border p-4'>
-          <p className='text-lg font-semibold p-2'>Jupiter without wallet passthrough</p>
-          <JupButton onClick={initWithoutWallet}>
-            Init Jupiter (without wallet)
-          </JupButton>
+      <div className='flex mt-10 space-x-10' >
+        <div>
+          <h2 className='font-bold text-lg'>Default Mode</h2>
+          <div className='mt-10 border p-4'>
+            <p className='text-lg font-semibold p-2'>Jupiter without wallet passthrough</p>
+            <JupButton onClick={() => {
+              window.Jupiter.init({
+                mode: 'default',
+                endpoint: 'https://mango.rpcpool.com'
+              });
+            }}>
+              Init Jupiter (without wallet)
+            </JupButton>
+          </div>
+
+          <div className='mt-10 border p-4'>
+            <p className='text-lg font-semibold p-2'>Jupiter with wallet passthrough</p>
+            <ContextProvider>
+              <WithAppWallet mode={'default'} />
+            </ContextProvider>
+          </div>
         </div>
 
-        <div className='mt-10 border p-4'>
-          <p className='text-lg font-semibold p-2'>Jupiter with wallet passthrough</p>
-          <ContextProvider>
-            <WithAppWallet />
-          </ContextProvider>
+        <div>
+          <h2 className='font-bold text-lg'>Output Only Mode</h2>
+          <div className='mt-10 border p-4'>
+            <p className='text-lg font-semibold p-2'>Jupiter without wallet passthrough</p>
+            <JupButton onClick={() => {
+              window.Jupiter.init({
+                mode: 'outputOnly',
+                mint: WRAPPED_SOL_MINT.toString(),
+                endpoint: 'https://mango.rpcpool.com'
+              });
+            }}>
+              Init Jupiter (without wallet)
+            </JupButton>
+          </div>
+
+          <div className='mt-10 border p-4'>
+            <p className='text-lg font-semibold p-2'>Jupiter with wallet passthrough</p>
+            <ContextProvider>
+              <WithAppWallet mode={'outputOnly'} />
+            </ContextProvider>
+          </div>
         </div>
       </div>
     </div>

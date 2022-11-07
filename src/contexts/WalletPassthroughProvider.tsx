@@ -43,12 +43,11 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
     connected,
     disconnect,
   } = useWallet();
-
   
   const value = (() => {
     // Pass through wallet adapter
-    const passThroughWallet = window.Jupiter.passThroughWallet as Wallet;
-    const isSolflare = passThroughWallet?.adapter.name !== SolflareWalletName;
+    const passThroughWallet = window.Jupiter.passThroughWallet;
+    const isSolflare = passThroughWallet?.adapter.name === SolflareWalletName;
 
     if (Boolean(passThroughWallet) && passThroughWallet?.adapter.publicKey) {
       // Solflare wallet does not allow pass through

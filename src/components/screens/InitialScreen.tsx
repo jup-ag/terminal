@@ -14,12 +14,10 @@ import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 interface Props {
-  mint: PublicKey;
+  mint: string;
   isWalletModalOpen: boolean;
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-
-
 
 const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { wallet } = useWalletPassThrough();
@@ -37,7 +35,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
   ]);
 
   useEffect(() => {
-    setForm((prev) => ({ ...prev, toMint: mint?.toString() }));
+    setForm((prev) => ({ ...prev, toMint: mint }));
   }, [mint]);
 
   // TODO: Dedupe the balance
@@ -67,15 +65,23 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     return false;
   }, [form, balance]);
 
-  const [isFormPairSelectorOpen, setIsFormPairSelectorOpen] = useState(false);
+  const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
 
-  const onSelectFromMint = useCallback((tokenInfo: TokenInfo) => {
-    setForm((prev) => ({
-      ...prev,
-      fromMint: tokenInfo.address,
-      fromValue: '',
-    }));
-    setIsFormPairSelectorOpen(false);
+  const onSelectMint = useCallback((tokenInfo: TokenInfo) => {
+    if (selectPairSelector === 'fromMint') {
+      setForm((prev) => ({
+        ...prev,
+        fromMint: tokenInfo.address,
+        fromValue: '',
+      }));
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        toMint: tokenInfo.address,
+        toValue: '',
+      }));
+    }
+    setSelectPairSelector(null);
   }, []);
 
   const availableMints: TokenInfo[] = useMemo(() => {
@@ -85,7 +91,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
       .map((mintAddress) => tokenMap.get(mintAddress))
       .filter(Boolean)
       .filter(
-        (tokenInfo) => tokenInfo?.address !== mint.toString(),
+        (tokenInfo) => tokenInfo?.address !== mint,
       ) as TokenInfo[]; // Prevent same token to same token
   }, [accounts, tokenMap]);
 
@@ -100,17 +106,17 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
         <Form
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
-          setIsFormPairSelectorOpen={setIsFormPairSelectorOpen}
+          setSelectPairSelector={setSelectPairSelector}
           setIsWalletModalOpen={setIsWalletModalOpen}
         />
       </form>
 
-      {isFormPairSelectorOpen ? (
+      {selectPairSelector !== null ? (
         <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
           <FormPairSelector
-            onSubmit={onSelectFromMint}
+            onSubmit={onSelectMint}
             tokenInfos={availableMints}
-            onClose={() => setIsFormPairSelectorOpen(false)}
+            onClose={() => setSelectPairSelector(null)}
           />
         </div>
       ) : null}

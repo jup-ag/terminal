@@ -11,7 +11,7 @@ import { AccountsProvider } from "../contexts/accounts";
 import { useScreenState } from "src/contexts/ScreenProvider";
 import InitialScreen from "./screens/InitialScreen";
 import ConfirmationScreen from "./screens/ConfirmationScreen";
-import { SwapContextProvider } from "src/contexts/SwapContext";
+import { SwapContextProvider, useSwapContext } from "src/contexts/SwapContext";
 import { ROUTE_CACHE_DURATION } from "src/misc/constants";
 import SwappingScreen from "./screens/SwappingScreen";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
@@ -23,6 +23,7 @@ const Content = ({
   containerStyles: IInit["containerStyles"];
 }) => {
   const { screen } = useScreenState();
+  const { mode, mint } = useSwapContext();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   const onClose = () => {
@@ -40,9 +41,8 @@ const Content = ({
         <Header setIsWalletModalOpen={setIsWalletModalOpen} />
 
         {screen === "Initial" ? (
-          // TODO: Read from init function
           <InitialScreen
-            mint={WRAPPED_SOL_MINT}
+            mint={mint || WRAPPED_SOL_MINT.toString()}
             isWalletModalOpen={isWalletModalOpen}
             setIsWalletModalOpen={setIsWalletModalOpen}
           />
@@ -66,8 +66,12 @@ const Content = ({
 };
 
 const JupiterApp = ({
+  mode,
+  mint,
   containerStyles,
 }: {
+  mode: IInit['mode'],
+  mint: IInit['mint'],
   containerStyles: IInit["containerStyles"];
 }) => {
   const { wallet } = useWalletPassThrough();
@@ -87,7 +91,7 @@ const JupiterApp = ({
         wrapUnwrapSOL={false}
         userPublicKey={walletPublicKey || undefined}
       >
-        <SwapContextProvider>
+        <SwapContextProvider mode={mode} mint={mint}>
           <Content containerStyles={containerStyles} />
         </SwapContextProvider>
       </JupiterProvider>

@@ -67,8 +67,7 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
             <span>You need to connect a Solana wallet.</span>
           </div>
         </div>
-        {/* // TODO: Close modal */}
-        <div className="cursor-pointer" onClick={() => {}}>
+        <div className="cursor-pointer" onClick={() => setIsWalletModalOpen(false)}>
           <CloseIcon />
         </div>
       </div>

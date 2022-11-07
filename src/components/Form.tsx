@@ -29,16 +29,17 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import SpinnerProgress from './SpinnerProgress/SpinnerProgress';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import classNames from 'classnames';
 
 const Form: React.FC<{
   onSubmit: () => void;
   isDisabled: boolean;
-  setIsFormPairSelectorOpen: Dispatch<SetStateAction<boolean>>;
+  setSelectPairSelector: React.Dispatch<React.SetStateAction<"fromMint" | "toMint" | null>>;
   setIsWalletModalOpen(toggle: boolean): void
 }> = ({
   onSubmit,
   isDisabled,
-  setIsFormPairSelectorOpen,
+  setSelectPairSelector,
   setIsWalletModalOpen,
 }) => {
     const { connect, wallet } = useWalletPassThrough();
@@ -50,6 +51,7 @@ const Form: React.FC<{
       fromTokenInfo,
       toTokenInfo,
       outputRoute,
+      mode,
       jupiter: {
         loading,
         refresh,
@@ -62,7 +64,7 @@ const Form: React.FC<{
         refresh();
       }
     }, [hasExpired])
-    
+
 
     const onConnectWallet = () => {
       if (wallet) connect();
@@ -130,7 +132,7 @@ const Form: React.FC<{
         <div className='flex w-full justify-end mb-2'>
           <SpinnerProgress percentage={timeDiff} strokeColor="lightgrey" strokeBgColor={'black'} />
         </div>
-        
+
         <div className="w-full rounded-xl bg-white/75 dark:bg-white dark:bg-opacity-5 shadow-lg flex flex-col p-4 pb-2">
           <div className="flex-col">
             <div className="flex justify-between items-end pb-3 text-xs text-gray-400">
@@ -157,7 +159,7 @@ const Form: React.FC<{
                       <button
                         type="button"
                         className="py-2 px-2 rounded-lg flex items-center hover:bg-gray-100 dark:hover:bg-white/10"
-                        onClick={() => setIsFormPairSelectorOpen(true)}
+                        onClick={() => setSelectPairSelector('fromMint')}
                       >
                         <TokenIcon tokenInfo={fromTokenInfo} />
                         <div className="ml-4 mr-2 font-semibold" translate="no">
@@ -215,7 +217,8 @@ const Form: React.FC<{
             <div className="pt-3 flex justify-between items-center">
               <button
                 type="button"
-                className="py-2 px-2 rounded-lg flex items-center cursor-default"
+                className={classNames("py-2 px-2 rounded-lg flex items-center", mode === 'default' ? 'hover:bg-gray-100 dark:hover:bg-white-10' : 'cursor-default')}
+                onClick={mode === 'default' ? () => setSelectPairSelector('fromMint') : () => {}}
               >
                 <TokenIcon tokenInfo={toTokenInfo} />
 

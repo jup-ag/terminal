@@ -6,6 +6,7 @@ import JSBI from 'jsbi';
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
+import { IInit } from 'src/types';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 
@@ -29,11 +30,13 @@ export interface ISwapContext {
   outputRoute: RouteInfo | undefined;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
+  mode: IInit['mode'];
+  mint: IInit['mint'];
   reset: () => void,
   jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & { exchange: ReturnType<typeof useJupiter>['exchange'] | undefined };
 }
 
-export const initialSwapContext = {
+export const initialSwapContext: ISwapContext = {
   form: {
     fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     toMint: WRAPPED_SOL_MINT.toString(),
@@ -48,6 +51,8 @@ export const initialSwapContext = {
   outputRoute: undefined,
   onSubmit: async () => null,
   lastSwapResult: null,
+  mode: 'default',
+  mint: undefined,
   reset() { },
   jupiter: {
     routes: [],
@@ -67,7 +72,7 @@ export function useSwapContext(): ISwapContext {
   return useContext(SwapContext);
 }
 
-export const SwapContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'], children: ReactNode }> = ({ mode, mint, children }) => {
   const { tokenMap } = useTokenContext()
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
@@ -189,6 +194,8 @@ export const SwapContextProvider: FC<{ children: ReactNode }> = ({ children }) =
       onSubmit,
       lastSwapResult,
       reset,
+      mode,
+      mint,
       jupiter: {
         routes: swapRoutes,
         allTokenMints,

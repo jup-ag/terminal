@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
+
 import JupiterApp from "./components/Jupiter";
 import { ContextProvider } from "./contexts/ContextProvider";
 import { ScreenProvider } from "./contexts/ScreenProvider";
@@ -8,7 +9,17 @@ import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 
 import { IInit, JupiterEmbed } from "./types";
 
-const renderJupiterApp = ({ endpoint, containerStyles }: { endpoint: string, containerStyles: IInit['containerStyles'] }) => {
+const renderJupiterApp = ({
+  mode,
+  mint,
+  endpoint,
+  containerStyles,
+}: {
+  mode: IInit["mode"];
+  mint: IInit["mint"];
+  endpoint: string;
+  containerStyles: IInit["containerStyles"];
+}) => {
   const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.
 
   return (
@@ -16,11 +27,15 @@ const renderJupiterApp = ({ endpoint, containerStyles }: { endpoint: string, con
       style={{ zIndex }}
       className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50"
     >
-      <ContextProvider customEndpoint={endpoint}>
+      <ContextProvider endpoint={endpoint}>
         <WalletPassthroughProvider>
           <TokenContextProvider>
             <ScreenProvider>
-              <JupiterApp containerStyles={{ zIndex }} />
+              <JupiterApp
+                mode={mode}
+                mint={mint}
+                containerStyles={{ zIndex }}
+              />
             </ScreenProvider>
           </TokenContextProvider>
         </WalletPassthroughProvider>
@@ -28,25 +43,41 @@ const renderJupiterApp = ({ endpoint, containerStyles }: { endpoint: string, con
     </div>
   );
 };
+
 const containerId = "jupiter-embed";
 
 const init: JupiterEmbed["init"] = (props) => {
-  const { endpoint, passThroughWallet, containerStyles } = props;
+  const { mode, mint, endpoint, passThroughWallet, containerStyles } = props;
+
+  if (mode === "outputOnly" && !mint) {
+    throw new Error("outputOnly mode requires a mint!");
+  }
 
   const targetDiv = document.createElement("div");
   const instanceExist = document.getElementById(containerId);
 
-  const addedPassThrough =
-    !window.Jupiter.passThroughWallet && passThroughWallet;
-  const removedPassThrough =
-    window.Jupiter.passThroughWallet && !passThroughWallet;
-  window.Jupiter.passThroughWallet = passThroughWallet;
+  const passThroughWalletChanged = (() => {
+    const current = window.Jupiter.passThroughWallet;
+    if (
+      current?.adapter.publicKey.toString() !==
+      passThroughWallet?.adapter.publicKey.toString()
+    ) {
+      window.Jupiter.passThroughWallet = passThroughWallet;
+      return true;
+    }
+    return false;
+  })();
 
-  if (addedPassThrough || removedPassThrough) {
+  if (passThroughWalletChanged) {
     window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
     instanceExist?.remove();
-    window.Jupiter.init({ endpoint: 'https://mango.rpcpool.com', passThroughWallet });
+    window.Jupiter.init({
+      mode,
+      mint,
+      endpoint: "https://mango.rpcpool.com",
+      passThroughWallet,
+    });
     return;
   }
 
@@ -64,7 +95,8 @@ const init: JupiterEmbed["init"] = (props) => {
   window.Jupiter.root = root;
 
   const element =
-    window.Jupiter._instance || renderJupiterApp({ endpoint, containerStyles });
+    window.Jupiter._instance ||
+    renderJupiterApp({ mode, mint, endpoint, containerStyles });
   root.render(element);
   window.Jupiter._instance = element;
 };

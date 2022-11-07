@@ -137,7 +137,6 @@ const ConfirmationScreen = () => {
           </div>
         </div>
 
-        {/* // TODO: Work on expiration */}
         {hasExpired
           ? (
             <>
