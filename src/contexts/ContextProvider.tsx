@@ -55,6 +55,7 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
 };
 
 export const ContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
+  console.log({ endpoint })
   return (
     <>
       <NetworkConfigurationProvider>

@@ -59,9 +59,9 @@ interface ExchangeRateProps {
   className?: string;
   textClassName?: string;
   loading?: boolean;
-  inputPair: TokenInfo;
+  fromTokenInfo: TokenInfo;
   rateParams: IRateParams;
-  outputPair: TokenInfo;
+  toTokenInfo: TokenInfo;
   reversible?: boolean;
 }
 
@@ -69,9 +69,9 @@ const ExchangeRate = ({
   className,
   textClassName,
   loading = false,
-  inputPair,
+  fromTokenInfo,
   rateParams,
-  outputPair,
+  toTokenInfo,
   reversible = true,
 }: ExchangeRateProps) => {
   const [reverse, setReverse] = React.useState(reversible ?? true);
@@ -91,7 +91,7 @@ const ExchangeRate = ({
     <div
       className={classnames(
         className,
-        'flex cursor-pointer text-black-50 dark:text-white-50 text-xs align-center',
+        'flex cursor-pointer text-white/30 text-xs align-center',
       )}
       onClick={onReverse}
     >
@@ -100,11 +100,11 @@ const ExchangeRate = ({
       >
         {reverse ? (
           <>
-            1 {inputPair.symbol} ≈ {rateText} {outputPair.symbol}
+            1 {fromTokenInfo.symbol} ≈ {rateText} {toTokenInfo.symbol}
           </>
         ) : (
           <>
-            1 {outputPair.symbol} ≈ {rateText} {inputPair.symbol}
+            1 {toTokenInfo.symbol} ≈ {rateText} {fromTokenInfo.symbol}
           </>
         )}
       </span>

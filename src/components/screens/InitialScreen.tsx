@@ -1,17 +1,14 @@
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { TokenInfo } from "@solana/spl-token-registry";
 
-import { TokenInfo } from '@solana/spl-token-registry';
-import { PublicKey } from '@solana/web3.js';
-
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-
-import Form from '../../components/Form';
-import FormPairSelector from '../../components/FormPairSelector';
-import { useAccounts } from '../../contexts/accounts';
-import { useTokenContext } from '../../contexts/TokenContextProvider';
-import { WalletModal } from 'src/components/WalletComponents/components/WalletModal';
-import { useSwapContext } from 'src/contexts/SwapContext';
-import { useScreenState } from 'src/contexts/ScreenProvider';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import Form from "../../components/Form";
+import FormPairSelector from "../../components/FormPairSelector";
+import { useAccounts } from "../../contexts/accounts";
+import { useTokenContext } from "../../contexts/TokenContextProvider";
+import { WalletModal } from "src/components/WalletComponents/components/WalletModal";
+import { useSwapContext } from "src/contexts/SwapContext";
+import { useScreenState } from "src/contexts/ScreenProvider";
+import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 
 interface Props {
   mint: string;
@@ -19,7 +16,11 @@ interface Props {
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props) => {
+const InitialScreen = ({
+  mint,
+  setIsWalletModalOpen,
+  isWalletModalOpen,
+}: Props) => {
   const { wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
@@ -27,12 +28,15 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     form,
     setForm,
     setErrors,
-    outputRoute, jupiter: { loading } } = useSwapContext();
+    outputRoute,
+    jupiter: { loading },
+  } = useSwapContext();
   const { setScreen } = useScreenState();
 
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
+  const walletPublicKey = useMemo(
+    () => wallet?.adapter.publicKey?.toString(),
+    [wallet?.adapter.publicKey]
+  );
 
   useEffect(() => {
     setForm((prev) => ({ ...prev, toMint: mint }));
@@ -40,7 +44,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
 
   // TODO: Dedupe the balance
   const balance = useMemo(() => {
-    return form.fromMint ? (accounts[form.fromMint]?.balance || 0) : 0;
+    return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
   }, [walletPublicKey, accounts, form.fromMint]);
 
   const isDisabled = useMemo(() => {
@@ -56,7 +60,7 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
 
     if (Number(form.fromValue) > balance) {
       setErrors({
-        fromValue: { title: 'Insufficient balance', message: '' },
+        fromValue: { title: "Insufficient balance", message: "" },
       });
       return true;
     }
@@ -65,20 +69,22 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     return false;
   }, [form, balance]);
 
-  const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
+  const [selectPairSelector, setSelectPairSelector] = useState<
+    "fromMint" | "toMint" | null
+  >(null);
 
   const onSelectMint = useCallback((tokenInfo: TokenInfo) => {
-    if (selectPairSelector === 'fromMint') {
+    if (selectPairSelector === "fromMint") {
       setForm((prev) => ({
         ...prev,
         fromMint: tokenInfo.address,
-        fromValue: '',
+        fromValue: "",
       }));
     } else {
       setForm((prev) => ({
         ...prev,
         toMint: tokenInfo.address,
-        toValue: '',
+        toValue: "",
       }));
     }
     setSelectPairSelector(null);
@@ -90,14 +96,12 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     return Object.keys(accounts)
       .map((mintAddress) => tokenMap.get(mintAddress))
       .filter(Boolean)
-      .filter(
-        (tokenInfo) => tokenInfo?.address !== mint,
-      ) as TokenInfo[]; // Prevent same token to same token
+      .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
   }, [accounts, tokenMap]);
 
   const onSubmitToConfirmation = useCallback(() => {
-    setScreen('Confirmation');
-  }, [])
+    setScreen("Confirmation");
+  }, []);
 
   return (
     <>

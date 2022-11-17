@@ -30,10 +30,10 @@ export const CurrentUserBadge: React.FC = () => {
 
       <div className="ml-2">
         <div
-          className="text-sm font-semibold text-black dark:text-white"
+          className="text-sm font-semibold text-white"
           translate="no"
         >{`${solBalance.toFixed(2)} SOL`}</div>
-        <div className="text-xs text-black-50 dark:text-white">
+        <div className="text-xs text-white/50">
           {shortenAddress(`${publicKey}`)}
         </div>
       </div>

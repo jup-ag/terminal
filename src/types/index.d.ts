@@ -24,4 +24,5 @@ export interface JupiterEmbed {
   }: IInit) => void;
   close: () => void;
   root: Root | null;
+  previousProps: IInit | null;
 }

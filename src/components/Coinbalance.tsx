@@ -17,7 +17,7 @@ const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
 
   if (props.hideZeroBalance && balance === 0) return null;
 
-  return <span translate="no">{formatNumber.format(balance)}</span>;
+  return <span translate="no">{formatNumber.format(balance, 6)}</span>;
 };
 
 export default CoinBalance;

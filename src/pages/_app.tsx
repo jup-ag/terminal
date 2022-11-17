@@ -30,14 +30,14 @@ const InitJupWithWallet: FC<{ mode: IInit['mode'], wallet: Wallet | null }> = ({
     if (mode === 'default') {
       window.Jupiter.init({
         mode,
-        endpoint: "https://mango.rpcpool.com",
+        endpoint: "https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci",
         passThroughWallet: wallet,
       });
     } else if (mode === 'outputOnly') {
       window.Jupiter.init({
         mode,
         mint: WRAPPED_SOL_MINT.toString(),
-        endpoint: 'https://mango.rpcpool.com',
+        endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
         passThroughWallet: wallet,
       });
     }
@@ -91,7 +91,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <JupButton onClick={() => {
               window.Jupiter.init({
                 mode: 'default',
-                endpoint: 'https://mango.rpcpool.com'
+                endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci'
               });
             }}>
               Init Jupiter (without wallet)
@@ -114,7 +114,7 @@ export default function App({ Component, pageProps }: AppProps) {
               window.Jupiter.init({
                 mode: 'outputOnly',
                 mint: WRAPPED_SOL_MINT.toString(),
-                endpoint: 'https://mango.rpcpool.com'
+                endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci'
               });
             }}>
               Init Jupiter (without wallet)

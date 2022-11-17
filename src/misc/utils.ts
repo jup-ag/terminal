@@ -22,9 +22,11 @@ export const formatNumber = {
       return '--';
     }
 
-    return numberFormatter.format(
-      precision !== undefined ? +val.toFixed(precision) : val,
-    );
+    if (precision !== undefined) {
+      return val.toFixed(precision);
+    } else {
+      return numberFormatter.format(val,);
+    }
   },
 };
 

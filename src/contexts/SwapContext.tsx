@@ -7,6 +7,7 @@ import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, us
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
 import { IInit } from 'src/types';
+import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 
@@ -109,6 +110,8 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
   }, [form.fromValue, form.fromMint, fromTokenInfo]);
 
+  const { slippage } = useSlippageConfig();
+
   const {
     routes: swapRoutes,
     allTokenMints,
@@ -124,13 +127,34 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
       form.fromMint,
     ]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
-    // TODO: Show slippage on UI, and support dynamic slippage
-    slippage: Number(0.1),
+    slippage,
     swapMode: SwapMode.ExactIn,
     // TODO: Support dynamic single tx
     enforceSingleTx: false,
   });
 
+  
+  console.log('input', {
+    amount: JSBI.BigInt(amountInLamports),
+    inputMint: useMemo(() => new PublicKey(form.fromMint), [
+      form.fromMint,
+    ]),
+    outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
+    slippage,
+    swapMode: SwapMode.ExactIn,
+    // TODO: Support dynamic single tx
+    enforceSingleTx: false,
+  })
+  console.log('output', {
+    routes: swapRoutes,
+    allTokenMints,
+    routeMap,
+    exchange,
+    loading: loadingQuotes,
+    refresh,
+    lastRefreshTimestamp,
+    error,
+  })
   const outputRoute = useMemo(
     () => swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0)),
     [swapRoutes],

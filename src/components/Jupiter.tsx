@@ -5,7 +5,6 @@ import { useConnection } from "@solana/wallet-adapter-react";
 import React, { useMemo, useState } from "react";
 import { WRAPPED_SOL_MINT } from "../constants";
 
-import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { AccountsProvider } from "../contexts/accounts";
 import { useScreenState } from "src/contexts/ScreenProvider";
@@ -16,6 +15,7 @@ import { ROUTE_CACHE_DURATION } from "src/misc/constants";
 import SwappingScreen from "./screens/SwappingScreen";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import { IInit } from "src/types";
+import { SLippageConfigProvider } from "src/contexts/SlippageConfigProvider";
 
 const Content = ({
   containerStyles,
@@ -35,7 +35,7 @@ const Content = ({
     <div>
       <div
         style={{ zIndex }}
-        className="flex flex-col h-screen max-h-[90vh] md:max-h-[600px] max-w-[448px] overflow-auto text-black relative bg-[#F3F5F6] rounded-lg"
+        className="flex flex-col h-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-[#3A3B43] rounded-lg webkit-scrollbar"
       >
         {/* Header */}
         <Header setIsWalletModalOpen={setIsWalletModalOpen} />
@@ -50,11 +50,6 @@ const Content = ({
 
         {screen === "Confirmation" ? <ConfirmationScreen /> : null}
         {screen === "Swapping" ? <SwappingScreen /> : null}
-
-        {/* Footer */}
-        <div className="mt-auto rounded-b-xl">
-          <Footer />
-        </div>
       </div>
 
       <div
@@ -82,19 +77,28 @@ const JupiterApp = ({
     [wallet?.adapter.publicKey]
   );
 
+  console.log('##', connection
+    , "mainnet-beta"
+    , ROUTE_CACHE_DURATION
+    , false
+    , walletPublicKey)
+
+
   return (
     <AccountsProvider>
-      <JupiterProvider
-        connection={connection}
-        cluster={"mainnet-beta"}
-        routeCacheDuration={ROUTE_CACHE_DURATION}
-        wrapUnwrapSOL={false}
-        userPublicKey={walletPublicKey || undefined}
-      >
-        <SwapContextProvider mode={mode} mint={mint}>
-          <Content containerStyles={containerStyles} />
-        </SwapContextProvider>
-      </JupiterProvider>
+      <SLippageConfigProvider>
+        <JupiterProvider
+          connection={connection}
+          cluster={"mainnet-beta"}
+          routeCacheDuration={ROUTE_CACHE_DURATION}
+          wrapUnwrapSOL={false}
+          userPublicKey={walletPublicKey || undefined}
+        >
+          <SwapContextProvider mode={mode} mint={mint}>
+            <Content containerStyles={containerStyles} />
+          </SwapContextProvider>
+        </JupiterProvider>
+      </SLippageConfigProvider>
     </AccountsProvider>
   );
 };

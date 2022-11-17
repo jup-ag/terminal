@@ -46,6 +46,8 @@ const renderJupiterApp = ({
 
 const containerId = "jupiter-embed";
 
+
+const deepCopy = (props: any) => JSON.parse(JSON.stringify(props));
 const init: JupiterEmbed["init"] = (props) => {
   const { mode, mint, endpoint, passThroughWallet, containerStyles } = props;
 
@@ -68,14 +70,23 @@ const init: JupiterEmbed["init"] = (props) => {
     return false;
   })();
 
-  if (passThroughWalletChanged) {
+  const propChanged = (() => {
+    const oldProps = window.Jupiter.previousProps;
+    if (!oldProps) return false;
+
+    window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles });
+    return oldProps?.mode !== mode || oldProps?.mint !== mint || oldProps.endpoint !== endpoint || oldProps.containerStyles !== containerStyles;
+  })();
+
+  // If props changed, we have to reinit the app.
+  if (passThroughWalletChanged || propChanged) {
     window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
     instanceExist?.remove();
     window.Jupiter.init({
       mode,
       mint,
-      endpoint: "https://mango.rpcpool.com",
+      endpoint: "https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci",
       passThroughWallet,
     });
     return;
@@ -99,6 +110,7 @@ const init: JupiterEmbed["init"] = (props) => {
     renderJupiterApp({ mode, mint, endpoint, containerStyles });
   root.render(element);
   window.Jupiter._instance = element;
+  window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles });
 };
 
 const close: JupiterEmbed["close"] = () => {
@@ -112,6 +124,7 @@ const Jupiter: JupiterEmbed = {
   _instance: null,
   passThroughWallet: null,
   root: null,
+  previousProps: null,
   init,
   close,
 };
