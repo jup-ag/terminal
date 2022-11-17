@@ -15,6 +15,7 @@ export interface IAccountsBalance {
 interface IAccountContext {
   accounts: Record<string, IAccountsBalance>;
   loading: boolean;
+  refresh: () => void
 }
 
 interface ParsedTokenData {
@@ -49,6 +50,7 @@ interface ParsedTokenData {
 const AccountContext = React.createContext<IAccountContext>({
   accounts: {},
   loading: true,
+  refresh: () => {}
 });
 
 const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -60,8 +62,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     {},
   );
 
-  // Fetch all accounts for the current wallet
-  useEffect(() => {
+  const refresh = () => {
     if (!publicKey) return;
 
     connection
@@ -86,10 +87,15 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
       .finally(() => {
         setLoading(false);
       });
+  }
+
+  // Fetch all accounts for the current wallet
+  useEffect(() => {
+    refresh()
   }, [publicKey]);
 
   return (
-    <AccountContext.Provider value={{ accounts, loading, }}>
+    <AccountContext.Provider value={{ accounts, loading, refresh }}>
       {children}
     </AccountContext.Provider>
   );

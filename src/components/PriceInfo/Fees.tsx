@@ -32,7 +32,7 @@ const Fees = ({ marketInfos }: IFees) => {
             <div className="text-white/30">
               <span>
                 <span>
-                  Fees paid to <span translate="no">{item.amm.label}</span> LP
+                  Fees paid to <span translate="no">{item.label}</span> LP
                 </span>
               </span>
             </div>

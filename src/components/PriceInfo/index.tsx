@@ -1,6 +1,7 @@
 import { ZERO } from '@jup-ag/math';
 import { RouteInfo, SwapMode, TransactionFeeInfo } from '@jup-ag/react-hook'
 import { TokenInfo } from '@solana/spl-token-registry';
+import classNames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -11,7 +12,7 @@ import Deposits from './Deposits';
 import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 
-const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading }: { routes: RouteInfo[], selectedSwapRoute: RouteInfo, fromTokenInfo: TokenInfo, toTokenInfo: TokenInfo, loading: boolean }) => {
+const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading, showFullDetails = false, containerClassName }: { routes: RouteInfo[], selectedSwapRoute: RouteInfo, fromTokenInfo: TokenInfo, toTokenInfo: TokenInfo, loading: boolean, showFullDetails?: boolean, containerClassName?: string }) => {
   const rateParams = {
     inAmount: selectedSwapRoute?.inAmount || routes?.[0]?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
     inputDecimal: fromTokenInfo.decimals,
@@ -44,8 +45,8 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
   useEffect(() => {
     setFeeInformation(undefined);
-    if (selectedSwapRoute) {
-      selectedSwapRoute.getDepositAndFee().then(setFeeInformation);
+    if (selectedSwapRoute.fees) {
+      setFeeInformation(selectedSwapRoute.fees);
     }
   }, [selectedSwapRoute, walletPublicKey]);
 
@@ -53,7 +54,7 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading 
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
   return (
-    <div className="mt-4 space-y-4 border border-white/5 rounded-xl p-3">
+    <div className={classNames("mt-4 space-y-4 border border-white/5 rounded-xl p-3", containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/30">{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
@@ -87,9 +88,14 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading 
         <div className="text-white/30">{otherAmountThresholdText}</div>
       </div>
 
-      {/* <Fees marketInfos={selectedSwapRoute?.marketInfos} />
-      <TransactionFee feeInformation={feeInformation} />
-      <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} /> */}
+      {showFullDetails ? (
+        <>
+          <Fees marketInfos={selectedSwapRoute?.marketInfos} />
+          <TransactionFee feeInformation={feeInformation} />
+          <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+        </>
+      )
+        : null}
     </div>
   )
 }

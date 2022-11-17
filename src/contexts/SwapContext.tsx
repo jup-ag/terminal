@@ -1,4 +1,4 @@
-import { RouteInfo, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
+import { IConfirmationTxDescription, OnTransaction, RouteInfo, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { PublicKey } from '@solana/web3.js';
@@ -7,6 +7,7 @@ import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, us
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
 import { IInit } from 'src/types';
+import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
@@ -33,6 +34,14 @@ export interface ISwapContext {
   lastSwapResult: SwapResult | null;
   mode: IInit['mode'];
   mint: IInit['mint'];
+  swapping: {
+    totalTxs: number;
+    txStatus: Array<{
+      txid: string,
+      txDescription: IConfirmationTxDescription,
+      status: 'loading' | 'fail' | 'success';
+    }>,
+  },
   reset: () => void,
   jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & { exchange: ReturnType<typeof useJupiter>['exchange'] | undefined };
 }
@@ -54,6 +63,10 @@ export const initialSwapContext: ISwapContext = {
   lastSwapResult: null,
   mode: 'default',
   mint: undefined,
+  swapping: {
+    totalTxs: 0,
+    txStatus: [],
+  },
   reset() { },
   jupiter: {
     routes: [],
@@ -76,6 +89,7 @@ export function useSwapContext(): ISwapContext {
 export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'], children: ReactNode }> = ({ mode, mint, children }) => {
   const { tokenMap } = useTokenContext()
   const { wallet } = useWalletPassThrough();
+  const { refresh: refreshAccount } = useAccounts();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,
   ]);
@@ -133,28 +147,6 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     enforceSingleTx: false,
   });
 
-  
-  console.log('input', {
-    amount: JSBI.BigInt(amountInLamports),
-    inputMint: useMemo(() => new PublicKey(form.fromMint), [
-      form.fromMint,
-    ]),
-    outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
-    slippage,
-    swapMode: SwapMode.ExactIn,
-    // TODO: Support dynamic single tx
-    enforceSingleTx: false,
-  })
-  console.log('output', {
-    routes: swapRoutes,
-    allTokenMints,
-    routeMap,
-    exchange,
-    loading: loadingQuotes,
-    refresh,
-    lastRefreshTimestamp,
-    error,
-  })
   const outputRoute = useMemo(
     () => swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0)),
     [swapRoutes],
@@ -170,13 +162,35 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     }));
   }, [outputRoute]);
 
-  const onTransaction = async (
-    txid: any,
-    totalTxs: any,
-    txDescription: any,
-    awaiter: any,
+  const [totalTxs, setTotalTxs] = useState(0);
+  const [txStatus, setTxStatus] = useState<Array<{
+    txid: string,
+    txDescription: IConfirmationTxDescription,
+    status: 'loading' | 'fail' | 'success';
+  }>>([]);
+  
+  const onTransaction: OnTransaction = async (
+    txid,
+    totalTxs,
+    txDescription,
+    awaiter,
   ) => {
-    console.log({ txid, totalTxs, txDescription, awaiter });
+    setTotalTxs(totalTxs);
+
+    const tx = txStatus.find((tx) => tx.txid === txid);
+    if (!tx) {
+      setTxStatus(prev => [...prev, { txid, txDescription, status: 'loading' }])
+    }
+
+    const success = !((await awaiter) instanceof Error);
+    
+    setTxStatus((prev) => {
+      const tx = prev.find((tx) => tx.txid === txid);
+      if (tx) {
+        tx.status = success ? 'success' : 'fail';
+      }
+      return [...prev];
+    });
   };
 
   const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
@@ -200,11 +214,19 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     }
   }, [walletPublicKey, outputRoute]);
 
+  const refreshAll = () => {
+    refresh();
+    refreshAccount();
+  }
+
   const reset = useCallback(() => {
     setForm(initialSwapContext.form);
     setErrors(initialSwapContext.errors);
     setLastSwapResult(initialSwapContext.lastSwapResult);
+    setTxStatus(initialSwapContext.swapping.txStatus);
+    setTotalTxs(initialSwapContext.swapping.totalTxs);
   }, [])
+
 
   return (
     <SwapContext.Provider value={{
@@ -220,13 +242,17 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
       reset,
       mode,
       mint,
+      swapping: {
+        totalTxs,
+        txStatus,
+      },
       jupiter: {
         routes: swapRoutes,
         allTokenMints,
         routeMap,
         exchange,
         loading: loadingQuotes,
-        refresh,
+        refresh: refreshAll,
         lastRefreshTimestamp,
         error,
       }

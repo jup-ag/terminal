@@ -9,7 +9,7 @@ import Header from "../components/Header";
 import { AccountsProvider } from "../contexts/accounts";
 import { useScreenState } from "src/contexts/ScreenProvider";
 import InitialScreen from "./screens/InitialScreen";
-import ConfirmationScreen from "./screens/ConfirmationScreen";
+import ReviewOrderScreen from "./screens/ReviewOrderScreen";
 import { SwapContextProvider, useSwapContext } from "src/contexts/SwapContext";
 import { ROUTE_CACHE_DURATION } from "src/misc/constants";
 import SwappingScreen from "./screens/SwappingScreen";
@@ -35,20 +35,20 @@ const Content = ({
     <div>
       <div
         style={{ zIndex }}
-        className="flex flex-col h-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-[#3A3B43] rounded-lg webkit-scrollbar"
+        className="flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-[#3A3B43] rounded-lg webkit-scrollbar"
       >
-        {/* Header */}
-        <Header setIsWalletModalOpen={setIsWalletModalOpen} />
-
         {screen === "Initial" ? (
-          <InitialScreen
-            mint={mint || WRAPPED_SOL_MINT.toString()}
-            isWalletModalOpen={isWalletModalOpen}
-            setIsWalletModalOpen={setIsWalletModalOpen}
-          />
+          <>
+            <Header setIsWalletModalOpen={setIsWalletModalOpen} />
+            <InitialScreen
+              mint={mint || WRAPPED_SOL_MINT.toString()}
+              isWalletModalOpen={isWalletModalOpen}
+              setIsWalletModalOpen={setIsWalletModalOpen}
+            />
+          </>
         ) : null}
 
-        {screen === "Confirmation" ? <ConfirmationScreen /> : null}
+        {screen === "Confirmation" ? <ReviewOrderScreen /> : null}
         {screen === "Swapping" ? <SwappingScreen /> : null}
       </div>
 
@@ -76,13 +76,6 @@ const JupiterApp = ({
     () => wallet?.adapter.publicKey,
     [wallet?.adapter.publicKey]
   );
-
-  console.log('##', connection
-    , "mainnet-beta"
-    , ROUTE_CACHE_DURATION
-    , false
-    , walletPublicKey)
-
 
   return (
     <AccountsProvider>

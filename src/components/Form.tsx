@@ -1,7 +1,5 @@
 import {
   ChangeEvent,
-  Dispatch,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -17,19 +15,12 @@ import CoinBalance from './Coinbalance';
 import FormError from './FormError';
 import JupButton from './JupButton';
 
-import OpenJupiterButton from './OpenJupiterButton';
-import SwapRoute from './SwapRoute';
 import TokenIcon from './TokenIcon';
 
-import Collapse from './Collapse';
-import Tooltip from './Tooltip';
-import InfoIcon from '../icons/InfoIcon';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
-import SpinnerProgress from './SpinnerProgress/SpinnerProgress';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import classNames from 'classnames';
 import WalletIcon from 'src/icons/WalletIcon';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import PriceInfo from './PriceInfo/index';
@@ -135,7 +126,7 @@ const Form: React.FC<{
       }
     };
 
-    const marketRoutes = outputRoute ? outputRoute.marketInfos.map(({ amm }) => amm.label).join(', ') : '';
+    const marketRoutes = outputRoute ? outputRoute.marketInfos.map(({ label }) => label).join(', ') : '';
     return (
       <div className="h-full flex flex-col items-center justify-center">
         <div className="w-full mt-2 rounded-xl flex flex-col px-2">
@@ -266,7 +257,7 @@ const Form: React.FC<{
               onClick={onSubmit}
               disabled={isDisabled || loading}
             >
-              {loading ? 'Loading...' : <SexyChameleonText>Swap</SexyChameleonText>}
+              {loading ? <span className='text-sm'>Loading...</span> : <SexyChameleonText>Swap</SexyChameleonText>}
             </JupButton>
           )}
 
