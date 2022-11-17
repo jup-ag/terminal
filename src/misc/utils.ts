@@ -92,3 +92,5 @@ export function useReactiveEventListener(
 
 export const isMobile = () =>
   typeof window !== 'undefined' && screen && screen.width <= 480;
+
+export const detectedSeparator = formatNumber.format(1.1).substring(1, 2);

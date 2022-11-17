@@ -13,6 +13,13 @@ module.exports = {
     './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'jupiter-input-light': '#EBEFF1',
+      },
+      backgroundImage: {
+        'jupiter-gradient': 'linear-gradient(91.26deg, #FCC00A 15.73%, #4EBAE9 83.27%)',
+      }
+    },
   },
 }

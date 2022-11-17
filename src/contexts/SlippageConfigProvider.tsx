@@ -7,15 +7,15 @@ export interface NetworkConfigurationState {
   setSlippage: Dispatch<SetStateAction<number>>
 }
 
-export const SLippageConfigContext = createContext<NetworkConfigurationState>({} as NetworkConfigurationState);
+export const SlippageConfigContext = createContext<NetworkConfigurationState>({} as NetworkConfigurationState);
 
 export function useSlippageConfig(): NetworkConfigurationState {
-  return useContext(SLippageConfigContext);
+  return useContext(SlippageConfigContext);
 }
 
 export const SLippageConfigProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE);
   return (
-    <SLippageConfigContext.Provider value={{ slippage, setSlippage }}>{children}</SLippageConfigContext.Provider>
+    <SlippageConfigContext.Provider value={{ slippage, setSlippage }}>{children}</SlippageConfigContext.Provider>
   );
 };

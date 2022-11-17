@@ -147,6 +147,9 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     enforceSingleTx: false,
   });
 
+  // Refresh on slippage change
+  useEffect(() => refresh(), [slippage]);
+
   const outputRoute = useMemo(
     () => swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0)),
     [swapRoutes],

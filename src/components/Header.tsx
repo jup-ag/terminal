@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
@@ -10,6 +10,7 @@ import JupiterLogo from '../icons/JupiterLogo';
 
 import { WalletButton } from './WalletComponents';
 import WalletConnectButton from './WalletConnectButton';
+import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal'
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { wallet } = useWalletPassThrough();
@@ -20,6 +21,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
     wallet?.adapter.publicKey,
   ]);
 
+  const [showSlippapgeSetting, setShowSlippageSetting] = useState(false);
 
   return (
     <div>
@@ -39,13 +41,20 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           <RefreshSVG />
         </button>
 
-        <button type="button" className='p-2 h-7 space-x-1 flex items-center justify-center border rounded-2xl border-white/10 text-white/30 fill-current'>
+        <button type="button" className='p-2 h-7 space-x-1 flex items-center justify-center border rounded-2xl border-white/10 text-white/30 fill-current' onClick={() => setShowSlippageSetting(true)}>
           <SettingsSVG />
           <span suppressHydrationWarning className="text-xs text-white-30">
             {isNaN(slippage) ? '0' : formatNumber.format(slippage)}%
           </span>
         </button>
+
       </div>
+
+      {showSlippapgeSetting ? (
+        <div className='absolute z-10 top-0 left-0 w-full h-full overflow-hidden bg-black/50 flex items-center px-4'>
+          <SwapSettingsModal closeModal={() => setShowSlippageSetting(false)} />
+        </div>
+      ) : null}
     </div>
   );
 };
