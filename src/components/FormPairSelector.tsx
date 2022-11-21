@@ -72,15 +72,26 @@ const FormPairSelector = ({
 
   if (!walletPublicKey) {
     return (
-      <div
-        className="pt-8 flex flex-col relative w-[80%] rounded-lg h-full items-center justify-center text-left bg-white"
-      >
-        <Header onClose={onClose} />
-        <JupiterLogo width={48} height={48} />
-        <p className="font-semibold text-lg mt-4 mb-6 text-black w-[60%] text-center">
-          Connect Your Wallet to Get Started
-        </p>
-        <JupButton onClick={() => setIsWalletModalOpen(true)}>Connect Wallet</JupButton>
+      <div className='flex flex-col h-full w-full py-4 px-2'>
+        <div className='flex w-full justify-between'>
+          <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={onClose}>
+            <LeftArrowIcon width={24} height={24} />
+          </div>
+
+          <div className='text-white'>
+            Select Token
+          </div>
+
+          <div className=' w-6 h-6' />
+        </div>
+
+        <div className='w-full mt-24 flex flex-col items-center'>
+          <JupiterLogo width={48} height={48} />
+          <p className="font-semibold text-lg mt-4 mb-6 text-white w-[60%] text-center">
+            Connect Your Wallet to Get Started
+          </p>
+          <JupButton onClick={() => setIsWalletModalOpen(true)}>Connect Wallet</JupButton>
+        </div>
       </div>
     );
   }
