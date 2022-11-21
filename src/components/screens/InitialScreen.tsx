@@ -9,6 +9,7 @@ import { WalletModal } from "src/components/WalletComponents/components/WalletMo
 import { useSwapContext } from "src/contexts/SwapContext";
 import { useScreenState } from "src/contexts/ScreenProvider";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
+import RouteSelectionScreen from "./RouteSelectionScreen";
 
 interface Props {
   mint: string;
@@ -28,7 +29,7 @@ const InitialScreen = ({
     form,
     setForm,
     setErrors,
-    outputRoute,
+    selectedSwapRoute,
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -53,7 +54,7 @@ const InitialScreen = ({
       !form.fromMint ||
       !form.toMint ||
       !form.toValue ||
-      !outputRoute ||
+      !selectedSwapRoute ||
       loading
     )
       return true;
@@ -72,6 +73,9 @@ const InitialScreen = ({
   const [selectPairSelector, setSelectPairSelector] = useState<
     "fromMint" | "toMint" | null
   >(null);
+  const [showRouteSelector, setShowRouteSelector] = useState<
+    boolean
+  >(false);
 
   const onSelectMint = useCallback((tokenInfo: TokenInfo) => {
     if (selectPairSelector === "fromMint") {
@@ -112,6 +116,7 @@ const InitialScreen = ({
           isDisabled={isDisabled}
           setSelectPairSelector={setSelectPairSelector}
           setIsWalletModalOpen={setIsWalletModalOpen}
+          setShowRouteSelector={setShowRouteSelector}
         />
       </form>
 
@@ -122,6 +127,14 @@ const InitialScreen = ({
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
             setIsWalletModalOpen={setIsWalletModalOpen}
+          />
+        </div>
+      ) : null}
+
+      {showRouteSelector ? (
+        <div className="absolute top-0 h-full w-full bg-[#3A3B43] rounded-lg overflow-hidden">
+          <RouteSelectionScreen
+            onClose={() => setShowRouteSelector(false)}
           />
         </div>
       ) : null}

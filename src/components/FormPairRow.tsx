@@ -14,7 +14,7 @@ const FormPairRow: React.FC<{
   return (
     <li
       className={`cursor-pointer list-none `}
-      style={{ maxHeight: PAIR_ROW_HEIGHT, height: PAIR_ROW_HEIGHT, marginBottom: 8, ...style }}
+      style={{ maxHeight: PAIR_ROW_HEIGHT, height: PAIR_ROW_HEIGHT, ...style }}
       translate="no"
     >
       <div className="flex items-center rounded-xl space-x-4 my-2 p-4 bg-[#2C2D33] hover:bg-black/10" onClick={() => onSubmit(item)}>

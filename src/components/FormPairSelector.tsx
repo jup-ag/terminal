@@ -10,7 +10,6 @@ import { useAccounts } from '../contexts/accounts';
 import CloseIcon from '../icons/CloseIcon';
 
 import JupiterLogo from '../icons/JupiterLogo';
-import { isMobile } from '../misc/utils';
 
 import FormPairRow from './FormPairRow';
 import JupButton from './JupButton';

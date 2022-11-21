@@ -32,11 +32,13 @@ const Form: React.FC<{
   isDisabled: boolean;
   setSelectPairSelector: React.Dispatch<React.SetStateAction<"fromMint" | "toMint" | null>>;
   setIsWalletModalOpen(toggle: boolean): void
+  setShowRouteSelector(toggle: boolean): void
 }> = ({
   onSubmit,
   isDisabled,
   setSelectPairSelector,
   setIsWalletModalOpen,
+  setShowRouteSelector,
 }) => {
   const { connect, wallet } = useWalletPassThrough();
     const { accounts } = useAccounts();
@@ -46,7 +48,7 @@ const Form: React.FC<{
       errors,
       fromTokenInfo,
       toTokenInfo,
-      outputRoute,
+      selectedSwapRoute,
       mode,
       jupiter: {
         routes,
@@ -126,7 +128,7 @@ const Form: React.FC<{
       }
     };
 
-    const marketRoutes = outputRoute ? outputRoute.marketInfos.map(({ label }) => label).join(', ') : '';
+    const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
     return (
       <div className="h-full flex flex-col items-center justify-center">
         <div className="w-full mt-2 rounded-xl flex flex-col px-2">
@@ -224,10 +226,11 @@ const Form: React.FC<{
               </div>
             </div>
 
-            {outputRoute
+            {routes
               ? (
-                <div className='flex mt-2 text-xs space-x-1'>
-                  <div className='bg-black/20 rounded-xl px-2 py-1'>
+                <div className='flex items-center mt-2 text-xs space-x-1'>
+                  <div className='bg-black/20 rounded-xl px-2 py-1 cursor-pointer text-white/50 flex items-center space-x-1' onClick={() => setShowRouteSelector(true)}>
+                    <span>{routes?.length}</span>
                     <RoutesSVG width={7} height={9} />
                   </div>
                   <span className='text-white/30'>using</span>
@@ -261,10 +264,10 @@ const Form: React.FC<{
             </JupButton>
           )}
 
-          {routes && outputRoute && fromTokenInfo && toTokenInfo ? (
+          {routes && selectedSwapRoute && fromTokenInfo && toTokenInfo ? (
             <PriceInfo
               routes={routes}
-              selectedSwapRoute={outputRoute}
+              selectedSwapRoute={selectedSwapRoute}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
               loading={loading}

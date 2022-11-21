@@ -9,14 +9,10 @@ import SexyChameleonText from '../SexyChameleonText/SexyChameleonText'
 
 const ConfirmationScreen = () => {
   const {
-    form,
-    setForm,
-    errors,
     fromTokenInfo,
     toTokenInfo,
     onSubmit: onSubmitJupiter,
-    outputRoute,
-    mode,
+    selectedSwapRoute,
     jupiter: {
       routes,
       loading,
@@ -52,10 +48,10 @@ const ConfirmationScreen = () => {
       </div>
 
       <div>
-        {routes && outputRoute && fromTokenInfo && toTokenInfo ? (
+        {routes && selectedSwapRoute && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
             routes={routes}
-            selectedSwapRoute={outputRoute}
+            selectedSwapRoute={selectedSwapRoute}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}

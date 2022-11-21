@@ -29,7 +29,8 @@ export interface ISwapContext {
   }>>>;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
-  outputRoute: RouteInfo | undefined;
+  selectedSwapRoute: RouteInfo | null;
+  setSelectedSwapRoute: Dispatch<SetStateAction<RouteInfo | null>>;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
   mode: IInit['mode'];
@@ -58,7 +59,8 @@ export const initialSwapContext: ISwapContext = {
   setErrors() { },
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
-  outputRoute: undefined,
+  selectedSwapRoute: null,
+  setSelectedSwapRoute() { },
   onSubmit: async () => null,
   lastSwapResult: null,
   mode: 'default',
@@ -150,20 +152,29 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
-  const outputRoute = useMemo(
-    () => swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0)),
+  const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(null);
+  useEffect(
+    () => {
+      const found = swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0))
+      if (found) {
+        setSelectedSwapRoute(found);
+      } else {
+        setSelectedSwapRoute(null);
+      }
+    },
     [swapRoutes],
   );
+
   useEffect(() => {
     setForm((prev) => ({
       ...prev,
-      toValue: outputRoute?.outAmount
+      toValue: selectedSwapRoute?.outAmount
         ? String(
-          fromLamports(outputRoute?.outAmount, toTokenInfo?.decimals || 0),
+          fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0),
         )
         : '',
     }));
-  }, [outputRoute]);
+  }, [selectedSwapRoute]);
 
   const [totalTxs, setTotalTxs] = useState(0);
   const [txStatus, setTxStatus] = useState<Array<{
@@ -198,14 +209,14 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
 
   const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
   const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !outputRoute) {
+    if (!walletPublicKey || !wallet?.adapter || !selectedSwapRoute) {
       return null;
     }
 
     try {
       const swapResult = await exchange({
         wallet: wallet?.adapter as SignerWalletAdapter,
-        routeInfo: outputRoute,
+        routeInfo: selectedSwapRoute,
         onTransaction,
       });
 
@@ -215,7 +226,7 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
       console.log('Swap error', error);
       return null;
     }
-  }, [walletPublicKey, outputRoute]);
+  }, [walletPublicKey, selectedSwapRoute]);
 
   const refreshAll = () => {
     refresh();
@@ -239,7 +250,8 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
       setErrors,
       fromTokenInfo,
       toTokenInfo,
-      outputRoute,
+      selectedSwapRoute,
+      setSelectedSwapRoute,
       onSubmit,
       lastSwapResult,
       reset,
