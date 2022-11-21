@@ -36,12 +36,12 @@ export const getMarketName = (markets: RouteInfo['marketInfos']) => {
     let label = '';
 
     const found = Object.keys(MARKET_LABEL_MAP).find(
-      (key) => market.amm.label.indexOf(key) >= 0,
+      (key) => market.label.indexOf(key) >= 0,
     );
     if (found) {
-      label = market.amm.label.replaceAll(found, MARKET_LABEL_MAP[found]);
+      label = market.label.replaceAll(found, MARKET_LABEL_MAP[found]);
     } else {
-      label = market.amm.label;
+      label = market.label;
     }
     names.push(label);
   });

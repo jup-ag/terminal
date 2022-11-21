@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build-widget": "NODE_ENV=production webpack"
+    "build-widget": "NODE_ENV=production MODE=widget webpack"
   },
   "dependencies": {
     "@jup-ag/math": "3.0.0-beta.1",

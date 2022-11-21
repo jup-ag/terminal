@@ -1,9 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 
-const isProduction = process.env.NODE_ENV === "production";
+const isWidgetOnly = process.env.MODE === "widget";
 module.exports = {
-  important: isProduction ? '#jupiter-embed' : false,
-  corePlugins: isProduction ? {
+  important: isWidgetOnly ? '#jupiter-embed' : false,
+  corePlugins: isWidgetOnly ? {
     preflight: false,
     container: false,
   } : {},

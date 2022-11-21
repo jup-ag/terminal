@@ -82,7 +82,6 @@ const JupiterApp = ({
       <SLippageConfigProvider>
         <JupiterProvider
           connection={connection}
-          cluster={"mainnet-beta"}
           routeCacheDuration={ROUTE_CACHE_DURATION}
           wrapUnwrapSOL={false}
           userPublicKey={walletPublicKey || undefined}
