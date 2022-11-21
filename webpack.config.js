@@ -3,6 +3,7 @@ const path = require("path");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   mode: "production",
@@ -52,6 +53,7 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "main.css",
     }),
+    new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: [".tsx", ".ts", ".js"],

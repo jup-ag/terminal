@@ -14,7 +14,6 @@ import {
 import { clusterApiUrl } from '@solana/web3.js';
 import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { AutoConnectProvider, useAutoConnect } from './AutoConnectProvider';
-import { notify } from "../utils/notifications";
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
 
 const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
@@ -39,8 +38,7 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
 
   const onError = useCallback(
     (error: WalletError) => {
-      notify({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
-      console.error(error);
+      console.error({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
     },
     []
   );
@@ -55,7 +53,6 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
 };
 
 export const ContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
-  console.log({ endpoint })
   return (
     <>
       <NetworkConfigurationProvider>
