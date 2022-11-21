@@ -1,20 +1,17 @@
 import React from 'react';
 import { WalletAdapterNetwork, WalletError } from '@solana/wallet-adapter-base';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import {
-  BackpackWalletAdapter,
-  CoinbaseWalletAdapter,
-  ExodusWalletAdapter,
-  GlowWalletAdapter,
-  PhantomWalletAdapter,
-  SlopeWalletAdapter,
-  SolflareWalletAdapter,
-  SolletWalletAdapter,
-} from '@solana/wallet-adapter-wallets';
+
 import { clusterApiUrl } from '@solana/web3.js';
 import { FC, ReactNode, useCallback, useMemo } from 'react';
 import { AutoConnectProvider, useAutoConnect } from './AutoConnectProvider';
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
+
+// Built in wallets
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
+import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
+import { GlowWalletAdapter } from '@solana/wallet-adapter-glow';
 
 const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
   const { autoConnect } = useAutoConnect();
@@ -27,10 +24,6 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
       new PhantomWalletAdapter(),
       new SolflareWalletAdapter(),
       new BackpackWalletAdapter(),
-      new SlopeWalletAdapter(),
-      new CoinbaseWalletAdapter(),
-      new ExodusWalletAdapter(),
-      new SolletWalletAdapter(),
       new GlowWalletAdapter(),
     ],
     [network]

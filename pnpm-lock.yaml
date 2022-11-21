@@ -6,8 +6,12 @@ specifiers:
   '@project-serum/anchor': ^0.24.2
   '@solana/spl-token': 0.1.8
   '@solana/spl-token-registry': ~0.2.1105
+  '@solana/wallet-adapter-backpack': ^0.1.9
   '@solana/wallet-adapter-base': 0.9.18
+  '@solana/wallet-adapter-glow': ^0.1.13
+  '@solana/wallet-adapter-phantom': ^0.9.17
   '@solana/wallet-adapter-react': 0.15.19
+  '@solana/wallet-adapter-solflare': ^0.6.18
   '@solana/wallet-adapter-wallets': 0.19.0
   '@solana/web3.js': ~1.63.1
   '@svgr/webpack': ^6.5.0
@@ -61,8 +65,12 @@ dependencies:
   '@project-serum/anchor': 0.24.2
   '@solana/spl-token': 0.1.8
   '@solana/spl-token-registry': 0.2.4574
+  '@solana/wallet-adapter-backpack': 0.1.9_@solana+web3.js@1.63.1
   '@solana/wallet-adapter-base': 0.9.18_@solana+web3.js@1.63.1
+  '@solana/wallet-adapter-glow': 0.1.13_@solana+web3.js@1.63.1
+  '@solana/wallet-adapter-phantom': 0.9.17_@solana+web3.js@1.63.1
   '@solana/wallet-adapter-react': 0.15.19_5j2akwpmh45vzaq5qdoj3sxh3i
+  '@solana/wallet-adapter-solflare': 0.6.18_@solana+web3.js@1.63.1
   '@solana/wallet-adapter-wallets': 0.19.0_bdzjtaomdquikenhtsl3t4c3hy
   '@solana/web3.js': 1.63.1
   '@svgr/webpack': 6.5.0

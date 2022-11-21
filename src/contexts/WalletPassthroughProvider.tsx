@@ -1,6 +1,6 @@
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base';
 import { useWallet, Wallet } from '@solana/wallet-adapter-react'
-import { SolflareWalletName } from '@solana/wallet-adapter-wallets';
+import { SolflareWalletName } from '@solana/wallet-adapter-solflare';
 import { PublicKey } from '@solana/web3.js';
 import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react'
 
@@ -47,7 +47,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const value = (() => {
     // Pass through wallet adapter
     const passThroughWallet = window.Jupiter.passThroughWallet;
-    const isSolflare = passThroughWallet?.adapter.name === SolflareWalletName;
+    const isSolflare = passThroughWallet?.adapter.name === 'Solflare';
 
     if (Boolean(passThroughWallet) && passThroughWallet?.adapter.publicKey) {
       // Solflare wallet does not allow pass through
