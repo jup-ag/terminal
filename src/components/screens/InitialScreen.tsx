@@ -116,11 +116,12 @@ const InitialScreen = ({
       </form>
 
       {selectPairSelector !== null ? (
-        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
+        <div className="absolute top-0 h-full w-full bg-[#3A3B43] rounded-lg overflow-hidden">
           <FormPairSelector
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
+            setIsWalletModalOpen={setIsWalletModalOpen}
           />
         </div>
       ) : null}

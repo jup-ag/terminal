@@ -4,6 +4,7 @@ import React, { createRef, memo, useEffect, useMemo, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { areEqual, FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 
 import { useAccounts } from '../contexts/accounts';
 import CloseIcon from '../icons/CloseIcon';
@@ -15,20 +16,6 @@ import FormPairRow from './FormPairRow';
 import JupButton from './JupButton';
 
 export const PAIR_ROW_HEIGHT = 72;
-
-const MAX_PAIR = () => (isMobile() ? 4 : 6);
-const getContainerHeight = () => {
-  const maxDesktopHeight = [
-    MAX_PAIR() * PAIR_ROW_HEIGHT,
-    8, // compensate top margins
-  ].reduce((num, acc) => num + acc, 0);
-
-  // Whichever is smaller, to compensate smaller screens
-  return Math.min(
-    window.innerHeight - 32, // Modal padding
-    maxDesktopHeight,
-  );
-};
 
 // eslint-disable-next-line react/display-name
 const rowRenderer = memo((props: ListChildComponentProps) => {
@@ -59,12 +46,14 @@ const FormPairSelector = ({
   onSubmit,
   tokenInfos,
   onClose,
+  setIsWalletModalOpen,
 }: {
   onSubmit: (value: TokenInfo) => void;
   onClose: () => void;
   tokenInfos: TokenInfo[];
+  setIsWalletModalOpen(toggle: boolean): void
 }) => {
-  const { wallet, connect } = useWalletPassThrough();
+  const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
     wallet?.adapter.publicKey,
   ]);
@@ -86,32 +75,30 @@ const FormPairSelector = ({
     return (
       <div
         className="pt-8 flex flex-col relative w-[80%] rounded-lg h-full items-center justify-center text-left bg-white"
-        style={{
-          // AutoSizer will greedily fills the container with height and width below
-          height: getContainerHeight(),
-          maxWidth: 448,
-        }}
       >
         <Header onClose={onClose} />
         <JupiterLogo width={48} height={48} />
         <p className="font-semibold text-lg mt-4 mb-6 text-black w-[60%] text-center">
           Connect Your Wallet to Get Started
         </p>
-        <JupButton onClick={connect}>Connect Wallet</JupButton>
+        <JupButton onClick={() => setIsWalletModalOpen(true)}>Connect Wallet</JupButton>
       </div>
     );
   }
 
   return (
-    <div
-      className="pt-8 flex flex-col relative w-[80%] rounded-lg h-full text-left bg-white"
-      style={{
-        // AutoSizer will greedily fills the container with height and width below
-        height: getContainerHeight(),
-        maxWidth: 448,
-      }}
-    >
-      <Header onClose={onClose} />
+    <div className='flex flex-col h-full w-full py-4 px-2'>
+      <div className='flex w-full justify-between'>
+        <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={onClose}>
+          <LeftArrowIcon width={24} height={24} />
+        </div>
+
+        <div className='text-white'>
+          Select Token
+        </div>
+
+        <div className=' w-6 h-6' />
+      </div>
 
       <div className="mt-2" style={{ flexGrow: 1 }}>
         {searchResult.length > 0 && (
@@ -129,7 +116,7 @@ const FormPairSelector = ({
                     onSubmit,
                   }}
                   className={classNames(
-                    'overflow-y-scroll mr-1 min-h-[12rem] px-5',
+                    'overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar',
                   )}
                 >
                   {rowRenderer}
