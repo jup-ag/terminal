@@ -4,6 +4,8 @@ import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
+import { WRAPPED_SOL_MINT } from 'src/constants';
+import { fromLamports } from 'src/misc/utils';
 
 export interface IAccountsBalance {
   balance: number;
@@ -50,7 +52,7 @@ interface ParsedTokenData {
 const AccountContext = React.createContext<IAccountContext>({
   accounts: {},
   loading: true,
-  refresh: () => {}
+  refresh: () => { }
 });
 
 const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -65,28 +67,53 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const refresh = () => {
     if (!publicKey) return;
 
+    // Fetch native balance
     connection
-      .getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: TOKEN_PROGRAM_ID },
-        'confirmed',
-      )
-      .then(({ value: result }) => {
-        const reducedResult = result.reduce((acc, item: ParsedTokenData) => {
-          acc[item.account.data.parsed.info.mint] = {
-            balance: item.account.data.parsed.info.tokenAmount.uiAmount,
-            balanceLamports: new BN(0),
-            hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
-            decimals: item.account.data.parsed.info.tokenAmount.decimals,
-          };
-          return acc;
-        }, {} as Record<string, IAccountsBalance>);
-
-        setAccounts(reducedResult);
+      .getAccountInfo(publicKey, 'confirmed')
+      .then((acc) => {
+        if (acc) {
+          setAccounts(prev => ({
+            ...prev,
+            [WRAPPED_SOL_MINT.toString()]: {
+              balance: fromLamports(acc.lamports, 9),
+              balanceLamports: new BN(acc.lamports),
+              hasBalance: acc.lamports > 0,
+              decimals: 9,
+            }
+          }));
+        } else {
+          // Fix nativeAccount stuck when user don't have native account
+          return undefined;
+        }
       })
-      .finally(() => {
-        setLoading(false);
+      .catch((err) => {
+        console.log(err);
+        return undefined;
       });
+
+      // Fetch all tokens balance
+      connection
+        .getParsedTokenAccountsByOwner(
+          publicKey,
+          { programId: TOKEN_PROGRAM_ID },
+          'confirmed',
+        )
+        .then(({ value: result }) => {
+          const reducedResult = result.reduce((acc, item: ParsedTokenData) => {
+            acc[item.account.data.parsed.info.mint] = {
+              balance: item.account.data.parsed.info.tokenAmount.uiAmount,
+              balanceLamports: new BN(0),
+              hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
+              decimals: item.account.data.parsed.info.tokenAmount.decimals,
+            };
+            return acc;
+          }, {} as Record<string, IAccountsBalance>);
+
+          setAccounts(prev => ({ ...prev, ...reducedResult }));
+        })
+        .finally(() => {
+          setLoading(false);
+        });
   }
 
   // Fetch all accounts for the current wallet
