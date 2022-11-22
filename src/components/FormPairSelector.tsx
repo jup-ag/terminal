@@ -5,6 +5,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { areEqual, FixedSizeList, ListChildComponentProps } from 'react-window';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
+import SearchIcon from 'src/icons/SearchIcon';
 
 import { useAccounts } from '../contexts/accounts';
 import CloseIcon from '../icons/CloseIcon';
@@ -15,6 +16,7 @@ import FormPairRow from './FormPairRow';
 import JupButton from './JupButton';
 
 export const PAIR_ROW_HEIGHT = 72;
+const SEARCH_BOX_HEIGHT = 56;
 
 // eslint-disable-next-line react/display-name
 const rowRenderer = memo((props: ListChildComponentProps) => {
@@ -30,16 +32,6 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
     />
   );
 }, areEqual);
-
-const Header: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  return (
-    <div className="absolute top-2 border-b border-b-gray-200 w-full flex justify-end items-center pt-1 pb-2 pr-4">
-      <div className="cursor-pointer" onClick={onClose}>
-        <CloseIcon width={16} height={16} />
-      </div>
-    </div>
-  );
-};
 
 const FormPairSelector = ({
   onSubmit,
@@ -58,15 +50,27 @@ const FormPairSelector = ({
   ]);
   const { accounts, loading: accountsLoading } = useAccounts();
 
-  // We do not support search yet
+  const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
   useEffect(() => {
     const sortedList = tokenInfos.sort(
-      (a, b) => accounts[b.address].balance - accounts[a.address].balance,
+      (a, b) => {
+        if (!accounts[a.address]) return 1;
+        if (!accounts[b.address]) return -1;
+
+        return accounts[b.address].balance - accounts[a.address].balance;
+      },
     );
 
-    setSearchResult(sortedList);
-  }, [accounts, tokenInfos]);
+    if (searchTerm) {
+      const filteredList = sortedList.filter((item) =>
+        item.symbol.toLowerCase().includes(searchTerm.toLowerCase()),
+      );
+      setSearchResult(filteredList);
+    } else {
+      setSearchResult(sortedList);
+    }
+  }, [accounts, tokenInfos, searchTerm]);
 
   const listRef = createRef<FixedSizeList>();
 
@@ -108,6 +112,18 @@ const FormPairSelector = ({
         </div>
 
         <div className=' w-6 h-6' />
+      </div>
+
+      <div className="flex px-5 mt-4 w-[98%] rounded-xl bg-[#212128]" style={{ height: SEARCH_BOX_HEIGHT, maxHeight: SEARCH_BOX_HEIGHT }}>
+        <SearchIcon />
+
+        <input
+          autoComplete="off"
+          className="w-full rounded-xl ml-4 truncate bg-[#212128] text-white/50 placeholder:text-white/20"
+          placeholder={`Search`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
       <div className="mt-2" style={{ flexGrow: 1 }}>

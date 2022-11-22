@@ -107,7 +107,7 @@ const Form: React.FC<{
           setForm((prev) => ({
             ...prev,
             fromValue: String(
-              balance > MINIMUM_SOL_BALANCE ? balance - MINIMUM_SOL_BALANCE : 0,
+              balance > MINIMUM_SOL_BALANCE ? (balance - MINIMUM_SOL_BALANCE).toFixed(6) : 0,
             ),
           }));
         } else {

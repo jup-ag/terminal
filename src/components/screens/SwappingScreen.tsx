@@ -38,9 +38,6 @@ const ErrorIcon = () => {
 
 const SwappingScreen = () => {
   const {
-    form,
-    fromTokenInfo,
-    toTokenInfo,
     lastSwapResult,
     reset,
     swapping: {
@@ -107,7 +104,7 @@ const SwappingScreen = () => {
           <JupiterLogo width={64} height={64} />
         </div>
 
-        <div className='flex w-full justify-center items-center px-5 mt-7'>
+        <div className='flex flex-col w-full justify-center items-center px-5 mt-7'>
           {txStatus && txStatus.map(item => (
             <div key={item.txid} className='flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2'>
               {item.status === 'loading' ? <Spinner spinnerColor={'white'} /> : <SuccessIcon />}

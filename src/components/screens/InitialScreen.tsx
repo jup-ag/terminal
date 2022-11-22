@@ -30,6 +30,7 @@ const InitialScreen = ({
     setForm,
     setErrors,
     selectedSwapRoute,
+    mode,
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -92,15 +93,24 @@ const InitialScreen = ({
       }));
     }
     setSelectPairSelector(null);
-  }, []);
+  }, [selectPairSelector]);
 
   const availableMints: TokenInfo[] = useMemo(() => {
     if (Object.keys(accounts).length === 0) return [];
 
-    return Object.keys(accounts)
-      .map((mintAddress) => tokenMap.get(mintAddress))
-      .filter(Boolean)
-      .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
+    let result;
+    // Only allows user's tokens to be selected
+    if (mode === 'outputOnly') {
+      result = Object.keys(accounts)
+        .map((mintAddress) => tokenMap.get(mintAddress))
+        .filter(Boolean)
+        .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
+    } else {
+      // Allow all tokens
+      result = [...tokenMap.values()];
+    }
+
+    return [...result];
   }, [accounts, tokenMap]);
 
   const onSubmitToConfirmation = useCallback(() => {

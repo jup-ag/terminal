@@ -235,6 +235,7 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
 
   const reset = useCallback(() => {
     setForm(initialSwapContext.form);
+    setSelectedSwapRoute(null);
     setErrors(initialSwapContext.errors);
     setLastSwapResult(initialSwapContext.lastSwapResult);
     setTxStatus(initialSwapContext.swapping.txStatus);
