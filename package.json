@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@jup-ag/math": "3.0.0-beta.1",
-    "@jup-ag/react-hook": "3.0.0-beta.8",
+    "@jup-ag/react-hook": "3.0.0-beta.8-8f7d88f",
     "@project-serum/anchor": "^0.24.2",
     "@solana/spl-token": "0.1.8",
     "@solana/spl-token-registry": "~0.2.1105",
@@ -22,7 +22,7 @@
     "@solana/wallet-adapter-react": "0.15.19",
     "@solana/wallet-adapter-solflare": "^0.6.18",
     "@solana/wallet-adapter-wallets": "0.19.0",
-    "@solana/web3.js": "~1.63.1",
+    "@solana/web3.js": "~1.66.2",
     "@svgr/webpack": "^6.5.0",
     "autoprefixer": "^10.4.0",
     "bn.js": "5.2.1",
@@ -69,5 +69,10 @@
     "webpack": "^5.74.0",
     "webpack-bundle-analyzer": "^4.7.0",
     "webpack-cli": "^4.10.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "@solana/web3.js": "~1.66.2"
+    }
   }
 }
