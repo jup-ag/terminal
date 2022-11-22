@@ -26,6 +26,7 @@ import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import PriceInfo from './PriceInfo/index';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
+import SwitchPairButton from './SwitchPairButton';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -40,7 +41,7 @@ const Form: React.FC<{
   setIsWalletModalOpen,
   setShowRouteSelector,
 }) => {
-  const { connect, wallet } = useWalletPassThrough();
+    const { connect, wallet } = useWalletPassThrough();
     const { accounts } = useAccounts();
     const {
       form,
@@ -119,18 +120,19 @@ const Form: React.FC<{
       [balance, fromTokenInfo],
     );
 
-    const [shouldDisplay, setShouldDisplay] = useState(false);
-    const onToggleExpand = () => {
-      if (shouldDisplay) {
-        setShouldDisplay(false);
-      } else {
-        setShouldDisplay(true);
-      }
-    };
+    const onClickSwitchPair = () => {
+      setForm((prev) => ({
+        ...prev,
+        fromValue: '',
+        toValue: '',
+        fromMint: prev.toMint,
+        toMint: prev.fromMint,
+      }));
+    }
 
     const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
     return (
-      <div className="h-full flex flex-col items-center justify-center">
+      <div className="h-full flex flex-col items-center justify-center pb-4">
         <div className="w-full mt-2 rounded-xl flex flex-col px-2">
           <div className="flex-col">
             <div className="border-b border-transparent bg-[#212128] rounded-xl">
@@ -178,6 +180,10 @@ const Form: React.FC<{
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div className='mt-2'>
+              <SwitchPairButton onClick={onClickSwitchPair} />
             </div>
 
             <div className="mt-2 border-b border-transparent bg-[#212128] rounded-xl">
