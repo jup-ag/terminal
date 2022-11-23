@@ -120,7 +120,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // Fetch all accounts for the current wallet
   useEffect(() => {
     refresh()
-  }, [publicKey]);
+  }, [publicKey, connected]);
 
   return (
     <AccountContext.Provider value={{ accounts, loading, refresh }}>

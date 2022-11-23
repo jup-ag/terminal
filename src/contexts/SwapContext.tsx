@@ -240,6 +240,7 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
     setLastSwapResult(initialSwapContext.lastSwapResult);
     setTxStatus(initialSwapContext.swapping.txStatus);
     setTotalTxs(initialSwapContext.swapping.totalTxs);
+    refreshAccount();
   }, [])
 
 
