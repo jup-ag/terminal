@@ -2,7 +2,7 @@
 
 const isWidgetOnly = process.env.MODE === "widget";
 module.exports = {
-  important: isWidgetOnly ? '#jupiter-embed' : false,
+  important: isWidgetOnly ? '#jupiter-easy-modal' : false,
   corePlugins: isWidgetOnly ? {
     preflight: false,
     container: false,

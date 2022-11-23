@@ -44,8 +44,7 @@ const renderJupiterApp = ({
   );
 };
 
-const containerId = "jupiter-embed";
-
+const containerId = "jupiter-easy-modal";
 
 const deepCopy = (props: any) => JSON.parse(JSON.stringify(props));
 const init: JupiterEmbed["init"] = (props) => {
