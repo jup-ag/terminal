@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 overrides:
   '@solana/web3.js': ~1.66.2
+  '@solana/buffer-layout': 4.0.0
 
 specifiers:
   '@jup-ag/math': 3.0.0-beta.1
@@ -2237,7 +2238,7 @@ packages:
     resolution: {integrity: sha512-DDZBLkoIQVhLQRy+t7dVuiHNw0nAmWD7xqwMekHT71bBLU5ajQglRvQ9b8d2RQQn1WJsXhbGbc7eTUGWdZqWoQ==}
     engines: {node: '>=10'}
     dependencies:
-      '@solana/buffer-layout': 3.0.0
+      '@solana/buffer-layout': 4.0.0
       '@solana/spl-token': 0.1.8
       '@solana/spl-token-registry': 0.2.4574
       '@solana/web3.js': 1.66.2
@@ -3034,13 +3035,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
-
-  /@solana/buffer-layout/3.0.0:
-    resolution: {integrity: sha512-MVdgAKKL39tEs0l8je0hKaXLQFb7Rdfb0Xg2LjFZd8Lfdazkg6xiS98uAZrEKvaoF3i4M95ei9RydkGIDMeo3w==}
-    engines: {node: '>=5.10'}
-    dependencies:
-      buffer: 6.0.3
     dev: false
 
   /@solana/buffer-layout/4.0.0:
@@ -4977,7 +4971,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -6716,18 +6710,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: false
-
-  /follow-redirects/1.15.2_debug@4.3.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.2
     dev: false
 
   /for-each/0.3.3:

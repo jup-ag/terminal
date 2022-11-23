@@ -72,7 +72,8 @@
   },
   "pnpm": {
     "overrides": {
-      "@solana/web3.js": "~1.66.2"
+      "@solana/web3.js": "~1.66.2",
+      "@solana/buffer-layout": "4.0.0"
     }
   }
 }
