@@ -121,13 +121,15 @@ const Form: React.FC<{
     );
 
     const onClickSwitchPair = () => {
-      setForm((prev) => ({
-        ...prev,
-        fromValue: '',
-        toValue: '',
-        fromMint: prev.toMint,
-        toMint: prev.fromMint,
-      }));
+      if (mode === 'default') {
+        setForm((prev) => ({
+          ...prev,
+          fromValue: '',
+          toValue: '',
+          fromMint: prev.toMint,
+          toMint: prev.fromMint,
+        }));
+      }
     }
 
     const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
@@ -182,9 +184,11 @@ const Form: React.FC<{
               </div>
             </div>
 
-            <div className='mt-2'>
-              <SwitchPairButton onClick={onClickSwitchPair} />
-            </div>
+            {mode === 'default' ? (
+              <div className='mt-2'>
+                <SwitchPairButton onClick={onClickSwitchPair} />
+              </div>
+            ) : null}
 
             <div className="mt-2 border-b border-transparent bg-[#212128] rounded-xl">
               <div className="px-x border-transparent rounded-xl">
