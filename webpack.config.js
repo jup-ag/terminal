@@ -80,8 +80,8 @@ module.exports = {
     library: "Jupiter",
     libraryTarget: "window",
     filename: "main.js",
-    path: path.resolve(__dirname, "dist"),
-    publicPath: "/dist/",
+    path: path.resolve(__dirname, "public"),
+    publicPath: "/public/",
   },
   optimization: {
     minimizer: [
