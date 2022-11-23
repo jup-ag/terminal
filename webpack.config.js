@@ -5,6 +5,8 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const analyseBundle = process.env.ANALYSE === 'true';
+
 module.exports = {
   mode: "production",
   entry: {
@@ -48,13 +50,20 @@ module.exports = {
       },
     ],
   },
-  plugins: [
-    new NodePolyfillPlugin(),
-    new MiniCssExtractPlugin({
-      filename: "main.css",
-    }),
-    new BundleAnalyzerPlugin(),
-  ],
+  plugins: (() => {
+    const plugins = [
+      new NodePolyfillPlugin(),
+      new MiniCssExtractPlugin({
+        filename: "main.css",
+      }),
+    ];
+
+    if (analyseBundle) {
+      plugins.push(new BundleAnalyzerPlugin())
+    }
+
+    return plugins;
+  })(),
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
     fallback: {
