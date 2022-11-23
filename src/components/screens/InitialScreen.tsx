@@ -10,6 +10,7 @@ import { useSwapContext } from "src/contexts/SwapContext";
 import { useScreenState } from "src/contexts/ScreenProvider";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import RouteSelectionScreen from "./RouteSelectionScreen";
+import { SOL_MINT_TOKEN_INFO } from "src/constants";
 
 interface Props {
   mint: string;
@@ -105,6 +106,7 @@ const InitialScreen = ({
         .map((mintAddress) => tokenMap.get(mintAddress))
         .filter(Boolean)
         .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
+      result = [...result, SOL_MINT_TOKEN_INFO]
     } else {
       // Allow all tokens
       result = [...tokenMap.values()];

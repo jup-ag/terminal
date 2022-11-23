@@ -153,11 +153,11 @@ const FormPairSelector = ({
         )}
 
         {accountsLoading ? (
-          <div className="mt-4 mb-4 text-center dark:text-white-50 text-black-50">
+          <div className="mt-4 mb-4 text-center text-white/50">
             <span>Loading tokens...</span>
           </div>
         ) : searchResult.length === 0 ? (
-          <div className="mt-4 mb-4 text-center dark:text-white-50 text-black-50">
+          <div className="mt-4 mb-4 text-center text-white/50">
             <span>No tokens found</span>
           </div>
         ) : (

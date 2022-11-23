@@ -1,14 +1,20 @@
-import { useWallet } from '@solana/wallet-adapter-react';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { WRAPPED_SOL_MINT } from 'src/constants';
+import { useAccounts } from 'src/contexts/accounts';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-
-import useNativeAccount from '../hooks/useNativeAccount';
 
 import { shortenAddress } from '../misc/utils';
 
 export const CurrentUserBadge: React.FC = () => {
   const { publicKey, wallet } = useWalletPassThrough();
-  const { balance: solBalance } = useNativeAccount();
+  const { accounts } = useAccounts();
+
+  const solBalance = useMemo(() => {
+    if (accounts[WRAPPED_SOL_MINT.toString()]) {
+      return accounts[WRAPPED_SOL_MINT.toString()].balance
+    }
+    return 0;
+  }, [publicKey, accounts]);
 
   if (!wallet || !publicKey) {
     return null;

@@ -83,7 +83,7 @@ const JupiterApp = ({
         <JupiterProvider
           connection={connection}
           routeCacheDuration={ROUTE_CACHE_DURATION}
-          wrapUnwrapSOL={false}
+          wrapUnwrapSOL={true}
           userPublicKey={walletPublicKey || undefined}
         >
           <SwapContextProvider mode={mode} mint={mint}>
