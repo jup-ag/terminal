@@ -106,7 +106,11 @@ const InitialScreen = ({
         .map((mintAddress) => tokenMap.get(mintAddress))
         .filter(Boolean)
         .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
-      result = [...result, SOL_MINT_TOKEN_INFO]
+
+      const haveSOL = result.find(tokenInfo => tokenInfo.address === SOL_MINT_TOKEN_INFO.address);
+      if (!haveSOL) {
+        result = [...result, SOL_MINT_TOKEN_INFO]
+      }
     } else {
       // Allow all tokens
       result = [...tokenMap.values()];
