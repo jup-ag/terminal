@@ -2,10 +2,8 @@ import React, { FC, MouseEvent } from 'react';
 import { WalletListItem } from './WalletListItem';
 import { Adapter, WalletReadyState } from '@solana/wallet-adapter-base';
 
-import GlassBox from '../../GlassBox/GlassBox';
-
-import CloseIcon from 'src/icons/CloseIcon';
 import { useWallet, WalletContextState } from '@solana/wallet-adapter-react';
+import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 
 const PRIORITISE: {
   [value in WalletReadyState]: number;
@@ -39,7 +37,7 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
   };
 
   const renderWalletList = (walletList: WalletContextState['wallets'], startKeyboardIndex: number = 0) => (
-    <div className="h-full overflow-y-auto grid grid-cols-2 content-start gap-3 px-5" translate="no">
+    <div className="h-full overflow-y-auto space-y-2" translate="no">
       {walletList.map((wallet, index) => {
         return (
           <ul key={index}>
@@ -54,28 +52,25 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
   );
 
   return (
-    <GlassBox
-      className="flex-col overflow-y-auto max-h-screen overflow-hidden dark:text-white pb-7 !bg-white dark:!bg-white/5"
-      style={{ maxHeight: '90vh', height: '90%', width: '90%' }}
-    >
-      <div className="p-5 flex justify-between">
-        <div>
-          <div className="font-md font-semibold">
-            <span>Connect Wallet</span>
-          </div>
-          <div className="text-xs text-black-50 dark:text-white-50">
-            <span>You need to connect a Solana wallet.</span>
-          </div>
+    <div className='flex flex-col h-full w-full py-4 px-2 bg-jupiter-bg'>
+      <div className='flex w-full justify-between'>
+        <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={() => setIsWalletModalOpen(false)}>
+          <LeftArrowIcon width={24} height={24} />
         </div>
-        <div className="cursor-pointer" onClick={() => setIsWalletModalOpen(false)}>
-          <CloseIcon />
+
+        <div className='text-white'>
+          Connect Wallet
         </div>
+
+        <div className=' w-6 h-6' />
       </div>
 
-      {renderWalletList(
-        wallets
-          .sort((a, b) => PRIORITISE[a.readyState] - PRIORITISE[b.readyState])
-      )}
-    </GlassBox>
+      <div className='mt-7'>
+        {renderWalletList(
+          wallets
+            .sort((a, b) => PRIORITISE[a.readyState] - PRIORITISE[b.readyState])
+        )}
+      </div>
+    </div>
   );
 };

@@ -35,7 +35,7 @@ const Content = ({
     <div>
       <div
         style={{ zIndex }}
-        className="flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-[#3A3B43] rounded-lg webkit-scrollbar"
+        className="flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar"
       >
         {screen === "Initial" ? (
           <>

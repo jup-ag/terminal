@@ -79,7 +79,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const inputRef = useRef<HTMLInputElement>();
 
   return (
-    <GlassBox className={classNames('!bg-[#3A3B43] text-white shadow-xl ')}>
+    <GlassBox className={classNames('!bg-jupiter-bg text-white shadow-xl ')}>
       <form
         onSubmit={form.handleSubmit((value) => {
           const slippage = Number(value.slippageInput ?? value.slippagePreset);
