@@ -17,6 +17,7 @@ const App = () => {
   const initJupiter = () => {
     if (wallet) {
       window.Jupiter.init({
+        mode: 'default',
         endpoint,
         passThroughWallet: wallet,
       });
@@ -39,8 +40,8 @@ In your document, link embed's `main.js` and `main.css`.
 
 ```tsx
 <head>
-  <script src={`/JupiterEmbed/main.js`}></script>
-  <link rel="stylesheet" href={`/JupiterEmbed/main.css`} />
+  <script src={`https://jupiter-easy-modal.vercel.app/main.js`}></script>
+  <link rel="stylesheet" href={`https://jupiter-easy-modal.vercel.app/main.css`} />
 </head>
 ```
 
@@ -54,6 +55,7 @@ const App = () => {
     if (wallet) {
       // We do not recommend using a public RPC due to 429 rate limits.
       window.Jupiter.init({
+        mode: 'default',
         endpoint: "https://api.mainnet-beta.solana.com",
         passThroughWallet: wallet,
       });
@@ -61,9 +63,10 @@ const App = () => {
   };
 
   const initJupiterWithoutWallet = () => {
-    if (wallet) {
-      window.Jupiter.init({ endpoint: "https://api.mainnet-beta.solana.com" });
-    }
+    window.Jupiter.init({ 
+      mode: 'default',
+      endpoint: "https://api.mainnet-beta.solana.com"
+    });
   };
 
   return (
@@ -79,6 +82,19 @@ const App = () => {
 };
 ```
 
+## Mode
+- `default`: Default mode, user can swap between any token pair.
+- `outputOnly`: Output only mode, user can only swap to destination pair.
+```ts
+  window.Jupiter.init({
+    mode: 'outputOnly',
+    mint: 'So11111111111111111111111111111111111111112',
+    endpoint: "https://api.mainnet-beta.solana.com",
+    passThroughWallet: wallet,
+  });
+```
+
+
 ## Hide / Close
 
 \*Note: To reduce RPC usage incurred on startup, whenever `close()` is called, the rendered instance will be added with a `hidden` class, and subsequent `init()` call will remove the `hidden` class.
@@ -88,13 +104,15 @@ window.Jupiter.close();
 ```
 
 ## Customising styles
-  - Custom zIndex
-  ```tsx
-  window.Jupiter.init({
-    // ...
-    containerStyles: { zIndex: 100 },
-  });
-  ```
+
+- Custom zIndex
+
+```tsx
+window.Jupiter.init({
+  // ...
+  containerStyles: { zIndex: 100 },
+});
+```
 
 ---
 
