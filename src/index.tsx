@@ -59,9 +59,10 @@ const init: JupiterEmbed["init"] = (props) => {
 
   const passThroughWalletChanged = (() => {
     const current = window.Jupiter.passThroughWallet;
+    const newPassthroughWallet = passThroughWallet?.adapter?.publicKey ? passThroughWallet?.adapter?.publicKey?.toString() : null
     if (
       current?.adapter.publicKey.toString() !==
-      passThroughWallet?.adapter.publicKey.toString()
+      newPassthroughWallet
     ) {
       window.Jupiter.passThroughWallet = passThroughWallet;
       return true;
