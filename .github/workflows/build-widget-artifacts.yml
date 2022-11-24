@@ -35,11 +35,11 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: JS
-          path: ./dist/main.js
+          path: ./public/main.js
       
       - uses: actions/upload-artifact@v3
         with:
           name: CSS
-          path: ./dist/main.css
+          path: ./public/main.css
 
       - run: echo "🍏 This job's status is ${{ job.status }}."
