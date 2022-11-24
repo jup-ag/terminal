@@ -8,6 +8,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const analyseBundle = process.env.ANALYSE === 'true';
 
 module.exports = {
+  devtool: "source-map",
   mode: "production",
   entry: {
     Jupiter: "./src/widget/index.tsx",
