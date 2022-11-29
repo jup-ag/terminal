@@ -25,7 +25,7 @@ export interface JupiterEmbed {
     passThroughWallet,
     containerStyles,
   }: IInit) => void;
+  resume: () => void;
   close: () => void;
   root: Root | null;
-  previousProps: IInit | null;
 }

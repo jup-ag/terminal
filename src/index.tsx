@@ -42,7 +42,6 @@ const renderJupiterApp = ({
 
 const containerId = "jupiter-easy-modal";
 
-const deepCopy = (props: any) => JSON.parse(JSON.stringify(props));
 const init: JupiterEmbed["init"] = (props) => {
   const { mode, mint, endpoint, passThroughWallet, containerStyles, containerClassName } = props;
 
@@ -53,61 +52,31 @@ const init: JupiterEmbed["init"] = (props) => {
   const targetDiv = document.createElement("div");
   const instanceExist = document.getElementById(containerId);
 
-  const passThroughWalletChanged = (() => {
-    const current = window.Jupiter.passThroughWallet;
-    if (
-      current?.adapter.publicKey.toString() !==
-      passThroughWallet?.adapter?.publicKey?.toString()
-    ) {
-      window.Jupiter.passThroughWallet = passThroughWallet;
-      return true;
-    }
-    return false;
-  })();
-
-  const propChanged = (() => {
-    const oldProps = window.Jupiter.previousProps;
-    if (!oldProps) return false;
-
-    window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles });
-    return oldProps?.mode !== mode || oldProps?.mint !== mint || oldProps.endpoint !== endpoint || oldProps.containerStyles !== containerStyles;
-  })();
-
-  // If props changed, we have to reinit the app.
-  if (passThroughWalletChanged || propChanged) {
+  // If there's existing instance, just show it
+  if (instanceExist) {
     window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
     instanceExist?.remove();
-    window.Jupiter.init({
-      mode,
-      mint,
-      endpoint,
-      passThroughWallet,
-      containerStyles,
-      containerClassName,
-    });
-    return;
-  }
-
-  // If there's existing instance, just show it
-  if (instanceExist) {
-    instanceExist.classList.remove("hidden");
-    instanceExist.classList.add("block");
-    return;
   }
 
   targetDiv.id = containerId;
   document.body.appendChild(targetDiv);
 
+  const element = renderJupiterApp({ mode, mint, endpoint, containerStyles, containerClassName });
   const root = createRoot(targetDiv);
-  window.Jupiter.root = root;
-
-  const element =
-    window.Jupiter._instance ||
-    renderJupiterApp({ mode, mint, endpoint, containerStyles, containerClassName });
   root.render(element);
+  window.Jupiter.root = root;
+  window.Jupiter.passThroughWallet = passThroughWallet;
   window.Jupiter._instance = element;
-  window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles, containerClassName });
+};
+
+const resume: JupiterEmbed["resume"] = () => {
+  const instanceExist = document.getElementById(containerId);
+  if (instanceExist) {
+    instanceExist.classList.remove("hidden");
+    instanceExist.classList.add("block");
+    return;
+  }
 };
 
 const close: JupiterEmbed["close"] = () => {
@@ -121,8 +90,8 @@ const Jupiter: JupiterEmbed = {
   _instance: null,
   passThroughWallet: null,
   root: null,
-  previousProps: null,
   init,
+  resume,
   close,
 };
 

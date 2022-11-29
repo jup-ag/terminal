@@ -95,11 +95,18 @@ const App = () => {
 ```
 
 
-## Hide / Close
+## Resuming / Closing activity
+- Everytime `init()` is called, it will create a new activity. 
 
-\*Note: To reduce RPC usage incurred on startup, whenever `close()` is called, the rendered instance will be added with a `hidden` class, and subsequent `init()` call will remove the `hidden` class.
+- If you want to resume the previous activity, you can use `resume()`.
+
+- `close()` function only hide the widget.
 
 ```tsx
+if (window.Jupiter._instance) {
+  window.Jupiter.resume();
+}
+
 window.Jupiter.close();
 ```
 

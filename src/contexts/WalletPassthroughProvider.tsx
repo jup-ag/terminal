@@ -61,7 +61,15 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
           },
           connecting: false,
           connected: true,
-          disconnect: passThroughWallet?.adapter.disconnect || (async () => { }),
+          disconnect: async () => {
+            try {
+              if (passThroughWallet?.adapter.disconnect) {
+                return passThroughWallet?.adapter.disconnect();
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          },
         }
       }
     }
