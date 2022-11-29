@@ -1,8 +1,8 @@
 import React, { FC, useMemo, useRef, useState } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { useOutsideClick } from 'src/misc/utils';
 import { CurrentUserBadge } from '../CurrentUserBadge';
-
 
 import { WalletModalButton } from './components/WalletModalButton';
 
@@ -19,6 +19,11 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
     disconnect();
   };
 
+  const closePopup = () => {
+    setActive(false);
+  };
+  useOutsideClick(ref, closePopup);
+
   if ((!connected && !connecting) || !base58) {
     return <WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />;
   }
@@ -34,7 +39,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
           aria-label="dropdown-list"
           className={
             active
-              ? 'absolute block top-12 right-0 text-sm bg-black rounded-lg p-2 text-white dark:bg-white dark:text-black'
+              ? 'absolute block top-10 right-0 text-sm bg-black rounded-lg p-2 text-white dark:bg-white dark:text-black'
               : 'hidden'
           }
           ref={ref}

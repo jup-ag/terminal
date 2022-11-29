@@ -184,13 +184,13 @@ const Form: React.FC<{
               </div>
             </div>
 
-            {mode === 'default' ? (
-              <div className='mt-2'>
+            <div className='my-2'>
+              {mode === 'default' ? (
                 <SwitchPairButton onClick={onClickSwitchPair} />
-              </div>
-            ) : null}
+              ) : null}
+            </div>
 
-            <div className="mt-2 border-b border-transparent bg-[#212128] rounded-xl">
+            <div className="border-b border-transparent bg-[#212128] rounded-xl">
               <div className="px-x border-transparent rounded-xl">
                 <div>
                   <div className="py-5 px-4 flex flex-col dark:text-white">

@@ -1,5 +1,4 @@
 import React, { FC, MouseEvent, useCallback } from 'react';
-import JupButton from 'src/components/JupButton';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
@@ -13,24 +12,15 @@ export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void
   );
 
   return (
-    <JupButton onClick={handleClick}>
+    <button type='button' className='py-2 px-3 h-7 flex items-center rounded-2xl text-xs bg-[#191B1F] text-white' onClick={handleClick}>
       {connecting && (
         <span>
           <span>Connecting...</span>
         </span>
       )}
-      {/* Mobile */}
-      {!connecting && (
-        <span className="block md:hidden">
-          <span>Connect</span>
-        </span>
-      )}
-      {/* Desktop */}
-      {!connecting && (
-        <span className="hidden md:block">
-          <span>Connect Wallet</span>
-        </span>
-      )}
-    </JupButton>
+      <span>
+        <span>Connect Wallet</span>
+      </span>
+    </button>
   );
 };

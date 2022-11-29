@@ -21,25 +21,22 @@ export const CurrentUserBadge: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center bg-[#191B1F] py-2 px-3 rounded-2xl h-7">
       <div
-        className="w-8 h-8 rounded-full bg-[#EBEFF1] dark:bg-white-10 flex justify-center items-center"
+        className="w-4 h-4 rounded-full bg-[#191B1F] dark:bg-white-10 flex justify-center items-center"
         style={{ position: 'relative' }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           alt="Wallet logo"
-          width={20}
-          height={20}
+          width={16}
+          height={16}
           src={wallet?.adapter?.icon}
         />
       </div>
 
       <div className="ml-2">
-        <div
-          className="text-sm font-semibold text-white"
-          translate="no"
-        >{`${solBalance.toFixed(2)} SOL`}</div>
-        <div className="text-xs text-white/50">
+        <div className="text-xs text-white">
           {shortenAddress(`${publicKey}`)}
         </div>
       </div>

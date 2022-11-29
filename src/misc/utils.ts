@@ -1,7 +1,7 @@
 import Decimal from 'decimal.js';
 import BN from 'bn.js';
 import JSBI from 'jsbi';
-import { useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 
 const userLocale =
   typeof window !== 'undefined'
@@ -94,3 +94,19 @@ export const isMobile = () =>
   typeof window !== 'undefined' && screen && screen.width <= 480;
 
 export const detectedSeparator = formatNumber.format(1.1).substring(1, 2);
+
+export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseEvent) => void) {
+  useEffect(() => {
+    const listener = (event: any) => {
+      // Do nothing if clicking ref's element or descendent elements
+      if (!ref.current || ref.current.contains(event.target)) {
+        return;
+      }
+      handler(event);
+    };
+    document.addEventListener('mouseup', listener);
+    return () => {
+      document.removeEventListener('mouseup', listener);
+    };
+  }, [ref, handler]);
+}
