@@ -6,6 +6,11 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const analyseBundle = process.env.ANALYSE === 'true';
+const bundleName = process.env.BUNDLE_NAME;
+
+if (!bundleName) {
+  throw new Error('Bundle name/version is not set');
+}
 
 module.exports = {
   devtool: "source-map",
@@ -55,7 +60,7 @@ module.exports = {
     const plugins = [
       new NodePolyfillPlugin(),
       new MiniCssExtractPlugin({
-        filename: "main.css",
+        filename: `${bundleName}.css`,
       }),
     ];
 
@@ -80,7 +85,7 @@ module.exports = {
   output: {
     library: "Jupiter",
     libraryTarget: "window",
-    filename: "main.js",
+    filename: `${bundleName}.js`,
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
   },
