@@ -2,7 +2,7 @@ import { JupiterProvider } from "@jup-ag/react-hook";
 
 import { useConnection } from "@solana/wallet-adapter-react";
 
-import React, { useMemo, useState } from "react";
+import React, { CSSProperties, useMemo, useState } from "react";
 import { WRAPPED_SOL_MINT } from "../constants";
 
 import Header from "../components/Header";
@@ -17,25 +17,30 @@ import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import { IInit } from "src/types";
 import { SLippageConfigProvider } from "src/contexts/SlippageConfigProvider";
 
+const defaultStyles: CSSProperties = {
+  zIndex: 50
+}
+
 const Content = ({
   containerStyles,
+  containerClassName,
 }: {
   containerStyles: IInit["containerStyles"];
+  containerClassName: IInit["containerClassName"];
 }) => {
   const { screen } = useScreenState();
-  const { mode, mint } = useSwapContext();
+  const { mint } = useSwapContext();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   const onClose = () => {
     window.Jupiter.close();
   };
 
-  const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.
   return (
-    <div>
+    <div className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50">
       <div
-        style={{ zIndex }}
-        className="flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar"
+        style={{ ...defaultStyles, ...containerStyles }}
+        className={`flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`}
       >
         {screen === "Initial" ? (
           <>
@@ -64,10 +69,12 @@ const JupiterApp = ({
   mode,
   mint,
   containerStyles,
+  containerClassName,
 }: {
   mode: IInit['mode'],
   mint: IInit['mint'],
   containerStyles: IInit["containerStyles"];
+  containerClassName: IInit["containerClassName"];
 }) => {
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
@@ -87,7 +94,7 @@ const JupiterApp = ({
           userPublicKey={walletPublicKey || undefined}
         >
           <SwapContextProvider mode={mode} mint={mint}>
-            <Content containerStyles={containerStyles} />
+            <Content containerStyles={containerStyles} containerClassName={containerClassName} />
           </SwapContextProvider>
         </JupiterProvider>
       </SLippageConfigProvider>

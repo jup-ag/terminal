@@ -103,14 +103,37 @@ const App = () => {
 window.Jupiter.close();
 ```
 
-## Customising styles
+## Customising styles: CSSProperties
+Any CSS-in-JS can be injected to the outer-most container via containerStyles api.
 
+Examples:
 - Custom zIndex
 
 ```tsx
 window.Jupiter.init({
   // ...
   containerStyles: { zIndex: 100 },
+});
+```
+
+- Custom height
+```tsx
+window.Jupiter.init({
+  // ...
+  containerStyles: { maxHeight: '90vh', },
+});
+```
+
+## Customising className: Tailwind className
+Tailwind classes can be injected to the outer-most container via containerClassName api.
+
+Example:
+- Custom breakpoints
+
+```tsx
+window.Jupiter.init({
+  // ...
+  containerClassName: 'max-h-[90vh] lg:max-h-[600px]'
 });
 ```
 

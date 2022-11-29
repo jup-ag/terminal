@@ -14,33 +14,29 @@ const renderJupiterApp = ({
   mint,
   endpoint,
   containerStyles,
+  containerClassName,
 }: {
   mode: IInit["mode"];
   mint: IInit["mint"];
   endpoint: string;
   containerStyles: IInit["containerStyles"];
+  containerClassName: IInit["containerClassName"];
 }) => {
-  const zIndex = containerStyles?.zIndex || 50; // Default to 50, tailwind default max is 50.
-
   return (
-    <div
-      style={{ zIndex }}
-      className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50"
-    >
-      <ContextProvider endpoint={endpoint}>
-        <WalletPassthroughProvider>
-          <TokenContextProvider>
-            <ScreenProvider>
-              <JupiterApp
-                mode={mode}
-                mint={mint}
-                containerStyles={{ zIndex }}
-              />
-            </ScreenProvider>
-          </TokenContextProvider>
-        </WalletPassthroughProvider>
-      </ContextProvider>
-    </div>
+    <ContextProvider endpoint={endpoint}>
+      <WalletPassthroughProvider>
+        <TokenContextProvider>
+          <ScreenProvider>
+            <JupiterApp
+              mode={mode}
+              mint={mint}
+              containerStyles={containerStyles}
+              containerClassName={containerClassName}
+            />
+          </ScreenProvider>
+        </TokenContextProvider>
+      </WalletPassthroughProvider>
+    </ContextProvider>
   );
 };
 
@@ -48,7 +44,7 @@ const containerId = "jupiter-easy-modal";
 
 const deepCopy = (props: any) => JSON.parse(JSON.stringify(props));
 const init: JupiterEmbed["init"] = (props) => {
-  const { mode, mint, endpoint, passThroughWallet, containerStyles } = props;
+  const { mode, mint, endpoint, passThroughWallet, containerStyles, containerClassName } = props;
 
   if (mode === "outputOnly" && !mint) {
     throw new Error("outputOnly mode requires a mint!");
@@ -85,8 +81,10 @@ const init: JupiterEmbed["init"] = (props) => {
     window.Jupiter.init({
       mode,
       mint,
-      endpoint: "https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci",
+      endpoint,
       passThroughWallet,
+      containerStyles,
+      containerClassName,
     });
     return;
   }
@@ -106,10 +104,10 @@ const init: JupiterEmbed["init"] = (props) => {
 
   const element =
     window.Jupiter._instance ||
-    renderJupiterApp({ mode, mint, endpoint, containerStyles });
+    renderJupiterApp({ mode, mint, endpoint, containerStyles, containerClassName });
   root.render(element);
   window.Jupiter._instance = element;
-  window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles });
+  window.Jupiter.previousProps = deepCopy({ mode, mint, endpoint, containerStyles, containerClassName });
 };
 
 const close: JupiterEmbed["close"] = () => {

@@ -1,3 +1,5 @@
+import { CSSProperties } from "react";
+
 declare global {
   interface Window {
     Jupiter: JupiterEmbed;
@@ -9,7 +11,8 @@ export interface IInit {
   mint?: string;
   endpoint: string;
   passThroughWallet?: Wallet | null;
-  containerStyles?: { zIndex: CSSProperties["zIndex"] };
+  containerStyles?: CSSProperties
+  containerClassName?: string
 }
 
 export interface JupiterEmbed {
