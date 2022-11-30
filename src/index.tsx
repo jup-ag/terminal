@@ -9,30 +9,13 @@ import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 
 import { IInit, JupiterEmbed } from "./types";
 
-const renderJupiterApp = ({
-  mode,
-  mint,
-  endpoint,
-  containerStyles,
-  containerClassName,
-}: {
-  mode: IInit["mode"];
-  mint: IInit["mint"];
-  endpoint: string;
-  containerStyles: IInit["containerStyles"];
-  containerClassName: IInit["containerClassName"];
-}) => {
+const renderJupiterApp = (props: IInit) => {
   return (
-    <ContextProvider endpoint={endpoint}>
+    <ContextProvider endpoint={props.endpoint}>
       <WalletPassthroughProvider>
         <TokenContextProvider>
           <ScreenProvider>
-            <JupiterApp
-              mode={mode}
-              mint={mint}
-              containerStyles={containerStyles}
-              containerClassName={containerClassName}
-            />
+            <JupiterApp  {...props} />
           </ScreenProvider>
         </TokenContextProvider>
       </WalletPassthroughProvider>
@@ -40,12 +23,12 @@ const renderJupiterApp = ({
   );
 };
 
-const containerId = "jupiter-easy-modal";
+const containerId = "jupiter-terminal";
 
 const init: JupiterEmbed["init"] = (props) => {
-  const { mode, mint, endpoint, passThroughWallet, containerStyles, containerClassName } = props;
+  const { passThroughWallet, onSwapError, onSuccess, ...restProps } = props;
 
-  if (mode === "outputOnly" && !mint) {
+  if (props.mode === "outputOnly" && !props.mint) {
     throw new Error("outputOnly mode requires a mint!");
   }
 
@@ -62,12 +45,16 @@ const init: JupiterEmbed["init"] = (props) => {
   targetDiv.id = containerId;
   document.body.appendChild(targetDiv);
 
-  const element = renderJupiterApp({ mode, mint, endpoint, containerStyles, containerClassName });
+  const element = renderJupiterApp(restProps);
   const root = createRoot(targetDiv);
   root.render(element);
   window.Jupiter.root = root;
-  window.Jupiter.passThroughWallet = passThroughWallet;
   window.Jupiter._instance = element;
+  
+  // Passthrough & Callbacks
+  window.Jupiter.passThroughWallet = passThroughWallet;
+  window.Jupiter.onSwapError = onSwapError;
+  window.Jupiter.onSuccess = onSuccess;
 };
 
 const resume: JupiterEmbed["resume"] = () => {

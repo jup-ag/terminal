@@ -65,17 +65,8 @@ const Content = ({
   );
 };
 
-const JupiterApp = ({
-  mode,
-  mint,
-  containerStyles,
-  containerClassName,
-}: {
-  mode: IInit['mode'],
-  mint: IInit['mint'],
-  containerStyles: IInit["containerStyles"];
-  containerClassName: IInit["containerClassName"];
-}) => {
+const JupiterApp = (props: IInit) => {
+  const { mode, mint, containerStyles, containerClassName } = props;
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 

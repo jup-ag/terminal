@@ -110,6 +110,22 @@ if (window.Jupiter._instance) {
 window.Jupiter.close();
 ```
 
+## onSuccess/onSwapError callback
+`onSuccess()` reference can be provided, and will be called when swap is successful.
+
+While `onSwapError()` will be called when an error has occurred.
+
+```tsx
+window.Jupiter.init({
+  onSuccess: ({ txid }) => {
+    console.log('onSuccess', txid);
+  }
+  onSwapError: ({ error }) => {
+    console.log('onSwapError', error);
+  },
+});
+```
+
 ## Customising styles: CSSProperties
 Any CSS-in-JS can be injected to the outer-most container via containerStyles api.
 

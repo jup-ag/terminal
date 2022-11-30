@@ -64,9 +64,17 @@ const SwappingScreen = () => {
     if (lastSwapResult && 'error' in lastSwapResult) {
       setStatus('error');
       setErrorMessage(lastSwapResult.error?.message || '');
+
+      if (window.Jupiter.onSwapError) {
+        window.Jupiter.onSwapError({ error: lastSwapResult.error });
+      }
       return;
     } else if (lastSwapResult && 'txid' in lastSwapResult) {
       setStatus('success');
+
+      if (window.Jupiter.onSuccess) {
+        window.Jupiter.onSuccess({ txid: lastSwapResult.txid })
+      }
       return;
     }
   }, [lastSwapResult])
