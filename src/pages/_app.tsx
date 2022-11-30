@@ -92,7 +92,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <div className='flex items-center justify-center h-screen w-screen overflow-auto'>
       <div className='flex flex-col px-8 lg:px-0'>
-        <h1 className='text-2xl font-bold'>Jupiter Embed App</h1>
+        <h1 className='text-2xl font-bold'>Jupiter Terminal Example</h1>
 
         <div className='mt-4'>
           <h2 className='font-bold text-lg mb-4'>Active instance</h2>

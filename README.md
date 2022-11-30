@@ -1,10 +1,10 @@
-# Jupiter Embed
+# Jupiter Terminal
 
-Jupiter Embed is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
+Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
 ---
 
-## Jupiter Embed allow two mode of operation,
+## Jupiter Terminal allow two mode of operation,
 
 ## Mode 1: Wallet passthrough
 
@@ -28,7 +28,7 @@ const App = () => {
 
 ## Mode 2: Built-in wallet
 
-If your user is not connected, Jupiter Embed have several built-in wallets that user can connect and perform swap directly.
+If your user is not connected, Jupiter Terminal have several built-in wallets that user can connect and perform swap directly.
 
 ---
 
@@ -40,8 +40,8 @@ In your document, link embed's `main.js` and `main.css`.
 
 ```tsx
 <head>
-  <script src={`https://jupiter-easy-modal.vercel.app/main.js`}></script>
-  <link rel="stylesheet" href={`https://jupiter-easy-modal.vercel.app/main.css`} />
+  <script src={`https://jupiter-terminal.vercel.app/main.js`}></script>
+  <link rel="stylesheet" href={`https://jupiter-terminal.vercel.app/main.css`} />
 </head>
 ```
 
@@ -165,4 +165,4 @@ window.Jupiter.init({
 ## Known issue
 
 - Wallet passthrough supports does not work for Solflare
-  - Jupiter Embed currently prompts the user to connect their Solflare wallet again, to perform swap.
+  - Jupiter Terminal currently prompts the user to connect their Solflare wallet again, to perform swap.
