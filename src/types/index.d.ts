@@ -2,7 +2,7 @@ import { CSSProperties } from "react";
 
 declare global {
   interface Window {
-    Jupiter: JupiterEmbed;
+    Jupiter: JupiterTerminal;
   }
 }
 
@@ -19,7 +19,7 @@ export interface IInit {
   onSuccess?: ({ txid: string }) => void;
 }
 
-export interface JupiterEmbed {
+export interface JupiterTerminal {
   _instance: React.ReactNode;
   init: (props: IInit) => void;
   resume: () => void;

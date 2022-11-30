@@ -36,7 +36,7 @@ Getting started
 
 ## Integrating the widget
 
-In your document, link embed's `main.js` and `main.css`.
+In your document, link and embed `main.js` and `main.css`.
 
 ```tsx
 <head>

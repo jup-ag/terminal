@@ -7,7 +7,7 @@ import { ScreenProvider } from "./contexts/ScreenProvider";
 import { TokenContextProvider } from "./contexts/TokenContextProvider";
 import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 
-import { IInit, JupiterEmbed } from "./types";
+import { IInit, JupiterTerminal } from "./types";
 
 const renderJupiterApp = (props: IInit) => {
   return (
@@ -25,7 +25,7 @@ const renderJupiterApp = (props: IInit) => {
 
 const containerId = "jupiter-terminal";
 
-const init: JupiterEmbed["init"] = (props) => {
+const init: JupiterTerminal["init"] = (props) => {
   const { passThroughWallet, onSwapError, onSuccess, ...restProps } = props;
 
   if (props.mode === "outputOnly" && !props.mint) {
@@ -57,7 +57,7 @@ const init: JupiterEmbed["init"] = (props) => {
   window.Jupiter.onSuccess = onSuccess;
 };
 
-const resume: JupiterEmbed["resume"] = () => {
+const resume: JupiterTerminal["resume"] = () => {
   const instanceExist = document.getElementById(containerId);
   if (instanceExist) {
     instanceExist.classList.remove("hidden");
@@ -66,14 +66,14 @@ const resume: JupiterEmbed["resume"] = () => {
   }
 };
 
-const close: JupiterEmbed["close"] = () => {
+const close: JupiterTerminal["close"] = () => {
   const targetDiv = document.getElementById(containerId);
   if (targetDiv) {
     targetDiv.classList.add("hidden");
   }
 };
 
-const Jupiter: JupiterEmbed = {
+const Jupiter: JupiterTerminal = {
   _instance: null,
   passThroughWallet: null,
   root: null,
