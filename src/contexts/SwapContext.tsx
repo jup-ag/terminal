@@ -34,6 +34,7 @@ export interface ISwapContext {
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
   mode: IInit['mode'];
+  displayMode: IInit['displayMode'];
   mint: IInit['mint'];
   swapping: {
     totalTxs: number;
@@ -64,6 +65,7 @@ export const initialSwapContext: ISwapContext = {
   onSubmit: async () => null,
   lastSwapResult: null,
   mode: 'default',
+  displayMode: 'modal',
   mint: undefined,
   swapping: {
     totalTxs: 0,
@@ -88,7 +90,7 @@ export function useSwapContext(): ISwapContext {
   return useContext(SwapContext);
 }
 
-export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'], children: ReactNode }> = ({ mode, mint, children }) => {
+export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: IInit['mode'], mint: IInit['mint'], children: ReactNode }> = ({ displayMode, mode, mint, children }) => {
   const { tokenMap } = useTokenContext()
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
@@ -258,6 +260,7 @@ export const SwapContextProvider: FC<{ mode: IInit['mode'], mint: IInit['mint'],
       lastSwapResult,
       reset,
       mode,
+      displayMode,
       mint,
       swapping: {
         totalTxs,

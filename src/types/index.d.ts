@@ -10,6 +10,10 @@ export interface IInit {
   mode: 'default' | 'outputOnly'
   mint?: string;
   endpoint: string;
+
+  // Display & Styling
+  displayMode?: 'modal' | 'integrated' | 'widget';
+  integratedTargetId?: string;
   containerStyles?: CSSProperties;
   containerClassName?: string;
 

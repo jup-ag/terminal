@@ -26,7 +26,7 @@ const renderJupiterApp = (props: IInit) => {
 const containerId = "jupiter-terminal";
 
 const init: JupiterTerminal["init"] = (props) => {
-  const { passThroughWallet, onSwapError, onSuccess, ...restProps } = props;
+  const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
   if (props.mode === "outputOnly" && !props.mint) {
     throw new Error("outputOnly mode requires a mint!");
@@ -43,7 +43,19 @@ const init: JupiterTerminal["init"] = (props) => {
   }
 
   targetDiv.id = containerId;
-  document.body.appendChild(targetDiv);
+  targetDiv.classList.add('w-full')
+  targetDiv.classList.add('h-full')
+  
+  if (restProps.displayMode === 'integrated') {
+    const target = document.getElementById(integratedTargetId!);
+    if (!target) {
+      throw new Error(`Jupiter Terminal: document.getElementById cannot find ${integratedTargetId}`);
+    }
+    
+    target?.appendChild(targetDiv);
+  } else {
+    document.body.appendChild(targetDiv);
+  }
 
   const element = renderJupiterApp(restProps);
   const root = createRoot(targetDiv);

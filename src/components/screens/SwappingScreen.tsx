@@ -38,6 +38,7 @@ const ErrorIcon = () => {
 
 const SwappingScreen = () => {
   const {
+    displayMode,
     lastSwapResult,
     reset,
     swapping: {
@@ -80,7 +81,10 @@ const SwappingScreen = () => {
   }, [lastSwapResult])
 
   const onClose = () => {
-    window.Jupiter.close();
+    if (displayMode === 'modal') {
+      window.Jupiter.close();
+    }
+
     reset();
     setScreen('Initial');
   }

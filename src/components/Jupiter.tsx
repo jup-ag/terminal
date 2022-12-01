@@ -22,9 +22,11 @@ const defaultStyles: CSSProperties = {
 }
 
 const Content = ({
+  displayMode,
   containerStyles,
   containerClassName,
 }: {
+  displayMode: IInit['displayMode'],
   containerStyles: IInit["containerStyles"];
   containerClassName: IInit["containerClassName"];
 }) => {
@@ -36,11 +38,35 @@ const Content = ({
     window.Jupiter.close();
   };
 
+  const displayClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+    } else if (displayMode === 'integrated') {
+      return 'flex items-center justify-center w-full h-full'
+    }
+    else if (displayMode === 'widget') {
+      return '';
+    }
+  }, [displayMode]);
+  
+  const contentClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
+    } else if (displayMode === 'integrated') {
+      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
+    }
+    else if (displayMode === 'widget') {
+      return '';
+    }
+  }, [displayMode]);
+
   return (
-    <div className="fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50">
+    <div className={displayClassName}>
       <div
         style={{ ...defaultStyles, ...containerStyles }}
-        className={`flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`}
+        className={contentClassName}
       >
         {screen === "Initial" ? (
           <>
@@ -57,16 +83,18 @@ const Content = ({
         {screen === "Swapping" ? <SwappingScreen /> : null}
       </div>
 
-      <div
-        onClick={onClose}
-        className="absolute w-screen h-screen top-0 left-0"
-      />
+      {(!displayMode || displayMode === 'modal') ? (
+        <div
+          onClick={onClose}
+          className="absolute w-screen h-screen top-0 left-0"
+        />
+      ) : null}
     </div>
   );
 };
 
 const JupiterApp = (props: IInit) => {
-  const { mode, mint, containerStyles, containerClassName } = props;
+  const { mode, mint, displayMode, containerStyles, containerClassName } = props;
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -84,8 +112,8 @@ const JupiterApp = (props: IInit) => {
           wrapUnwrapSOL={true}
           userPublicKey={walletPublicKey || undefined}
         >
-          <SwapContextProvider mode={mode} mint={mint}>
-            <Content containerStyles={containerStyles} containerClassName={containerClassName} />
+          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint}>
+            <Content displayMode={displayMode} containerStyles={containerStyles} containerClassName={containerClassName} />
           </SwapContextProvider>
         </JupiterProvider>
       </SLippageConfigProvider>
