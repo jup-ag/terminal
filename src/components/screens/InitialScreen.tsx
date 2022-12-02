@@ -58,8 +58,10 @@ const InitialScreen = ({
       !form.toValue ||
       !selectedSwapRoute ||
       loading
-    )
+    ) {
+      setErrors({});
       return true;
+    }
 
     if (Number(form.fromValue) > balance) {
       setErrors({
