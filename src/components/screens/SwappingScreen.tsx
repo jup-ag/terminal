@@ -42,6 +42,7 @@ const SwappingScreen = () => {
     lastSwapResult,
     reset,
     swapping: {
+      totalTxs,
       txStatus,
     },
     jupiter: {
@@ -51,6 +52,13 @@ const SwappingScreen = () => {
   const { setScreen } = useScreenState();
 
   const [errorMessage, setErrorMessage] = useState('');
+
+  const onSwapMore = () => {
+    reset();
+    setErrorMessage('');
+    setScreen('Initial');
+    refresh();
+  }
 
   const onGoBack = () => {
     reset({ resetValues: false });
@@ -105,16 +113,21 @@ const SwappingScreen = () => {
           <div className='text-white'>
             Performing Swap
           </div>
+
         </div>
 
         <div className='flex justify-center mt-9'>
           <JupiterLogo width={64} height={64} />
         </div>
 
+        {totalTxs === 0 ? (<span className='text-white text-center mt-8 text-sm px-4'>Awaiting approval from your wallet...</span>) : null}
+        {totalTxs > 1 ? <span className='text-white text-center mt-8 text-sm px-4'>Because of transaction size limits, we need to split up the transactions</span> : ''}
+
         <div className='flex flex-col w-full justify-center items-center px-5 mt-7'>
           {txStatus && txStatus.map(item => (
             <div key={item.txid} className='flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2'>
               {item.status === 'loading' ? <Spinner spinnerColor={'white'} /> : <SuccessIcon />}
+
 
               <div className='ml-4 text-white text-sm'>
                 {item.txDescription === 'SETUP' ? <span>Setup</span> : null}
@@ -126,10 +139,21 @@ const SwappingScreen = () => {
         </div>
 
         {swapState === 'success' ? (
-          <div className='mt-auto px-5'>
+          <div className='mt-auto px-5 flex space-x-2'>
             <JupButton
               size="lg"
-              className="w-full mt-4 disabled:opacity-50"
+              className="w-full mt-4"
+              type="button"
+              onClick={onSwapMore}
+            >
+              <SexyChameleonText>
+                <span className='text-sm'>Swap More</span>
+              </SexyChameleonText>
+            </JupButton>
+
+            <JupButton
+              size="lg"
+              className="w-full mt-4"
               type="button"
               onClick={onClose}
             >
