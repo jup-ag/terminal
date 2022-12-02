@@ -2,11 +2,32 @@
 
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
+Demo: https://jupiter-terminal.vercel.app
+
 ---
 
-## Jupiter Terminal allow two mode of operation,
+## Core features
 
-## Mode 1: Wallet passthrough
+- Built-in wallets, or passthrough wallets from your dApp
+- Modal, Integrated, or Widget mode.
+
+---
+
+## Getting started
+
+### Integrating the widget
+
+In your document, link and embed `main.js` and `main.css`.
+
+```tsx
+<head>
+  <script src={`https://jupiter-terminal.vercel.app/main.js`}></script>
+  <link rel="stylesheet" href={`https://jupiter-terminal.vercel.app/main.css`} />
+</head>
+```
+
+### Built-in wallets, or passthrough wallets from your dApp
+*_Mode 1: Wallet passthrough_*
 
 If your user have connected their wallet via your dApp, you may passthrough the wallet instance via the `init({ passThroughWallet: wallet })`.
 
@@ -26,26 +47,47 @@ const App = () => {
 };
 ```
 
-## Mode 2: Built-in wallet
+*_Mode 2: Built-in wallet_*
 
 If your user is not connected, Jupiter Terminal have several built-in wallets that user can connect and perform swap directly.
 
 ---
 
-Getting started
+### Modal, Integrated, or Widget mode.
+### *_Modal_*
 
-## Integrating the widget
-
-In your document, link and embed `main.js` and `main.css`.
+By default, Jupiter renders as a modal and take up the whole screen.
+<img src="public/demo/modal-demo.png" />
 
 ```tsx
-<head>
-  <script src={`https://jupiter-terminal.vercel.app/main.js`}></script>
-  <link rel="stylesheet" href={`https://jupiter-terminal.vercel.app/main.css`} />
-</head>
+window.Jupiter.init({ displayMode: 'modal' });
 ```
 
-## Init / Show the widget
+### *_Integrated_*
+
+Integrated mode renders Jupiter Terminal as a part of your dApp.
+<img src="public/demo/integrated-demo.png" />
+
+```tsx
+window.Jupiter.init({ displayMode: 'integrated' });
+```
+
+### *_Widget_*
+<img src="public/demo/widget-demo.png" />
+Widget mode renders Jupiter Terminal as a widget that can be placed at different position.
+
+```tsx
+
+```tsx
+window.Jupiter.init({ 
+  displayMode: 'widget',
+  widgetPosition: 'bottom-right', // 'bottom-left', 'top-right', 'top-left'
+});
+```
+
+---
+
+### Init / Show the widget
 
 ```tsx
 const App = () => {
@@ -82,7 +124,7 @@ const App = () => {
 };
 ```
 
-## Mode
+### Mode
 - `default`: Default mode, user can swap between any token pair.
 - `outputOnly`: Output only mode, user can only swap to destination pair.
 ```ts
@@ -95,7 +137,7 @@ const App = () => {
 ```
 
 
-## Resuming / Closing activity
+### Resuming / Closing activity
 - Everytime `init()` is called, it will create a new activity. 
 
 - If you want to resume the previous activity, you can use `resume()`.
@@ -110,7 +152,7 @@ if (window.Jupiter._instance) {
 window.Jupiter.close();
 ```
 
-## onSuccess/onSwapError callback
+### onSuccess/onSwapError callback
 `onSuccess()` reference can be provided, and will be called when swap is successful.
 
 While `onSwapError()` will be called when an error has occurred.
@@ -126,7 +168,7 @@ window.Jupiter.init({
 });
 ```
 
-## Customising styles: CSSProperties
+### Customising styles: CSSProperties
 Any CSS-in-JS can be injected to the outer-most container via containerStyles api.
 
 Examples:
@@ -147,7 +189,7 @@ window.Jupiter.init({
 });
 ```
 
-## Customising className: Tailwind className
+### Customising className: Tailwind className
 Tailwind classes can be injected to the outer-most container via containerClassName api.
 
 Example:
@@ -162,7 +204,7 @@ window.Jupiter.init({
 
 ---
 
-## Known issue
+### Known issue
 
 - Wallet passthrough supports does not work for Solflare
   - Jupiter Terminal currently prompts the user to connect their Solflare wallet again, to perform swap.
