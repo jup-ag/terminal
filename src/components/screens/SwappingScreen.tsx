@@ -50,12 +50,10 @@ const SwappingScreen = () => {
   } = useSwapContext();
   const { setScreen } = useScreenState();
 
-  const [status, setStatus] = useState<'error' | 'success' | 'loading'>('loading');
   const [errorMessage, setErrorMessage] = useState('');
 
   const onGoBack = () => {
-    reset();
-    setStatus('loading')
+    reset({ resetValues: false });
     setErrorMessage('');
     setScreen('Initial');
     refresh();
@@ -63,7 +61,6 @@ const SwappingScreen = () => {
 
   useEffect(() => {
     if (lastSwapResult && 'error' in lastSwapResult) {
-      setStatus('error');
       setErrorMessage(lastSwapResult.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
@@ -71,8 +68,6 @@ const SwappingScreen = () => {
       }
       return;
     } else if (lastSwapResult && 'txid' in lastSwapResult) {
-      setStatus('success');
-
       if (window.Jupiter.onSuccess) {
         window.Jupiter.onSuccess({ txid: lastSwapResult.txid })
       }

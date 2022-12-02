@@ -44,7 +44,7 @@ export interface ISwapContext {
       status: 'loading' | 'fail' | 'success';
     }>,
   },
-  reset: () => void,
+  reset: (props?: { resetValues: boolean }) => void,
   jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & { exchange: ReturnType<typeof useJupiter>['exchange'] | undefined };
 }
 
@@ -184,7 +184,7 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     txDescription: IConfirmationTxDescription,
     status: 'loading' | 'fail' | 'success';
   }>>([]);
-  
+
   const onTransaction: OnTransaction = async (
     txid,
     totalTxs,
@@ -199,7 +199,7 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     }
 
     const success = !((await awaiter) instanceof Error);
-    
+
     setTxStatus((prev) => {
       const tx = prev.find((tx) => tx.txid === txid);
       if (tx) {
@@ -235,8 +235,11 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     refreshAccount();
   }
 
-  const reset = useCallback(() => {
-    setForm(initialSwapContext.form);
+  const reset = useCallback(({ resetValues } = { resetValues: true }) => {
+    if (resetValues) {
+      setForm(initialSwapContext.form);
+    }
+
     setSelectedSwapRoute(null);
     setErrors(initialSwapContext.errors);
     setLastSwapResult(initialSwapContext.lastSwapResult);
