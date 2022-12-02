@@ -96,7 +96,7 @@ const SwappingScreen = () => {
     }
 
     const allSuccess = txStatus.every(item => item.status !== 'loading')
-    if (allSuccess) {
+    if (txStatus.length > 0 && allSuccess) {
       return 'success'
     }
 
