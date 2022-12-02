@@ -9,28 +9,28 @@ specifiers:
   '@jup-ag/react-hook': 3.0.0-beta.8-8f7d88f
   '@project-serum/anchor': ^0.24.2
   '@solana/spl-token': 0.1.8
-  '@solana/spl-token-registry': ~0.2.4574
-  '@solana/wallet-adapter-backpack': ^0.1.10
+  '@solana/spl-token-registry': ~0.2.1105
+  '@solana/wallet-adapter-backpack': ^0.1.9
   '@solana/wallet-adapter-base': 0.9.18
-  '@solana/wallet-adapter-glow': ^0.1.14
-  '@solana/wallet-adapter-phantom': ^0.9.18
+  '@solana/wallet-adapter-glow': ^0.1.13
+  '@solana/wallet-adapter-phantom': ^0.9.17
   '@solana/wallet-adapter-react': 0.15.19
-  '@solana/wallet-adapter-solflare': ^0.6.19
+  '@solana/wallet-adapter-solflare': ^0.6.18
   '@solana/wallet-adapter-wallets': 0.19.0
-  '@solana/web3.js': ~1.66.5
-  '@svgr/webpack': ^6.5.1
-  '@types/bn.js': ^5.1.1
+  '@solana/web3.js': ~1.66.2
+  '@svgr/webpack': ^6.5.0
+  '@types/bn.js': ^5.1.0
   '@types/bs58': ^4.0.1
   '@types/node': 18.11.5
   '@types/react': 18.0.23
   '@types/react-dom': 18.0.7
   '@types/react-virtualized-auto-sizer': ~1.0.1
   '@types/react-window': ~1.8.5
-  autoprefixer: ^10.4.13
+  autoprefixer: ^10.4.0
   bn.js: 5.2.1
   bs58: ^4.0.1
-  classnames: ^2.3.2
-  css-loader: ^6.7.2
+  classnames: ^2.3.1
+  css-loader: ^6.7.1
   css-minimizer-webpack-plugin: ^4.2.2
   cssnano: ^5.1.14
   decimal.js: 10.3.1
@@ -38,28 +38,28 @@ specifiers:
   eslint-config-next: 13.0.0
   jazzicon: ^1.5.0
   jsbi: 4.3.0
-  mini-css-extract-plugin: ^2.7.1
+  mini-css-extract-plugin: ^2.6.1
   next: 13.0.0
   next-themes: 0.2.0
   next-transpile-modules: 9.0.0
   node-polyfill-webpack-plugin: ^2.0.1
-  postcss: ^8.4.19
-  postcss-loader: ^7.0.2
-  postcss-preset-env: ^7.8.3
+  postcss: ^8.4.18
+  postcss-loader: ^7.0.1
+  postcss-preset-env: ^7.8.2
   react: 18.2.0
   react-dom: 18.2.0
   react-hook-form: 7.8.8
   react-number-format: 4.8.0
-  react-virtualized-auto-sizer: ~1.0.7
-  react-window: ~1.8.8
-  sass: ^1.56.1
-  sass-loader: ^13.2.0
+  react-virtualized-auto-sizer: ~1.0.6
+  react-window: ~1.8.6
+  sass: ^1.56.0
+  sass-loader: ^13.1.0
   style-loader: ^3.3.1
   svg-inline-loader: ^0.8.2
-  tailwindcss: ~3.1.8
-  ts-loader: ^9.4.2
+  tailwindcss: '3.1'
+  ts-loader: ^9.4.1
   typescript: 4.8.4
-  webpack: ^5.75.0
+  webpack: ^5.74.0
   webpack-bundle-analyzer: ^4.7.0
   webpack-cli: ^4.10.0
 
@@ -5017,7 +5017,7 @@ packages:
   /axios/0.25.0:
     resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -5025,7 +5025,7 @@ packages:
   /axios/1.2.0:
     resolution: {integrity: sha512-zT7wZyNYu3N5Bu0wuZ6QccIf93Qk1eV8LOewxgjOZFd2DenOs98cJ7+Y6703d0wkaXGY6/nZd4EweJaHz9uzQw==}
     dependencies:
-      follow-redirects: 1.15.2
+      follow-redirects: 1.15.2_debug@4.3.2
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
