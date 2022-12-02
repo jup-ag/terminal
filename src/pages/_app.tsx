@@ -10,6 +10,7 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import { Jupiter } from '../index';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
 import { IInit } from 'src/types';
+import WidgetTerminal from 'src/content/WidgetTerminal';
 
 
 if (typeof window !== 'undefined') {
@@ -35,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <div className='space-x-4 mt-4'>
             <JupButton onClick={() => { setTab('modal') }} type='button' className={tab === 'modal' ? '' : 'opacity-20 hover:opacity-70'}>Modal</JupButton>
             <JupButton onClick={() => { setTab('integrated') }} type='button' className={tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70'}>Integrated</JupButton>
-            <JupButton onClick={() => { setTab('widget') }} disabled type='button' className={tab === 'widget' ? '' : 'opacity-20 hover:opacity-70'}>Widget</JupButton>
+            <JupButton onClick={() => { setTab('widget') }} type='button' className={tab === 'widget' ? '' : 'opacity-20 hover:opacity-70'}>Widget</JupButton>
           </div>
         </div>
 
@@ -58,6 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
         {tab === 'widget' ? (
           <>
             <h2 className='font-bold text-2xl mb-4'>Widget Terminal</h2>
+            <WidgetTerminal />
           </>
         ) : null}
       </div>

@@ -37,7 +37,7 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
   };
 
   const renderWalletList = (walletList: WalletContextState['wallets'], startKeyboardIndex: number = 0) => (
-    <div className="h-full overflow-y-auto space-y-2" translate="no">
+    <div className="h-full overflow-y-auto space-y-2 webkit-scrollbar" translate="no">
       {walletList.map((wallet, index) => {
         return (
           <ul key={index}>
@@ -65,7 +65,7 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
         <div className=' w-6 h-6' />
       </div>
 
-      <div className='mt-7'>
+      <div className='mt-7 overflow-auto'>
         {renderWalletList(
           wallets
             .sort((a, b) => PRIORITISE[a.readyState] - PRIORITISE[b.readyState])

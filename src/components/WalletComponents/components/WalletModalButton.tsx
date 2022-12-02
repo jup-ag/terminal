@@ -13,14 +13,15 @@ export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void
 
   return (
     <button type='button' className='py-2 px-3 h-7 flex items-center rounded-2xl text-xs bg-[#191B1F] text-white' onClick={handleClick}>
-      {connecting && (
+      {connecting ? (
         <span>
           <span>Connecting...</span>
         </span>
+      ) : (
+        <span>
+          <span>Connect Wallet</span>
+        </span>
       )}
-      <span>
-        <span>Connect Wallet</span>
-      </span>
     </button>
   );
 };

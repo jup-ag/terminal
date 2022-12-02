@@ -101,7 +101,7 @@ const RouteSelectionScreen: React.FC<{ onClose(): void }> = ({ onClose }) => {
 
       <p className='text-xs text-white/50 my-3'>Jupiter automatically selects a route with the best price, however you can select a route manually.</p>
 
-      <div className="mt-2" style={{ flexGrow: 1 }}>
+      <div className="mt-2 overflow-y-auto overflow-x-hidden webkit-scrollbar" style={{ flexGrow: 1 }}>
         {(availableRoutes || []).length > 0 ? (
           <List
             ref={listRef}

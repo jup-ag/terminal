@@ -71,7 +71,7 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading,
       </div>
 
       <div className="flex items-center justify-between text-xs text-white/30">
-        <div className="">
+        <div>
           <span>Price Impact</span>
         </div>
         <div>{priceImpactText}</div>

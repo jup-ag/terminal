@@ -24,7 +24,7 @@ const Deposits = ({
               <div className="max-w-xs p-2 rounded-lg text-white-75">
                 <ul className="pl-2">
                   {hasSerumDeposit && (
-                    <li className="">
+                    <li>
                       <p>
                         <span>Open serum require an OpenOrders account but it can be closed later on.</span>{' '}
                         <a

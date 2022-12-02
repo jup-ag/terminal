@@ -12,14 +12,8 @@ import { WalletButton } from './WalletComponents';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal'
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { wallet } = useWalletPassThrough();
   const { slippage } = useSlippageConfig();
   const { jupiter: { refresh } } = useSwapContext();
-
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
-
   const [showSlippapgeSetting, setShowSlippageSetting] = useState(false);
 
   return (

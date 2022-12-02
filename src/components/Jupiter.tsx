@@ -42,11 +42,8 @@ const Content = ({
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
       return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
-    } else if (displayMode === 'integrated') {
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex items-center justify-center w-full h-full'
-    }
-    else if (displayMode === 'widget') {
-      return '';
     }
   }, [displayMode]);
   
@@ -54,11 +51,8 @@ const Content = ({
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
       return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
-    } else if (displayMode === 'integrated') {
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
-    }
-    else if (displayMode === 'widget') {
-      return '';
     }
   }, [displayMode]);
 

@@ -6,6 +6,9 @@ declare global {
   }
 }
 
+export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
+export type WidgetSize = 'sm' | 'default';
+
 export interface IInit {
   mode: 'default' | 'outputOnly'
   mint?: string;
@@ -14,6 +17,10 @@ export interface IInit {
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';
   integratedTargetId?: string;
+  widgetStyle?: {
+    position?: WidgetPosition;
+    size?: WidgetSize;
+  };
   containerStyles?: CSSProperties;
   containerClassName?: string;
 
