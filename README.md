@@ -2,7 +2,7 @@
 
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
-Demo: https://jupiter-terminal.vercel.app
+Demo: https://terminal.jup.ag
 
 ---
 
@@ -21,8 +21,8 @@ In your document, link and embed `main.js` and `main.css`.
 
 ```tsx
 <head>
-  <script src={`https://jupiter-terminal.vercel.app/main.js`}></script>
-  <link rel="stylesheet" href={`https://jupiter-terminal.vercel.app/main.css`} />
+  <script src={`https://terminal.jup.ag/main.js`}></script>
+  <link rel="stylesheet" href={`https://terminal.jup.ag/main.css`} />
 </head>
 ```
 
