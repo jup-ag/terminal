@@ -7,7 +7,6 @@ import { ScreenProvider } from "./contexts/ScreenProvider";
 import { TokenContextProvider } from "./contexts/TokenContextProvider";
 import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
 import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
-import ChevronUpSolidIcon from "./icons/ChevronUpSolidIcon";
 import JupiterLogo from "./icons/JupiterLogo";
 
 import { IInit, JupiterTerminal } from "./types";

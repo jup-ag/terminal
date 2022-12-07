@@ -88,7 +88,7 @@ const Content = ({
 };
 
 const JupiterApp = (props: IInit) => {
-  const { mode, mint, displayMode, containerStyles, containerClassName } = props;
+  const { mode, mint, displayMode, containerStyles, containerClassName, platformFeeAndAccounts } = props;
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -105,6 +105,7 @@ const JupiterApp = (props: IInit) => {
           routeCacheDuration={ROUTE_CACHE_DURATION}
           wrapUnwrapSOL={true}
           userPublicKey={walletPublicKey || undefined}
+          platformFeeAndAccounts={platformFeeAndAccounts}
         >
           <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint}>
             <Content displayMode={displayMode} containerStyles={containerStyles} containerClassName={containerClassName} />

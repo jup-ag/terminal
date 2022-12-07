@@ -49,7 +49,7 @@ const SwappingScreen = () => {
       refresh,
     }
   } = useSwapContext();
-  const { setScreen } = useScreenState();
+  const { screen, setScreen } = useScreenState();
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -68,6 +68,8 @@ const SwappingScreen = () => {
   }
 
   useEffect(() => {
+    if (screen !== 'Swapping') return;
+
     if (lastSwapResult && 'error' in lastSwapResult) {
       setErrorMessage(lastSwapResult.error?.message || '');
 
@@ -84,7 +86,7 @@ const SwappingScreen = () => {
   }, [lastSwapResult])
 
   const onClose = () => {
-    if (displayMode === 'modal') {
+    if (!displayMode || displayMode === 'modal') {
       window.Jupiter.close();
     }
 

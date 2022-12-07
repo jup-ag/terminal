@@ -10,7 +10,8 @@ Demo: https://terminal.jup.ag
 
 - Built-in wallets, or passthrough wallets from your dApp
 - Modal, Integrated, or Widget mode.
-
+- Mode (default, outputOnly) to allow user to swap between any token pair, or only swap to destination pair.
+- Fee supports
 ---
 
 ## Getting started
@@ -25,8 +26,15 @@ In your document, link and embed `main.js` and `main.css`.
   <link rel="stylesheet" href={`https://terminal.jup.ag/main.css`} />
 </head>
 ```
+Then, 
+```tsx
+window.Jupiter.init({ mode: 'default', endpoint: "https://api.mainnet-beta.solana.com",});
+```
 
-### Built-in wallets, or passthrough wallets from your dApp
+--- 
+
+
+## Built-in wallets, or passthrough wallets from your dApp
 *_Mode 1: Wallet passthrough_*
 
 If your user have connected their wallet via your dApp, you may passthrough the wallet instance via the `init({ passThroughWallet: wallet })`.
@@ -87,43 +95,6 @@ window.Jupiter.init({
 
 ---
 
-### Init / Show the widget
-
-```tsx
-const App = () => {
-  const { wallet } = useWallet();
-
-  const initJupiter = () => {
-    if (wallet) {
-      // We do not recommend using a public RPC due to 429 rate limits.
-      window.Jupiter.init({
-        mode: 'default',
-        endpoint: "https://api.mainnet-beta.solana.com",
-        passThroughWallet: wallet,
-      });
-    }
-  };
-
-  const initJupiterWithoutWallet = () => {
-    window.Jupiter.init({ 
-      mode: 'default',
-      endpoint: "https://api.mainnet-beta.solana.com"
-    });
-  };
-
-  return (
-    <div>
-      <button type="button" onClick={initJupiter}>
-        Open Jupiter with In-App
-      </button>
-      <button type="button" onClick={initJupiterWithoutWallet}>
-        Open Jupiter with Built-in
-      </button>
-    </div>
-  );
-};
-```
-
 ### Mode
 - `default`: Default mode, user can swap between any token pair.
 - `outputOnly`: Output only mode, user can only swap to destination pair.
@@ -136,6 +107,7 @@ const App = () => {
   });
 ```
 
+---
 
 ### Resuming / Closing activity
 - Everytime `init()` is called, it will create a new activity. 
@@ -151,6 +123,36 @@ if (window.Jupiter._instance) {
 
 window.Jupiter.close();
 ```
+
+---
+### Fee supports
+Similar to Jupiter, Jupiter Terminal supports fee for integrators.
+
+There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
+
+
+Refer to [Adding your own fees](https://docs.jup.ag/integrating-jupiter/additional-guides/adding-your-own-fees) docs for more details.
+
+*Note: You will need to create the Token fee accounts to collect the platform fee.*
+
+```tsx
+import { getPlatformFeeAccounts } from '@jup-ag/core';
+
+// Jupiter Core provides a helper function that returns all your feeAccounts
+const platformFeeAndAccounts = {
+  feeBps: 50,
+  feeAccounts: await getPlatformFeeAccounts(
+    connection,
+    new PublicKey('BUX7s2ef2htTGb2KKoPHWkmzxPj4nTWMWRgs5CSbQxf9') // The platform fee account owner
+  ) // map of mint to token account pubkey
+}
+
+window.Jupiter.init({
+  // ...
+  platformFeeAndAccounts,
+});
+```
+---
 
 ### onSuccess/onSwapError callback
 `onSuccess()` reference can be provided, and will be called when swap is successful.
