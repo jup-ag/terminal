@@ -18,7 +18,7 @@ module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    Jupiter: "./src/widget/index.tsx",
+    Jupiter: "./src/index.tsx",
   },
   cache: {
     type: "filesystem",
@@ -103,15 +103,8 @@ module.exports = {
         // The default bundle of our code
         default: {
           name: 'default',
-          test: /src\/index.ts/,
           filename: `${bundleName}.js`,
           reuseExistingChunk: true,
-        },
-        app: {
-          name: 'app',
-          chunks: 'all',
-          test: /.*\.(ts|tsx)$/,
-          filename: `${bundleName}-app.js`,
         },
         // node modules
         vendors: {
