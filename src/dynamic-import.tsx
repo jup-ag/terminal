@@ -1,27 +1,74 @@
-import React, { useMemo, useState } from "react";
-import { createRoot } from "react-dom/client";
+import React, { CSSProperties, useMemo, useState, Suspense } from "react";
 
 import JupiterApp from "./components/Jupiter";
 import { ContextProvider } from "./contexts/ContextProvider";
 import { ScreenProvider } from "./contexts/ScreenProvider";
 import { TokenContextProvider } from "./contexts/TokenContextProvider";
 import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
+import { IInit } from "./types";
+
 import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
 import JupiterLogo from "./icons/JupiterLogo";
+import { createRoot } from "react-dom/client";
 
-import { IInit, JupiterTerminal } from "./types";
+
+const defaultStyles: CSSProperties = {
+  zIndex: 50
+}
 
 const RenderJupiter = (props: IInit) => {
+  const displayMode = props.displayMode;
+  const containerStyles = props.containerStyles;
+  const containerClassName = props.containerClassName;
+
+  const displayClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex items-center justify-center w-full h-full'
+    }
+  }, [displayMode]);
+
+  const contentClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
+    }
+  }, [displayMode]);
+
+  const onClose = () => {
+    if (window.Jupiter) {
+      window.Jupiter.close();
+    }
+  };
+
   return (
-    <ContextProvider endpoint={props.endpoint}>
-      <WalletPassthroughProvider>
-        <TokenContextProvider>
-          <ScreenProvider>
-            <JupiterApp  {...props} />
-          </ScreenProvider>
-        </TokenContextProvider>
-      </WalletPassthroughProvider>
-    </ContextProvider>
+    <div className={displayClassName}>
+      <div
+        style={{ ...defaultStyles, ...containerStyles }}
+        className={contentClassName}
+      >
+        <ContextProvider endpoint={props.endpoint}>
+          <WalletPassthroughProvider>
+            <TokenContextProvider>
+              <ScreenProvider>
+                <JupiterApp  {...props} />
+              </ScreenProvider>
+            </TokenContextProvider>
+          </WalletPassthroughProvider>
+        </ContextProvider>
+      </div>
+
+      {(!displayMode || displayMode === 'modal') ? (
+        <div
+          onClick={onClose}
+          className="absolute w-screen h-screen top-0 left-0"
+        />
+      ) : null}
+    </div>
   );
 };
 
@@ -96,9 +143,8 @@ const RenderWidget = (props: IInit) => {
   )
 }
 
-const containerId = "jupiter-terminal";
 
-const init: JupiterTerminal["init"] = (props) => {
+const init = async (props: IInit, containerId: string) => {
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
   if (props.mode === "outputOnly" && !props.mint) {
@@ -132,9 +178,17 @@ const init: JupiterTerminal["init"] = (props) => {
 
   let element;
   if (restProps.displayMode === 'widget') {
-    element = <RenderWidget {...restProps} />;
+    element = (
+      <Suspense fallback={<div>Loading...</div>}>
+        <RenderWidget {...restProps} />
+      </Suspense>
+    );
   } else {
-    element = <RenderJupiter {...props} />;
+    element = (
+      <Suspense fallback={<div>Loading...</div>}>
+        <RenderJupiter {...props} />;
+      </Suspense>
+    );
   }
   const root = createRoot(targetDiv);
   root.render(element);
@@ -147,29 +201,4 @@ const init: JupiterTerminal["init"] = (props) => {
   window.Jupiter.onSuccess = onSuccess;
 };
 
-const resume: JupiterTerminal["resume"] = () => {
-  const instanceExist = document.getElementById(containerId);
-  if (instanceExist) {
-    instanceExist.classList.remove("hidden");
-    instanceExist.classList.add("block");
-    return;
-  }
-};
-
-const close: JupiterTerminal["close"] = () => {
-  const targetDiv = document.getElementById(containerId);
-  if (targetDiv) {
-    targetDiv.classList.add("hidden");
-  }
-};
-
-const Jupiter: JupiterTerminal = {
-  _instance: null,
-  passThroughWallet: null,
-  root: null,
-  init,
-  resume,
-  close,
-};
-
-export { Jupiter, init, close };
+export { init };

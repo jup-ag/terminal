@@ -5,9 +5,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const packageJson = require("./package.json");
+
 const analyseBundle = process.env.ANALYSE === 'true';
-const packageJson = require('./package.json');
-const bundleName = `main-${packageJson.version}`
+const bundleName = `main-${packageJson.version}`;
 
 if (!bundleName) {
   throw new Error('Bundle name/version is not set');
@@ -62,6 +63,7 @@ module.exports = {
       new NodePolyfillPlugin(),
       new MiniCssExtractPlugin({
         filename: `${bundleName}.css`,
+        chunkFilename: '[name].css',
       }),
     ];
 
@@ -86,9 +88,9 @@ module.exports = {
   output: {
     library: "Jupiter",
     libraryTarget: "window",
-    filename: `${bundleName}.js`,
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
+    filename: `${bundleName}.js`, // filename are decided by splitChunks default group
   },
   optimization: {
     minimizer: [
@@ -96,5 +98,36 @@ module.exports = {
       new CssMinimizerPlugin(),
     ],
     minimize: true,
+    splitChunks: {
+      cacheGroups: {
+        // The default bundle of our code
+        default: {
+          name: 'default',
+          test: /src\/index.ts/,
+          filename: `${bundleName}.js`,
+          reuseExistingChunk: true,
+        },
+        app: {
+          name: 'app',
+          chunks: 'all',
+          test: /.*\.(ts|tsx)$/,
+          filename: `${bundleName}-app.js`,
+        },
+        // node modules
+        vendors: {
+          name: 'vendors',
+          filename: `${bundleName}.[name].js`,
+          chunks: 'all',
+          test: /[\\/]node_modules[\\/].*\.js$/,
+          reuseExistingChunk: true,
+        },
+        // Merge and prevent chunking CSS
+        styles: {
+          name: 'styles',
+          test: /\.s?css$/,
+          reuseExistingChunk: true,
+        },
+      }
+    },
   }
 };
