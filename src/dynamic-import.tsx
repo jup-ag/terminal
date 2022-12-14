@@ -1,4 +1,5 @@
 import React, { CSSProperties, useMemo, useState, Suspense } from "react";
+import { createRoot } from "react-dom/client";
 
 import JupiterApp from "./components/Jupiter";
 import { ContextProvider } from "./contexts/ContextProvider";
@@ -9,8 +10,6 @@ import { IInit } from "./types";
 
 import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
 import JupiterLogo from "./icons/JupiterLogo";
-import { createRoot } from "react-dom/client";
-
 
 const defaultStyles: CSSProperties = {
   zIndex: 50

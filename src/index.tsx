@@ -1,6 +1,3 @@
-import "tailwindcss/tailwind.css";
-import "src/styles/globals.css";
-
 const containerId = "jupiter-terminal";
 
 const init = async (props: any) => {

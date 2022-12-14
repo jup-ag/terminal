@@ -18,7 +18,7 @@ module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    Jupiter: "./src/index.tsx",
+    Jupiter: "./src/library.tsx",
   },
   cache: {
     type: "filesystem",
