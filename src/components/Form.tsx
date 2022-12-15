@@ -208,9 +208,11 @@ const Form: React.FC<{
                           {toTokenInfo?.symbol}
                         </div>
 
-                        <span className='text-white/25 fill-current'>
-                          <ChevronDownIcon />
-                        </span>
+                        {mode === 'default' ? (
+                          <span className='text-white/25 fill-current'>
+                            <ChevronDownIcon />
+                          </span>
+                        ) : null}
                       </button>
 
                       <div className="text-right">
@@ -251,7 +253,7 @@ const Form: React.FC<{
         </div>
 
         <div className='w-full px-2'>
-          <FormError errors={errors} />
+          {walletPublicKey ? <FormError errors={errors} /> : null}
 
           {!walletPublicKey ? (
             <JupButton

@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
+
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext'
-import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import JupiterLogo from 'src/icons/JupiterLogo';
 import JupButton from '../JupButton';
 import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
-import TokenIcon from '../TokenIcon';
 
 const SuccessIcon = () => {
   return (
@@ -118,8 +118,13 @@ const SwappingScreen = () => {
 
         </div>
 
-        <div className='flex justify-center mt-9'>
-          <JupiterLogo width={64} height={64} />
+        <div className='flex w-full justify-center items-center mt-9'>
+          <div className='h-16 w-16'>
+            <Rive
+              src=" /swap-animation.riv"
+              layout={new Layout({ fit: Fit.Contain, alignment: Alignment.TopCenter })}
+            />
+          </div>
         </div>
 
         {totalTxs === 0 ? (<span className='text-white text-center mt-8 text-sm px-4'>Awaiting approval from your wallet...</span>) : null}
