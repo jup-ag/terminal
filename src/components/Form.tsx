@@ -208,9 +208,11 @@ const Form: React.FC<{
                           {toTokenInfo?.symbol}
                         </div>
 
-                        <span className='text-white/25 fill-current'>
-                          <ChevronDownIcon />
-                        </span>
+                        {mode === 'default' ? (
+                          <span className='text-white/25 fill-current'>
+                            <ChevronDownIcon />
+                          </span>
+                        ) : null}
                       </button>
 
                       <div className="text-right">
@@ -251,8 +253,6 @@ const Form: React.FC<{
         </div>
 
         <div className='w-full px-2'>
-          <FormError errors={errors} />
-
           {!walletPublicKey ? (
             <JupButton
               size="lg"
@@ -273,6 +273,8 @@ const Form: React.FC<{
               {loading ? <span className='text-sm'>Loading...</span> : <SexyChameleonText>Swap</SexyChameleonText>}
             </JupButton>
           )}
+
+          {walletPublicKey ? <FormError errors={errors} /> : null}
 
           {routes && selectedSwapRoute && fromTokenInfo && toTokenInfo ? (
             <PriceInfo

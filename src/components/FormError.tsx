@@ -8,7 +8,7 @@ const FormError: React.FC<{
       {Object.keys(errors).map((key) => (
         <div
           key={key}
-          className="w-full mt-5 bg-[#F3F5F6] dark:bg-[#292A33] border border-black/10 dark:border-white/25 shadow-row-dark py-3 px-5 space-y-1 rounded-lg backdrop-blur-[20px]"
+          className="w-full mt-5 bg-[#292A33] border border-black/10 dark:border-white/25 shadow-row-dark py-3 px-5 space-y-1 rounded-lg backdrop-blur-[20px]"
         >
           <div className="flex items-start space-x-2.5">
             <div className="flex-grow">
