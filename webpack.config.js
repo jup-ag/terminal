@@ -6,7 +6,8 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const analyseBundle = process.env.ANALYSE === 'true';
-const bundleName = process.env.BUNDLE_NAME;
+const packageJson = require('./package.json');
+const bundleName = `main-${packageJson.version}`
 
 if (!bundleName) {
   throw new Error('Bundle name/version is not set');
