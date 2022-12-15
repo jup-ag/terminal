@@ -253,8 +253,6 @@ const Form: React.FC<{
         </div>
 
         <div className='w-full px-2'>
-          {walletPublicKey ? <FormError errors={errors} /> : null}
-
           {!walletPublicKey ? (
             <JupButton
               size="lg"
@@ -275,6 +273,8 @@ const Form: React.FC<{
               {loading ? <span className='text-sm'>Loading...</span> : <SexyChameleonText>Swap</SexyChameleonText>}
             </JupButton>
           )}
+
+          {walletPublicKey ? <FormError errors={errors} /> : null}
 
           {routes && selectedSwapRoute && fromTokenInfo && toTokenInfo ? (
             <PriceInfo
