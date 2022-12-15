@@ -94,7 +94,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 w-full bg-jupiter-bg">
+      <div className="fixed z-50 bottom-0 w-full bg-jupiter-bg">
         <Footer />
       </div>
     </div>
