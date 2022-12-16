@@ -99,6 +99,6 @@ module.exports = {
       '...', // Include existing minimizer.
       new CssMinimizerPlugin(),
     ],
-    minimize: false,
+    minimize: true,
   }
 };

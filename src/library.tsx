@@ -2,7 +2,17 @@ import { createRoot } from "react-dom/client";
 import { IInit } from "./types";
 
 import "tailwindcss/tailwind.css";
-import "src/styles/globals.css";
+import { CSSProperties, useEffect, useMemo, useState } from "react";
+import JupiterLogo from "./icons/JupiterLogo";
+import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
+
+const packageJson = require("../package.json");
+const bundleName = `main-${packageJson.version}`;
+// To prevent loading styles twice on development
+// And to prevent NextJS from complaining about importing css in _app.tsx
+if (process.env.NODE_ENV !== "development") {
+  import("src/styles/globals.css")
+}
 
 const containerId = "jupiter-terminal";
 
@@ -22,6 +32,13 @@ const close = () => {
   }
 };
 
+const scriptDomain = (() => {
+  const url = (document.currentScript as HTMLScriptElement)?.src;
+  if (url) {
+    return new URL(url).origin;
+  }
+  return '';
+})() || 'https://terminal.jup.ag';
 async function loadJupiter() {
   const script = new Promise<any>((res, rej) => {
     const existing = document.getElementById(
@@ -36,7 +53,7 @@ async function loadJupiter() {
       el.onerror = rej;
       el.id = 'jupiter-load-script';
       el.type = 'text/javascript';
-      el.src = 'http://localhost:63733/main-0.1.6-app.js';
+      el.src = `${scriptDomain}/${bundleName}-app.js`;
       document.head.append(el);
     }
   });
@@ -54,26 +71,175 @@ async function loadJupiter() {
       el.onerror = rej;
       el.id = 'jupiter-load-styles';
       el.rel = 'stylesheet';
-      el.href = 'http://localhost:63733/main-0.1.6.css';
+      el.href = `${scriptDomain}/${bundleName}.css`;
       document.head.append(el);
     }
   });
 
   try {
-    const [loadedScript, loadedCss] = await Promise.all([script, css]);
-    return [loadedScript, loadedCss];
+    await Promise.all([script, css]);
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`)
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
   }
 }
 
+const defaultStyles: CSSProperties = {
+  zIndex: 50
+}
+
+const RenderLoadableJupiter = (props: IInit) => {
+  const [loaded, setLoaded] = useState(false);
+  useEffect(() => {
+    loadJupiter();
+
+    let intervalId: NodeJS.Timer;
+    if (!loaded) {
+      intervalId = setInterval(() => {
+        const instance = (window as any).Jupiter.RenderJupiter;
+        if (instance) {
+          setLoaded(true);
+        }
+      }, 50)
+    }
+    
+    return () => {
+      clearInterval(intervalId);
+    }
+  }, [loaded])
+
+  const RenderJupiter: (props: any) => JSX.Element = useMemo(() => {
+    if (loaded) {
+      return (window as any).Jupiter.RenderJupiter;
+    }
+
+    return EmptyJSX;
+  }, [loaded]);
+
+  return <RenderJupiter {...props} />;
+}
+
+const EmptyJSX = () => <></>;
+const RenderShell = (props: IInit) => {
+  const displayMode = props.displayMode;
+  const containerStyles = props.containerStyles;
+  const containerClassName = props.containerClassName;
+
+  const displayClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex items-center justify-center w-full h-full'
+    }
+  }, [displayMode]);
+
+  const contentClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
+    }
+  }, [displayMode]);
+
+  const onClose = () => {
+    if (window.Jupiter) {
+      window.Jupiter.close();
+    }
+  };
+
+  return (
+    <div className={displayClassName}>
+      <div
+        style={{ ...defaultStyles, ...containerStyles }}
+        className={contentClassName}
+      >
+        <RenderLoadableJupiter {...props} />
+      </div>
+
+      {(!displayMode || displayMode === 'modal') ? (
+        <div
+          onClick={onClose}
+          className="absolute w-screen h-screen top-0 left-0"
+        />
+      ) : null}
+    </div>
+  );
+}
+
+const RenderWidgetShell = (props: IInit) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const classes = useMemo(() => {
+    const size = props.widgetStyle?.size || 'default';
+
+    let result: { containerClassName: string, contentClassName: string, caretClassName: string } | undefined = undefined;
+    if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
+      result = {
+        containerClassName: 'bottom-6 right-6',
+        contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
+        caretClassName: size === 'default' ? 'bottom-[-18px] right-6' : 'bottom-[-18px] right-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'bottom-left') {
+      result = {
+        containerClassName: 'bottom-6 left-6',
+        contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
+        caretClassName: size === 'default' ? 'bottom-[-18px] left-6' : 'bottom-[-18px] left-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'top-left') {
+      result = {
+        containerClassName: 'top-6 left-6',
+        contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
+        caretClassName: size === 'default' ? 'top-[-18px] left-6' : 'top-[-18px] left-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'top-right') {
+      result = {
+        containerClassName: 'top-6 right-6',
+        contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
+        caretClassName: size === 'default' ? 'top-[-18px] right-6' : 'top-[-18px] right-5',
+      }
+    }
+
+    return {
+      ...result,
+      widgetContainerClassName: size === 'default' ? 'h-14 w-14' : 'h-10 w-10',
+      widgetLogoSize: size === 'default' ? 42 : 32,
+    }
+  }, [props.widgetStyle?.position, props.widgetStyle?.size]);
+
+  return (
+    <>
+      <div className={`fixed ${classes.containerClassName}`}>
+        <div
+          className={`${classes.widgetContainerClassName} rounded-full bg-[#282830] flex items-center justify-center cursor-pointer`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
+        </div>
+
+        <div
+          id="integrated-terminal"
+          className={`absolute ${classes.contentClassName} flex w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-[#282830] transition-opacity duration-300 shadow-2xl ${!isOpen ? "h-0 opacity-0" : "opacity-100"
+            }`}
+        >
+          <RenderLoadableJupiter {...props} />
+        </div>
+
+        {isOpen ? (
+          <div className={`absolute ${classes.caretClassName} w-8 h-8 text-[#282830] fill-current transition-opacity duration-500 ${!isOpen ? "opacity-0" : "opacity-100"}`}>
+            {props.widgetStyle?.position?.includes('bottom') ? <ChevronDownSolidIcon /> : <div className="rotate-180"><ChevronDownSolidIcon /></div>}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+}
+
 const init = async (props: IInit) => {
-  await loadJupiter();
-
-  const { RenderWidget, RenderJupiter } = (window as any).Jupiter
-  console.log(RenderWidget, RenderJupiter)
-
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
   if (props.mode === "outputOnly" && !props.mint) {
@@ -108,11 +274,11 @@ const init = async (props: IInit) => {
   let element;
   if (restProps.displayMode === 'widget') {
     element = (
-      <RenderWidget {...restProps} />
+      <RenderWidgetShell {...restProps} />
     );
   } else {
     element = (
-      <RenderJupiter {...props} />
+      <RenderShell {...props} />
     );
   }
   const root = createRoot(targetDiv);

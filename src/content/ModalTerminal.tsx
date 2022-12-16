@@ -111,7 +111,7 @@ const ModalTerminal = () => {
               onClick={() => {
                 window.Jupiter.init({
                   mode: 'default',
-                  endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
+                  endpoint,
                 });
               }}
             >
