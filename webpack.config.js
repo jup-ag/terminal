@@ -18,7 +18,11 @@ module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    Jupiter: "./src/library.tsx",
+    [bundleName]: "./src/library.tsx",
+    [`${bundleName}-app`]: {
+      dependOn: bundleName,
+      import: "./src/index.tsx",
+    },
   },
   cache: {
     type: "filesystem",
@@ -63,7 +67,6 @@ module.exports = {
       new NodePolyfillPlugin(),
       new MiniCssExtractPlugin({
         filename: `${bundleName}.css`,
-        chunkFilename: '[name].css',
       }),
     ];
 
@@ -90,37 +93,12 @@ module.exports = {
     libraryTarget: "window",
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
-    filename: `${bundleName}.js`, // filename are decided by splitChunks default group
   },
   optimization: {
     minimizer: [
       '...', // Include existing minimizer.
       new CssMinimizerPlugin(),
     ],
-    minimize: true,
-    splitChunks: {
-      cacheGroups: {
-        // The default bundle of our code
-        default: {
-          name: 'default',
-          filename: `${bundleName}.js`,
-          reuseExistingChunk: true,
-        },
-        // node modules
-        vendors: {
-          name: 'vendors',
-          filename: `${bundleName}.[name].js`,
-          chunks: 'all',
-          test: /[\\/]node_modules[\\/].*\.js$/,
-          reuseExistingChunk: true,
-        },
-        // Merge and prevent chunking CSS
-        styles: {
-          name: 'styles',
-          test: /\.s?css$/,
-          reuseExistingChunk: true,
-        },
-      }
-    },
+    minimize: false,
   }
 };

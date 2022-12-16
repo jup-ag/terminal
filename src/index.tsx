@@ -1,33 +1,144 @@
-const containerId = "jupiter-terminal";
+import React, { CSSProperties, useMemo, useState } from "react";
 
-const init = async (props: any) => {
-  const { init: dynamicInit } = await import("./dynamic-import");
-  dynamicInit(props, containerId)
+import JupiterApp from "./components/Jupiter";
+import { ContextProvider } from "./contexts/ContextProvider";
+import { ScreenProvider } from "./contexts/ScreenProvider";
+import { TokenContextProvider } from "./contexts/TokenContextProvider";
+import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
+import { IInit } from "./types";
+
+import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
+import JupiterLogo from "./icons/JupiterLogo";
+
+const defaultStyles: CSSProperties = {
+  zIndex: 50
 }
 
-const resume = () => {
-  const instanceExist = document.getElementById(containerId);
-  if (instanceExist) {
-    instanceExist.classList.remove("hidden");
-    instanceExist.classList.add("block");
-    return;
-  }
+const RenderJupiter = (props: IInit) => {
+  const displayMode = props.displayMode;
+  const containerStyles = props.containerStyles;
+  const containerClassName = props.containerClassName;
+
+  const displayClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex items-center justify-center w-full h-full'
+    }
+  }, [displayMode]);
+
+  const contentClassName = useMemo(() => {
+    // Default Modal
+    if (!displayMode || displayMode === 'modal') {
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
+    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
+    }
+  }, [displayMode]);
+
+  const onClose = () => {
+    if (window.Jupiter) {
+      window.Jupiter.close();
+    }
+  };
+
+  return (
+    <div className={displayClassName}>
+      <div
+        style={{ ...defaultStyles, ...containerStyles }}
+        className={contentClassName}
+      >
+        <ContextProvider endpoint={props.endpoint}>
+          <WalletPassthroughProvider>
+            <TokenContextProvider>
+              <ScreenProvider>
+                <JupiterApp  {...props} />
+              </ScreenProvider>
+            </TokenContextProvider>
+          </WalletPassthroughProvider>
+        </ContextProvider>
+      </div>
+
+      {(!displayMode || displayMode === 'modal') ? (
+        <div
+          onClick={onClose}
+          className="absolute w-screen h-screen top-0 left-0"
+        />
+      ) : null}
+    </div>
+  );
 };
 
-const close = () => {
-  const targetDiv = document.getElementById(containerId);
-  if (targetDiv) {
-    targetDiv.classList.add("hidden");
-  }
-};
+const RenderWidget = (props: IInit) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-const Jupiter = {
-  _instance: null,
-  passThroughWallet: null,
-  root: null,
-  init,
-  resume,
-  close,
-};
+  const classes = useMemo(() => {
+    const size = props.widgetStyle?.size || 'default';
 
-export { Jupiter, init, close };
+    let result: { containerClassName: string, contentClassName: string, caretClassName: string } | undefined = undefined;
+    if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
+      result = {
+        containerClassName: 'bottom-6 right-6',
+        contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
+        caretClassName: size === 'default' ? 'bottom-[-18px] right-6' : 'bottom-[-18px] right-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'bottom-left') {
+      result = {
+        containerClassName: 'bottom-6 left-6',
+        contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
+        caretClassName: size === 'default' ? 'bottom-[-18px] left-6' : 'bottom-[-18px] left-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'top-left') {
+      result = {
+        containerClassName: 'top-6 left-6',
+        contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
+        caretClassName: size === 'default' ? 'top-[-18px] left-6' : 'top-[-18px] left-5',
+      }
+    }
+    if (props.widgetStyle?.position === 'top-right') {
+      result = {
+        containerClassName: 'top-6 right-6',
+        contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
+        caretClassName: size === 'default' ? 'top-[-18px] right-6' : 'top-[-18px] right-5',
+      }
+    }
+
+    return {
+      ...result,
+      widgetContainerClassName: size === 'default' ? 'h-14 w-14' : 'h-10 w-10',
+      widgetLogoSize: size === 'default' ? 42 : 32,
+    }
+  }, [props.widgetStyle?.position, props.widgetStyle?.size]);
+
+  return (
+    <>
+      <div className={`fixed ${classes.containerClassName}`}>
+        <div
+          className={`${classes.widgetContainerClassName} rounded-full bg-[#282830] flex items-center justify-center cursor-pointer`}
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
+        </div>
+
+        <div
+          id="integrated-terminal"
+          className={`absolute ${classes.contentClassName} flex w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-[#282830] transition-opacity duration-300 shadow-2xl ${!isOpen ? "h-0 opacity-0" : "opacity-100"
+            }`}
+        >
+          <RenderJupiter {...props} />
+
+          {isOpen ? (
+            <div className={`absolute ${classes.caretClassName} w-8 h-8 text-[#282830] fill-current transition-opacity duration-500 ${!isOpen ? "opacity-0" : "opacity-100"}`}>
+              {props.widgetStyle?.position?.includes('bottom') ? <ChevronDownSolidIcon /> : <div className="rotate-180"><ChevronDownSolidIcon /></div>}
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </>
+  )
+}
+
+export { RenderWidget, RenderJupiter };

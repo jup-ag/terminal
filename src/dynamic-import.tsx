@@ -142,7 +142,6 @@ const RenderWidget = (props: IInit) => {
   )
 }
 
-
 const init = async (props: IInit, containerId: string) => {
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
