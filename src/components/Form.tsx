@@ -162,7 +162,7 @@ const Form: React.FC<{
                       <div className="text-right">
                         <input
                           placeholder="0.00"
-                          className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl "
+                          className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl !outline-none"
                           value={form.fromValue}
                           onChange={(e) => onChangeFromValue(e)}
                         />

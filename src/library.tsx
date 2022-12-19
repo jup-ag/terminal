@@ -8,12 +8,6 @@ import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
 
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
-// To prevent loading styles twice on development
-// And to prevent NextJS from complaining about importing css in _app.tsx
-if (process.env.NODE_ENV !== "development") {
-  import("src/styles/globals.css")
-}
-
 const containerId = "jupiter-terminal";
 
 const resume = () => {
@@ -33,6 +27,8 @@ const close = () => {
 };
 
 const scriptDomain = (() => {
+  if (typeof window === "undefined") return '';
+
   const url = (document.currentScript as HTMLScriptElement)?.src;
   if (url) {
     return new URL(url).origin;
