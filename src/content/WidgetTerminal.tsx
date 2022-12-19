@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React, { useEffect, useState } from "react";
 import JupButton from "src/components/JupButton";
 import LeftArrowIcon from "src/icons/LeftArrowIcon";
-import { IInit, WidgetPosition, WidgetSize } from "src/types";
+import { WidgetPosition, WidgetSize } from "src/types";
 
 const WidgetTerminal = () => {
   const [isLoaded, setIsLoaded] = useState(false);

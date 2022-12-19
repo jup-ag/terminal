@@ -180,33 +180,29 @@ const RenderWidgetShell = (props: IInit) => {
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
 
-    let result: { containerClassName: string, contentClassName: string, caretClassName: string } | undefined = undefined;
+    let result: { containerClassName: string, contentClassName: string } | undefined = undefined;
     if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
       result = {
         containerClassName: 'bottom-6 right-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
-        caretClassName: size === 'default' ? 'bottom-[-18px] right-6' : 'bottom-[-18px] right-5',
       }
     }
     if (props.widgetStyle?.position === 'bottom-left') {
       result = {
         containerClassName: 'bottom-6 left-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
-        caretClassName: size === 'default' ? 'bottom-[-18px] left-6' : 'bottom-[-18px] left-5',
       }
     }
     if (props.widgetStyle?.position === 'top-left') {
       result = {
         containerClassName: 'top-6 left-6',
         contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
-        caretClassName: size === 'default' ? 'top-[-18px] left-6' : 'top-[-18px] left-5',
       }
     }
     if (props.widgetStyle?.position === 'top-right') {
       result = {
         containerClassName: 'top-6 right-6',
         contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
-        caretClassName: size === 'default' ? 'top-[-18px] right-6' : 'top-[-18px] right-5',
       }
     }
 
@@ -218,30 +214,22 @@ const RenderWidgetShell = (props: IInit) => {
   }, [props.widgetStyle?.position, props.widgetStyle?.size]);
 
   return (
-    <>
-      <div className={`fixed ${classes.containerClassName}`}>
-        <div
-          className={`${classes.widgetContainerClassName} rounded-full bg-[#282830] flex items-center justify-center cursor-pointer`}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
-        </div>
-
-        <div
-          id="integrated-terminal"
-          className={`absolute ${classes.contentClassName} flex w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-[#282830] transition-opacity duration-300 shadow-2xl ${!isOpen ? "h-0 opacity-0" : "opacity-100"
-            }`}
-        >
-          <RenderLoadableJupiter {...props} />
-        </div>
-
-        {isOpen ? (
-          <div className={`absolute ${classes.caretClassName} w-8 h-8 text-[#282830] fill-current transition-opacity duration-500 ${!isOpen ? "opacity-0" : "opacity-100"}`}>
-            {props.widgetStyle?.position?.includes('bottom') ? <ChevronDownSolidIcon /> : <div className="rotate-180"><ChevronDownSolidIcon /></div>}
-          </div>
-        ) : null}
+    <div className={`fixed ${classes.containerClassName}`}>
+      <div
+        className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
       </div>
-    </>
+
+      <div
+        id="integrated-terminal"
+        className={`absolute overflow-hidden ${classes.contentClassName} flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${!isOpen ? "h-0 opacity-0" : "opacity-100"
+          }`}
+      >
+        <RenderLoadableJupiter {...props} />
+      </div>
+    </div>
   );
 }
 
@@ -280,7 +268,7 @@ const init = async (props: IInit) => {
   let element;
   if (restProps.displayMode === 'widget') {
     element = (
-      <RenderWidgetShell {...restProps} />
+      <RenderWidgetShell {...props} />
     );
   } else {
     element = (
