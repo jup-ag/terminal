@@ -83,8 +83,11 @@ const defaultStyles: CSSProperties = {
   zIndex: 50
 }
 
-if (process.env.NODE_ENV === 'development' && typeof window !== "undefined") {
-  // Perform local fetch on development
+const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
+// In NextJS preview env settings
+const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
+if (isDeveloping || isPreview) {
+  // Perform local fetch on development, and next preview
   import('./index')
     .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
 }
