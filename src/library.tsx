@@ -4,7 +4,6 @@ import { IInit } from "./types";
 import "tailwindcss/tailwind.css";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
 import JupiterLogo from "./icons/JupiterLogo";
-import ChevronDownSolidIcon from "./icons/ChevronDownSolidIcon";
 
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
@@ -84,7 +83,7 @@ const defaultStyles: CSSProperties = {
   zIndex: 50
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' && typeof window !== "undefined") {
   // Perform local fetch on development
   import('./index')
     .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
