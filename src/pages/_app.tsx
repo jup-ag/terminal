@@ -23,6 +23,15 @@ if (typeof window !== 'undefined') {
   (window as any).Jupiter = Jupiter
 }
 
+const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
+// In NextJS preview env settings
+const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
+if ((isDeveloping || isPreview) && typeof window !== "undefined") {
+  // Perform local fetch on development, and next preview
+  import('../index')
+    .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
+}
+
 export default function App({ Component, pageProps }: AppProps) {
   const [tab, setTab] = useState<IInit["displayMode"]>("modal");
 

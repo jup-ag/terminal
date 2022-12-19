@@ -35,6 +35,10 @@ const scriptDomain = (() => {
   return '';
 })() || 'https://terminal.jup.ag';
 async function loadJupiter() {
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
+
   const script = new Promise<any>((res, rej) => {
     const existing = document.getElementById(
       'jupiter-load-script-app',
@@ -83,23 +87,9 @@ const defaultStyles: CSSProperties = {
   zIndex: 50
 }
 
-const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
-// In NextJS preview env settings
-const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
-if (isDeveloping || isPreview) {
-  // Perform local fetch on development, and next preview
-  import('./index')
-    .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
-}
-
 const RenderLoadableJupiter = (props: IInit) => {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && window.Jupiter.RenderJupiter) {
-      setLoaded(true);
-      return;
-    }
-
     loadJupiter();
 
     let intervalId: NodeJS.Timer;
