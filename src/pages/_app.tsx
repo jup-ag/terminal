@@ -19,16 +19,8 @@ import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { Jupiter } from '../library';
 
-if (typeof window !== "undefined") {
-  window.Jupiter = Jupiter;
-}
-
 if (typeof window !== 'undefined') {
   (window as any).Jupiter = Jupiter
-}
-
-if (typeof window !== 'undefined') {
-  window.Jupiter = Jupiter
 }
 
 export default function App({ Component, pageProps }: AppProps) {

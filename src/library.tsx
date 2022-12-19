@@ -84,9 +84,20 @@ const defaultStyles: CSSProperties = {
   zIndex: 50
 }
 
+if (process.env.NODE_ENV === 'development') {
+  // Perform local fetch on development
+  import('./index')
+    .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
+}
+
 const RenderLoadableJupiter = (props: IInit) => {
   const [loaded, setLoaded] = useState(false);
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && window.Jupiter.RenderJupiter) {
+      setLoaded(true);
+      return;
+    }
+
     loadJupiter();
 
     let intervalId: NodeJS.Timer;
@@ -98,7 +109,6 @@ const RenderLoadableJupiter = (props: IInit) => {
         }
       }, 50)
     }
-    
     return () => {
       clearInterval(intervalId);
     }

@@ -47,4 +47,7 @@ export interface JupiterTerminal {
   passThroughWallet: Wallet | null;
   onSwapError?: ({ error: string }) => void;
   onSuccess?: ({ txid: string }) => void;
+
+  // Temporary Renderer
+  RenderJupiter?: (props: IInit) => JSX.Element
 }
