@@ -17,19 +17,26 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
 import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
-import { Jupiter } from '../library';
-
-if (typeof window !== 'undefined') {
-  (window as any).Jupiter = Jupiter
-}
 
 const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
 // In NextJS preview env settings
 const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
 if ((isDeveloping || isPreview) && typeof window !== "undefined") {
+  // Initialize an empty value, simulate webpack IIFE when imported
+  (window as any).Jupiter = {};
+
   // Perform local fetch on development, and next preview
-  import('../index')
-    .then(({ RenderJupiter }) => window.Jupiter.RenderJupiter = RenderJupiter)
+  Promise.all([
+    import('../library'),
+    import('../index'),
+  ]).then((res) => {
+    const [
+      { init },
+      { ...jupiterProps }
+    ] = res;
+
+    (window as any).Jupiter = { init, ...jupiterProps }
+  })
 }
 
 export default function App({ Component, pageProps }: AppProps) {

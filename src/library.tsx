@@ -5,25 +5,9 @@ import "tailwindcss/tailwind.css";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
 import JupiterLogo from "./icons/JupiterLogo";
 
+const containerId = "jupiter-terminal";
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
-const containerId = "jupiter-terminal";
-
-const resume = () => {
-  const instanceExist = document.getElementById(containerId);
-  if (instanceExist) {
-    instanceExist.classList.remove("hidden");
-    instanceExist.classList.add("block");
-    return;
-  }
-};
-
-const close = () => {
-  const targetDiv = document.getElementById(containerId);
-  if (targetDiv) {
-    targetDiv.classList.add("hidden");
-  }
-};
 
 const scriptDomain = (() => {
   if (typeof window === "undefined") return '';
@@ -34,6 +18,46 @@ const scriptDomain = (() => {
   }
   return '';
 })() || 'https://terminal.jup.ag';
+
+async function preloadJupiter() {
+  const script = new Promise<any>((res, rej) => {
+    const el = document.createElement('link');
+    el.rel = "preload";
+    el.as = "script";
+    el.onload = res;
+    el.onerror = rej;
+    el.id = 'jupiter-load-script';
+    el.type = 'text/javascript';
+    el.href = `${scriptDomain}/${bundleName}-app.js`;
+    document.head.append(el);
+  });
+
+  const css = new Promise((res, rej) => {
+    const existing = document.getElementById(
+      'jupiter-load-styles',
+    ) as HTMLLinkElement | null;
+
+    if (existing) {
+      res({});
+    } else {
+      const el = document.createElement('link');
+      el.onload = res;
+      el.onerror = rej;
+      el.id = 'jupiter-load-styles';
+      el.rel = 'stylesheet';
+      el.href = `${scriptDomain}/${bundleName}.css`;
+      document.head.append(el);
+    }
+  });
+
+  try {
+    await Promise.all([script, css]);
+  } catch (error) {
+    console.error(`Error pre-loading Jupiter Terminal: ${error}`)
+    throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
+  }
+}
+
 async function loadJupiter() {
   if (process.env.NODE_ENV === 'development') {
     return;
@@ -114,7 +138,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} />;
+  return <RenderJupiter {...props} init={init} />;
 }
 
 const EmptyJSX = () => <></>;
@@ -225,7 +249,7 @@ const RenderWidgetShell = (props: IInit) => {
   );
 }
 
-const init = async (props: IInit) => {
+async function init(props: IInit) {
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
   if (props.mode === "outputOnly" && !props.mint) {
@@ -278,13 +302,18 @@ const init = async (props: IInit) => {
   window.Jupiter.onSuccess = onSuccess;
 };
 
-const Jupiter = {
-  _instance: null,
-  passThroughWallet: null,
-  root: null,
-  init,
-  resume,
-  close,
-};
+const attributes = (document.currentScript as HTMLScriptElement)?.attributes;
+if (typeof window !== 'undefined') {
+  document.onreadystatechange = function () {
+    const loadComplete = document.readyState === "complete";
+    const shouldPreload = Boolean(attributes.getNamedItem('data-preload'));
 
-export { Jupiter, init };
+    if (loadComplete && shouldPreload) {
+      setTimeout(() => {
+        preloadJupiter();
+      }, 2000)
+    }
+  }
+}
+
+export { init };
