@@ -119,7 +119,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     let intervalId: NodeJS.Timer;
     if (!loaded) {
       intervalId = setInterval(() => {
-        const instance = (window as any).JupiterRenderer.RenderJupiter;
+        const instance = (window as any).JupiterRenderer?.RenderJupiter;
         if (instance) {
           setLoaded(true);
         }
