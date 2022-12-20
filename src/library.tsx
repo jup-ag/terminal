@@ -119,7 +119,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     let intervalId: NodeJS.Timer;
     if (!loaded) {
       intervalId = setInterval(() => {
-        const instance = (window as any).Jupiter.RenderJupiter;
+        const instance = (window as any).JupiterRenderer.RenderJupiter;
         if (instance) {
           setLoaded(true);
         }
@@ -132,7 +132,7 @@ const RenderLoadableJupiter = (props: IInit) => {
 
   const RenderJupiter: (props: any) => JSX.Element = useMemo(() => {
     if (loaded) {
-      return (window as any).Jupiter.RenderJupiter;
+      return (window as any).JupiterRenderer.RenderJupiter;
     }
 
     return EmptyJSX;
@@ -316,4 +316,20 @@ if (typeof window !== 'undefined') {
   }
 }
 
-export { init };
+const resume = () => {
+  const instanceExist = document.getElementById(containerId);
+  if (instanceExist) {
+    instanceExist.classList.remove("hidden");
+    instanceExist.classList.add("block");
+    return;
+  }
+};
+
+const close = () => {
+  const targetDiv = document.getElementById(containerId);
+  if (targetDiv) {
+    targetDiv.classList.add("hidden");
+  }
+};
+
+export { init, resume, close };

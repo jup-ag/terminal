@@ -18,10 +18,14 @@ module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    [bundleName]: "./src/library.tsx",
-    [`${bundleName}-app`]: {
-      dependOn: bundleName,
+    "Jupiter": {
+      import: "./src/library.tsx",
+      filename: `${bundleName}.js`,
+    },
+    "JupiterRenderer": {
+      dependOn: "Jupiter",
       import: "./src/index.tsx",
+      filename: `${bundleName}-app.js`,
     },
   },
   cache: {
@@ -89,7 +93,7 @@ module.exports = {
   },
   target: "web",
   output: {
-    library: "Jupiter",
+    library: "[name]",
     libraryTarget: "window",
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
