@@ -138,7 +138,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} init={init} />;
+  return <RenderJupiter {...props} scriptDomain={scriptDomain} />;
 }
 
 const EmptyJSX = () => <></>;

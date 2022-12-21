@@ -3,7 +3,6 @@ import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext'
-import JupiterLogo from 'src/icons/JupiterLogo';
 import JupButton from '../JupButton';
 import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
@@ -41,6 +40,7 @@ const SwappingScreen = () => {
     displayMode,
     lastSwapResult,
     reset,
+    scriptDomain,
     swapping: {
       totalTxs,
       txStatus,
@@ -108,6 +108,7 @@ const SwappingScreen = () => {
     return 'loading'
   }, [txStatus]);
 
+  console.log(`${scriptDomain}/swap-animation.riv`);
   const Content = () => {
     return (
       <>
@@ -121,7 +122,7 @@ const SwappingScreen = () => {
         <div className='flex w-full justify-center items-center mt-9'>
           <div className='h-16 w-16'>
             <Rive
-              src=" /swap-animation.riv"
+              src={`${scriptDomain}/swap-animation.riv`}
               layout={new Layout({ fit: Fit.Contain, alignment: Alignment.TopCenter })}
             />
           </div>

@@ -1,16 +1,34 @@
-import { IConfirmationTxDescription, OnTransaction, RouteInfo, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
-import { TokenInfo } from '@solana/spl-token-registry';
-import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
-import { PublicKey } from '@solana/web3.js';
-import JSBI from 'jsbi';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, toLamports } from 'src/misc/utils';
-import { IInit } from 'src/types';
-import { useAccounts } from './accounts';
-import { useSlippageConfig } from './SlippageConfigProvider';
-import { useTokenContext } from './TokenContextProvider';
-import { useWalletPassThrough } from './WalletPassthroughProvider';
+import {
+  IConfirmationTxDescription,
+  OnTransaction,
+  RouteInfo,
+  SwapMode,
+  SwapResult,
+  useJupiter,
+} from "@jup-ag/react-hook";
+import { TokenInfo } from "@solana/spl-token-registry";
+import { SignerWalletAdapter } from "@solana/wallet-adapter-base";
+import { PublicKey } from "@solana/web3.js";
+import JSBI from "jsbi";
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { WRAPPED_SOL_MINT } from "src/constants";
+import { fromLamports, toLamports } from "src/misc/utils";
+import { IInit } from "src/types";
+import { useAccounts } from "./accounts";
+import { useSlippageConfig } from "./SlippageConfigProvider";
+import { useTokenContext } from "./TokenContextProvider";
+import { useWalletPassThrough } from "./WalletPassthroughProvider";
 
 export interface IForm {
   fromMint: string;
@@ -23,66 +41,77 @@ export interface ISwapContext {
   form: IForm;
   setForm: Dispatch<SetStateAction<IForm>>;
   errors: Record<string, { title: string; message: string }>;
-  setErrors: Dispatch<SetStateAction<Record<string, {
-    title: string;
-    message: string;
-  }>>>;
+  setErrors: Dispatch<
+    SetStateAction<
+      Record<
+        string,
+        {
+          title: string;
+          message: string;
+        }
+      >
+    >
+  >;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
   selectedSwapRoute: RouteInfo | null;
   setSelectedSwapRoute: Dispatch<SetStateAction<RouteInfo | null>>;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
-  mode: IInit['mode'];
-  displayMode: IInit['displayMode'];
-  mint: IInit['mint'];
+  mode: IInit["mode"];
+  displayMode: IInit["displayMode"];
+  mint: IInit["mint"];
+  scriptDomain: IInit["scriptDomain"];
   swapping: {
     totalTxs: number;
     txStatus: Array<{
-      txid: string,
-      txDescription: IConfirmationTxDescription,
-      status: 'loading' | 'fail' | 'success';
-    }>,
-  },
-  reset: (props?: { resetValues: boolean }) => void,
-  jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & { exchange: ReturnType<typeof useJupiter>['exchange'] | undefined };
+      txid: string;
+      txDescription: IConfirmationTxDescription;
+      status: "loading" | "fail" | "success";
+    }>;
+  };
+  reset: (props?: { resetValues: boolean }) => void;
+  jupiter: Omit<ReturnType<typeof useJupiter>, "exchange"> & {
+    exchange: ReturnType<typeof useJupiter>["exchange"] | undefined;
+  };
 }
 
 export const initialSwapContext: ISwapContext = {
   form: {
-    fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    fromMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     toMint: WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
+    fromValue: "",
+    toValue: "",
   },
-  setForm() { },
+  setForm() {},
   errors: {},
-  setErrors() { },
+  setErrors() {},
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
   selectedSwapRoute: null,
-  setSelectedSwapRoute() { },
+  setSelectedSwapRoute() {},
   onSubmit: async () => null,
   lastSwapResult: null,
-  mode: 'default',
-  displayMode: 'modal',
+  mode: "default",
+  displayMode: "modal",
   mint: undefined,
+  scriptDomain: '',
   swapping: {
     totalTxs: 0,
     txStatus: [],
   },
-  reset() { },
+  reset() {},
   jupiter: {
     routes: [],
     allTokenMints: [],
     routeMap: new Map(),
     exchange: undefined,
     loading: false,
-    refresh() { },
+    refresh() {},
     lastRefreshTimestamp: 0,
     error: undefined,
   },
-}
+};
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
 
@@ -90,35 +119,38 @@ export function useSwapContext(): ISwapContext {
   return useContext(SwapContext);
 }
 
-export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: IInit['mode'], mint: IInit['mint'], children: ReactNode }> = ({ displayMode, mode, mint, children }) => {
-  const { tokenMap } = useTokenContext()
+export const SwapContextProvider: FC<{
+  displayMode: IInit["displayMode"];
+  mode: IInit["mode"];
+  mint: IInit["mint"];
+  scriptDomain?: string;
+  children: ReactNode;
+}> = ({ displayMode, mode, mint, scriptDomain, children }) => {
+  const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
+  const walletPublicKey = useMemo(
+    () => wallet?.adapter.publicKey?.toString(),
+    [wallet?.adapter.publicKey]
+  );
 
   const [form, setForm] = useState<IForm>({
-    fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    fromMint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
     toMint: WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
+    fromValue: "",
+    toValue: "",
   });
   const [errors, setErrors] = useState<
     Record<string, { title: string; message: string }>
   >({});
 
   const fromTokenInfo = useMemo(() => {
-    const tokenInfo = form.fromMint
-      ? tokenMap.get(form.fromMint)
-      : null;
+    const tokenInfo = form.fromMint ? tokenMap.get(form.fromMint) : null;
     return tokenInfo;
   }, [form.fromMint, tokenMap]);
 
   const toTokenInfo = useMemo(() => {
-    const tokenInfo = form.toMint
-      ? tokenMap.get(form.toMint)
-      : null;
+    const tokenInfo = form.toMint ? tokenMap.get(form.toMint) : null;
     return tokenInfo;
   }, [form.toMint, tokenMap]);
 
@@ -141,9 +173,7 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     error,
   } = useJupiter({
     amount: JSBI.BigInt(amountInLamports),
-    inputMint: useMemo(() => new PublicKey(form.fromMint), [
-      form.fromMint,
-    ]),
+    inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
     slippage,
     swapMode: SwapMode.ExactIn,
@@ -154,48 +184,55 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
-  const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(null);
-  useEffect(
-    () => {
-      const found = swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0))
-      if (found) {
-        setSelectedSwapRoute(found);
-      } else {
-        setSelectedSwapRoute(null);
-      }
-    },
-    [swapRoutes],
+  const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(
+    null
   );
+  useEffect(() => {
+    const found = swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0));
+    if (found) {
+      setSelectedSwapRoute(found);
+    } else {
+      setSelectedSwapRoute(null);
+    }
+  }, [swapRoutes]);
 
   useEffect(() => {
     setForm((prev) => ({
       ...prev,
       toValue: selectedSwapRoute?.outAmount
         ? String(
-          fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0),
-        )
-        : '',
+            fromLamports(
+              selectedSwapRoute?.outAmount,
+              toTokenInfo?.decimals || 0
+            )
+          )
+        : "",
     }));
   }, [selectedSwapRoute]);
 
   const [totalTxs, setTotalTxs] = useState(0);
-  const [txStatus, setTxStatus] = useState<Array<{
-    txid: string,
-    txDescription: IConfirmationTxDescription,
-    status: 'loading' | 'fail' | 'success';
-  }>>([]);
+  const [txStatus, setTxStatus] = useState<
+    Array<{
+      txid: string;
+      txDescription: IConfirmationTxDescription;
+      status: "loading" | "fail" | "success";
+    }>
+  >([]);
 
   const onTransaction: OnTransaction = async (
     txid,
     totalTxs,
     txDescription,
-    awaiter,
+    awaiter
   ) => {
     setTotalTxs(totalTxs);
 
     const tx = txStatus.find((tx) => tx.txid === txid);
     if (!tx) {
-      setTxStatus(prev => [...prev, { txid, txDescription, status: 'loading' }])
+      setTxStatus((prev) => [
+        ...prev,
+        { txid, txDescription, status: "loading" },
+      ]);
     }
 
     const success = !((await awaiter) instanceof Error);
@@ -203,7 +240,7 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     setTxStatus((prev) => {
       const tx = prev.find((tx) => tx.txid === txid);
       if (tx) {
-        tx.status = success ? 'success' : 'fail';
+        tx.status = success ? "success" : "fail";
       }
       return [...prev];
     });
@@ -222,10 +259,10 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
         onTransaction,
       });
 
-      setLastSwapResult(swapResult)
+      setLastSwapResult(swapResult);
       return swapResult;
     } catch (error) {
-      console.log('Swap error', error);
+      console.log("Swap error", error);
       return null;
     }
   }, [walletPublicKey, selectedSwapRoute]);
@@ -233,7 +270,7 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
   const refreshAll = () => {
     refresh();
     refreshAccount();
-  }
+  };
 
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
     if (resetValues) {
@@ -246,40 +283,42 @@ export const SwapContextProvider: FC<{ displayMode: IInit['displayMode'], mode: 
     setTxStatus(initialSwapContext.swapping.txStatus);
     setTotalTxs(initialSwapContext.swapping.totalTxs);
     refreshAccount();
-  }, [])
-
+  }, []);
 
   return (
-    <SwapContext.Provider value={{
-      form,
-      setForm,
-      errors,
-      setErrors,
-      fromTokenInfo,
-      toTokenInfo,
-      selectedSwapRoute,
-      setSelectedSwapRoute,
-      onSubmit,
-      lastSwapResult,
-      reset,
-      mode,
-      displayMode,
-      mint,
-      swapping: {
-        totalTxs,
-        txStatus,
-      },
-      jupiter: {
-        routes: swapRoutes,
-        allTokenMints,
-        routeMap,
-        exchange,
-        loading: loadingQuotes,
-        refresh: refreshAll,
-        lastRefreshTimestamp,
-        error,
-      }
-    }}>
+    <SwapContext.Provider
+      value={{
+        form,
+        setForm,
+        errors,
+        setErrors,
+        fromTokenInfo,
+        toTokenInfo,
+        selectedSwapRoute,
+        setSelectedSwapRoute,
+        onSubmit,
+        lastSwapResult,
+        reset,
+        mode,
+        displayMode,
+        mint,
+        scriptDomain,
+        swapping: {
+          totalTxs,
+          txStatus,
+        },
+        jupiter: {
+          routes: swapRoutes,
+          allTokenMints,
+          routeMap,
+          exchange,
+          loading: loadingQuotes,
+          refresh: refreshAll,
+          lastRefreshTimestamp,
+          error,
+        },
+      }}
+    >
       {children}
     </SwapContext.Provider>
   );

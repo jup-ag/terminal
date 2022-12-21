@@ -61,7 +61,7 @@ const JupiterApp = (props: IInit) => {
           userPublicKey={walletPublicKey || undefined}
           platformFeeAndAccounts={platformFeeAndAccounts}
         >
-          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint}>
+          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint} scriptDomain={props.scriptDomain}>
             <Content />
           </SwapContextProvider>
         </JupiterProvider>
