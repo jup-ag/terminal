@@ -34,9 +34,6 @@ export interface IInit {
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error: string }) => void;
   onSuccess?: ({ txid: string }) => void;
-
-  // More settings
-  preload?: boolean;
 }
 
 export interface JupiterTerminal {
