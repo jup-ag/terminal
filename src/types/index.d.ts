@@ -34,6 +34,9 @@ export interface IInit {
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error: string }) => void;
   onSuccess?: ({ txid: string }) => void;
+
+  // Internal resolves
+  scriptDomain?: string;
 }
 
 export interface JupiterTerminal {

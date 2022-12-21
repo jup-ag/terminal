@@ -5,12 +5,6 @@ import "tailwindcss/tailwind.css";
 import "../styles/app.css";
 import "../styles/globals.css";
 
-import JupButton from "src/components/JupButton";
-import ModalTerminal from "src/content/ModalTerminal";
-import { Jupiter } from "../index";
-import IntegratedTerminal from "src/content/IntegratedTerminal";
-import { IInit } from "src/types";
-import WidgetTerminal from "src/content/WidgetTerminal";
 import AppHeader from "src/components/AppHeader/AppHeader";
 import SexyChameleonText from "src/components/SexyChameleonText/SexyChameleonText";
 import TerminalModalIcon from "src/icons/TerminalModalIcon";
@@ -18,8 +12,29 @@ import TerminalIntegratedIcon from "src/icons/TerminalIntegratedIcon";
 import TerminalWidgetIcon from "src/icons/TerminalWidgetIcon";
 import Footer from "src/components/Footer/Footer";
 
-if (typeof window !== "undefined") {
-  window.Jupiter = Jupiter;
+import JupButton from 'src/components/JupButton';
+import ModalTerminal from 'src/content/ModalTerminal';
+import IntegratedTerminal from 'src/content/IntegratedTerminal';
+import { IInit } from 'src/types';
+import WidgetTerminal from 'src/content/WidgetTerminal';
+
+const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
+// In NextJS preview env settings
+const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
+if ((isDeveloping || isPreview) && typeof window !== "undefined") {
+  // Initialize an empty value, simulate webpack IIFE when imported
+  (window as any).Jupiter = {};
+
+  // Perform local fetch on development, and next preview
+  Promise.all([
+    import('../library'),
+    import('../index'),
+  ]).then((res) => {
+    const [libraryProps, rendererProps] = res;
+
+    (window as any).Jupiter = libraryProps;
+    (window as any).JupiterRenderer = rendererProps;
+  })
 }
 
 export default function App({ Component, pageProps }: AppProps) {

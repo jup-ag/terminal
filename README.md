@@ -8,6 +8,9 @@ Demo: https://terminal.jup.ag
 
 ## Core features
 
+- `main.js` bundle ~66kb gzipped
+  - app bundle (~900Kb) are loaded on-demand when `init()` is called
+  - alternatively, preload app bundle with `data-preload` attributes
 - Built-in wallets, or passthrough wallets from your dApp
 - Modal, Integrated, or Widget mode.
 - Mode (default, outputOnly) to allow user to swap between any token pair, or only swap to destination pair.
@@ -18,14 +21,17 @@ Demo: https://terminal.jup.ag
 
 ### Integrating the widget
 
-In your document, link and embed `main.js` and `main.css`.
+In your document, link and embed `main.js`.
 
 ```tsx
-<head>
-  <script src={`https://terminal.jup.ag/main.js`}></script>
-  <link rel="stylesheet" href={`https://terminal.jup.ag/main.css`} />
-</head>
+<script src="https://terminal.jup.ag/main.js" data-preload />
 ```
+### Preloading Terminal 
+Assign the attribute `data-preload` to the script tag, the full application will be preloaded on your browser's `(document.readyState === "complete")` event.
+```tsx
+<script src="https://terminal.jup.ag/main.js" data-preload />
+```
+
 Then, 
 ```tsx
 window.Jupiter.init({ mode: 'default', endpoint: "https://api.mainnet-beta.solana.com",});

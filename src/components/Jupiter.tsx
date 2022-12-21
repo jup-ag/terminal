@@ -2,7 +2,7 @@ import { JupiterProvider } from "@jup-ag/react-hook";
 
 import { useConnection } from "@solana/wallet-adapter-react";
 
-import React, { CSSProperties, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { WRAPPED_SOL_MINT } from "../constants";
 
 import Header from "../components/Header";
@@ -17,78 +17,32 @@ import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import { IInit } from "src/types";
 import { SLippageConfigProvider } from "src/contexts/SlippageConfigProvider";
 
-const defaultStyles: CSSProperties = {
-  zIndex: 50
-}
-
-const Content = ({
-  displayMode,
-  containerStyles,
-  containerClassName,
-}: {
-  displayMode: IInit['displayMode'],
-  containerStyles: IInit["containerStyles"];
-  containerClassName: IInit["containerClassName"];
-}) => {
+const Content = () => {
   const { screen } = useScreenState();
   const { mint } = useSwapContext();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-  const onClose = () => {
-    window.Jupiter.close();
-  };
-
-  const displayClassName = useMemo(() => {
-    // Default Modal
-    if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
-    } else if (displayMode === 'integrated' || displayMode === 'widget') {
-      return 'flex items-center justify-center w-full h-full'
-    }
-  }, [displayMode]);
-  
-  const contentClassName = useMemo(() => {
-    // Default Modal
-    if (!displayMode || displayMode === 'modal') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''}`;
-    } else if (displayMode === 'integrated' || displayMode === 'widget') {
-      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar'
-    }
-  }, [displayMode]);
-
   return (
-    <div className={displayClassName}>
-      <div
-        style={{ ...defaultStyles, ...containerStyles }}
-        className={contentClassName}
-      >
-        {screen === "Initial" ? (
-          <>
-            <Header setIsWalletModalOpen={setIsWalletModalOpen} />
-            <InitialScreen
-              mint={mint || WRAPPED_SOL_MINT.toString()}
-              isWalletModalOpen={isWalletModalOpen}
-              setIsWalletModalOpen={setIsWalletModalOpen}
-            />
-          </>
-        ) : null}
-
-        {screen === "Confirmation" ? <ReviewOrderScreen /> : null}
-        {screen === "Swapping" ? <SwappingScreen /> : null}
-      </div>
-
-      {(!displayMode || displayMode === 'modal') ? (
-        <div
-          onClick={onClose}
-          className="absolute w-screen h-screen top-0 left-0"
-        />
+    <>
+      {screen === "Initial" ? (
+        <>
+          <Header setIsWalletModalOpen={setIsWalletModalOpen} />
+          <InitialScreen
+            mint={mint || WRAPPED_SOL_MINT.toString()}
+            isWalletModalOpen={isWalletModalOpen}
+            setIsWalletModalOpen={setIsWalletModalOpen}
+          />
+        </>
       ) : null}
-    </div>
+
+      {screen === "Confirmation" ? <ReviewOrderScreen /> : null}
+      {screen === "Swapping" ? <SwappingScreen /> : null}
+      </>
   );
 };
 
 const JupiterApp = (props: IInit) => {
-  const { mode, mint, displayMode, containerStyles, containerClassName, platformFeeAndAccounts } = props;
+  const { mode, mint, displayMode, platformFeeAndAccounts } = props;
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -107,8 +61,8 @@ const JupiterApp = (props: IInit) => {
           userPublicKey={walletPublicKey || undefined}
           platformFeeAndAccounts={platformFeeAndAccounts}
         >
-          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint}>
-            <Content displayMode={displayMode} containerStyles={containerStyles} containerClassName={containerClassName} />
+          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint} scriptDomain={props.scriptDomain}>
+            <Content />
           </SwapContextProvider>
         </JupiterProvider>
       </SLippageConfigProvider>

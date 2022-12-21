@@ -5,9 +5,10 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
+const packageJson = require("./package.json");
+
 const analyseBundle = process.env.ANALYSE === 'true';
-const packageJson = require('./package.json');
-const bundleName = `main-${packageJson.version}`
+const bundleName = `main-${packageJson.version}`;
 
 if (!bundleName) {
   throw new Error('Bundle name/version is not set');
@@ -17,7 +18,15 @@ module.exports = {
   devtool: "source-map",
   mode: "production",
   entry: {
-    Jupiter: "./src/widget/index.tsx",
+    "Jupiter": {
+      import: "./src/library.tsx",
+      filename: `${bundleName}.js`,
+    },
+    "JupiterRenderer": {
+      dependOn: "Jupiter",
+      import: "./src/index.tsx",
+      filename: `${bundleName}-app.js`,
+    },
   },
   cache: {
     type: "filesystem",
@@ -84,9 +93,8 @@ module.exports = {
   },
   target: "web",
   output: {
-    library: "Jupiter",
+    library: "[name]",
     libraryTarget: "window",
-    filename: `${bundleName}.js`,
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
   },

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Wallet } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
@@ -111,7 +111,7 @@ const ModalTerminal = () => {
               onClick={() => {
                 window.Jupiter.init({
                   mode: 'default',
-                  endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
+                  endpoint,
                 });
               }}
             >
