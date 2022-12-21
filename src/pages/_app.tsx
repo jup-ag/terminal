@@ -30,12 +30,10 @@ if ((isDeveloping || isPreview) && typeof window !== "undefined") {
     import('../library'),
     import('../index'),
   ]).then((res) => {
-    const [
-      { init },
-      { ...jupiterProps }
-    ] = res;
+    const [libraryProps, rendererProps] = res;
 
-    (window as any).Jupiter = { init, ...jupiterProps }
+    (window as any).Jupiter = libraryProps;
+    (window as any).JupiterRenderer = rendererProps;
   })
 }
 
