@@ -55,10 +55,13 @@ export default function App({ Component, pageProps }: AppProps) {
         <div className="flex">
           <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
             <div className="flex flex-col justify-center items-center text-center">
-              <p className="text-[#9D9DA6]">Visual demo for integrating</p>
-              <SexyChameleonText className="text-[52px] font-semibold px-4 md:px-0">
+              <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 md:px-0">
                 Jupiter Terminal
               </SexyChameleonText>
+              <p className="text-[#9D9DA6] w-[80%] md:max-w-[50%] text-md mt-4 heading-[24px]">
+                An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
+                Check out the visual demo for the various integration modes below
+              </p>
             </div>
 
             <div className="space-x-2 p-1.5 mt-12 bg-black/30 rounded-xl">
@@ -114,6 +117,13 @@ export default function App({ Component, pageProps }: AppProps) {
                 </div>
               </JupButton>
             </div>
+
+
+            <span className="flex justify-center text-center text-xs max-w-[90%] md:max-w-[50%] text-[#9D9DA6] mt-4">
+              {tab === "modal" ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
+              {tab === "integrated" ? 'Jupiter renders as a part of your dApp.' : null}
+              {tab === "widget" ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.' : null}
+            </span>
 
             <div className="w-full max-w-3xl px-4 md:px-0 text-white/75 mt-9 mb-16">
               {tab === "modal" ? <ModalTerminal /> : null}

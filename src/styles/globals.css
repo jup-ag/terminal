@@ -49,3 +49,13 @@ a {
   border-radius: 10px;
   background: #979797;
 }
+
+/* Add tooltip functionality */
+.tooltip {
+  @apply invisible absolute;
+  @apply bg-black text-white p-2 rounded-lg;
+}
+
+.has-tooltip:hover .tooltip {
+  @apply visible z-50;
+}

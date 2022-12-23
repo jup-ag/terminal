@@ -49,22 +49,15 @@ const WidgetTerminal = () => {
   }, [position, size]);
 
   return (
-    <div>
-      <div className="flex flex-col md:flex-row md:items-center justify-between mt-9 px-2 md:px-0">
+    <div className="flex flex-col items-center">
+      <div className="flex mt-9 px-2 md:px-0">
         <div>
-          <h2 className="font-semibold text-lg">Position & Size</h2>
-          <p className="text-white/30 text-xs">
-            Click the screen edge position to see how
-            <br />
-            it appear on your browser
-          </p>
-        </div>
-
-        <div>
-          <div className="relative mt-9 md:mt-0">
+          <div className="relative mt-8 md:mt-0">
             <div className="bg-white/10 rounded-xl flex items-center justify-center w-full md:w-[384px] h-[216px]">
-              <span className="text-xs text-white/50">
-                Click edge to see position
+              <span className="text-xs text-white/50 text-center w-[70%]">
+                Click on the arrows to see how the Jupiter Widget will appear on your web browser.
+                <br />
+                Click on the logo to view the Jupiter Swap Modal.
               </span>
 
               {/* Top left  */}
