@@ -25,26 +25,7 @@ const IntegratedTerminal = () => {
 
   return (
     <div className='min-h-[600px] h-[600px] w-full bg-[#282830] rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden'>
-      <p className='font-semibold mb-2 w-full'>Example dApp</p>
-
       <div className='flex flex-col lg:flex-row h-full w-full overflow-auto'>
-        <div className='rounded-xl w-auto flex lg:flex-col items-center'>
-          <div className='text-xs flex lg:flex-col items-center justify-center p-2 rounded-xl bg-black/30'>
-            <button type="button" className='bg-white/10 text-white rounded-xl py-2 px-4'>
-              Swap
-            </button>
-
-            <button type="button" disabled className='cursor-not-allowed opacity-70 rounded-xl py-2 px-4'>
-              Farms
-            </button>
-
-            <button type="button" disabled className='cursor-not-allowed opacity-70 rounded-xl py-2 px-4'>
-              LP
-            </button>
-          </div>
-        </div>
-
-
         <div className='w-full h-full rounded-xl overflow-hidden flex justify-center'>
           {/* Loading state */}
           {!isLoaded ? (

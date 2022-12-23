@@ -13,6 +13,7 @@ import { ContextProvider } from '../contexts/ContextProvider';
 import { PlayIcon } from 'src/icons/PlayIcon';
 import WalletConnectedGraphic from 'src/icons/WalletConnectedGraphic';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
+import InfoIcon from 'src/icons/InfoIcon';
 
 const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci';
 const WithAppWallet = ({ mode = 'default' }: { mode: IInit['mode'] }) => {
@@ -72,10 +73,17 @@ const ModalTerminal = () => {
 
   return (
     <>
-      <div className='flex items-center justify-between mt-9'>
-        <h2 className='font-semibold text-xl'>Active instance</h2>
+      <div className='flex flex-col md:flex-row items-center justify-between mt-9'>
+        <div className='flex items-center space-x-2 has-tooltip'>
+          <h2 className='font-semibold text-xl'>Active instance</h2>
+          
+          <div className='mt-1 relative'>
+            <InfoIcon />
+            <p className='tooltip w-[320px] right-[-80px] md:right-unset text-xs'>Once initialized and closed, previous activity can be resumed.</p>
+          </div>
+        </div>
 
-        <JupButton className='h-12' disabled={!isActive} onClick={() => {
+        <JupButton className='mt-4 md:mt-0 h-12' disabled={!isActive} onClick={() => {
           if (typeof window !== 'undefined') {
             window.Jupiter.resume();
           }
@@ -102,7 +110,7 @@ const ModalTerminal = () => {
         <div className='flex flex-col md:flex-row justify-between'>
           <div>
             <h2 className='font-semibold text-lg'>Default Mode</h2>
-            <p className='text-white/30 text-xs'>Click any to see example</p>
+            <p className='text-white/30 text-xs md:max-w-[65%]'>In this mode, users can swap between any token pair.</p>
           </div>
 
           <div className='flex justify-center'>
@@ -132,8 +140,8 @@ const ModalTerminal = () => {
 
         <div className='flex flex-col md:flex-row justify-between'>
           <div>
-            <h2 className='font-semibold text-lg'>Output Only Mode</h2>
-            <p className='text-white/30 text-xs'>Click any to see example</p>
+            <h2 className='font-semibold text-lg'>Fixed output mode</h2>
+            <p className='text-white/30 text-xs md:max-w-[65%]'>In this mode, users can only swap to a fixed output token.</p>
           </div>
 
           <div className='flex justify-center'>

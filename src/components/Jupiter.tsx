@@ -15,7 +15,7 @@ import { ROUTE_CACHE_DURATION } from "src/misc/constants";
 import SwappingScreen from "./screens/SwappingScreen";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import { IInit } from "src/types";
-import { SLippageConfigProvider } from "src/contexts/SlippageConfigProvider";
+import { SlippageConfigProvider } from "src/contexts/SlippageConfigProvider";
 
 const Content = () => {
   const { screen } = useScreenState();
@@ -53,7 +53,7 @@ const JupiterApp = (props: IInit) => {
 
   return (
     <AccountsProvider>
-      <SLippageConfigProvider>
+      <SlippageConfigProvider>
         <JupiterProvider
           connection={connection}
           routeCacheDuration={ROUTE_CACHE_DURATION}
@@ -65,7 +65,7 @@ const JupiterApp = (props: IInit) => {
             <Content />
           </SwapContextProvider>
         </JupiterProvider>
-      </SLippageConfigProvider>
+      </SlippageConfigProvider>
     </AccountsProvider>
   );
 };

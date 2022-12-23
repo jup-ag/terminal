@@ -13,7 +13,7 @@ export function useSlippageConfig(): NetworkConfigurationState {
   return useContext(SlippageConfigContext);
 }
 
-export const SLippageConfigProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SlippageConfigProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE);
   return (
     <SlippageConfigContext.Provider value={{ slippage, setSlippage }}>{children}</SlippageConfigContext.Provider>
