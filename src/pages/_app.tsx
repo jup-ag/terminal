@@ -58,9 +58,9 @@ export default function App({ Component, pageProps }: AppProps) {
               <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 md:px-0">
                 Jupiter Terminal
               </SexyChameleonText>
-              <p className="text-[#9D9DA6] w-[80%] md:max-w-[50%] text-md mt-4 heading-[24px]">
+              <p className="text-[#9D9DA6] w-[80%] md:max-w-[60%] text-md mt-4 heading-[24px]">
                 An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
-                Check out the visual demo for the various integration modes below
+                Check out the visual demo for the various integration modes below.
               </p>
             </div>
 
