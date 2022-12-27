@@ -9,14 +9,6 @@ const containerId = "jupiter-terminal";
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
 
-// const isBundling = process.env.NODE_ENV === 'production' && process.env.MODE === 'widget';
-// console.log('##################', isBundling)
-// if (isBundling) {
-//   // Load tailwind directive on library level, and bypass nextjs custom error
-//   const requireText = "./styles/globals.css";
-//   require(requireText);
-// }
-
 const scriptDomain = (() => {
   if (typeof window === "undefined") return '';
 
@@ -40,9 +32,9 @@ async function preloadJupiter() {
     document.head.append(el);
   });
 
-  const css = new Promise((res, rej) => {
+  const cssApp = new Promise((res, rej) => {
     const existing = document.getElementById(
-      'jupiter-load-styles',
+      'jupiter-load-styles-jupiter',
     ) as HTMLLinkElement | null;
 
     if (existing) {
@@ -51,15 +43,33 @@ async function preloadJupiter() {
       const el = document.createElement('link');
       el.onload = res;
       el.onerror = rej;
-      el.id = 'jupiter-load-styles';
+      el.id = 'jupiter-load-styles-jupiter';
       el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}.css`;
+      el.href = `${scriptDomain}/${bundleName}-Jupiter.css`;
+      document.head.append(el);
+    }
+  });
+  
+  const cssTailwind = new Promise((res, rej) => {
+    const existing = document.getElementById(
+      'jupiter-load-styles-tailwind',
+    ) as HTMLLinkElement | null;
+
+    if (existing) {
+      res({});
+    } else {
+      const el = document.createElement('link');
+      el.onload = res;
+      el.onerror = rej;
+      el.id = 'jupiter-load-styles-tailwind';
+      el.rel = 'stylesheet';
+      el.href = `${scriptDomain}/${bundleName}-Tailwind.css`;
       document.head.append(el);
     }
   });
 
   try {
-    await Promise.all([script, css]);
+    await Promise.all([script, cssApp, cssTailwind]);
   } catch (error) {
     console.error(`Error pre-loading Jupiter Terminal: ${error}`)
     throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
@@ -89,9 +99,9 @@ async function loadJupiter() {
     }
   });
 
-  const css = new Promise((res, rej) => {
+  const cssApp = new Promise((res, rej) => {
     const existing = document.getElementById(
-      'jupiter-load-styles',
+      'jupiter-load-styles-jupiter',
     ) as HTMLLinkElement | null;
 
     if (existing) {
@@ -100,15 +110,33 @@ async function loadJupiter() {
       const el = document.createElement('link');
       el.onload = res;
       el.onerror = rej;
-      el.id = 'jupiter-load-styles';
+      el.id = 'jupiter-load-styles-jupiter';
       el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}.css`;
+      el.href = `${scriptDomain}/${bundleName}-Jupiter.css`;
+      document.head.append(el);
+    }
+  });
+  
+  const cssTailwind = new Promise((res, rej) => {
+    const existing = document.getElementById(
+      'jupiter-load-styles-tailwind',
+    ) as HTMLLinkElement | null;
+
+    if (existing) {
+      res({});
+    } else {
+      const el = document.createElement('link');
+      el.onload = res;
+      el.onerror = rej;
+      el.id = 'jupiter-load-styles-tailwind';
+      el.rel = 'stylesheet';
+      el.href = `${scriptDomain}/${bundleName}-Tailwind.css`;
       document.head.append(el);
     }
   });
 
   try {
-    await Promise.all([script, css]);
+    await Promise.all([script, cssApp, cssTailwind]);
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`)
     throw new Error(`Error loading Jupiter Terminal: ${error}`);

@@ -60,3 +60,8 @@ a {
 .has-tooltip:hover .tooltip {
   @apply visible z-50;
 }
+
+/* Fix hidden not working due to `important` in tailwind.config.js */
+.hidden {
+  display: none;
+}

@@ -108,7 +108,6 @@ const SwappingScreen = () => {
     return 'loading'
   }, [txStatus]);
 
-  console.log(`${scriptDomain}/swap-animation.riv`);
   const Content = () => {
     return (
       <>
