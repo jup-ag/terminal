@@ -54,7 +54,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <div className="flex">
           <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
             <div className="flex flex-col justify-center items-center text-center">
-              <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 md:px-0">
+              <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
                 Jupiter Terminal
               </SexyChameleonText>
               <p className="text-[#9D9DA6] w-[80%] md:max-w-[60%] text-md mt-4 heading-[24px]">
