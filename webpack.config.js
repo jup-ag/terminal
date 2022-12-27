@@ -22,6 +22,9 @@ module.exports = {
       import: "./src/library.tsx",
       filename: `${bundleName}.js`,
     },
+    "Tailwind": {
+      import: "./src/styles/globals.css",
+    },
     "JupiterRenderer": {
       dependOn: "Jupiter",
       import: "./src/index.tsx",
@@ -70,7 +73,7 @@ module.exports = {
     const plugins = [
       new NodePolyfillPlugin(),
       new MiniCssExtractPlugin({
-        filename: `${bundleName}.css`,
+        filename: `${bundleName}-[name].css`,
       }),
     ];
 
