@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import { IInit } from "./types";
 
 import "tailwindcss/tailwind.css";
+import "./styles/globals.css";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
 import JupiterLogo from "./icons/JupiterLogo";
 
@@ -9,12 +10,13 @@ const containerId = "jupiter-terminal";
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
 
-const isBundling = process.env.NODE_ENV === 'production' && process.env.MODE === 'widget';
-if (isBundling) {
-  // Load tailwind directive on library level, and bypass nextjs custom error
-  const requireText = "./styles/globals.css";
-  require(requireText);
-}
+// const isBundling = process.env.NODE_ENV === 'production' && process.env.MODE === 'widget';
+// console.log('##################', isBundling)
+// if (isBundling) {
+//   // Load tailwind directive on library level, and bypass nextjs custom error
+//   const requireText = "./styles/globals.css";
+//   require(requireText);
+// }
 
 const scriptDomain = (() => {
   if (typeof window === "undefined") return '';
