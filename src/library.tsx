@@ -2,7 +2,6 @@ import { createRoot } from "react-dom/client";
 import { IInit } from "./types";
 
 import "tailwindcss/tailwind.css";
-import "./styles/globals.css";
 import { CSSProperties, useEffect, useMemo, useState } from "react";
 import JupiterLogo from "./icons/JupiterLogo";
 
