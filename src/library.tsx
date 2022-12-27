@@ -9,6 +9,13 @@ const containerId = "jupiter-terminal";
 const packageJson = require("../package.json");
 const bundleName = `main-${packageJson.version}`;
 
+const isBundling = process.env.NODE_ENV === 'production' && process.env.MODE === 'widget';
+if (isBundling) {
+  // Load tailwind directive on library level, and bypass nextjs custom error
+  const requireText = "./styles/globals.css";
+  require(requireText);
+}
+
 const scriptDomain = (() => {
   if (typeof window === "undefined") return '';
 

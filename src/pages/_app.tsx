@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
-import "../styles/app.css";
 import "../styles/globals.css";
 
 import AppHeader from "src/components/AppHeader/AppHeader";
@@ -24,7 +23,7 @@ const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
 if ((isDeveloping || isPreview) && typeof window !== "undefined") {
   // Initialize an empty value, simulate webpack IIFE when imported
   (window as any).Jupiter = {};
-
+  
   // Perform local fetch on development, and next preview
   Promise.all([
     import('../library'),
