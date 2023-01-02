@@ -14,6 +14,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey]);
 
+  const passThroughWallet = window.Jupiter.passThroughWallet;
   const onClickDisconnect = () => {
     setActive(false);
     disconnect();
@@ -34,7 +35,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
         <CurrentUserBadge />
       </div>
 
-      {screen === 'Initial' ? (
+      {screen === 'Initial' && Boolean(passThroughWallet) === false ? (
         <ul
           aria-label="dropdown-list"
           className={

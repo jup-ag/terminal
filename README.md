@@ -214,5 +214,5 @@ window.Jupiter.init({
 
 ### Known issue
 
-- Wallet passthrough supports does not work for Solflare
-  - Jupiter Terminal currently prompts the user to connect their Solflare wallet again, to perform swap.
+~~- Wallet passthrough supports does not work for Solflare~~
+  ~~- Jupiter Terminal currently prompts the user to connect their Solflare wallet again, to perform swap.~~ (Issue fixed in 0.1.10)
