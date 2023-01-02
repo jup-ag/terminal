@@ -51,16 +51,6 @@ body {
   background: #979797;
 }
 
-/* Add tooltip functionality */
-#jupiter-terminal .tooltip {
-  @apply invisible absolute;
-  @apply bg-black text-white p-2 rounded-lg;
-}
-
-#jupiter-terminal .has-tooltip:hover .tooltip {
-  @apply visible z-50;
-}
-
 /* Fix hidden not working due to `important` in tailwind.config.js */
 #jupiter-terminal .hidden {
   display: none;
