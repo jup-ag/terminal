@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import type { AppProps } from "next/app";
 
 import "tailwindcss/tailwind.css";
+import "../styles/app.css";
 import "../styles/globals.css";
 
 import AppHeader from "src/components/AppHeader/AppHeader";

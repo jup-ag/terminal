@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+#jupiter-terminal html,
 body {
   padding: 0;
   margin: 0;
@@ -10,21 +10,21 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-a {
+#jupiter-terminal a {
   color: inherit;
   text-decoration: none;
 }
 
-* {
+#jupiter-terminal * {
   box-sizing: border-box;
 }
 
-*:focus {
+#jupiter-terminal *:focus {
   outline: none;
 }
 
 /* JupButton border gradient */
-.jup-gradient::before {
+#jupiter-terminal .jup-gradient::before {
   content: '';
   position: absolute;
   top: 0;
@@ -40,28 +40,18 @@ a {
 }
 
 /* Custom scroll bar */
-.webkit-scrollbar::-webkit-scrollbar {
+#jupiter-terminal .webkit-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
-.webkit-scrollbar::-webkit-scrollbar-thumb {
+#jupiter-terminal .webkit-scrollbar::-webkit-scrollbar-thumb {
   margin: 2px;
   -webkit-border-radius: 10px;
   border-radius: 10px;
   background: #979797;
 }
 
-/* Add tooltip functionality */
-.tooltip {
-  @apply invisible absolute;
-  @apply bg-black text-white p-2 rounded-lg;
-}
-
-.has-tooltip:hover .tooltip {
-  @apply visible z-50;
-}
-
 /* Fix hidden not working due to `important` in tailwind.config.js */
-.hidden {
+#jupiter-terminal .hidden {
   display: none;
 }
