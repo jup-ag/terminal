@@ -19,7 +19,10 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
   const network = networkConfiguration as WalletAdapterNetwork;
   const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network])
 
-  const passThroughWallet = window.Jupiter.passThroughWallet;
+  const passThroughWallet = (() => {
+    if (typeof window === "undefined") return undefined;
+    return window.Jupiter.passThroughWallet;
+  })();
 
   const wallets = useMemo(
     () => {
