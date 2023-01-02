@@ -77,14 +77,6 @@ const Form: React.FC<{
       wallet?.adapter.publicKey,
     ]);
 
-    const jupiterDirectLink = useMemo(() => {
-      if (fromTokenInfo && toTokenInfo) {
-        const inAmount = form.fromValue ? form.fromValue : '1';
-        return `https://jup.ag/swap/${fromTokenInfo.address}-${toTokenInfo.address}?inAmount=${inAmount}`;
-      }
-      return 'https://jup.ag';
-    }, [fromTokenInfo, toTokenInfo, form.fromValue]);
-
     const onChangeFromValue = (e: ChangeEvent<HTMLInputElement>) => {
       e.preventDefault();
       const isInvalid = Number.isNaN(Number(e.target.value));

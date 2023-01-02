@@ -43,34 +43,30 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
     connected,
     disconnect,
   } = useWallet();
-  
+
   const value = (() => {
     // Pass through wallet adapter
     const passThroughWallet = window.Jupiter.passThroughWallet;
-    const isSolflare = passThroughWallet?.adapter.name === 'Solflare';
 
     if (Boolean(passThroughWallet) && passThroughWallet?.adapter.publicKey) {
-      // Solflare wallet does not allow pass through
-      if (!isSolflare) {
-        return {
-          ...initialPassThrough,
-          publicKey: passThroughWallet?.adapter.publicKey,
-          wallet: {
-            adapter: passThroughWallet.adapter,
-            readyState: WalletReadyState.Loadable,
-          },
-          connecting: false,
-          connected: true,
-          disconnect: async () => {
-            try {
-              if (passThroughWallet?.adapter.disconnect) {
-                return passThroughWallet?.adapter.disconnect();
-              }
-            } catch (error) {
-              console.log(error);
+      return {
+        ...initialPassThrough,
+        publicKey: passThroughWallet?.adapter.publicKey,
+        wallet: {
+          adapter: passThroughWallet.adapter,
+          readyState: WalletReadyState.Loadable,
+        },
+        connecting: false,
+        connected: true,
+        disconnect: async () => {
+          try {
+            if (passThroughWallet?.adapter.disconnect) {
+              return passThroughWallet?.adapter.disconnect();
             }
-          },
-        }
+          } catch (error) {
+            console.log(error);
+          }
+        },
       }
     }
 

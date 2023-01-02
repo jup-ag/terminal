@@ -17,15 +17,26 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
   const { autoConnect } = useAutoConnect();
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
-  const selectedEndpoint = useMemo(() => endpoint ?? clusterApiUrl(network), [network])
+  const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network])
+
+  const passThroughWallet = (() => {
+    if (typeof window === "undefined") return undefined;
+    return window.Jupiter.passThroughWallet;
+  })();
 
   const wallets = useMemo(
-    () => [
-      new PhantomWalletAdapter(),
-      new SolflareWalletAdapter(),
-      new BackpackWalletAdapter(),
-      new GlowWalletAdapter(),
-    ],
+    () => {
+      if (passThroughWallet) {
+        return [];
+      }
+
+      return [
+        new PhantomWalletAdapter(),
+        new SolflareWalletAdapter(),
+        new BackpackWalletAdapter(),
+        new GlowWalletAdapter(),
+      ]
+    },
     [network]
   );
 
