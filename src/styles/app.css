@@ -9,3 +9,18 @@
 .has-tooltip:hover .tooltip {
   @apply visible z-50;
 }
+
+.jup-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 0.5rem;
+  padding: 2px;
+  background: linear-gradient(91.26deg, #fcc00a 15.73%, #4ebae9 83.27%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: source-out;
+}
