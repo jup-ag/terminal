@@ -2,19 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-#jupiter-terminal html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
-
-#jupiter-terminal a {
-  color: inherit;
-  text-decoration: none;
-}
-
 #jupiter-terminal * {
   box-sizing: border-box;
 }
@@ -52,6 +39,6 @@ body {
 }
 
 /* Fix hidden not working due to `important` in tailwind.config.js */
-#jupiter-terminal .hidden {
+.hidden {
   display: none;
 }
