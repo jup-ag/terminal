@@ -60,6 +60,13 @@ const HeaderLinks = () => {
         icon={<RepoLogo width="20" height="20" />}
       />
       <HeaderLink
+        href="https://docs.jup.ag/integrating-jupiter/web-app-integration/jupiter-terminal"
+        isActive={false}
+        external
+        title={'Docs'}
+        icon={<RepoLogo width="20" height="20" />}
+      />
+      <HeaderLink
         href="https://discord.gg/jup"
         isActive={false}
         external
