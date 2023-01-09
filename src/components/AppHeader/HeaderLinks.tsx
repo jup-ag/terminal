@@ -45,7 +45,7 @@ const HeaderLink = ({
 
 const HeaderLinks = () => {
   return (
-    <div className="flex-1 justify-center hidden text-sm text-white-35 md:flex space-x-10 fill-current">
+    <div className="flex-1 justify-center hidden md:!flex text-sm text-white-35 space-x-10 fill-current">
       <HeaderLink
         href="/"
         isActive
