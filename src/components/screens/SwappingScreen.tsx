@@ -101,7 +101,7 @@ const SwappingScreen = () => {
 
   const swapState: "success" | "error" | "loading" = useMemo(() => {
     const hasErrors = txStatus.find((item) => item.status === "fail");
-    if (hasErrors) {
+    if (hasErrors || errorMessage) {
       return "error";
     }
 
@@ -263,7 +263,7 @@ const SwappingScreen = () => {
 
             <p className="text-white mt-2">Swap Failed</p>
             <p className="text-white/50 text-xs mt-2">
-              We were unable to complete the swap. Please try again.
+              We were unable to complete the swap, please try again.
             </p>
             {errorMessage ? (
               <p className="text-white/50 text-xs mt-2">{errorMessage}</p>
@@ -283,8 +283,8 @@ const SwappingScreen = () => {
         </div>
       ) : null}
 
-      {swapState === "loading" ? <Content /> : null}
-      {swapState === "success" ? <SuccessContent /> : null}
+      {!errorMessage && swapState === "loading" ? <Content /> : null}
+      {!errorMessage && swapState === "success" ? <SuccessContent /> : null}
     </div>
   );
 };
