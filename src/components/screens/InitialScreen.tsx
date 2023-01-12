@@ -109,6 +109,7 @@ const InitialScreen = ({
         .filter(Boolean)
         .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
 
+      // This is to handle user who have wSOL, so we filter it out to prevent duplication
       const haveSOL = result.find(tokenInfo => tokenInfo.address === SOL_MINT_TOKEN_INFO.address);
       if (!haveSOL) {
         result = [...result, SOL_MINT_TOKEN_INFO]
