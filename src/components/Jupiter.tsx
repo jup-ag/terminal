@@ -1,21 +1,20 @@
 import { JupiterProvider } from "@jup-ag/react-hook";
-
 import { useConnection } from "@solana/wallet-adapter-react";
-
 import React, { useMemo, useState } from "react";
-import { WRAPPED_SOL_MINT } from "../constants";
 
-import Header from "../components/Header";
-import { AccountsProvider } from "../contexts/accounts";
 import { useScreenState } from "src/contexts/ScreenProvider";
-import InitialScreen from "./screens/InitialScreen";
-import ReviewOrderScreen from "./screens/ReviewOrderScreen";
 import { SwapContextProvider, useSwapContext } from "src/contexts/SwapContext";
 import { ROUTE_CACHE_DURATION } from "src/misc/constants";
-import SwappingScreen from "./screens/SwappingScreen";
 import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
 import { IInit } from "src/types";
 import { SlippageConfigProvider } from "src/contexts/SlippageConfigProvider";
+
+import { WRAPPED_SOL_MINT } from "../constants";
+import Header from "../components/Header";
+import { AccountsProvider } from "../contexts/accounts";
+import InitialScreen from "./screens/InitialScreen";
+import ReviewOrderScreen from "./screens/ReviewOrderScreen";
+import SwappingScreen from "./screens/SwappingScreen";
 
 const Content = () => {
   const { screen } = useScreenState();
@@ -37,7 +36,7 @@ const Content = () => {
 
       {screen === "Confirmation" ? <ReviewOrderScreen /> : null}
       {screen === "Swapping" ? <SwappingScreen /> : null}
-      </>
+    </>
   );
 };
 

@@ -20,7 +20,7 @@ const ConfirmationScreen = () => {
     }
   } = useSwapContext();
 
-  const [hasExpired, timeDiff] = useTimeDiff();
+  const [hasExpired] = useTimeDiff();
 
   const { setScreen } = useScreenState();
 

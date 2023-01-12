@@ -242,9 +242,10 @@ const Form: React.FC<{
                 </div>
               ) : null}
           </div>
+
+          {walletPublicKey ? <FormError errors={errors} /> : null}
         </div>
 
-        {walletPublicKey ? <FormError errors={errors} /> : null}
 
         <div className='w-full px-2'>
           {!walletPublicKey ? (
