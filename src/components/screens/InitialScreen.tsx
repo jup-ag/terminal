@@ -126,12 +126,10 @@ const InitialScreen = ({
     setScreen("Confirmation");
   }, []);
 
-  const hideBody = selectPairSelector !== null || Boolean(showRouteSelector) || Boolean(isWalletModalOpen);
-
   return (
     <>
       {/* Body */}
-      <form onSubmit={onSubmitToConfirmation} className={hideBody ? `hidden` : ''}>
+      <form onSubmit={onSubmitToConfirmation}>
         <Form
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
