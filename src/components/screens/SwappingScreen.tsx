@@ -81,7 +81,7 @@ const SwappingScreen = () => {
       return;
     } else if (lastSwapResult && "txid" in lastSwapResult) {
       if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult.txid });
+        window.Jupiter.onSuccess({ txid: lastSwapResult.txid, swapResult: lastSwapResult });
       }
       return;
     }
