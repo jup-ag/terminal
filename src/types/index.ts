@@ -37,8 +37,8 @@ export interface IInit {
 
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
-  onSwapError?: ({ error }: { error: string }) => void;
-  onSuccess?: ({ txid }: { txid: string }) => void;
+  onSwapError?: ({ error }: { error?: TransactionError }) => void;
+  onSuccess?: ({ txid, lastSwapResult }: { txid: string, lastSwapResult: SwapResult }) => void;
 
   // Internal resolves
   scriptDomain?: string;
@@ -52,7 +52,7 @@ export interface JupiterTerminal {
   root: Root | null;
 
   // Passthrough & Callbacks
-  passThroughWallet: Wallet | null;
-  onSwapError?: ({ error }: { error?: TransactionError }) => void;
-  onSuccess?: ({ txid }: { txid: string, lastSwapResult: SwapResult }) => void;
+  passThroughWallet: IInit['passThroughWallet'];
+  onSwapError : IInit['onSwapError'];
+  onSuccess: IInit['onSuccess'];
 }
