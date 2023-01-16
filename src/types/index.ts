@@ -1,4 +1,9 @@
 import { CSSProperties } from "react";
+import { Root } from "react-dom/client";
+
+import { Wallet } from "@solana/wallet-adapter-react";
+import { PublicKey, TransactionError } from "@solana/web3.js";
+import { SwapResult } from "@jup-ag/react-hook";
 
 declare global {
   interface Window {
@@ -32,8 +37,8 @@ export interface IInit {
 
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
-  onSwapError?: ({ error: string }) => void;
-  onSuccess?: ({ txid: string }) => void;
+  onSwapError?: ({ error }: { error: string }) => void;
+  onSuccess?: ({ txid }: { txid: string }) => void;
 
   // Internal resolves
   scriptDomain?: string;
@@ -45,9 +50,9 @@ export interface JupiterTerminal {
   resume: () => void;
   close: () => void;
   root: Root | null;
-  
+
   // Passthrough & Callbacks
   passThroughWallet: Wallet | null;
-  onSwapError?: ({ error: string }) => void;
-  onSuccess?: ({ txid: string }) => void;
+  onSwapError?: ({ error }: { error?: TransactionError }) => void;
+  onSuccess?: ({ txid }: { txid: string, lastSwapResult: SwapResult }) => void;
 }
