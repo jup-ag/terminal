@@ -167,8 +167,8 @@ While `onSwapError()` will be called when an error has occurred.
 
 ```tsx
 window.Jupiter.init({
-  onSuccess: ({ txid, lastSwapResult }) => {
-    console.log({ txid, lastSwapResult })
+  onSuccess: ({ txid, swapResult }) => {
+    console.log({ txid, swapResult })
   },
   onSwapError: ({ error }) => {
     console.log('onSwapError', error);

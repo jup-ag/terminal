@@ -38,7 +38,7 @@ export interface IInit {
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
-  onSuccess?: ({ txid, lastSwapResult }: { txid: string, lastSwapResult: SwapResult }) => void;
+  onSuccess?: ({ txid, swapResult }: { txid: string, swapResult: SwapResult }) => void;
 
   // Internal resolves
   scriptDomain?: string;
