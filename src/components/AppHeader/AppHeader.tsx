@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import CloseIcon from 'src/icons/CloseIcon';
 import JupiterLogo from 'src/icons/JupiterLogo';
 import MenuIcon from 'src/icons/MenuIcon';
@@ -24,11 +24,7 @@ const AppHeader: React.FC<{}> = () => {
     <>
       <div className="flex items-center justify-between w-full px-4 py-4 md:px-8">
         <div className="flex items-center flex-1">
-          <button
-            onClick={handleToggleMenu}
-            type="button"
-            className="w-6 mr-3 md:hidden text-white"
-          >
+          <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-white">
             {openMobileMenu ? <CloseIcon /> : <MenuIcon />}
           </button>
 
@@ -42,7 +38,7 @@ const AppHeader: React.FC<{}> = () => {
 
         <HeaderLinks />
 
-        <div className='flex-1' />
+        <div className="flex-1" />
       </div>
 
       {openMobileMenu && (
@@ -57,7 +53,7 @@ const AppHeader: React.FC<{}> = () => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default AppHeader
+export default AppHeader;

@@ -1,9 +1,9 @@
-import { CSSProperties } from "react";
-import { Root } from "react-dom/client";
+import { CSSProperties } from 'react';
+import { Root } from 'react-dom/client';
 
-import { Wallet } from "@solana/wallet-adapter-react";
-import { PublicKey, TransactionError } from "@solana/web3.js";
-import { SwapResult } from "@jup-ag/react-hook";
+import { Wallet } from '@solana/wallet-adapter-react';
+import { PublicKey, TransactionError } from '@solana/web3.js';
+import { SwapResult } from '@jup-ag/react-hook';
 
 declare global {
   interface Window {
@@ -20,7 +20,7 @@ export declare type PlatformFeeAndAccounts = {
 };
 
 export interface IInit {
-  mode: 'default' | 'outputOnly'
+  mode: 'default' | 'outputOnly';
   mint?: string;
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
@@ -38,7 +38,7 @@ export interface IInit {
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
-  onSuccess?: ({ txid, swapResult }: { txid: string, swapResult: SwapResult }) => void;
+  onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
 
   // Internal resolves
   scriptDomain?: string;
@@ -53,6 +53,6 @@ export interface JupiterTerminal {
 
   // Passthrough & Callbacks
   passThroughWallet: IInit['passThroughWallet'];
-  onSwapError : IInit['onSwapError'];
+  onSwapError: IInit['onSwapError'];
   onSuccess: IInit['onSuccess'];
 }

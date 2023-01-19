@@ -14,9 +14,7 @@ const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
   const { accounts } = useAccounts();
   const { wallet } = useWalletPassThrough();
 
-  const walletPublicKey = React.useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
+  const walletPublicKey = React.useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
   const balance = React.useMemo(() => {
     return accounts[props.mintAddress]?.balance || 0;

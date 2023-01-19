@@ -23,14 +23,7 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
   const { data, index, style } = props;
   const item = data.searchResult[index];
 
-  return (
-    <FormPairRow
-      key={item.address}
-      item={item}
-      style={style}
-      onSubmit={data.onSubmit}
-    />
-  );
+  return <FormPairRow key={item.address} item={item} style={style} onSubmit={data.onSubmit} />;
 }, areEqual);
 
 const FormPairSelector = ({
@@ -42,30 +35,24 @@ const FormPairSelector = ({
   onSubmit: (value: TokenInfo) => void;
   onClose: () => void;
   tokenInfos: TokenInfo[];
-  setIsWalletModalOpen(toggle: boolean): void
+  setIsWalletModalOpen(toggle: boolean): void;
 }) => {
   const { wallet } = useWalletPassThrough();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
+  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const { accounts, loading: accountsLoading } = useAccounts();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
   useEffect(() => {
-    const sortedList = tokenInfos.sort(
-      (a, b) => {
-        if (!accounts[a.address]) return 1;
-        if (!accounts[b.address]) return -1;
+    const sortedList = tokenInfos.sort((a, b) => {
+      if (!accounts[a.address]) return 1;
+      if (!accounts[b.address]) return -1;
 
-        return accounts[b.address].balance - accounts[a.address].balance;
-      },
-    );
+      return accounts[b.address].balance - accounts[a.address].balance;
+    });
 
     if (searchTerm) {
-      const filteredList = sortedList.filter((item) =>
-        item.symbol.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+      const filteredList = sortedList.filter((item) => item.symbol.toLowerCase().includes(searchTerm.toLowerCase()));
       setSearchResult(filteredList);
     } else {
       setSearchResult(sortedList);
@@ -76,20 +63,18 @@ const FormPairSelector = ({
 
   if (!walletPublicKey) {
     return (
-      <div className='flex flex-col h-full w-full py-4 px-2'>
-        <div className='flex w-full justify-between'>
-          <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={onClose}>
+      <div className="flex flex-col h-full w-full py-4 px-2">
+        <div className="flex w-full justify-between">
+          <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onClose}>
             <LeftArrowIcon width={24} height={24} />
           </div>
 
-          <div className='text-white'>
-            Select Token
-          </div>
+          <div className="text-white">Select Token</div>
 
-          <div className=' w-6 h-6' />
+          <div className=" w-6 h-6" />
         </div>
 
-        <div className='w-full mt-24 flex flex-col items-center'>
+        <div className="w-full mt-24 flex flex-col items-center">
           <JupiterLogo width={48} height={48} />
           <p className="font-semibold text-lg mt-4 mb-6 text-white w-[60%] text-center">
             Connect Your Wallet to Get Started
@@ -101,20 +86,21 @@ const FormPairSelector = ({
   }
 
   return (
-    <div className='flex flex-col h-full w-full py-4 px-2'>
-      <div className='flex w-full justify-between'>
-        <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={onClose}>
+    <div className="flex flex-col h-full w-full py-4 px-2">
+      <div className="flex w-full justify-between">
+        <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onClose}>
           <LeftArrowIcon width={24} height={24} />
         </div>
 
-        <div className='text-white'>
-          Select Token
-        </div>
+        <div className="text-white">Select Token</div>
 
-        <div className=' w-6 h-6' />
+        <div className=" w-6 h-6" />
       </div>
 
-      <div className="flex px-5 mt-4 w-[98%] rounded-xl bg-[#212128]" style={{ height: SEARCH_BOX_HEIGHT, maxHeight: SEARCH_BOX_HEIGHT }}>
+      <div
+        className="flex px-5 mt-4 w-[98%] rounded-xl bg-[#212128]"
+        style={{ height: SEARCH_BOX_HEIGHT, maxHeight: SEARCH_BOX_HEIGHT }}
+      >
         <SearchIcon />
 
         <input
@@ -141,9 +127,7 @@ const FormPairSelector = ({
                     searchResult,
                     onSubmit,
                   }}
-                  className={classNames(
-                    'overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar',
-                  )}
+                  className={classNames('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
                 >
                   {rowRenderer}
                 </FixedSizeList>

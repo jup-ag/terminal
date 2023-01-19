@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import JupiterApp from "./components/Jupiter";
-import { ContextProvider } from "./contexts/ContextProvider";
-import { ScreenProvider } from "./contexts/ScreenProvider";
-import { TokenContextProvider } from "./contexts/TokenContextProvider";
-import WalletPassthroughProvider from "./contexts/WalletPassthroughProvider";
-import { IInit } from "./types";
+import JupiterApp from './components/Jupiter';
+import { ContextProvider } from './contexts/ContextProvider';
+import { ScreenProvider } from './contexts/ScreenProvider';
+import { TokenContextProvider } from './contexts/TokenContextProvider';
+import WalletPassthroughProvider from './contexts/WalletPassthroughProvider';
+import { IInit } from './types';
 
 const RenderJupiter = (props: IInit) => {
   return (
@@ -13,7 +13,7 @@ const RenderJupiter = (props: IInit) => {
       <WalletPassthroughProvider>
         <TokenContextProvider>
           <ScreenProvider>
-            <JupiterApp  {...props} />
+            <JupiterApp {...props} />
           </ScreenProvider>
         </TokenContextProvider>
       </WalletPassthroughProvider>

@@ -5,7 +5,7 @@ const SpinnerProgress = ({
   strokeWidth = 2,
   sqSize = 14,
   strokeColor = '#23C1AA',
-  strokeBgColor = '#FFFFFF'
+  strokeBgColor = '#FFFFFF',
 }: {
   percentage: number;
   strokeWidth?: number;

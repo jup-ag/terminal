@@ -1,20 +1,20 @@
-import { JupiterProvider } from "@jup-ag/react-hook";
-import { useConnection } from "@solana/wallet-adapter-react";
-import React, { useMemo, useState } from "react";
+import { JupiterProvider } from '@jup-ag/react-hook';
+import { useConnection } from '@solana/wallet-adapter-react';
+import React, { useMemo, useState } from 'react';
 
-import { useScreenState } from "src/contexts/ScreenProvider";
-import { SwapContextProvider, useSwapContext } from "src/contexts/SwapContext";
-import { ROUTE_CACHE_DURATION } from "src/misc/constants";
-import { useWalletPassThrough } from "src/contexts/WalletPassthroughProvider";
-import { IInit } from "src/types";
-import { SlippageConfigProvider } from "src/contexts/SlippageConfigProvider";
+import { useScreenState } from 'src/contexts/ScreenProvider';
+import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
+import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { IInit } from 'src/types';
+import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
 
-import { WRAPPED_SOL_MINT } from "../constants";
-import Header from "../components/Header";
-import { AccountsProvider } from "../contexts/accounts";
-import InitialScreen from "./screens/InitialScreen";
-import ReviewOrderScreen from "./screens/ReviewOrderScreen";
-import SwappingScreen from "./screens/SwappingScreen";
+import { WRAPPED_SOL_MINT } from '../constants';
+import Header from '../components/Header';
+import { AccountsProvider } from '../contexts/accounts';
+import InitialScreen from './screens/InitialScreen';
+import ReviewOrderScreen from './screens/ReviewOrderScreen';
+import SwappingScreen from './screens/SwappingScreen';
 
 const Content = () => {
   const { screen } = useScreenState();
@@ -23,7 +23,7 @@ const Content = () => {
 
   return (
     <>
-      {screen === "Initial" ? (
+      {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
           <InitialScreen
@@ -34,8 +34,8 @@ const Content = () => {
         </>
       ) : null}
 
-      {screen === "Confirmation" ? <ReviewOrderScreen /> : null}
-      {screen === "Swapping" ? <SwappingScreen /> : null}
+      {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
+      {screen === 'Swapping' ? <SwappingScreen /> : null}
     </>
   );
 };
@@ -45,10 +45,7 @@ const JupiterApp = (props: IInit) => {
   const { wallet } = useWalletPassThrough();
   const { connection } = useConnection();
 
-  const walletPublicKey = useMemo(
-    () => wallet?.adapter.publicKey,
-    [wallet?.adapter.publicKey]
-  );
+  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
   return (
     <AccountsProvider>

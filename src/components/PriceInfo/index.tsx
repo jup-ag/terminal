@@ -1,10 +1,10 @@
 import { ZERO } from '@jup-ag/math';
-import { RouteInfo, SwapMode, TransactionFeeInfo } from '@jup-ag/react-hook'
+import { RouteInfo, SwapMode, TransactionFeeInfo } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
-import JSBI from 'jsbi'
-import React, { useEffect, useMemo, useState } from 'react'
+import JSBI from 'jsbi';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
@@ -12,7 +12,23 @@ import Deposits from './Deposits';
 import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 
-const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading, showFullDetails = false, containerClassName }: { routes: RouteInfo[], selectedSwapRoute: RouteInfo, fromTokenInfo: TokenInfo, toTokenInfo: TokenInfo, loading: boolean, showFullDetails?: boolean, containerClassName?: string }) => {
+const Index = ({
+  routes,
+  selectedSwapRoute,
+  fromTokenInfo,
+  toTokenInfo,
+  loading,
+  showFullDetails = false,
+  containerClassName,
+}: {
+  routes: RouteInfo[];
+  selectedSwapRoute: RouteInfo;
+  fromTokenInfo: TokenInfo;
+  toTokenInfo: TokenInfo;
+  loading: boolean;
+  showFullDetails?: boolean;
+  containerClassName?: string;
+}) => {
   const rateParams = {
     inAmount: selectedSwapRoute?.inAmount || routes?.[0]?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
     inputDecimal: fromTokenInfo.decimals,
@@ -21,9 +37,7 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading,
   };
 
   const { wallet } = useWalletPassThrough();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [
-    wallet?.adapter.publicKey,
-  ]);
+  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
   const priceImpact = formatNumber.format(
     new Decimal(selectedSwapRoute?.priceImpactPct || 0).mul(100).toDP(4).toNumber(),
@@ -54,7 +68,7 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading,
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
   return (
-    <div className={classNames("mt-4 space-y-4 border border-white/5 rounded-xl p-3", containerClassName)}>
+    <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/30">{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
@@ -94,10 +108,9 @@ const Index = ({ routes, selectedSwapRoute, fromTokenInfo, toTokenInfo, loading,
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
         </>
-      )
-        : null}
+      ) : null}
     </div>
-  )
-}
+  );
+};
 
-export default Index
+export default Index;

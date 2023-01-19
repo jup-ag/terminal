@@ -21,9 +21,7 @@ export const calculateRate = (
   const input = fromLamports(inAmount, inputDecimal);
   const output = fromLamports(outAmount, outputDecimal);
 
-  const rate = !reverse
-    ? new Decimal(input).div(output)
-    : new Decimal(output).div(input);
+  const rate = !reverse ? new Decimal(input).div(output) : new Decimal(output).div(input);
 
   if (Number.isNaN(rate.toNumber())) {
     return 0;
@@ -32,21 +30,9 @@ export const calculateRate = (
   return Number(rate.toFixed(reverse ? outputDecimal : inputDecimal));
 };
 
-const ApproxSVG = ({
-  width = 16,
-  height = 16,
-}: {
-  width?: string | number;
-  height?: string | number;
-}) => {
+const ApproxSVG = ({ width = 16, height = 16 }: { width?: string | number; height?: string | number }) => {
   return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width={width} height={height} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         d="M10.8573 8.18429L13.6323 5.95933L10.8573 3.73438V5.31937H3.32735V6.59937H10.8573V8.18429ZM5.14223 7.81429L2.36719 10.0393L5.14223 12.2642V10.6792H12.6722V9.39922H5.14223V7.81429Z"
         fill="#777777"
@@ -77,8 +63,7 @@ const ExchangeRate = ({
   const [reverse, setReverse] = React.useState(reversible ?? true);
 
   const rateText = React.useMemo(
-    () =>
-      loading ? '-' : formatNumber.format(calculateRate(rateParams, reverse)),
+    () => (loading ? '-' : formatNumber.format(calculateRate(rateParams, reverse))),
     [loading, reverse, rateParams],
   );
 
@@ -89,15 +74,10 @@ const ExchangeRate = ({
 
   return (
     <div
-      className={classnames(
-        className,
-        'flex cursor-pointer text-white/30 text-xs align-center',
-      )}
+      className={classnames(className, 'flex cursor-pointer text-white/30 text-xs align-center')}
       onClick={onReverse}
     >
-      <span
-        className={classnames(textClassName, 'max-w-full whitespace-nowrap')}
-      >
+      <span className={classnames(textClassName, 'max-w-full whitespace-nowrap')}>
         {reverse ? (
           <>
             1 {fromTokenInfo.symbol} ≈ {rateText} {toTokenInfo.symbol}

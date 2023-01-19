@@ -86,8 +86,9 @@ const Deposits = ({
                       ),
                     )}{' '}
                     SOL for {feeInformation?.openOrdersDeposits.length}{' '}
-                    {(feeInformation?.openOrdersDeposits?.length || 0) > 0 ? 'Serum OpenOrders account' : 'Serum OpenOrders accounts'}
-                    
+                    {(feeInformation?.openOrdersDeposits?.length || 0) > 0
+                      ? 'Serum OpenOrders account'
+                      : 'Serum OpenOrders accounts'}
                   </span>
                 </p>
               ),

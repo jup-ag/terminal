@@ -12,9 +12,7 @@ const FormError: React.FC<{
         >
           <div className="flex items-start space-x-2.5">
             <div className="flex-grow">
-              <p className="text-[12px] leading-[1.67] font-bold !text-[#F04A44]">
-                {errors[key].title}
-              </p>
+              <p className="text-[12px] leading-[1.67] font-bold !text-[#F04A44]">{errors[key].title}</p>
               {errors[key].message ? (
                 <p className="text-[12px] leading-[1.17] font-medium dark:text-white/50 text-black/50">
                   {errors[key].message}

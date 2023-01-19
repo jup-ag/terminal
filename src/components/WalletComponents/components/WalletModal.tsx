@@ -14,7 +14,7 @@ const PRIORITISE: {
   [WalletReadyState.Unsupported]: 3,
 };
 export interface WalletModalProps {
-  setIsWalletModalOpen(toggle: boolean): void
+  setIsWalletModalOpen(toggle: boolean): void;
 }
 
 export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
@@ -41,10 +41,7 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
       {walletList.map((wallet, index) => {
         return (
           <ul key={index}>
-            <WalletListItem
-              handleClick={(event) => handleWalletClick(event, wallet.adapter)}
-              wallet={wallet.adapter}
-            />
+            <WalletListItem handleClick={(event) => handleWalletClick(event, wallet.adapter)} wallet={wallet.adapter} />
           </ul>
         );
       })}
@@ -52,24 +49,19 @@ export const WalletModal: FC<WalletModalProps> = ({ setIsWalletModalOpen }) => {
   );
 
   return (
-    <div className='flex flex-col h-full w-full py-4 px-2 bg-jupiter-bg'>
-      <div className='flex w-full justify-between'>
-        <div className='text-white fill-current w-6 h-6 cursor-pointer' onClick={() => setIsWalletModalOpen(false)}>
+    <div className="flex flex-col h-full w-full py-4 px-2 bg-jupiter-bg">
+      <div className="flex w-full justify-between">
+        <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={() => setIsWalletModalOpen(false)}>
           <LeftArrowIcon width={24} height={24} />
         </div>
 
-        <div className='text-white'>
-          Connect Wallet
-        </div>
+        <div className="text-white">Connect Wallet</div>
 
-        <div className=' w-6 h-6' />
+        <div className=" w-6 h-6" />
       </div>
 
-      <div className='mt-7 overflow-auto'>
-        {renderWalletList(
-          wallets
-            .sort((a, b) => PRIORITISE[a.readyState] - PRIORITISE[b.readyState])
-        )}
+      <div className="mt-7 overflow-auto">
+        {renderWalletList(wallets.sort((a, b) => PRIORITISE[a.readyState] - PRIORITISE[b.readyState]))}
       </div>
     </div>
   );
