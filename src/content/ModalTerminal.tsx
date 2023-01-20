@@ -38,14 +38,15 @@ const WithAppWallet = ({ endpoint, mode = 'default' }: { endpoint: string, mode:
         endpoint,
         passThroughWallet: wallet,
       });
-    } else if (mode === 'outputOnly') {
-      window.Jupiter.init({
-        mode,
-        mint: WRAPPED_SOL_MINT.toString(),
-        endpoint,
-        passThroughWallet: wallet,
-      });
     }
+    // } else if (mode === 'outputOnly') {
+    //   window.Jupiter.init({
+    //     mode,
+    //     mint: WRAPPED_SOL_MINT.toString(),
+    //     endpoint,
+    //     passThroughWallet: wallet,
+    //   });
+    // }
   };
 
   return (
@@ -149,6 +150,10 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
             <p className="text-white/30 text-xs md:max-w-[65%]">
               In this mode, users can only swap to a fixed output token.
             </p>
+            <p className="text-white/30 text-xs md:max-w-[65%]">
+              <input type="checkbox" /> Fixed output mint
+              <input type="checkbox" /> swap mode exact output with fixed output mint
+            </p>
           </div>
 
           <div className="flex justify-center">
@@ -157,8 +162,12 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
               className="p-4 hover:bg-black/25 rounded-xl cursor-pointer flex flex-col items-center text-white"
               onClick={() => {
                 window.Jupiter.init({
-                  mode: 'outputOnly',
-                  mint: WRAPPED_SOL_MINT.toString(),
+                  mode: 'default',
+                  swapMode: 'ExactOut',
+                  amount: '10000000',
+                  fixedAmount: true,
+                  outputMint: WRAPPED_SOL_MINT.toString(),
+                  fixedOutputMint: true,
                   endpoint: rpcUrl,
                 });
               }}
@@ -169,7 +178,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet endpoint={rpcUrl} mode={'outputOnly'} />
+              <WithAppWallet mode={'default'} endpoint={rpcUrl} />
             </ContextProvider>
           </div>
         </div>

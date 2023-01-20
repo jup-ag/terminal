@@ -20,6 +20,7 @@ import PriceInfo from './PriceInfo/index';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
+import { SwapMode } from '@jup-ag/react-hook';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -38,6 +39,10 @@ const Form: React.FC<{
     toTokenInfo,
     selectedSwapRoute,
     mode,
+    swapMode,
+    fixedAmount,
+    fixedInputMint,
+    fixedOutputMint,
     jupiter: { routes, loading, refresh },
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
@@ -63,6 +68,14 @@ const Form: React.FC<{
     if (isInvalid) return;
 
     setForm((form) => ({ ...form, fromValue: e.target.value }));
+  };
+
+  const onChangeToValue = (e: ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const isInvalid = Number.isNaN(Number(e.target.value));
+    if (isInvalid) return;
+
+    setForm((form) => ({ ...form, toValue: e.target.value }));
   };
 
   const balance = useMemo(() => {
@@ -91,16 +104,27 @@ const Form: React.FC<{
   );
 
   const onClickSwitchPair = () => {
-    if (mode === 'default') {
-      setForm((prev) => ({
-        ...prev,
-        fromValue: '',
-        toValue: '',
-        fromMint: prev.toMint,
-        toMint: prev.fromMint,
-      }));
-    }
+    setForm((prev) => ({
+      ...prev,
+      fromValue: '',
+      toValue: '',
+      fromMint: prev.toMint,
+      toMint: prev.fromMint,
+    }));
   };
+
+  const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
+  const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
+    const result = { inputAmountDisabled: true, outputAmountDisabled: true };
+    if (!fixedAmount) {
+      if (swapMode === SwapMode.ExactOut) {
+        result.outputAmountDisabled = false;
+      } else {
+        result.inputAmountDisabled = false;
+      }
+    }
+    return result;
+  }, [fixedAmount, swapMode]);
 
   const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
   return (
@@ -115,7 +139,8 @@ const Form: React.FC<{
                     <button
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
-                      onClick={() => setSelectPairSelector('fromMint')}
+                      disabled={fixedInputMint}
+                      onClick={fixedInputMint ? () => {} : () => setSelectPairSelector('fromMint')}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={fromTokenInfo} width={20} height={20} />
@@ -123,17 +148,20 @@ const Form: React.FC<{
                       <div className="ml-4 mr-2 font-semibold" translate="no">
                         {fromTokenInfo?.symbol}
                       </div>
-
-                      <span className="text-white/25 fill-current">
-                        <ChevronDownIcon />
-                      </span>
+                      {fixedInputMint ? null : (
+                        <span className="text-white/25 fill-current">
+                          <ChevronDownIcon />
+                        </span>
+                      )}
                     </button>
 
                     <div className="text-right">
                       <input
                         placeholder="0.00"
-                        className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl !outline-none"
+                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
+                        // className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl !outline-none"
                         value={form.fromValue}
+                        disabled={inputAmountDisabled}
                         onChange={(e) => onChangeFromValue(e)}
                       />
                     </div>
@@ -154,7 +182,7 @@ const Form: React.FC<{
             </div>
           </div>
 
-          <div className="my-2">{mode === 'default' ? <SwitchPairButton onClick={onClickSwitchPair} /> : null}</div>
+          <div className="my-2">{hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} />}</div>
 
           <div className="border-b border-transparent bg-[#212128] rounded-xl">
             <div className="px-x border-transparent rounded-xl">
@@ -164,8 +192,8 @@ const Form: React.FC<{
                     <button
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
-                      disabled={mode === 'outputOnly'}
-                      onClick={mode === 'default' ? () => setSelectPairSelector('toMint') : () => {}}
+                      disabled={fixedOutputMint}
+                      onClick={fixedOutputMint ? () => {} : () => setSelectPairSelector('toMint')}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
@@ -174,18 +202,19 @@ const Form: React.FC<{
                         {toTokenInfo?.symbol}
                       </div>
 
-                      {mode === 'default' ? (
+                      {fixedOutputMint ? null : (
                         <span className="text-white/25 fill-current">
                           <ChevronDownIcon />
                         </span>
-                      ) : null}
+                      )}
                     </button>
 
                     <div className="text-right">
                       <input
                         className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
                         value={form.toValue}
-                        disabled
+                        disabled={outputAmountDisabled}
+                        onChange={(e) => onChangeToValue(e)}
                       />
                     </div>
                   </div>
