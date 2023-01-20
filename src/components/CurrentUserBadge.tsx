@@ -11,7 +11,7 @@ export const CurrentUserBadge: React.FC = () => {
 
   const solBalance = useMemo(() => {
     if (accounts[WRAPPED_SOL_MINT.toString()]) {
-      return accounts[WRAPPED_SOL_MINT.toString()].balance
+      return accounts[WRAPPED_SOL_MINT.toString()].balance;
     }
     return 0;
   }, [publicKey, accounts]);
@@ -27,18 +27,11 @@ export const CurrentUserBadge: React.FC = () => {
         style={{ position: 'relative' }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt="Wallet logo"
-          width={16}
-          height={16}
-          src={wallet?.adapter?.icon}
-        />
+        <img alt="Wallet logo" width={16} height={16} src={wallet?.adapter?.icon} />
       </div>
 
       <div className="ml-2">
-        <div className="text-xs text-white">
-          {shortenAddress(`${publicKey}`)}
-        </div>
+        <div className="text-xs text-white">{shortenAddress(`${publicKey}`)}</div>
       </div>
     </div>
   );

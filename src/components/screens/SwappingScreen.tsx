@@ -1,24 +1,18 @@
-import React, { useEffect, useMemo, useState } from "react";
-import Rive, { Alignment, Fit, Layout } from "@rive-app/react-canvas";
+import React, { useEffect, useMemo, useState } from 'react';
+import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
 
-import { useScreenState } from "src/contexts/ScreenProvider";
-import { useSwapContext } from "src/contexts/SwapContext";
-import JupButton from "../JupButton";
-import SexyChameleonText from "../SexyChameleonText/SexyChameleonText";
-import Spinner from "../Spinner";
-import SuccessIcon from "src/icons/SuccessIcon";
-import PriceInfo from "../PriceInfo/index";
-import { fromLamports } from "src/misc/utils";
+import { useScreenState } from 'src/contexts/ScreenProvider';
+import { useSwapContext } from 'src/contexts/SwapContext';
+import JupButton from '../JupButton';
+import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
+import Spinner from '../Spinner';
+import SuccessIcon from 'src/icons/SuccessIcon';
+import PriceInfo from '../PriceInfo/index';
+import { fromLamports } from 'src/misc/utils';
 
 const ErrorIcon = () => {
   return (
-    <svg
-      width="40"
-      height="40"
-      viewBox="0 0 40 40"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
       <g clipPath="url(#clip0_7547_116874)">
         <circle cx="20" cy="20" r="20" fill="#F04A44" />
         <path
@@ -53,33 +47,33 @@ const SwappingScreen = () => {
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onSwapMore = () => {
     reset();
-    setErrorMessage("");
-    setScreen("Initial");
+    setErrorMessage('');
+    setScreen('Initial');
     refresh();
   };
 
   const onGoBack = () => {
     reset({ resetValues: false });
-    setErrorMessage("");
-    setScreen("Initial");
+    setErrorMessage('');
+    setScreen('Initial');
     refresh();
   };
 
   useEffect(() => {
-    if (screen !== "Swapping") return;
+    if (screen !== 'Swapping') return;
 
-    if (lastSwapResult && "error" in lastSwapResult) {
-      setErrorMessage(lastSwapResult.error?.message || "");
+    if (lastSwapResult && 'error' in lastSwapResult) {
+      setErrorMessage(lastSwapResult.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
         window.Jupiter.onSwapError({ error: lastSwapResult.error });
       }
       return;
-    } else if (lastSwapResult && "txid" in lastSwapResult) {
+    } else if (lastSwapResult && 'txid' in lastSwapResult) {
       if (window.Jupiter.onSuccess) {
         window.Jupiter.onSuccess({ txid: lastSwapResult.txid, swapResult: lastSwapResult });
       }
@@ -88,77 +82,65 @@ const SwappingScreen = () => {
   }, [lastSwapResult]);
 
   const onClose = () => {
-    if (!displayMode || displayMode === "modal") {
+    if (!displayMode || displayMode === 'modal') {
       window.Jupiter.close();
     }
 
     reset();
-    setScreen("Initial");
+    setScreen('Initial');
   };
 
-  const swapState: "success" | "error" | "loading" = useMemo(() => {
-    const hasErrors = txStatus.find((item) => item.status === "fail");
+  const swapState: 'success' | 'error' | 'loading' = useMemo(() => {
+    const hasErrors = txStatus.find((item) => item.status === 'fail');
     if (hasErrors || errorMessage) {
-      return "error";
+      return 'error';
     }
 
-    const allSuccess = txStatus.every((item) => item.status !== "loading");
+    const allSuccess = txStatus.every((item) => item.status !== 'loading');
     if (txStatus.length > 0 && allSuccess) {
-      return "success";
+      return 'success';
     }
 
-    return "loading";
+    return 'loading';
   }, [txStatus]);
 
   const Content = () => {
     return (
       <>
         <div className="flex w-full justify-center">
-          <div className="text-white">
-            {swapState === "loading" ? "Performing Swap" : ""}
-          </div>
+          <div className="text-white">{swapState === 'loading' ? 'Performing Swap' : ''}</div>
         </div>
 
         <div className="flex w-full justify-center items-center mt-9">
           <div className="h-16 w-16">
             <Rive
               src={`${scriptDomain}/swap-animation.riv`}
-              layout={
-                new Layout({ fit: Fit.Contain, alignment: Alignment.TopCenter })
-              }
+              layout={new Layout({ fit: Fit.Contain, alignment: Alignment.TopCenter })}
             />
           </div>
         </div>
 
         {totalTxs === 0 ? (
-          <span className="text-white text-center mt-8 text-sm px-4">
-            Awaiting approval from your wallet...
-          </span>
+          <span className="text-white text-center mt-8 text-sm px-4">Awaiting approval from your wallet...</span>
         ) : null}
         {totalTxs > 1 ? (
           <span className="text-white text-center mt-8 text-sm px-4">
-            Because of transaction size limits, we need to split up the
-            transactions
+            Because of transaction size limits, we need to split up the transactions
           </span>
         ) : (
-          ""
+          ''
         )}
 
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
           {txStatus &&
             txStatus.map((item) => (
-              <div
-                key={item.txid}
-                className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2"
-              >
-                <Spinner spinnerColor={"white"} />
+              <div key={item.txid} className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
+                <Spinner spinnerColor={'white'} />
 
                 <div className="ml-4 text-white text-sm">
-                  {item.txDescription === "SETUP" ? <span>Setup</span> : null}
-                  {item.txDescription === "SWAP" ? <span>Swap</span> : null}
-                  {item.txDescription === "CLEANUP" ? (
-                    <span>Cleanup</span>
-                  ) : null}
+                  {item.txDescription === 'SETUP' ? <span>Setup</span> : null}
+                  {item.txDescription === 'SWAP' ? <span>Swap</span> : null}
+                  {item.txDescription === 'CLEANUP' ? <span>Cleanup</span> : null}
                 </div>
               </div>
             ))}
@@ -168,19 +150,11 @@ const SwappingScreen = () => {
   };
 
   const SuccessContent = () => {
-    if (
-      !lastSwapResult ||
-      !fromTokenInfo ||
-      !toTokenInfo ||
-      !routes ||
-      !selectedSwapRoute
-    ) {
+    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo || !routes || !selectedSwapRoute) {
       return null;
     }
 
-    const solscanLink = (lastSwapResult as any).txid
-      ? `https://solscan.io/tx/${(lastSwapResult as any).txid}`
-      : null;
+    const solscanLink = (lastSwapResult as any).txid ? `https://solscan.io/tx/${(lastSwapResult as any).txid}` : null;
 
     return (
       <>
@@ -193,14 +167,17 @@ const SwappingScreen = () => {
         </div>
 
         <div className="flex flex-col justify-center items-center">
-          <p className="mt-5 text-white text-xl font-semibold">
-            Swap successful
-          </p>
+          <p className="mt-5 text-white text-xl font-semibold">Swap successful</p>
 
           <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
-              <p className="text-xs font-semibold text-white/75">Swapped {fromLamports((lastSwapResult as any).inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to</p>
-              <p className="text-2xl font-semibold text-white/75">{fromLamports((lastSwapResult as any).outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}</p>
+              <p className="text-xs font-semibold text-white/75">
+                Swapped {fromLamports((lastSwapResult as any).inputAmount, fromTokenInfo.decimals)}{' '}
+                {fromTokenInfo.symbol} to
+              </p>
+              <p className="text-2xl font-semibold text-white/75">
+                {fromLamports((lastSwapResult as any).outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
+              </p>
             </div>
 
             <PriceInfo
@@ -227,23 +204,13 @@ const SwappingScreen = () => {
         ) : null}
 
         <div className="mt-auto px-5 pb-4 flex space-x-2">
-          <JupButton
-            size="lg"
-            className="w-full mt-4"
-            type="button"
-            onClick={onSwapMore}
-          >
+          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
             <SexyChameleonText>
               <span className="text-sm">Swap More</span>
             </SexyChameleonText>
           </JupButton>
 
-          <JupButton
-            size="lg"
-            className="w-full mt-4"
-            type="button"
-            onClick={onClose}
-          >
+          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onClose}>
             <span className="text-sm">Close</span>
           </JupButton>
         </div>
@@ -253,35 +220,24 @@ const SwappingScreen = () => {
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
-      {errorMessage || swapState === "error" ? (
+      {errorMessage || swapState === 'error' ? (
         <div className="flex justify-center">
           <div className="flex flex-col items-center justify-center text-center mt-12">
             <ErrorIcon />
 
             <p className="text-white mt-2">Swap Failed</p>
-            <p className="text-white/50 text-xs mt-2">
-              We were unable to complete the swap, please try again.
-            </p>
-            {errorMessage ? (
-              <p className="text-white/50 text-xs mt-2">{errorMessage}</p>
-            ) : (
-              ""
-            )}
+            <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
+            {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
 
-            <JupButton
-              size="lg"
-              className="w-full mt-6 disabled:opacity-50"
-              type="button"
-              onClick={onGoBack}
-            >
+            <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
               <SexyChameleonText>Retry</SexyChameleonText>
             </JupButton>
           </div>
         </div>
       ) : null}
 
-      {!errorMessage && swapState === "loading" ? <Content /> : null}
-      {!errorMessage && swapState === "success" ? <SuccessContent /> : null}
+      {!errorMessage && swapState === 'loading' ? <Content /> : null}
+      {!errorMessage && swapState === 'success' ? <SuccessContent /> : null}
     </div>
   );
 };

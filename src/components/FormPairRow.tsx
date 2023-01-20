@@ -17,16 +17,17 @@ const FormPairRow: React.FC<{
       style={{ maxHeight: PAIR_ROW_HEIGHT, height: PAIR_ROW_HEIGHT, ...style }}
       translate="no"
     >
-      <div className="flex items-center rounded-xl space-x-4 my-2 p-4 bg-[#2C2D33] hover:bg-black/10" onClick={() => onSubmit(item)}>
+      <div
+        className="flex items-center rounded-xl space-x-4 my-2 p-4 bg-[#2C2D33] hover:bg-black/10"
+        onClick={() => onSubmit(item)}
+      >
         <div className="flex-shrink-0">
           <div className="h-6 w-6 rounded-full">
             <TokenIcon tokenInfo={item} />
           </div>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-white truncate">
-            {item.symbol}
-          </p>
+          <p className="text-sm text-white truncate">{item.symbol}</p>
           <p className="text-xs text-gray-500 truncate">
             <CoinBalance mintAddress={item.address} hideZeroBalance /> {item.symbol}
           </p>

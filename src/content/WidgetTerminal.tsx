@@ -1,13 +1,13 @@
-import classNames from "classnames";
-import React, { useEffect, useState } from "react";
-import JupButton from "src/components/JupButton";
-import LeftArrowIcon from "src/icons/LeftArrowIcon";
-import { WidgetPosition, WidgetSize } from "src/types";
+import classNames from 'classnames';
+import React, { useEffect, useState } from 'react';
+import JupButton from 'src/components/JupButton';
+import LeftArrowIcon from 'src/icons/LeftArrowIcon';
+import { WidgetPosition, WidgetSize } from 'src/types';
 
 const WidgetTerminal = () => {
   const [isLoaded, setIsLoaded] = useState(false);
-  const [position, setPosition] = useState<WidgetPosition>("bottom-right");
-  const [size, setSize] = useState<WidgetSize>("default");
+  const [position, setPosition] = useState<WidgetPosition>('bottom-right');
+  const [size, setSize] = useState<WidgetSize>('default');
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -17,14 +17,13 @@ const WidgetTerminal = () => {
       }, 500);
 
       window.Jupiter.init({
-        mode: "default",
-        displayMode: "widget",
+        mode: 'default',
+        displayMode: 'widget',
         widgetStyle: {
-          position: "bottom-right",
-          size: "default",
+          position: 'bottom-right',
+          size: 'default',
         },
-        endpoint:
-          "https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci",
+        endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
       });
     }
 
@@ -36,14 +35,13 @@ const WidgetTerminal = () => {
   useEffect(() => {
     if (isLoaded) {
       window.Jupiter.init({
-        mode: "default",
-        displayMode: "widget",
+        mode: 'default',
+        displayMode: 'widget',
         widgetStyle: {
           position,
           size,
         },
-        endpoint:
-          "https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci",
+        endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
       });
     }
   }, [position, size]);
@@ -62,13 +60,10 @@ const WidgetTerminal = () => {
 
               {/* Top left  */}
               <div
-                className={classNames(
-                  "absolute left-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1",
-                  {
-                    "jup-gradient": position === "top-left",
-                  }
-                )}
-                onClick={() => setPosition("top-left")}
+                className={classNames('absolute left-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                  'jup-gradient': position === 'top-left',
+                })}
+                onClick={() => setPosition('top-left')}
               >
                 <div className="rotate-45">
                   <LeftArrowIcon width={24} height={24} />
@@ -77,13 +72,10 @@ const WidgetTerminal = () => {
 
               {/* Top right  */}
               <div
-                className={classNames(
-                  "absolute right-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1",
-                  {
-                    "jup-gradient": position === "top-right",
-                  }
-                )}
-                onClick={() => setPosition("top-right")}
+                className={classNames('absolute right-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                  'jup-gradient': position === 'top-right',
+                })}
+                onClick={() => setPosition('top-right')}
               >
                 <div className="rotate-[135deg]">
                   <LeftArrowIcon width={24} height={24} />
@@ -92,13 +84,10 @@ const WidgetTerminal = () => {
 
               {/* Bottom left  */}
               <div
-                className={classNames(
-                  "absolute left-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1",
-                  {
-                    "jup-gradient": position === "bottom-left",
-                  }
-                )}
-                onClick={() => setPosition("bottom-left")}
+                className={classNames('absolute left-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                  'jup-gradient': position === 'bottom-left',
+                })}
+                onClick={() => setPosition('bottom-left')}
               >
                 <div className="-rotate-45">
                   <LeftArrowIcon width={24} height={24} />
@@ -107,13 +96,10 @@ const WidgetTerminal = () => {
 
               {/* Bottom right  */}
               <div
-                className={classNames(
-                  "absolute right-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1",
-                  {
-                    "jup-gradient": position === "bottom-right",
-                  }
-                )}
-                onClick={() => setPosition("bottom-right")}
+                className={classNames('absolute right-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                  'jup-gradient': position === 'bottom-right',
+                })}
+                onClick={() => setPosition('bottom-right')}
               >
                 <div className="rotate-[225deg]">
                   <LeftArrowIcon width={24} height={24} />
@@ -129,12 +115,10 @@ const WidgetTerminal = () => {
               <JupButton
                 size="sm"
                 onClick={() => {
-                  setSize("sm");
+                  setSize('sm');
                 }}
                 type="button"
-                className={
-                  size === "sm" ? "bg-white/10" : "opacity-20 hover:opacity-70"
-                }
+                className={size === 'sm' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
                   <div>Small</div>
@@ -143,14 +127,10 @@ const WidgetTerminal = () => {
               <JupButton
                 size="sm"
                 onClick={() => {
-                  setSize("default");
+                  setSize('default');
                 }}
                 type="button"
-                className={
-                  size === "default"
-                    ? "bg-white/10"
-                    : "opacity-20 hover:opacity-70"
-                }
+                className={size === 'default' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
                   <div>Default</div>

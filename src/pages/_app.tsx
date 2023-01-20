@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import type { AppProps } from "next/app";
+import React, { useEffect, useState } from 'react';
+import type { AppProps } from 'next/app';
 
-import "tailwindcss/tailwind.css";
-import "../styles/app.css";
-import "../styles/globals.css";
+import 'tailwindcss/tailwind.css';
+import '../styles/app.css';
+import '../styles/globals.css';
 
-import AppHeader from "src/components/AppHeader/AppHeader";
-import SexyChameleonText from "src/components/SexyChameleonText/SexyChameleonText";
-import TerminalModalIcon from "src/icons/TerminalModalIcon";
-import TerminalIntegratedIcon from "src/icons/TerminalIntegratedIcon";
-import TerminalWidgetIcon from "src/icons/TerminalWidgetIcon";
-import Footer from "src/components/Footer/Footer";
+import AppHeader from 'src/components/AppHeader/AppHeader';
+import SexyChameleonText from 'src/components/SexyChameleonText/SexyChameleonText';
+import TerminalModalIcon from 'src/icons/TerminalModalIcon';
+import TerminalIntegratedIcon from 'src/icons/TerminalIntegratedIcon';
+import TerminalWidgetIcon from 'src/icons/TerminalWidgetIcon';
+import Footer from 'src/components/Footer/Footer';
 
 import JupButton from 'src/components/JupButton';
 import ModalTerminal from 'src/content/ModalTerminal';
@@ -18,27 +18,24 @@ import IntegratedTerminal from 'src/content/IntegratedTerminal';
 import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 
-const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== "undefined";
+const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
 // In NextJS preview env settings
 const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
-if ((isDeveloping || isPreview) && typeof window !== "undefined") {
+if ((isDeveloping || isPreview) && typeof window !== 'undefined') {
   // Initialize an empty value, simulate webpack IIFE when imported
   (window as any).Jupiter = {};
-  
+
   // Perform local fetch on development, and next preview
-  Promise.all([
-    import('../library'),
-    import('../index'),
-  ]).then((res) => {
+  Promise.all([import('../library'), import('../index')]).then((res) => {
     const [libraryProps, rendererProps] = res;
 
     (window as any).Jupiter = libraryProps;
     (window as any).JupiterRenderer = rendererProps;
-  })
+  });
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [tab, setTab] = useState<IInit["displayMode"]>("modal");
+  const [tab, setTab] = useState<IInit['displayMode']>('modal');
 
   // Cleanup on tab change
   useEffect(() => {
@@ -68,14 +65,10 @@ export default function App({ Component, pageProps }: AppProps) {
               <JupButton
                 size="sm"
                 onClick={() => {
-                  setTab("modal");
+                  setTab('modal');
                 }}
                 type="button"
-                className={
-                  tab === "modal"
-                    ? "bg-white/10"
-                    : "opacity-20 hover:opacity-70"
-                }
+                className={tab === 'modal' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
                   <TerminalModalIcon />
@@ -85,14 +78,10 @@ export default function App({ Component, pageProps }: AppProps) {
               <JupButton
                 size="sm"
                 onClick={() => {
-                  setTab("integrated");
+                  setTab('integrated');
                 }}
                 type="button"
-                className={
-                  tab === "integrated"
-                    ? "bg-white/10"
-                    : "opacity-20 hover:opacity-70"
-                }
+                className={tab === 'integrated' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
                   <TerminalIntegratedIcon />
@@ -102,14 +91,10 @@ export default function App({ Component, pageProps }: AppProps) {
               <JupButton
                 size="sm"
                 onClick={() => {
-                  setTab("widget");
+                  setTab('widget');
                 }}
                 type="button"
-                className={
-                  tab === "widget"
-                    ? "bg-white/10"
-                    : "opacity-20 hover:opacity-70"
-                }
+                className={tab === 'widget' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
                   <TerminalWidgetIcon />
@@ -118,17 +103,18 @@ export default function App({ Component, pageProps }: AppProps) {
               </JupButton>
             </div>
 
-
             <span className="flex justify-center text-center text-xs max-w-[90%] md:max-w-[50%] text-[#9D9DA6] mt-4">
-              {tab === "modal" ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
-              {tab === "integrated" ? 'Jupiter renders as a part of your dApp.' : null}
-              {tab === "widget" ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.' : null}
+              {tab === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
+              {tab === 'integrated' ? 'Jupiter renders as a part of your dApp.' : null}
+              {tab === 'widget'
+                ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.'
+                : null}
             </span>
 
             <div className="w-full max-w-3xl px-4 md:px-0 text-white/75 mt-9 mb-16">
-              {tab === "modal" ? <ModalTerminal /> : null}
-              {tab === "integrated" ? <IntegratedTerminal /> : null}
-              {tab === "widget" ? <WidgetTerminal /> : null}
+              {tab === 'modal' ? <ModalTerminal /> : null}
+              {tab === 'integrated' ? <IntegratedTerminal /> : null}
+              {tab === 'widget' ? <WidgetTerminal /> : null}
             </div>
           </div>
         </div>

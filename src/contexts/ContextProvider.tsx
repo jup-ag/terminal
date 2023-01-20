@@ -13,39 +13,33 @@ import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
 import { GlowWalletAdapter } from '@solana/wallet-adapter-glow';
 
-const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
+const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({ endpoint, children }) => {
   const { autoConnect } = useAutoConnect();
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
-  const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network])
+  const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network]);
 
   const passThroughWallet = (() => {
-    if (typeof window === "undefined") return undefined;
+    if (typeof window === 'undefined') return undefined;
     return window.Jupiter.passThroughWallet;
   })();
 
-  const wallets = useMemo(
-    () => {
-      if (passThroughWallet) {
-        return [];
-      }
+  const wallets = useMemo(() => {
+    if (passThroughWallet) {
+      return [];
+    }
 
-      return [
-        new PhantomWalletAdapter(),
-        new SolflareWalletAdapter(),
-        new BackpackWalletAdapter(),
-        new GlowWalletAdapter(),
-      ]
-    },
-    [network]
-  );
+    return [
+      new PhantomWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new BackpackWalletAdapter(),
+      new GlowWalletAdapter(),
+    ];
+  }, [network]);
 
-  const onError = useCallback(
-    (error: WalletError) => {
-      console.error({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
-    },
-    []
-  );
+  const onError = useCallback((error: WalletError) => {
+    console.error({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
+  }, []);
 
   return (
     <ConnectionProvider endpoint={selectedEndpoint}>
@@ -56,7 +50,7 @@ const WalletContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({
   );
 };
 
-export const ContextProvider: FC<{ endpoint?: string, children: ReactNode }> = ({ endpoint, children }) => {
+export const ContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({ endpoint, children }) => {
   return (
     <>
       <NetworkConfigurationProvider>

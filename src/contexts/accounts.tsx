@@ -17,7 +17,7 @@ export interface IAccountsBalance {
 interface IAccountContext {
   accounts: Record<string, IAccountsBalance>;
   loading: boolean;
-  refresh: () => void
+  refresh: () => void;
 }
 
 interface ParsedTokenData {
@@ -52,7 +52,7 @@ interface ParsedTokenData {
 const AccountContext = React.createContext<IAccountContext>({
   accounts: {},
   loading: true,
-  refresh: () => { }
+  refresh: () => {},
 });
 
 const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -60,9 +60,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const { connection } = useConnection();
 
   const [loading, setLoading] = useState(false);
-  const [accounts, setAccounts] = useState<Record<string, IAccountsBalance>>(
-    {},
-  );
+  const [accounts, setAccounts] = useState<Record<string, IAccountsBalance>>({});
 
   const fetchNative = async () => {
     if (!publicKey || !connected) return null;
@@ -74,19 +72,18 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         balanceLamports: new BN(response?.lamports || 0),
         hasBalance: response?.lamports ? response?.lamports > 0 : false,
         decimals: 9,
-      }
+      };
     }
-  }
+  };
 
   const fetchAllTokens = async () => {
     if (!publicKey || !connected) return {};
 
-    const response = await connection
-      .getParsedTokenAccountsByOwner(
-        publicKey,
-        { programId: TOKEN_PROGRAM_ID },
-        'confirmed',
-      );
+    const response = await connection.getParsedTokenAccountsByOwner(
+      publicKey,
+      { programId: TOKEN_PROGRAM_ID },
+      'confirmed',
+    );
 
     const reducedResult = response.value.reduce((acc, item: ParsedTokenData) => {
       acc[item.account.data.parsed.info.mint] = {
@@ -99,34 +96,27 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }, {} as Record<string, IAccountsBalance>);
 
     return reducedResult;
-  }
+  };
 
   const refresh = async () => {
     if (!publicKey) return;
 
     // Fetch all tokens balance
-    const [nativeAccount, accounts] = await Promise.all([
-      fetchNative(),
-      fetchAllTokens(),
-    ])
+    const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
 
     setAccounts({
       ...accounts,
-      ...nativeAccount ? { [WRAPPED_SOL_MINT.toString()]: nativeAccount } : {},
-    })
+      ...(nativeAccount ? { [WRAPPED_SOL_MINT.toString()]: nativeAccount } : {}),
+    });
     setLoading(false);
-  }
+  };
 
   // Fetch all accounts for the current wallet
   useEffect(() => {
-    refresh()
+    refresh();
   }, [publicKey, connected]);
 
-  return (
-    <AccountContext.Provider value={{ accounts, loading, refresh }}>
-      {children}
-    </AccountContext.Provider>
-  );
+  return <AccountContext.Provider value={{ accounts, loading, refresh }}>{children}</AccountContext.Provider>;
 };
 
 const useAccounts = () => {

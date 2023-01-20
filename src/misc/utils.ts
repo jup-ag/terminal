@@ -25,7 +25,7 @@ export const formatNumber = {
     if (precision !== undefined) {
       return val.toFixed(precision);
     } else {
-      return numberFormatter.format(val,);
+      return numberFormatter.format(val);
     }
   },
 };
@@ -90,8 +90,7 @@ export function useReactiveEventListener(
   );
 }
 
-export const isMobile = () =>
-  typeof window !== 'undefined' && screen && screen.width <= 480;
+export const isMobile = () => typeof window !== 'undefined' && screen && screen.width <= 480;
 
 export const detectedSeparator = formatNumber.format(1.1).substring(1, 2);
 

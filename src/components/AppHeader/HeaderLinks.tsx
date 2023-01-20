@@ -46,12 +46,7 @@ const HeaderLink = ({
 const HeaderLinks = () => {
   return (
     <div className="flex-1 justify-center hidden md:!flex text-sm text-white-35 space-x-10 fill-current">
-      <HeaderLink
-        href="/"
-        isActive
-        title={'Demo'}
-        icon={<SwapIcon width="20" height="20" />}
-      />
+      <HeaderLink href="/" isActive title={'Demo'} icon={<SwapIcon width="20" height="20" />} />
       <HeaderLink
         href="https://github.com/jup-ag/terminal"
         isActive={false}

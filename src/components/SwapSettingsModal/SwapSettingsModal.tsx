@@ -36,11 +36,11 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       ...(slippage
         ? slippageInitialPreset
           ? {
-            slippagePreset: String(slippageInitialPreset),
-          }
+              slippagePreset: String(slippageInitialPreset),
+            }
           : {
-            slippageInput: String(slippage),
-          }
+              slippageInput: String(slippage),
+            }
         : {}),
     },
   });
@@ -99,8 +99,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
           </div>
         </div>
 
-        <div
-        >
+        <div>
           <div className="px-5 py-2">
             <div className="flex items-center space-x-2 mt-3">
               <Controller
@@ -178,12 +177,8 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               </div>
             )}
 
-            {slippageSuggestionText && (
-              <div className="mt-2 text-xs">
-                {slippageSuggestionText}
-              </div>
-            )}
-            
+            {slippageSuggestionText && <div className="mt-2 text-xs">{slippageSuggestionText}</div>}
+
             <JupButton type="submit" className={'w-full mt-4'} disabled={isDisabled} size={'lg'}>
               <span>Save Settings</span>
             </JupButton>

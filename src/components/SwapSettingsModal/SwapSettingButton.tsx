@@ -11,9 +11,7 @@ const SwapSettingButton = ({ onClick, highlighted, children }: ISwapSettingButto
   return (
     <button
       type="button"
-      className={`${
-        highlighted ? 'jup-gradient bg-transparent' : 'bg-black/30'
-      } ${classes} relative rounded-xl`}
+      className={`${highlighted ? 'jup-gradient bg-transparent' : 'bg-black/30'} ${classes} relative rounded-xl`}
       onClick={onClick}
     >
       <div className="absolute top-0 left-0 h-full w-full" />

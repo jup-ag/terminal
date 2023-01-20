@@ -16,17 +16,7 @@ interface IJupButton {
 
 const JupButton = React.forwardRef(
   (
-    {
-      onClick,
-      disabled,
-      children,
-      highlighted,
-      className = '',
-      size = 'md',
-      type,
-      bgClass,
-      rounded,
-    }: IJupButton,
+    { onClick, disabled, children, highlighted, className = '', size = 'md', type, bgClass, rounded }: IJupButton,
     ref: React.ForwardedRef<any>,
   ) => {
     const contentClass = (() => {
@@ -46,7 +36,7 @@ const JupButton = React.forwardRef(
         type={type}
         ref={ref}
         className={classNames({
-          'relative': true,
+          relative: true,
           'jup-gradient': highlighted,
           'opacity-50 cursor-not-allowed': disabled,
           [background]: true,
@@ -56,9 +46,7 @@ const JupButton = React.forwardRef(
         disabled={disabled}
         onClick={onClick}
       >
-        <div className={`${contentClass} h-full w-full leading-none`}>
-          {children}
-        </div>
+        <div className={`${contentClass} h-full w-full leading-none`}>{children}</div>
       </button>
     );
   },

@@ -1,8 +1,8 @@
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base';
-import { useWallet, Wallet } from '@solana/wallet-adapter-react'
+import { useWallet, Wallet } from '@solana/wallet-adapter-react';
 import { SolflareWalletName } from '@solana/wallet-adapter-solflare';
 import { PublicKey } from '@solana/web3.js';
-import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react'
+import React, { createContext, FC, ReactNode, useContext, useMemo } from 'react';
 
 interface IWalletPassThrough {
   publicKey: PublicKey | null;
@@ -19,12 +19,12 @@ const initialPassThrough = {
   publicKey: null,
   wallets: [],
   wallet: null,
-  connect: async () => { },
-  select: () => { },
+  connect: async () => {},
+  select: () => {},
   connecting: false,
   connected: false,
-  disconnect: async () => { },
-}
+  disconnect: async () => {},
+};
 
 export const WalletPassthroughContext = createContext<IWalletPassThrough>(initialPassThrough);
 
@@ -33,16 +33,7 @@ export function useWalletPassThrough(): IWalletPassThrough {
 }
 
 const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const {
-    publicKey,
-    wallets,
-    wallet,
-    connect,
-    select,
-    connecting,
-    connected,
-    disconnect,
-  } = useWallet();
+  const { publicKey, wallets, wallet, connect, select, connecting, connected, disconnect } = useWallet();
 
   const value = (() => {
     // Pass through wallet adapter
@@ -67,7 +58,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
             console.log(error);
           }
         },
-      }
+      };
     }
 
     // Original wallet adapter
@@ -83,11 +74,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
     };
   })();
 
-  return (
-    <WalletPassthroughContext.Provider value={value}>
-      {children}
-    </WalletPassthroughContext.Provider>
-  )
-}
+  return <WalletPassthroughContext.Provider value={value}>{children}</WalletPassthroughContext.Provider>;
+};
 
-export default WalletPassthroughProvider
+export default WalletPassthroughProvider;
