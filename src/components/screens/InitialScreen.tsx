@@ -10,15 +10,15 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import RouteSelectionScreen from './RouteSelectionScreen';
-import { SOL_MINT_TOKEN_INFO } from 'src/constants';
+import { SOL_MINT_TOKEN_INFO, WRAPPED_SOL_MINT } from 'src/constants';
 
 interface Props {
-  mint: string;
   isWalletModalOpen: boolean;
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props) => {
+// TODO: make this flexible
+const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
@@ -28,15 +28,12 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     setErrors,
     selectedSwapRoute,
     mode,
+    // outputMint,
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
-
-  useEffect(() => {
-    setForm((prev) => ({ ...prev, toMint: mint }));
-  }, [mint]);
 
   // TODO: Dedupe the balance
   const balance = useMemo(() => {
@@ -88,17 +85,18 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
 
     let result;
     // Only allows user's tokens to be selected
-    if (mode === 'outputOnly') {
-      result = Object.keys(accounts)
-        .map((mintAddress) => tokenMap.get(mintAddress))
-        .filter(Boolean)
-        .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
-
-      // This is to handle user who have wSOL, so we filter it out to prevent duplication
-      const haveSOL = result.find((tokenInfo) => tokenInfo.address === SOL_MINT_TOKEN_INFO.address);
-      if (!haveSOL) {
-        result = [...result, SOL_MINT_TOKEN_INFO];
-      }
+    // TODO: Not sure how to resolve this
+    if (false) {
+      // // if (mode === 'outputOnly') {
+      // result = Object.keys(accounts)
+      //   .map((mintAddress) => tokenMap.get(mintAddress))
+      //   .filter(Boolean)
+      //   .filter((tokenInfo) => tokenInfo?.address !== outputMint) as TokenInfo[]; // Prevent same token to same token
+      // // This is to handle user who have wSOL, so we filter it out to prevent duplication
+      // const haveSOL = result.find((tokenInfo) => tokenInfo.address === SOL_MINT_TOKEN_INFO.address);
+      // if (!haveSOL) {
+      //   result = [...result, SOL_MINT_TOKEN_INFO];
+      // }
     } else {
       // Allow all tokens
       result = [...tokenMap.values()];
