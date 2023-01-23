@@ -38,11 +38,11 @@ const JupiterApp = (props: IInit) => {
   const {
     mode,
     swapMode,
-    amount,
+    initialAmount: amount,
     fixedAmount,
-    inputMint,
+    initialInputMint: inputMint,
     fixedInputMint,
-    outputMint,
+    initialOutputMint: outputMint,
     fixedOutputMint,
     displayMode,
     platformFeeAndAccounts,
@@ -66,11 +66,11 @@ const JupiterApp = (props: IInit) => {
             displayMode={displayMode}
             mode={mode}
             swapMode={swapMode}
-            amount={amount}
+            initialAmount={amount}
             fixedAmount={fixedAmount}
-            inputMint={inputMint}
+            initialInputMint={inputMint}
             fixedInputMint={fixedInputMint}
-            outputMint={outputMint}
+            initialOutputMint={outputMint}
             fixedOutputMint={fixedOutputMint}
             scriptDomain={props.scriptDomain}
           >

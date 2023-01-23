@@ -22,11 +22,11 @@ export declare type PlatformFeeAndAccounts = {
 export interface IInit {
   mode: 'default' | 'normal';
   swapMode?: 'ExactOut' | 'ExactOut';
-  amount?: string;
+  initialAmount?: string;
   fixedAmount?: boolean;
-  outputMint?: string;
+  initialOutputMint?: string;
   fixedOutputMint?: boolean;
-  inputMint?: string;
+  initialInputMint?: string;
   fixedInputMint?: boolean;
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
