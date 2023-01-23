@@ -61,6 +61,10 @@ const WithAppWallet = ({ endpoint, mode = 'default' }: { endpoint: string, mode:
   );
 };
 
+function toggleState(setState: React.Dispatch<React.SetStateAction<boolean>>) {
+  return setState((previousValue) => !previousValue);
+}
+
 const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [isActive, setIsActive] = useState(false);
   useEffect(() => {
@@ -70,6 +74,9 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
     return () => clearInterval(intervalId);
   }, []);
+  const [fixedOutputMint, setFixedOutputMint] = useState(true);
+  const [swapModeExactOut, setSwapModeExactOut] = useState(false);
+  const [fixedAmount, setFixedAmount] = useState(false);
 
   return (
     <>
@@ -146,13 +153,34 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
         <div className="flex flex-col md:flex-row justify-between">
           <div>
-            <h2 className="font-semibold text-lg">Fixed output mode</h2>
+            <h2 className="font-semibold text-lg">Configurable modes</h2>
+            <p className="text-white/30 text-xs md:max-w-[65%]">Set an inital amount, mints or swap mode</p>
             <p className="text-white/30 text-xs md:max-w-[65%]">
-              In this mode, users can only swap to a fixed output token.
+              <input
+                type="checkbox"
+                value="fixed-output-mint"
+                checked={fixedOutputMint}
+                onChange={() => toggleState(setFixedOutputMint)}
+              />{' '}
+              Fixed output mint
             </p>
             <p className="text-white/30 text-xs md:max-w-[65%]">
-              <input type="checkbox" /> Fixed output mint
-              <input type="checkbox" /> swap mode exact output with fixed output mint
+              <input
+                type="checkbox"
+                value="swap-mode-exact-out"
+                checked={swapModeExactOut}
+                onChange={() => toggleState(setSwapModeExactOut)}
+              />{' '}
+              Swap mode exact output
+            </p>
+            <p className="text-white/30 text-xs md:max-w-[65%]">
+              <input
+                type="checkbox"
+                value="fixed-amount"
+                checked={fixedAmount}
+                onChange={() => toggleState(setFixedAmount)}
+              />{' '}
+              Fixed amount
             </p>
           </div>
 
@@ -163,11 +191,11 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
               onClick={() => {
                 window.Jupiter.init({
                   mode: 'default',
-                  swapMode: 'ExactOut',
-                  amount: '10000000',
-                  fixedAmount: true,
-                  outputMint: WRAPPED_SOL_MINT.toString(),
-                  fixedOutputMint: true,
+                  swapMode: swapModeExactOut ? 'ExactOut' : undefined,
+                  initialAmount: fixedAmount ? '10000000' : undefined, // 0.01 SOL or 10 USDC given swapMode
+                  fixedAmount: fixedAmount ? true : undefined,
+                  initialOutputMint: WRAPPED_SOL_MINT.toString(),
+                  fixedOutputMint: fixedOutputMint ? true : undefined,
                   endpoint: rpcUrl,
                 });
               }}

@@ -61,11 +61,8 @@ export interface ISwapContext {
   lastSwapResult: SwapResult | null;
   mode: IInit['mode'];
   swapMode?: IInit['swapMode'];
-  // amount: IInit['amount'];
   fixedAmount: IInit['fixedAmount'];
-  // inputMint?: IInit['inputMint'];
   fixedInputMint?: IInit['fixedInputMint'];
-  // outputMint?: IInit['outputMint'];
   fixedOutputMint?: IInit['fixedOutputMint'];
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
@@ -106,11 +103,8 @@ export const initialSwapContext: ISwapContext = {
   mode: 'default',
   swapMode: undefined,
   displayMode: 'modal',
-  // amount: undefined,
   fixedAmount: undefined,
-  // inputMint: undefined,
   fixedInputMint: undefined,
-  // outputMint: undefined,
   fixedOutputMint: undefined,
   scriptDomain: '',
   swapping: {
@@ -149,11 +143,11 @@ export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
   mode: IInit['mode'];
   swapMode: IInit['swapMode'];
-  amount: IInit['amount'];
+  initialAmount: IInit['initialAmount'];
   fixedAmount: IInit['fixedAmount'];
-  inputMint: IInit['inputMint'];
+  initialInputMint: IInit['initialInputMint'];
   fixedInputMint: IInit['fixedInputMint'];
-  outputMint: IInit['outputMint'];
+  initialOutputMint: IInit['initialOutputMint'];
   fixedOutputMint: IInit['fixedOutputMint'];
   scriptDomain?: string;
   asLegacyTransaction: boolean;
@@ -163,11 +157,11 @@ export const SwapContextProvider: FC<{
   displayMode,
   mode,
   swapMode,
-  amount,
+  initialAmount,
   fixedAmount,
-  inputMint,
+  initialInputMint,
   fixedInputMint,
-  outputMint,
+  initialOutputMint,
   fixedOutputMint,
   scriptDomain,
   asLegacyTransaction,
@@ -180,8 +174,8 @@ export const SwapContextProvider: FC<{
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
   const [form, setForm] = useState<IForm>({
-    fromMint: inputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: outputMint ?? WRAPPED_SOL_MINT.toString(),
+    fromMint: initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    toMint: initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
   });
@@ -199,23 +193,24 @@ export const SwapContextProvider: FC<{
 
   // Set value given initial amount
   useEffect(() => {
-    if (!amount) return;
+    if (!initialAmount) return;
 
-    // What if outputMint/inputMint is not specified? We don't end up grabbing the default here
-    const mint = swapMode === SwapMode.ExactOut ? outputMint : inputMint;
-    const tokenInfo = mint ? tokenMap.get(mint) : undefined;
-    const uiAmount = String(fromLamports(JSBI.BigInt(amount), tokenInfo?.decimals || 0));
+    const toUiAmount = (mint: string) => {
+      const tokenInfo = mint ? tokenMap.get(mint) : undefined;
+      if (!tokenInfo) return;
+      return String(fromLamports(JSBI.BigInt(initialAmount), tokenInfo.decimals));
+    };
+
     if (swapMode === SwapMode.ExactOut) {
-      setForm((prev) => ({ ...prev, toValue: uiAmount }));
+      setForm((prev) => ({ ...prev, toValue: toUiAmount(prev.toMint) ?? '' }));
     } else {
-      setForm((prev) => ({ ...prev, fromValue: uiAmount }));
+      setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
     }
-  }, [amount, fixedAmount, swapMode, inputMint, outputMint, tokenMap]);
+  }, [initialAmount, swapMode, tokenMap]);
 
   const nativeAmount = useMemo(() => {
     if (swapMode === SwapMode.ExactOut) {
       if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
-      console.log('form.toValue', form.toValue, 'toTokenInfo', toTokenInfo);
       return toLamports(Number(form.toValue), Number(toTokenInfo.decimals));
     } else {
       if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
@@ -267,7 +262,6 @@ export const SwapContextProvider: FC<{
           ? String(fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0))
           : '';
       } else {
-        console.log('update toValue');
         newValue.fromValue = selectedSwapRoute?.inAmount
           ? String(fromLamports(selectedSwapRoute?.inAmount, fromTokenInfo?.decimals || 0))
           : '';
