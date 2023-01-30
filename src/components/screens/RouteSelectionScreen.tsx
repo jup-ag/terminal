@@ -17,6 +17,7 @@ export const PADDING_TOP = 18;
 const rowRenderer = memo((props: ListChildComponentProps) => {
   const { data, index, style } = props;
   const item = data.availableRoutes[index] as RouteInfo;
+  const fromTokenInfo = data.fromTokenInfo as TokenInfo;
   const toTokenInfo = data.toTokenInfo as TokenInfo;
 
   const active = data.selectedSwapRoute == data.availableRoutes[index];
@@ -45,11 +46,13 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
         } `}
         onClick={onSubmit}
       >
-        <div className="text-white/50 w-[60%]">{marketRoutes}</div>
+        <div className="text-white/50 w-[50%]">{marketRoutes}</div>
 
-        <div className="w-[40%]">
-          <p className="text-base font-semibold text-white truncate">
-            {fromLamports(item.outAmount, toTokenInfo.decimals || 6)}
+        <div className="w-[50%] text-right">
+          <p className="text-sm font-semibold text-white truncate">
+            {data.swapMode === 'ExactOut' ? 
+            `${fromLamports(item.inAmount, fromTokenInfo.decimals || 6)} ${fromTokenInfo.symbol}`
+            : `${fromLamports(item.outAmount, toTokenInfo.decimals || 6)} ${toTokenInfo.symbol}`}
           </p>
         </div>
       </div>
@@ -59,9 +62,10 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
 
 const RouteSelectionScreen: React.FC<{ onClose(): void }> = ({ onClose }) => {
   const {
-    form: { toMint },
+    form: { fromMint, toMint },
     selectedSwapRoute,
     setSelectedSwapRoute,
+    swapMode,
     jupiter: { routes },
   } = useSwapContext();
 
@@ -73,10 +77,12 @@ const RouteSelectionScreen: React.FC<{ onClose(): void }> = ({ onClose }) => {
   };
 
   const { tokenMap } = useTokenContext();
-  const toTokenInfo = useMemo(() => {
-    const tokenInfo = toMint ? tokenMap.get(toMint) : null;
-    return tokenInfo;
-  }, [toMint, tokenMap]);
+  const [fromTokenInfo, toTokenInfo] = useMemo(() => {
+    return [
+      fromMint ? tokenMap.get(fromMint) : null,
+      toMint ? tokenMap.get(toMint) : null,
+    ]
+  }, [fromMint, toMint, tokenMap]);
 
   const listRef = useRef<any>();
   const availableRoutes = useMemo(() => routes || [], [routes]);
@@ -107,9 +113,11 @@ const RouteSelectionScreen: React.FC<{ onClose(): void }> = ({ onClose }) => {
             width={'100%'}
             itemData={{
               availableRoutes,
+              fromTokenInfo,
               toTokenInfo,
               selectedSwapRoute,
               onSubmit,
+              swapMode,
             }}
             className={classNames('overflow-y-scroll mr-1 min-h-[12rem] webkit-scrollbar pt-4')}
           >

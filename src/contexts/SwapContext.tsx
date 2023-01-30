@@ -244,13 +244,22 @@ export const SwapContextProvider: FC<{
 
   const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(null);
   useEffect(() => {
-    const found = swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0)); // TODO: Is this necessary?
-    if (found) {
-      setSelectedSwapRoute(found);
-    } else {
+    if (!swapRoutes || swapRoutes.length === 0) {
       setSelectedSwapRoute(null);
+      return;
     }
-  }, [swapRoutes]);
+
+    const sortedBestRoute = swapRoutes
+      .sort((a, b) => {
+      if (swapMode === 'ExactOut') {
+        return JSBI.lessThan(a.inAmount, b.inAmount) ? -1 : 1;
+      } else {
+        return JSBI.lessThan(a.outAmount, b.outAmount) ? 1 : -1;
+      }
+    })
+
+    setSelectedSwapRoute(sortedBestRoute[0])
+  }, [swapMode, swapRoutes]);
 
   useEffect(() => {
     setForm((prev) => {

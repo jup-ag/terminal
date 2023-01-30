@@ -21,6 +21,7 @@ import { RoutesSVG } from 'src/icons/RoutesSVG';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
+import classNames from 'classnames';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -73,7 +74,10 @@ const Form: React.FC<{
   const onChangeToValue = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const isInvalid = Number.isNaN(Number(e.target.value));
-    if (isInvalid) return;
+    if (isInvalid) {
+      setForm((form) => ({ ...form, fromValue: '', toValue: e.target.value }));
+      return;
+    };
 
     setForm((form) => ({ ...form, toValue: e.target.value }));
   };
@@ -132,20 +136,25 @@ const Form: React.FC<{
     if (fixedInputMint) return;
     setSelectPairSelector('fromMint')
   }, [fixedInputMint])
-  
+
   const onClickSelectToMint = useCallback(() => {
     if (fixedOutputMint) return;
     setSelectPairSelector('toMint')
   }, [fixedOutputMint])
 
+  const fixedOutputFomMintClass = useMemo(() => {
+    if (swapMode === 'ExactOut' && !form.toValue) return 'opacity-20 hover:opacity-100';
+    return '';
+  }, [fixedOutputMint, form.toValue])
+
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div className="border-b border-transparent bg-[#212128] rounded-xl">
-            <div className="px-x border-transparent rounded-xl">
+          <div className={classNames("border-b border-transparent bg-[#212128] rounded-xl transition-all", fixedOutputFomMintClass)}>
+            <div className={classNames("px-x border-transparent rounded-xl ")}>
               <div>
-                <div className="py-5 px-4 flex flex-col dark:text-white">
+                <div className={classNames("py-5 px-4 flex flex-col dark:text-white")}>
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
@@ -169,7 +178,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       <input
                         placeholder="0.00"
-                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
+                        className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg", { 'cursor-not-allowed': inputAmountDisabled })}
                         value={form.fromValue}
                         disabled={inputAmountDisabled}
                         onChange={onChangeFromValue}
@@ -179,7 +188,7 @@ const Form: React.FC<{
 
                   {fromTokenInfo?.address ? (
                     <div
-                      className="flex mt-3 cursor-pointer space-x-1 text-xs items-center text-white/30 fill-current"
+                      className={classNames("flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current", { "cursor-pointer": swapMode !== 'ExactOut' })}
                       onClick={onClickMax}
                     >
                       <WalletIcon width={10} height={10} />
@@ -192,7 +201,7 @@ const Form: React.FC<{
             </div>
           </div>
 
-          <div className="my-2">{hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} />}</div>
+          <div className={"my-2"}>{hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} className={classNames("transition-all", fixedOutputFomMintClass)} />}</div>
 
           <div className="border-b border-transparent bg-[#212128] rounded-xl">
             <div className="px-x border-transparent rounded-xl">
@@ -221,10 +230,11 @@ const Form: React.FC<{
 
                     <div className="text-right">
                       <input
-                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
+                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 placeholder:text-sm placeholder:font-normal text-lg"
+                        placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
                         value={form.toValue}
                         disabled={outputAmountDisabled}
-                        onChange={(e) => onChangeToValue(e)}
+                        onChange={onChangeToValue}
                       />
                     </div>
                   </div>
@@ -241,7 +251,7 @@ const Form: React.FC<{
             </div>
           </div>
 
-          {swapMode !== 'ExactOut' && routes ? (
+          {routes ? (
             <div className="flex items-center mt-2 text-xs space-x-1">
               <div
                 className="bg-black/20 rounded-xl px-2 py-1 cursor-pointer text-white/50 flex items-center space-x-1"
