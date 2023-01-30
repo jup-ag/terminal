@@ -23,7 +23,7 @@ const WidgetTerminal = () => {
           position: 'bottom-right',
           size: 'default',
         },
-        endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
+        endpoint: 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed',
       });
     }
 
@@ -41,7 +41,7 @@ const WidgetTerminal = () => {
           position,
           size,
         },
-        endpoint: 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci',
+        endpoint: 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed',
       });
     }
   }, [position, size]);
