@@ -127,6 +127,17 @@ const Form: React.FC<{
   }, [fixedAmount, swapMode]);
 
   const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
+
+  const onClickSelectFromMint = useCallback(() => {
+    if (fixedInputMint) return;
+    setSelectPairSelector('fromMint')
+  }, [fixedInputMint])
+  
+  const onClickSelectToMint = useCallback(() => {
+    if (fixedOutputMint) return;
+    setSelectPairSelector('toMint')
+  }, [fixedOutputMint])
+
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
@@ -140,7 +151,7 @@ const Form: React.FC<{
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
                       disabled={fixedInputMint}
-                      onClick={fixedInputMint ? () => {} : () => setSelectPairSelector('fromMint')}
+                      onClick={onClickSelectFromMint}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={fromTokenInfo} width={20} height={20} />
@@ -159,10 +170,9 @@ const Form: React.FC<{
                       <input
                         placeholder="0.00"
                         className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
-                        // className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl !outline-none"
                         value={form.fromValue}
                         disabled={inputAmountDisabled}
-                        onChange={(e) => onChangeFromValue(e)}
+                        onChange={onChangeFromValue}
                       />
                     </div>
                   </div>
@@ -193,7 +203,7 @@ const Form: React.FC<{
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
                       disabled={fixedOutputMint}
-                      onClick={fixedOutputMint ? () => {} : () => setSelectPairSelector('toMint')}
+                      onClick={onClickSelectToMint}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
@@ -231,7 +241,7 @@ const Form: React.FC<{
             </div>
           </div>
 
-          {routes ? (
+          {swapMode !== 'ExactOut' && routes ? (
             <div className="flex items-center mt-2 text-xs space-x-1">
               <div
                 className="bg-black/20 rounded-xl px-2 py-1 cursor-pointer text-white/50 flex items-center space-x-1"
