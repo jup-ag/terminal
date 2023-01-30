@@ -34,7 +34,7 @@ Assign the attribute `data-preload` to the script tag, the full application will
 
 Then, 
 ```tsx
-window.Jupiter.init({ mode: 'default', endpoint: "https://api.mainnet-beta.solana.com",});
+window.Jupiter.init({ mode: 'default', endpoint: "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed",});
 ```
 
 --- 
@@ -108,7 +108,7 @@ window.Jupiter.init({
   window.Jupiter.init({
     mode: 'outputOnly',
     mint: 'So11111111111111111111111111111111111111112',
-    endpoint: "https://api.mainnet-beta.solana.com",
+    endpoint: "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed",
     passThroughWallet: wallet,
   });
 ```

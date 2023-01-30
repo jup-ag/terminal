@@ -73,6 +73,8 @@ export interface ISwapContext {
   reset: (props?: { resetValues: boolean }) => void;
   jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & {
     exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
+    asLegacyTransaction: boolean;
+    setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
   };
 }
 
@@ -83,13 +85,13 @@ export const initialSwapContext: ISwapContext = {
     fromValue: '',
     toValue: '',
   },
-  setForm() {},
+  setForm() { },
   errors: {},
-  setErrors() {},
+  setErrors() { },
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
   selectedSwapRoute: null,
-  setSelectedSwapRoute() {},
+  setSelectedSwapRoute() { },
   onSubmit: async () => null,
   lastSwapResult: null,
   mode: 'default',
@@ -100,16 +102,18 @@ export const initialSwapContext: ISwapContext = {
     totalTxs: 0,
     txStatus: [],
   },
-  reset() {},
+  reset() { },
   jupiter: {
     routes: [],
     allTokenMints: [],
     routeMap: new Map(),
     exchange: undefined,
     loading: false,
-    refresh() {},
+    refresh() { },
     lastRefreshTimestamp: 0,
     error: undefined,
+    asLegacyTransaction: false,
+    setAsLegacyTransaction() { },
   },
 };
 
@@ -124,8 +128,10 @@ export const SwapContextProvider: FC<{
   mode: IInit['mode'];
   mint: IInit['mint'];
   scriptDomain?: string;
+  asLegacyTransaction: boolean;
+  setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
   children: ReactNode;
-}> = ({ displayMode, mode, mint, scriptDomain, children }) => {
+}> = ({ displayMode, mode, mint, scriptDomain, asLegacyTransaction, setAsLegacyTransaction, children }) => {
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
@@ -170,10 +176,9 @@ export const SwapContextProvider: FC<{
     amount: JSBI.BigInt(amountInLamports),
     inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
-    slippage,
+    slippageBps: slippage * 100,
     swapMode: SwapMode.ExactIn,
-    // TODO: Support dynamic single tx
-    enforceSingleTx: false,
+    asLegacyTransaction,
   });
 
   // Refresh on slippage change
@@ -296,6 +301,8 @@ export const SwapContextProvider: FC<{
           refresh: refreshAll,
           lastRefreshTimestamp,
           error,
+          asLegacyTransaction,
+          setAsLegacyTransaction,
         },
       }}
     >

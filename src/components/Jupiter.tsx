@@ -1,6 +1,6 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
 import { useConnection } from '@solana/wallet-adapter-react';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
@@ -47,6 +47,16 @@ const JupiterApp = (props: IInit) => {
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
+  const [asLegacyTransaction, setAsLegacyTransaction] = useState(true);
+  // Auto detech if wallet supports it, and enable it if it does
+  useEffect(() => {
+    if (wallet?.adapter?.supportedTransactionVersions?.has(0)) {
+      setAsLegacyTransaction(false)
+      return;
+    }
+    setAsLegacyTransaction(true)
+  }, [wallet?.adapter]);
+
   return (
     <AccountsProvider>
       <SlippageConfigProvider>
@@ -56,8 +66,16 @@ const JupiterApp = (props: IInit) => {
           wrapUnwrapSOL={true}
           userPublicKey={walletPublicKey || undefined}
           platformFeeAndAccounts={platformFeeAndAccounts}
+          asLegacyTransaction={asLegacyTransaction}
         >
-          <SwapContextProvider displayMode={displayMode} mode={mode} mint={mint} scriptDomain={props.scriptDomain}>
+          <SwapContextProvider
+            displayMode={displayMode}
+            mode={mode}
+            mint={mint}
+            scriptDomain={props.scriptDomain}
+            asLegacyTransaction={asLegacyTransaction}
+            setAsLegacyTransaction={setAsLegacyTransaction}
+          >
             <Content />
           </SwapContextProvider>
         </JupiterProvider>
