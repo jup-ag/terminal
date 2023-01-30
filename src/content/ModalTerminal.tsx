@@ -74,6 +74,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
     return () => clearInterval(intervalId);
   }, []);
+  const [fixedInputMint, setFixedInputMint] = useState(false);
   const [fixedOutputMint, setFixedOutputMint] = useState(true);
   const [swapModeExactOut, setSwapModeExactOut] = useState(false);
   const [fixedAmount, setFixedAmount] = useState(false);
@@ -155,33 +156,44 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
           <div>
             <h2 className="font-semibold text-lg">Configurable modes</h2>
             <p className="text-white/30 text-xs md:max-w-[65%]">Set an inital amount, mints or swap mode</p>
-            <p className="text-white/30 text-xs md:max-w-[65%]">
-              <input
-                type="checkbox"
-                value="fixed-output-mint"
-                checked={fixedOutputMint}
-                onChange={() => toggleState(setFixedOutputMint)}
-              />{' '}
-              Fixed output mint
-            </p>
-            <p className="text-white/30 text-xs md:max-w-[65%]">
-              <input
-                type="checkbox"
-                value="swap-mode-exact-out"
-                checked={swapModeExactOut}
-                onChange={() => toggleState(setSwapModeExactOut)}
-              />{' '}
-              Swap mode exact output
-            </p>
-            <p className="text-white/30 text-xs md:max-w-[65%]">
-              <input
-                type="checkbox"
-                value="fixed-amount"
-                checked={fixedAmount}
-                onChange={() => toggleState(setFixedAmount)}
-              />{' '}
-              Fixed amount
-            </p>
+            <div className='p-2 space-y-2'>
+              <p className="text-white/30 text-xs md:max-w-[80%]">
+                <input
+                  type="checkbox"
+                  value="fixed-input-mint"
+                  checked={fixedInputMint}
+                  onChange={() => toggleState(setFixedInputMint)}
+                />{' '}
+                Fixed input mint
+              </p>
+              <p className="text-white/30 text-xs md:max-w-[80%]">
+                <input
+                  type="checkbox"
+                  value="fixed-output-mint"
+                  checked={fixedOutputMint}
+                  onChange={() => toggleState(setFixedOutputMint)}
+                />{' '}
+                Fixed output mint
+              </p>
+              <p className="text-white/30 text-xs md:max-w-[80%]">
+                <input
+                  type="checkbox"
+                  value="swap-mode-exact-out"
+                  checked={swapModeExactOut}
+                  onChange={() => toggleState(setSwapModeExactOut)}
+                />{' '}
+                Swap mode exact output
+              </p>
+              <p className="text-white/30 text-xs md:max-w-[80%]">
+                <input
+                  type="checkbox"
+                  value="fixed-amount"
+                  checked={fixedAmount}
+                  onChange={() => toggleState(setFixedAmount)}
+                />{' '}
+                Fixed amount
+              </p>
+            </div>
           </div>
 
           <div className="flex justify-center">
@@ -194,6 +206,8 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
                   swapMode: swapModeExactOut ? 'ExactOut' : undefined,
                   initialAmount: fixedAmount ? '10000000' : undefined, // 0.01 SOL or 10 USDC given swapMode
                   fixedAmount: fixedAmount ? true : undefined,
+                  initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+                  fixedInputMint: fixedInputMint ? true : undefined,
                   initialOutputMint: WRAPPED_SOL_MINT.toString(),
                   fixedOutputMint: fixedOutputMint ? true : undefined,
                   endpoint: rpcUrl,

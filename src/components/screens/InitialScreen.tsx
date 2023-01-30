@@ -81,8 +81,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   );
 
   const availableMints: TokenInfo[] = useMemo(() => {
-    if (Object.keys(accounts).length === 0) return [];
-
     let result;
     // Only allows user's tokens to be selected
     // TODO: Not sure how to resolve this
@@ -103,7 +101,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     }
 
     return [...result];
-  }, [accounts, tokenMap]);
+  }, [tokenMap]);
 
   const onSubmitToConfirmation = useCallback(() => {
     setScreen('Confirmation');
@@ -128,7 +126,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
-            setIsWalletModalOpen={setIsWalletModalOpen}
           />
         </div>
       ) : null}
