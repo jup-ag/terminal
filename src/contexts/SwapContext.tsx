@@ -248,17 +248,8 @@ export const SwapContextProvider: FC<{
       setSelectedSwapRoute(null);
       return;
     }
-
-    const sortedBestRoute = swapRoutes
-      .sort((a, b) => {
-      if (swapMode === 'ExactOut') {
-        return JSBI.lessThan(a.inAmount, b.inAmount) ? -1 : 1;
-      } else {
-        return JSBI.lessThan(a.outAmount, b.outAmount) ? 1 : -1;
-      }
-    })
-
-    setSelectedSwapRoute(sortedBestRoute[0])
+    // the UI sorts the best route depending on ExactIn or ExactOut
+    setSelectedSwapRoute(swapRoutes[0])
   }, [swapMode, swapRoutes]);
 
   useEffect(() => {
