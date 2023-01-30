@@ -101,11 +101,7 @@ dependencies:
   react-number-format: 5.1.3_biqbaboplfbrettd7655fr4n2y
   react-virtualized-auto-sizer: 1.0.7_biqbaboplfbrettd7655fr4n2y
   react-window: 1.8.8_biqbaboplfbrettd7655fr4n2y
-<<<<<<< HEAD
-  tailwindcss: 3.1.8_postcss@8.4.19
-=======
   tailwindcss: 3.2.4
->>>>>>> 90ae3e4 (update library to v4)
 
 devDependencies:
   '@types/bn.js': 5.1.1
@@ -2284,12 +2280,9 @@ packages:
       promise-retry: 2.0.1
     dev: false
 
-  /@mercurial-finance/port-sdk/0.2.69_2qzhuxgrjxqsscav4u6vahdwbi:
+  /@mercurial-finance/port-sdk/0.2.69:
     resolution: {integrity: sha512-DDZBLkoIQVhLQRy+t7dVuiHNw0nAmWD7xqwMekHT71bBLU5ajQglRvQ9b8d2RQQn1WJsXhbGbc7eTUGWdZqWoQ==}
     engines: {node: '>=10'}
-    peerDependencies:
-      '@solana/web3.js': ^1.32.0
-      bn.js: ^5.2.0
     dependencies:
       '@solana/buffer-layout': 4.0.0
       '@solana/spl-token': 0.1.8
@@ -2341,13 +2334,8 @@ packages:
       '@mercurial-finance/apricot-sdk': 0.17.6
       '@mercurial-finance/drift-sdk': 1.0.3
       '@mercurial-finance/francium-sdk': 1.4.3
-<<<<<<< HEAD
-      '@mercurial-finance/optimist': 0.1.9_bnkidwn3q7ocu426ct67qhyvai
-      '@mercurial-finance/port-sdk': 0.2.69_2qzhuxgrjxqsscav4u6vahdwbi
-=======
       '@mercurial-finance/optimist': 0.1.9_3uu5xgoq3e7kvunyrzjtujz4mu
       '@mercurial-finance/port-sdk': 0.2.69
->>>>>>> 90ae3e4 (update library to v4)
       '@mercurial-finance/solend-sdk': 0.6.5
       '@mercurial-finance/tulip-platform-sdk': 2.0.30
       '@project-serum/anchor': 0.24.2
@@ -2377,13 +2365,8 @@ packages:
       '@mercurial-finance/apricot-sdk': 0.17.6
       '@mercurial-finance/drift-sdk': 1.0.3
       '@mercurial-finance/francium-sdk': 1.4.3
-<<<<<<< HEAD
-      '@mercurial-finance/optimist': 0.1.9_bnkidwn3q7ocu426ct67qhyvai
-      '@mercurial-finance/port-sdk': 0.2.69_2qzhuxgrjxqsscav4u6vahdwbi
-=======
       '@mercurial-finance/optimist': 0.1.9_3uu5xgoq3e7kvunyrzjtujz4mu
       '@mercurial-finance/port-sdk': 0.2.69
->>>>>>> 90ae3e4 (update library to v4)
       '@mercurial-finance/solend-sdk': 0.6.5
       '@mercurial-finance/tulip-platform-sdk': 2.0.30
       '@project-serum/anchor': 0.24.2
@@ -5374,18 +5357,7 @@ packages:
   /axios/0.21.4_debug@4.3.2:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
-<<<<<<< HEAD
-    transitivePeerDependencies:
-      - debug
-    dev: false
-
-  /axios/0.25.0:
-    resolution: {integrity: sha512-cD8FOb0tRH3uuEe6+evtAbgJtfxr7ly3fQjYcMcuPlgkwVS9xboaVIpcDV+cYQe+yGykgwZCs1pzjntcGa6l5g==}
-    dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
-=======
->>>>>>> 90ae3e4 (update library to v4)
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
     dev: false
@@ -7144,18 +7116,6 @@ packages:
         optional: true
     dev: false
 
-  /follow-redirects/1.15.2_debug@4.3.2:
-    resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
-    dependencies:
-      debug: 4.3.2
-    dev: false
-
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
     dependencies:
@@ -7662,13 +7622,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -10336,17 +10296,10 @@ packages:
       picocolors: 1.0.0
       stable: 0.1.8
 
-<<<<<<< HEAD
-  /tailwindcss/3.1.8_postcss@8.4.19:
-    resolution: {integrity: sha512-YSneUCZSFDYMwk+TGq8qYFdCA3yfBRdBlS7txSq0LUmzyeqRe3a8fBQzbz9M3WS/iFT4BNf/nmw9mEzrnSaC0g==}
-=======
   /tailwindcss/3.2.4:
     resolution: {integrity: sha512-AhwtHCKMtR71JgeYDaswmZXhPcW9iuI9Sp2LvZPo9upDZ7231ZJ7eA9RaURbhpXGVlrjX4cFNlB4ieTetEb7hQ==}
->>>>>>> 90ae3e4 (update library to v4)
     engines: {node: '>=12.13.0'}
     hasBin: true
-    peerDependencies:
-      postcss: ^8.0.9
     dependencies:
       arg: 5.0.2
       chokidar: 3.5.3
