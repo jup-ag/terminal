@@ -93,7 +93,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             closeModal();
           }
         })}
-        className={'relative w-full'}
+        className={'w-full'}
       >
         <div className="absolute right-4 top-4">
           <div className="text-white fill-current cursor-pointer" onClick={() => closeModal()}>
