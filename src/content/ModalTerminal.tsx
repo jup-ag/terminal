@@ -15,7 +15,7 @@ import WalletConnectedGraphic from 'src/icons/WalletConnectedGraphic';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 import InfoIcon from 'src/icons/InfoIcon';
 
-const endpoint = 'https://solana-mainnet.g.alchemy.com/v2/ZT3c4pYf1inIrB0GVDNR7nx4LwyED5Ci';
+const endpoint = 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
 const WithAppWallet = ({ mode = 'default' }: { mode: IInit['mode'] }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 

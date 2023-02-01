@@ -9,13 +9,13 @@ type Props = {
 
 const Toggle = ({ active, onClick, className, dotClassName }: Props) => {
   const activeClass = 'bg-white transform translate-x-full';
-  const inactiveClass = 'bg-white dark:bg-white-35';
+  const inactiveClass = 'bg-white';
   return (
     <button
       type="button"
       className={classNames('w-16 h-9 flex items-center rounded-full p-1 cursor-pointer', className, {
         'bg-jupiter-jungle-green': active,
-        'dark:bg-[#010101] bg-jupiter-light': !active,
+        'bg-[#010101]': !active,
       })}
       onClick={() => onClick(!active)}
     >

@@ -18,6 +18,7 @@ module.exports = {
         'jupiter-input-light': '#EBEFF1',
         'jupiter-bg': '#3A3B43',
         'jupiter-dark-bg': '#292A33',
+        'jupiter-jungle-green': '#24AE8F',
       },
       backgroundImage: {
         'jupiter-gradient': 'linear-gradient(91.26deg, #FCC00A 15.73%, #4EBAE9 83.27%)',
