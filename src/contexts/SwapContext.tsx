@@ -176,7 +176,7 @@ export const SwapContextProvider: FC<{
     amount: JSBI.BigInt(amountInLamports),
     inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
-    slippageBps: slippage * 100,
+    slippageBps: Math.ceil(slippage * 100),
     swapMode: SwapMode.ExactIn,
     asLegacyTransaction,
   });
