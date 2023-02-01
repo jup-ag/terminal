@@ -36,20 +36,16 @@ const Content = () => {
 
 const JupiterApp = (props: IInit) => {
   const {
-    mode,
-    swapMode,
-    initialAmount: amount,
-    fixedAmount,
-    initialInputMint: inputMint,
-    fixedInputMint,
-    initialOutputMint: outputMint,
-    fixedOutputMint,
     displayMode,
     platformFeeAndAccounts,
-  } = props;
-  const { wallet } = useWalletPassThrough();
-  const { connection } = useConnection();
+    configurableProps,
 
+    /** Deprecated, use configurableProps */
+    mode,
+    mint,
+  } = props;
+  const { connection } = useConnection();
+  const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
   const [asLegacyTransaction, setAsLegacyTransaction] = useState(true);
@@ -76,13 +72,8 @@ const JupiterApp = (props: IInit) => {
           <SwapContextProvider
             displayMode={displayMode}
             mode={mode}
-            swapMode={swapMode}
-            initialAmount={amount}
-            fixedAmount={fixedAmount}
-            initialInputMint={inputMint}
-            fixedInputMint={fixedInputMint}
-            initialOutputMint={outputMint}
-            fixedOutputMint={fixedOutputMint}
+            mint={mint}
+            configurableProps={configurableProps}
             scriptDomain={props.scriptDomain}
             asLegacyTransaction={asLegacyTransaction}
             setAsLegacyTransaction={setAsLegacyTransaction}

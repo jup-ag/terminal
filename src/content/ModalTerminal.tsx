@@ -6,7 +6,7 @@ import { WalletReadyState } from '@solana/wallet-adapter-base';
 
 import JupButton from 'src/components/JupButton';
 import { shortenAddress } from 'src/misc/utils';
-import { IInit } from 'src/types';
+import { ConfigurableProps } from 'src/types';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 
 import { ContextProvider } from '../contexts/ContextProvider';
@@ -16,17 +16,7 @@ import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 import InfoIcon from 'src/icons/InfoIcon';
 import { SwapMode } from '@jup-ag/core';
 
-interface ConfigurableProps {
-  swapMode: SwapMode;
-  initialAmount: string | undefined;
-  fixedAmount: boolean | undefined;
-  initialInputMint: string;
-  fixedInputMint: boolean | undefined;
-  initialOutputMint: string;
-  fixedOutputMint: boolean | undefined;
-}
-
-const WithAppWallet = ({ endpoint, mode = 'default', configurations }: { endpoint: string, mode: IInit['mode'], configurations?: ConfigurableProps }) => {
+const WithAppWallet = ({ endpoint, configurableProps }: { endpoint: string, configurableProps?: ConfigurableProps }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
@@ -44,10 +34,9 @@ const WithAppWallet = ({ endpoint, mode = 'default', configurations }: { endpoin
     if (!wallet) return;
 
     window.Jupiter.init({
-      mode,
       endpoint,
       passThroughWallet: wallet,
-      ...configurations,
+      configurableProps,
     });
   };
 
@@ -81,7 +70,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [swapModeExactOut, setSwapModeExactOut] = useState(false);
   const [fixedAmount, setFixedAmount] = useState(false);
 
-  const configurations: ConfigurableProps = useMemo(() => {
+  const configurableProps: ConfigurableProps = useMemo(() => {
     return {
       swapMode: swapModeExactOut ? SwapMode.ExactOut : SwapMode.ExactIn,
       initialAmount: fixedAmount ? '10000000' : undefined, // 0.01 SOL or 10 USDC given swapMode
@@ -90,7 +79,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
       fixedInputMint: fixedInputMint ? true : undefined,
       initialOutputMint: WRAPPED_SOL_MINT.toString(),
       fixedOutputMint: fixedOutputMint ? true : undefined,
-    }
+    };
   }, [swapModeExactOut, fixedAmount, fixedInputMint, fixedOutputMint]);
 
   return (
@@ -145,10 +134,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
             <div
               className="p-4 hover:bg-black/25 rounded-xl cursor-pointer flex flex-col items-center text-white"
               onClick={() => {
-                window.Jupiter.init({
-                  mode: 'default',
-                  endpoint: rpcUrl,
-                });
+                window.Jupiter.init({ endpoint: rpcUrl, });
               }}
             >
               <WalletDisconnectedGraphic />
@@ -157,7 +143,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet endpoint={rpcUrl} mode={'default'} />
+              <WithAppWallet endpoint={rpcUrl} />
             </ContextProvider>
           </div>
         </div>
@@ -170,7 +156,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
           <div>
             <h2 className="font-semibold text-lg">Configurable modes</h2>
             <p className="text-white/30 text-xs md:max-w-[65%]">Set an inital amount, mints or swap mode</p>
-            <div className='p-2 space-y-2'>
+            <div className="p-2 space-y-2">
               <p className="text-white/30 text-xs md:max-w-[80%]">
                 <input
                   type="checkbox"
@@ -215,11 +201,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
             <div
               className="p-4 hover:bg-black/25 rounded-xl cursor-pointer flex flex-col items-center text-white"
               onClick={() => {
-                window.Jupiter.init({
-                  mode: 'default',
-                  endpoint: rpcUrl,
-                  ...configurations,
-                });
+                window.Jupiter.init({ endpoint: rpcUrl, configurableProps });
               }}
             >
               <WalletDisconnectedGraphic />
@@ -228,7 +210,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet mode={'default'} endpoint={rpcUrl} configurations={configurations} />
+              <WithAppWallet endpoint={rpcUrl} configurableProps={configurableProps} />
             </ContextProvider>
           </div>
         </div>

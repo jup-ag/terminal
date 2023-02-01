@@ -17,7 +17,6 @@ const WidgetTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
       }, 500);
 
       window.Jupiter.init({
-        mode: 'default',
         displayMode: 'widget',
         widgetStyle: {
           position: 'bottom-right',
@@ -35,7 +34,6 @@ const WidgetTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   useEffect(() => {
     if (isLoaded) {
       window.Jupiter.init({
-        mode: 'default',
         displayMode: 'widget',
         widgetStyle: {
           position,

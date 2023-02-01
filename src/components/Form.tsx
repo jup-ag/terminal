@@ -39,11 +39,15 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     selectedSwapRoute,
-    mode,
-    swapMode,
-    fixedAmount,
-    fixedInputMint,
-    fixedOutputMint,
+    configurableProps: {
+      swapMode,
+      initialAmount,
+      fixedAmount,
+      initialInputMint,
+      fixedInputMint,
+      initialOutputMint,
+      fixedOutputMint,
+    },
     jupiter: { routes, loading, refresh },
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();

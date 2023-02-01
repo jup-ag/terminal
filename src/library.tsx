@@ -214,9 +214,10 @@ const RenderWidgetShell = (props: IInit) => {
 async function init(props: IInit) {
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
 
-  // if (props.mode === 'outputOnly' && !props.mint) {
-  //   throw new Error('outputOnly mode requires a mint!');
-  // }
+  /** Deprecated, use configurableProps */
+  if (props.mode === 'outputOnly' && !props.mint) {
+    throw new Error('outputOnly mode requires a mint!');
+  }
 
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);

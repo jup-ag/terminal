@@ -11,7 +11,6 @@ const IntegratedTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
       }, 500);
 
       window.Jupiter.init({
-        mode: 'default',
         displayMode: 'integrated',
         integratedTargetId: 'integrated-terminal',
         endpoint: rpcUrl,

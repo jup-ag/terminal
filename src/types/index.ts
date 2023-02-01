@@ -19,18 +19,21 @@ export declare type PlatformFeeAndAccounts = {
   feeAccounts: Map<string, PublicKey>;
 };
 
-export interface IInit {
-  mode: 'default' | 'normal';
+export interface ConfigurableProps {
   swapMode?: SwapMode;
   initialAmount?: string;
   fixedAmount?: boolean;
-  initialOutputMint?: string;
-  fixedOutputMint?: boolean;
   initialInputMint?: string;
   fixedInputMint?: boolean;
+  initialOutputMint?: string;
+  fixedOutputMint?: boolean;
+}
+
+export interface IInit {
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
-
+  configurableProps?: ConfigurableProps;
+  
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';
   integratedTargetId?: string;
@@ -40,14 +43,42 @@ export interface IInit {
   };
   containerStyles?: CSSProperties;
   containerClassName?: string;
-
+  
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
   onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
-
+  
   // Internal resolves
   scriptDomain?: string;
+  
+  /** Deprecated
+    use configurableProps for more flexibility in customising interactions. 
+    existing user on `mode` props will have their capability unaffected, and mapped accordingly to `configurableProps`
+
+    mode: 'default'
+    ```tsx
+    const configurableProps = {
+      fixedInputMint: undefined,
+      fixedOutputMint: undefined,
+      swapModeExactOut: undefined,
+      fixedAmount: undefined,
+    }
+    ```
+    
+    mode: 'outputOnly'
+    ```tsx
+    const configurableProps = {
+      fixedInputMint: undefined,
+      swapModeExactOut: undefined,
+      fixedAmount: undefined,
+      initialOutputMint: 'So11111111111111111111111111111111111111112',
+      fixedOutputMint: true,
+    }
+    ```
+  */
+  mode?: 'default' | 'outputOnly';
+  mint?: string;
 }
 
 export interface JupiterTerminal {

@@ -65,7 +65,9 @@ const RouteSelectionScreen: React.FC<{ onClose(): void }> = ({ onClose }) => {
     form: { fromMint, toMint },
     selectedSwapRoute,
     setSelectedSwapRoute,
-    swapMode,
+    configurableProps: {
+      swapMode,
+    },
     jupiter: { routes },
   } = useSwapContext();
 
