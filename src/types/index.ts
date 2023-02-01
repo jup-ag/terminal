@@ -3,7 +3,7 @@ import { Root } from 'react-dom/client';
 
 import { Wallet } from '@solana/wallet-adapter-react';
 import { PublicKey, TransactionError } from '@solana/web3.js';
-import { SwapResult } from '@jup-ag/react-hook';
+import { SwapMode, SwapResult } from '@jup-ag/react-hook';
 
 declare global {
   interface Window {
@@ -21,7 +21,7 @@ export declare type PlatformFeeAndAccounts = {
 
 export interface IInit {
   mode: 'default' | 'normal';
-  swapMode?: 'ExactOut' | 'ExactOut';
+  swapMode?: SwapMode;
   initialAmount?: string;
   fixedAmount?: boolean;
   initialOutputMint?: string;

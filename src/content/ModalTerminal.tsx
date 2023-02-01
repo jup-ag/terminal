@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Wallet } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
@@ -14,8 +14,19 @@ import { PlayIcon } from 'src/icons/PlayIcon';
 import WalletConnectedGraphic from 'src/icons/WalletConnectedGraphic';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 import InfoIcon from 'src/icons/InfoIcon';
+import { SwapMode } from '@jup-ag/core';
 
-const WithAppWallet = ({ endpoint, mode = 'default' }: { endpoint: string, mode: IInit['mode'] }) => {
+interface ConfigurableProps {
+  swapMode: SwapMode;
+  initialAmount: string | undefined;
+  fixedAmount: boolean | undefined;
+  initialInputMint: string;
+  fixedInputMint: boolean | undefined;
+  initialOutputMint: string;
+  fixedOutputMint: boolean | undefined;
+}
+
+const WithAppWallet = ({ endpoint, mode = 'default', configurations }: { endpoint: string, mode: IInit['mode'], configurations?: ConfigurableProps }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
@@ -32,21 +43,12 @@ const WithAppWallet = ({ endpoint, mode = 'default' }: { endpoint: string, mode:
   const initWithWallet = () => {
     if (!wallet) return;
 
-    if (mode === 'default') {
-      window.Jupiter.init({
-        mode,
-        endpoint,
-        passThroughWallet: wallet,
-      });
-    }
-    // } else if (mode === 'outputOnly') {
-    //   window.Jupiter.init({
-    //     mode,
-    //     mint: WRAPPED_SOL_MINT.toString(),
-    //     endpoint,
-    //     passThroughWallet: wallet,
-    //   });
-    // }
+    window.Jupiter.init({
+      mode,
+      endpoint,
+      passThroughWallet: wallet,
+      ...configurations,
+    });
   };
 
   return (
@@ -78,6 +80,18 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [fixedOutputMint, setFixedOutputMint] = useState(true);
   const [swapModeExactOut, setSwapModeExactOut] = useState(false);
   const [fixedAmount, setFixedAmount] = useState(false);
+
+  const configurations: ConfigurableProps = useMemo(() => {
+    return {
+      swapMode: swapModeExactOut ? SwapMode.ExactOut : SwapMode.ExactIn,
+      initialAmount: fixedAmount ? '10000000' : undefined, // 0.01 SOL or 10 USDC given swapMode
+      fixedAmount: fixedAmount ? true : undefined,
+      initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+      fixedInputMint: fixedInputMint ? true : undefined,
+      initialOutputMint: WRAPPED_SOL_MINT.toString(),
+      fixedOutputMint: fixedOutputMint ? true : undefined,
+    }
+  }, [swapModeExactOut, fixedAmount, fixedInputMint, fixedOutputMint]);
 
   return (
     <>
@@ -203,14 +217,8 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
               onClick={() => {
                 window.Jupiter.init({
                   mode: 'default',
-                  swapMode: swapModeExactOut ? 'ExactOut' : undefined,
-                  initialAmount: fixedAmount ? '10000000' : undefined, // 0.01 SOL or 10 USDC given swapMode
-                  fixedAmount: fixedAmount ? true : undefined,
-                  initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-                  fixedInputMint: fixedInputMint ? true : undefined,
-                  initialOutputMint: WRAPPED_SOL_MINT.toString(),
-                  fixedOutputMint: fixedOutputMint ? true : undefined,
                   endpoint: rpcUrl,
+                  ...configurations,
                 });
               }}
             >
@@ -220,7 +228,7 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet mode={'default'} endpoint={rpcUrl} />
+              <WithAppWallet mode={'default'} endpoint={rpcUrl} configurations={configurations} />
             </ContextProvider>
           </div>
         </div>
