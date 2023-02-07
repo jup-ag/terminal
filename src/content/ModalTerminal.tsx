@@ -15,8 +15,7 @@ import WalletConnectedGraphic from 'src/icons/WalletConnectedGraphic';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 import InfoIcon from 'src/icons/InfoIcon';
 
-const endpoint = 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
-const WithAppWallet = ({ mode = 'default' }: { mode: IInit['mode'] }) => {
+const WithAppWallet = ({ endpoint, mode = 'default' }: { endpoint: string, mode: IInit['mode'] }) => {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
@@ -61,7 +60,7 @@ const WithAppWallet = ({ mode = 'default' }: { mode: IInit['mode'] }) => {
   );
 };
 
-const ModalTerminal = () => {
+const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [isActive, setIsActive] = useState(false);
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -125,7 +124,7 @@ const ModalTerminal = () => {
               onClick={() => {
                 window.Jupiter.init({
                   mode: 'default',
-                  endpoint,
+                  endpoint: rpcUrl,
                 });
               }}
             >
@@ -135,7 +134,7 @@ const ModalTerminal = () => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet mode={'default'} />
+              <WithAppWallet endpoint={rpcUrl} mode={'default'} />
             </ContextProvider>
           </div>
         </div>
@@ -160,7 +159,7 @@ const ModalTerminal = () => {
                 window.Jupiter.init({
                   mode: 'outputOnly',
                   mint: WRAPPED_SOL_MINT.toString(),
-                  endpoint,
+                  endpoint: rpcUrl,
                 });
               }}
             >
@@ -170,7 +169,7 @@ const ModalTerminal = () => {
 
             {/* Wallet passthrough */}
             <ContextProvider>
-              <WithAppWallet mode={'outputOnly'} />
+              <WithAppWallet endpoint={rpcUrl} mode={'outputOnly'} />
             </ContextProvider>
           </div>
         </div>

@@ -4,7 +4,7 @@ import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import { WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = () => {
+const WidgetTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -23,8 +23,7 @@ const WidgetTerminal = () => {
           position: 'bottom-right',
           size: 'default',
         },
-        endpoint:
-          "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed",
+        endpoint: rpcUrl
       });
     }
 
@@ -42,8 +41,7 @@ const WidgetTerminal = () => {
           position,
           size,
         },
-        endpoint:
-          "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed",
+        endpoint: rpcUrl
       });
     }
   }, [position, size]);

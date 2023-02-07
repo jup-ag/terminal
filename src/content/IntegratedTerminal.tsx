@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-const IntegratedTerminal = () => {
+const IntegratedTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -14,7 +14,7 @@ const IntegratedTerminal = () => {
         mode: 'default',
         displayMode: 'integrated',
         integratedTargetId: 'integrated-terminal',
-        endpoint: "https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed",
+        endpoint: rpcUrl,
       });
     }
 
