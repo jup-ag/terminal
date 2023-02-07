@@ -9,6 +9,7 @@ import {
 import { TokenInfo } from '@solana/spl-token-registry';
 import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { PublicKey } from '@solana/web3.js';
+import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
   createContext,
@@ -75,6 +76,8 @@ export interface ISwapContext {
     exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
+    priorityFeeInSOL: number;
+    setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
   };
 }
 
@@ -114,6 +117,8 @@ export const initialSwapContext: ISwapContext = {
     error: undefined,
     asLegacyTransaction: false,
     setAsLegacyTransaction() { },
+    priorityFeeInSOL: 0,
+    setPriorityFeeInSOL() { },
   },
 };
 
@@ -122,6 +127,11 @@ export const SwapContext = createContext<ISwapContext>(initialSwapContext);
 export function useSwapContext(): ISwapContext {
   return useContext(SwapContext);
 }
+
+export const PRIORITY_NONE = 0; // No additional fee
+export const PRIORITY_HIGH = 0.000_005; // Additional fee of 1x base fee
+export const PRIORITY_TURBO = 0.000_5; // Additional fee of 100x base fee
+export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
 
 export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
@@ -242,6 +252,7 @@ export const SwapContextProvider: FC<{
         wallet: wallet?.adapter as SignerWalletAdapter,
         routeInfo: selectedSwapRoute,
         onTransaction,
+        computeUnitPriceMicroLamports,
       });
 
       setLastSwapResult(swapResult);
@@ -269,6 +280,17 @@ export const SwapContextProvider: FC<{
     setTotalTxs(initialSwapContext.swapping.totalTxs);
     refreshAccount();
   }, []);
+
+  const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
+  const computeUnitPriceMicroLamports = useMemo(() => {
+    if (priorityFeeInSOL === undefined) return 0;
+    return new Decimal(priorityFeeInSOL)
+      .mul(10 ** 9) // sol into lamports
+      .mul(10 ** 6) // lamports into microlamports
+      .div(1_400_000) // divide by CU
+      .round()
+      .toNumber();
+  }, [priorityFeeInSOL]);
 
   return (
     <SwapContext.Provider
@@ -303,6 +325,8 @@ export const SwapContextProvider: FC<{
           error,
           asLegacyTransaction,
           setAsLegacyTransaction,
+          priorityFeeInSOL,
+          setPriorityFeeInSOL,
         },
       }}
     >
