@@ -46,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [rpcUrl, setRPCUrl] = useState<string>('https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed');
 
-  const validateURL = (url: string) => {
+  const validateURL = (url: string): boolean => {
     const URLRegex =
       /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
     return Boolean(url.match(URLRegex));
@@ -135,15 +135,17 @@ export default function App({ Component, pageProps }: AppProps) {
                 </div>
               </div>
 
-              <input
-                className="w-full mt-2 lg:mt-0 lg:w-[340px] rounded-xl items-center bg-black/30 text-sm text-white/50 placeholder:text-white/30 placeholder:text-white text-left px-4 py-3.5"
-                value={rpcUrl}
-                onChange={handleCusomInput}
-                placeholder={`e.g. https://api.mainnet-beta.solana.com`}
-              />
-              {!!rpcUrl && !isCustomUrlValid && (
-                <p className="text-[rgba(240,74,68,0.7)] !mt-2 pl-2 text-xs">Invalid URL!</p>
-              )}
+              <div>
+                <input
+                  className="w-full mt-2 lg:mt-0 lg:w-[340px] rounded-xl items-center bg-black/30 text-sm text-white/50 placeholder:text-white/30 placeholder:text-white text-left px-4 py-3.5"
+                  value={rpcUrl}
+                  onChange={handleCusomInput}
+                  placeholder={`e.g. https://api.mainnet-beta.solana.com`}
+                />
+                {!!rpcUrl && !isCustomUrlValid && (
+                  <p className="text-[rgba(240,74,68,0.7)] !mt-2 pl-2 text-xs">Invalid URL!</p>
+                )}
+              </div>
             </div>
 
             <div className="w-full max-w-3xl px-4 md:px-0 text-white/75 mb-16">
