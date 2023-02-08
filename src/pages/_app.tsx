@@ -46,19 +46,6 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [tab]);
 
   const [rpcUrl, setRPCUrl] = useState<string>(JUPITER_DEFAULT_RPC);
-
-  const validateURL = (url: string): boolean => {
-    const URLRegex =
-      /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi;
-    return Boolean(url.match(URLRegex));
-  }
-
-  const handleCusomInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRPCUrl(e.target.value);
-  };
-
-  const isCustomUrlValid = validateURL(rpcUrl);
-
   return (
     <div className="bg-jupiter-dark-bg h-screen w-screen overflow-auto flex flex-col justify-between">
       <div>
@@ -125,29 +112,6 @@ export default function App({ Component, pageProps }: AppProps) {
                 ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.'
                 : null}
             </span>
-
-            <div className='max-w-3xl px-4 md:px-0  flex flex-col lg:flex-row items-end mt-12'>
-              <div>
-                <p className='font-semibold text-lg text-white'>RPC</p>
-                <div className=' rounded-xl overflow-hidden'>
-                  <p className="lg:w-[60%] text-[#9D9DA6] text-xs my-1">
-                    You will need a Solana RPC endpoint to connect to the network. (e.g Quiknode, RPCPool, etc.)
-                  </p>
-                </div>
-              </div>
-
-              <div>
-                <input
-                  className="w-full mt-2 lg:mt-0 lg:w-[340px] rounded-xl items-center bg-black/30 text-sm text-white/50 placeholder:text-white/30 placeholder:text-white text-left px-4 py-3.5"
-                  value={rpcUrl}
-                  onChange={handleCusomInput}
-                  placeholder={`e.g. https://api.mainnet-beta.solana.com`}
-                />
-                {!!rpcUrl && !isCustomUrlValid && (
-                  <p className="text-[rgba(240,74,68,0.7)] !mt-2 pl-2 text-xs">Invalid URL!</p>
-                )}
-              </div>
-            </div>
 
             <div className="w-full max-w-3xl px-4 md:px-0 text-white/75 mb-16">
               {tab === 'modal' ? <ModalTerminal rpcUrl={rpcUrl} /> : null}
