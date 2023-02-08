@@ -88,7 +88,7 @@ const SwapRoute: React.FC<{
 
           <div className="flex space-x-1">
             {path.map((item, idx) => (
-              <div className="flex space-x-1 text-black-50 dark:text-white-50" key={idx}>
+              <div className="flex space-x-1 text-black/50 dark:text-white/50" key={idx}>
                 <div className="font-semibold text-[11px]">
                   <span>{item}</span>
                 </div>

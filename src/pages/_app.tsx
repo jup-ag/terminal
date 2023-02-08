@@ -17,6 +17,7 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
 import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
+import { JUPITER_DEFAULT_RPC } from 'src/constants';
 
 const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
 // In NextJS preview env settings
@@ -44,7 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
     }
   }, [tab]);
 
-  const [rpcUrl, setRPCUrl] = useState<string>('https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed');
+  const [rpcUrl, setRPCUrl] = useState<string>(JUPITER_DEFAULT_RPC);
 
   const validateURL = (url: string): boolean => {
     const URLRegex =

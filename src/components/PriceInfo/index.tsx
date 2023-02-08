@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
@@ -67,6 +68,8 @@ const Index = ({
   const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
+  const { jupiter: { priorityFeeInSOL} } = useSwapContext();
+
   return (
     <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
@@ -107,6 +110,15 @@ const Index = ({
           <Fees marketInfos={selectedSwapRoute?.marketInfos} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+
+          {priorityFeeInSOL > 0 ? (
+            <div className="flex items-center justify-between text-xs">
+              <div className="text-white/30">
+                Priority Fee
+              </div>
+              <div className="text-white/30">{new Decimal(priorityFeeInSOL).toString()}</div>
+            </div>
+          ) : null}
         </>
       ) : null}
     </div>

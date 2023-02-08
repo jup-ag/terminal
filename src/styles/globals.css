@@ -43,3 +43,33 @@
 .hidden {
   display: none;
 }
+
+
+/* JupButton border gradient */
+#jupiter-terminal .v2-border-gradient::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1px;
+  background: linear-gradient(91.26deg, rgba(250, 196, 58, 0.5) 15.73%, rgba(113, 229, 237, 0.5) 83.27%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask-composite: source-out;
+  z-index: 10;
+  pointer-events: none;
+}
+
+#jupiter-terminal .v2-border-gradient-left.v2-border-gradient::before {
+  border-top-left-radius: 0.75rem;
+  border-bottom-left-radius: 0.75rem;
+}
+#jupiter-terminal .v2-border-gradient-center.v2-border-gradient::before {
+  border-radius: 0.75rem;
+}
+#jupiter-terminal .v2-border-gradient-right.v2-border-gradient::before {
+  border-top-right-radius: 0.75rem;
+  border-bottom-right-radius: 0.75rem;
+}
