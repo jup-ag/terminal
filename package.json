@@ -9,7 +9,6 @@
     "start": "next start",
     "lint": "next lint",
     "format:fix": "prettier --write src",
-    "scope-tailwind": "stylus ./scoped-preflight.stylus -o scoped-preflight.css",
     "build-widget": "NODE_ENV=production MODE=widget webpack",
     "analyse": "NODE_ENV=production MODE=widget ANALYSE=true webpack"
   },
