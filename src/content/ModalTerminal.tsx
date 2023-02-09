@@ -73,12 +73,12 @@ const ModalTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   return (
     <>
       <div className="flex flex-col md:flex-row items-center justify-between mt-9">
-        <div className="flex items-center space-x-2 has-tooltip">
+        <div className="flex items-center space-x-2 jupiter-has-tooltip">
           <h2 className="font-semibold text-xl">Active instance</h2>
 
           <div className="mt-1 relative">
             <InfoIcon />
-            <p className="tooltip w-[320px] right-[-80px] md:right-unset text-xs">
+            <p className="jupiter-tooltip w-[320px] right-[-80px] md:right-unset text-xs">
               Once initialized and closed, previous activity can be resumed.
             </p>
           </div>

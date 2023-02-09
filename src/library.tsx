@@ -20,57 +20,31 @@ const scriptDomain =
     return '';
   })() || 'https://terminal.jup.ag';
 
-async function preloadJupiter() {
-  const script = new Promise<any>((res, rej) => {
-    const el = document.createElement('link');
-    el.rel = 'preload';
-    el.as = 'script';
-    el.onload = res;
-    el.onerror = rej;
-    el.id = 'jupiter-load-script';
-    el.type = 'text/javascript';
-    el.href = `${scriptDomain}/${bundleName}-app.js`;
-    document.head.append(el);
-  });
-
-  const cssApp = new Promise((res, rej) => {
-    const existing = document.getElementById('jupiter-load-styles-jupiter') as HTMLLinkElement | null;
+async function loadRemote(id: string, href: string, type: 'text/javascript' | 'stylesheet') {
+  return new Promise((res, rej) => {
+    const existing = document.getElementById(id) as HTMLLinkElement | null;
 
     if (existing) {
       res({});
     } else {
-      const el = document.createElement('link');
+      let el: HTMLScriptElement | HTMLLinkElement = type === 'text/javascript'
+        ? document.createElement('script')
+        : document.createElement('link');
+
+      el.id = id;
       el.onload = res;
       el.onerror = rej;
-      el.id = 'jupiter-load-styles-jupiter';
-      el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}-Jupiter.css`;
+      if (el instanceof HTMLScriptElement) {
+        el.type = 'text/javascript';
+        el.src = href;
+      } else if (el instanceof HTMLLinkElement) {
+        el.rel = 'stylesheet';
+        el.href = href;
+      }
+
       document.head.append(el);
     }
   });
-
-  const cssTailwind = new Promise((res, rej) => {
-    const existing = document.getElementById('jupiter-load-styles-tailwind') as HTMLLinkElement | null;
-
-    if (existing) {
-      res({});
-    } else {
-      const el = document.createElement('link');
-      el.onload = res;
-      el.onerror = rej;
-      el.id = 'jupiter-load-styles-tailwind';
-      el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}-Tailwind.css`;
-      document.head.append(el);
-    }
-  });
-
-  try {
-    await Promise.all([script, cssApp, cssTailwind]);
-  } catch (error) {
-    console.error(`Error pre-loading Jupiter Terminal: ${error}`);
-    throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
-  }
 }
 
 async function loadJupiter() {
@@ -78,56 +52,15 @@ async function loadJupiter() {
     return;
   }
 
-  const script = new Promise<any>((res, rej) => {
-    const existing = document.getElementById('jupiter-load-script-app') as HTMLScriptElement | null;
-
-    if (existing) {
-      res({});
-    } else {
-      const el = document.createElement('script');
-      el.onload = res;
-      el.onerror = rej;
-      el.id = 'jupiter-load-script';
-      el.type = 'text/javascript';
-      el.src = `${scriptDomain}/${bundleName}-app.js`;
-      document.head.append(el);
-    }
-  });
-
-  const cssApp = new Promise((res, rej) => {
-    const existing = document.getElementById('jupiter-load-styles-jupiter') as HTMLLinkElement | null;
-
-    if (existing) {
-      res({});
-    } else {
-      const el = document.createElement('link');
-      el.onload = res;
-      el.onerror = rej;
-      el.id = 'jupiter-load-styles-jupiter';
-      el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}-Jupiter.css`;
-      document.head.append(el);
-    }
-  });
-
-  const cssTailwind = new Promise((res, rej) => {
-    const existing = document.getElementById('jupiter-load-styles-tailwind') as HTMLLinkElement | null;
-
-    if (existing) {
-      res({});
-    } else {
-      const el = document.createElement('link');
-      el.onload = res;
-      el.onerror = rej;
-      el.id = 'jupiter-load-styles-tailwind';
-      el.rel = 'stylesheet';
-      el.href = `${scriptDomain}/${bundleName}-Tailwind.css`;
-      document.head.append(el);
-    }
-  });
-
   try {
-    await Promise.all([script, cssApp, cssTailwind]);
+    // Load all the scripts and styles
+    await Promise.all([
+      loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript'),
+      loadRemote('jupiter-load-styles-tailwind', `${scriptDomain}/${bundleName}-Tailwind.css`, 'stylesheet'),
+      loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
+    ]);
+    // The sequence matters! the last imported Jupiter.css takes precendent
+    loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet')
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`);
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
@@ -186,9 +119,8 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${
-        containerClassName || ''
-      }`;
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''
+        }`;
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar';
     }
@@ -269,11 +201,9 @@ const RenderWidgetShell = (props: IInit) => {
 
       <div
         id="integrated-terminal"
-        className={`absolute overflow-hidden ${
-          classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${
-          !isOpen ? 'h-0 opacity-0' : 'opacity-100'
-        }`}
+        className={`absolute overflow-hidden ${classes.contentClassName
+          } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${!isOpen ? 'h-0 opacity-0' : 'opacity-100'
+          }`}
       >
         <RenderLoadableJupiter {...props} />
       </div>
@@ -338,7 +268,11 @@ if (typeof window !== 'undefined') {
 
     if (loadComplete && shouldPreload) {
       setTimeout(() => {
-        preloadJupiter();
+        loadJupiter()
+          .catch((error) => {
+            console.error(`Error pre-loading Jupiter Terminal: ${error}`);
+            throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
+          })
       }, 2000);
     }
   };
@@ -347,8 +281,7 @@ if (typeof window !== 'undefined') {
 const resume = () => {
   const instanceExist = document.getElementById(containerId);
   if (instanceExist) {
-    instanceExist.classList.remove('hidden');
-    instanceExist.classList.add('block');
+    instanceExist.style.display = 'block';
     return;
   }
 };
@@ -356,7 +289,7 @@ const resume = () => {
 const close = () => {
   const targetDiv = document.getElementById(containerId);
   if (targetDiv) {
-    targetDiv.classList.add('hidden');
+    targetDiv.style.display = 'none';
   }
 };
 

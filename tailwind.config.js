@@ -3,10 +3,9 @@
 const isWidgetOnly = process.env.MODE === "widget";
 module.exports = {
   important: isWidgetOnly ? '#jupiter-terminal' : false,
-  // corePlugins: isWidgetOnly ? {
-  //   preflight: false,
-  //   container: false,
-  // } : {},
+  corePlugins: {
+    preflight: isWidgetOnly ? false : true,
+  },
   mode: 'jit',
   darkMode: 'class',
   content: [
