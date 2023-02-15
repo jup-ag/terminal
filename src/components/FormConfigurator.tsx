@@ -1,19 +1,67 @@
-import { SwapMode } from '@jup-ag/react-hook';
+import { SwapMode } from '@jup-ag/core';
 import classNames from 'classnames';
-import React, { useMemo, useState } from 'react';
-import { WRAPPED_SOL_MINT } from 'src/constants';
+import React, { useEffect } from 'react';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import { FormProps } from 'src/types';
 import Toggle from './Toggle';
 
-const templateOptions = [{ name: 'All functionality' }, { name: 'Fixed output token' }, { name: 'Exact out amount' }];
+const templateOptions: { name: string; values: FormProps }[] = [
+  {
+    name: 'Default',
+    values: {
+      swapMode: SwapMode.ExactIn,
+      initialAmount: '',
+      fixedAmount: false,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: false,
+    },
+  },
+  {
+    name: 'Only allowed to buy specific token',
+    values: {
+      swapMode: SwapMode.ExactIn,
+      initialAmount: '',
+      fixedAmount: false,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: true,
+    },
+  },
+  {
+    name: 'Specify desired output amount (ExactOut)',
+    values: {
+      swapMode: SwapMode.ExactOut,
+      initialAmount: '',
+      fixedAmount: false,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: false,
+    },
+  },
+  {
+    name: 'To Pay for NFT',
+    values: {
+      swapMode: SwapMode.ExactOut,
+      initialAmount: '1000000000',
+      fixedAmount: true,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: true,
+    },
+  },
+];
 const FormConfigurator = ({
   fixedInputMint,
   setFixedInputMint,
   fixedOutputMint,
   setFixedOutputMint,
-  swapModeExactOut,
-  setSwapModeExactOut,
+  swapMode,
+  setSwapMode,
   fixedAmount,
   setFixedAmount,
   initialAmount,
@@ -25,8 +73,8 @@ const FormConfigurator = ({
   setFixedInputMint: React.Dispatch<React.SetStateAction<boolean>>;
   fixedOutputMint: boolean;
   setFixedOutputMint: React.Dispatch<React.SetStateAction<boolean>>;
-  swapModeExactOut: boolean;
-  setSwapModeExactOut: React.Dispatch<React.SetStateAction<boolean>>;
+  swapMode: SwapMode;
+  setSwapMode: React.Dispatch<React.SetStateAction<SwapMode>>;
   fixedAmount: boolean;
   setFixedAmount: React.Dispatch<React.SetStateAction<boolean>>;
   initialAmount: string;
@@ -41,6 +89,40 @@ const FormConfigurator = ({
     setActive(index);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    const {
+      swapMode,
+      initialAmount,
+      fixedAmount,
+      initialInputMint,
+      fixedInputMint,
+      initialOutputMint,
+      fixedOutputMint,
+    } = templateOptions[active].values;
+
+    if (typeof swapMode !== 'undefined') {
+      setSwapMode(swapMode)
+    }
+    if (typeof initialAmount !== 'undefined') {
+      setInitialAmount(initialAmount)
+    }
+    if (typeof fixedAmount !== 'undefined') {
+      setFixedAmount(fixedAmount)
+    }
+    // if (typeof initialInputMint !== 'undefined') {
+    //   setInitialInputMint(initialInputMint)
+    // }
+    if (typeof fixedInputMint !== 'undefined') {
+      setFixedInputMint(fixedInputMint)
+    }
+    // if (typeof initialOutputMint !== 'undefined') {
+    //   setInitialOutputMint(initialOutputMint)
+    // }
+    if (typeof fixedOutputMint !== 'undefined') {
+      setFixedOutputMint(fixedOutputMint)
+    }
+  }, [active]);
 
   return (
     <div className="w-full max-w-full md:max-w-[300px] bg-white/5 rounded-xl p-4">
@@ -63,7 +145,7 @@ const FormConfigurator = ({
 
             {isOpen ? (
               <div
-                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md overflow-hidden shadow-lg bg-zinc-800 w-full"
+                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md overflow-hidden shadow-xl bg-zinc-700 w-full border border-white/20"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
@@ -76,6 +158,7 @@ const FormConfigurator = ({
                     className={classNames(
                       'w-full block px-4 py-2 text-sm hover:bg-white/20 text-left',
                       active === index ? '' : '',
+                      index !== templateOptions.length - 1 ? 'border-b border-white/10' : '',
                     )}
                   >
                     {item.name}
@@ -115,13 +198,13 @@ const FormConfigurator = ({
       {/* Exact out */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-white/75">Exact output amount</p>
-          <p className="text-xs text-white/30">A fixed output amount cannot be changed</p>
+          <p className="text-sm text-white/75">Exact output mode</p>
+          <p className="text-xs text-white/30">Specify output instead of input</p>
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={swapModeExactOut}
-          onClick={() => setSwapModeExactOut(!swapModeExactOut)}
+          active={swapMode === SwapMode.ExactOut}
+          onClick={() => setSwapMode(swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn)}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -151,7 +234,7 @@ const FormConfigurator = ({
           const regex = /^[0-9\b]+$/;
           const value = e.target.value;
           if (value === '' || regex.test(value)) {
-            setInitialAmount(value)
+            setInitialAmount(value);
           }
         }}
       />

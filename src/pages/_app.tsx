@@ -50,14 +50,14 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [fixedInputMint, setFixedInputMint] = useState(false);
   const [fixedOutputMint, setFixedOutputMint] = useState(false);
-  const [swapModeExactOut, setSwapModeExactOut] = useState(false);
+  const [swapMode, setSwapMode] = useState<SwapMode>(SwapMode.ExactIn);
   const [fixedAmount, setFixedAmount] = useState(false);
   const [initialAmount, setInitialAmount] = useState('');
   const [useWalletPassthrough, setUseWalletPassthrough] = useState(false);
 
   const formProps: FormProps = useMemo(() => {
     return {
-      swapMode: swapModeExactOut ? SwapMode.ExactOut : SwapMode.ExactIn,
+      swapMode,
       initialAmount,
       fixedAmount,
       initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -68,7 +68,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [
     fixedInputMint,
     fixedOutputMint,
-    swapModeExactOut,
+    swapMode,
     fixedAmount,
     initialAmount,
     useWalletPassthrough,
@@ -117,8 +117,8 @@ export default function App({ Component, pageProps }: AppProps) {
                 setFixedInputMint={setFixedInputMint}
                 fixedOutputMint={fixedOutputMint}
                 setFixedOutputMint={setFixedOutputMint}
-                swapModeExactOut={swapModeExactOut}
-                setSwapModeExactOut={setSwapModeExactOut}
+                swapMode={swapMode}
+                setSwapMode={setSwapMode}
                 initialAmount={initialAmount}
                 setInitialAmount={setInitialAmount}
                 fixedAmount={fixedAmount}
