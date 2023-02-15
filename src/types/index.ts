@@ -19,7 +19,7 @@ export declare type PlatformFeeAndAccounts = {
   feeAccounts: Map<string, PublicKey>;
 };
 
-export interface ConfigurableProps {
+export interface FormProps {
   swapMode?: SwapMode;
   initialAmount?: string;
   fixedAmount?: boolean;
@@ -32,7 +32,7 @@ export interface ConfigurableProps {
 export interface IInit {
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
-  configurableProps?: ConfigurableProps;
+  formProps?: FormProps;
   
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';
@@ -51,34 +51,6 @@ export interface IInit {
   
   // Internal resolves
   scriptDomain?: string;
-  
-  /** Deprecated
-    use configurableProps for more flexibility in customising interactions. 
-    existing user on `mode` props will have their capability unaffected, and mapped accordingly to `configurableProps`
-
-    mode: 'default'
-    ```tsx
-    const configurableProps = {
-      fixedInputMint: undefined,
-      fixedOutputMint: undefined,
-      swapModeExactOut: undefined,
-      fixedAmount: undefined,
-    }
-    ```
-    
-    mode: 'outputOnly'
-    ```tsx
-    const configurableProps = {
-      fixedInputMint: undefined,
-      swapModeExactOut: undefined,
-      fixedAmount: undefined,
-      initialOutputMint: 'So11111111111111111111111111111111111111112',
-      fixedOutputMint: true,
-    }
-    ```
-  */
-  mode?: 'default' | 'outputOnly';
-  mint?: string;
 }
 
 export interface JupiterTerminal {

@@ -1,29 +1,35 @@
+import { Wallet } from '@solana/wallet-adapter-react';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
-import { WidgetPosition, WidgetSize } from 'src/types';
+import { FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
+const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
+  const { rpcUrl, fakeWallet, formProps } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
 
+  const launchTerminal = () => {
+    window.Jupiter.init({
+      displayMode: 'widget',
+      widgetStyle: {
+        position,
+        size,
+      },
+      formProps,
+      passThroughWallet: fakeWallet,
+      endpoint: rpcUrl,
+    });
+  };
+
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
-    if (!isLoaded) {
+    if (!isLoaded || !window.Jupiter.init) {
       intervalId = setInterval(() => {
-        setIsLoaded(Boolean(window.Jupiter));
+        setIsLoaded(Boolean(window.Jupiter.init));
       }, 500);
-
-      window.Jupiter.init({
-        displayMode: 'widget',
-        widgetStyle: {
-          position: 'bottom-right',
-          size: 'default',
-        },
-        endpoint: rpcUrl
-      });
     }
 
     if (intervalId) {
@@ -32,17 +38,10 @@ const WidgetTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
-      window.Jupiter.init({
-        displayMode: 'widget',
-        widgetStyle: {
-          position,
-          size,
-        },
-        endpoint: rpcUrl
-      });
+    if (isLoaded && Boolean(window.Jupiter.init)) {
+      launchTerminal();
     }
-  }, [position, size]);
+  }, [isLoaded, props, position, size]);
 
   return (
     <div className="flex flex-col items-center">

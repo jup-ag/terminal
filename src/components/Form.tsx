@@ -39,13 +39,10 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     selectedSwapRoute,
-    configurableProps: {
+    formProps: {
       swapMode,
-      initialAmount,
       fixedAmount,
-      initialInputMint,
       fixedInputMint,
-      initialOutputMint,
       fixedOutputMint,
     },
     jupiter: { routes, loading, refresh },

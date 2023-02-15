@@ -10,7 +10,6 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import RouteSelectionScreen from './RouteSelectionScreen';
-import { SOL_MINT_TOKEN_INFO, WRAPPED_SOL_MINT } from 'src/constants';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -27,7 +26,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     setForm,
     setErrors,
     selectedSwapRoute,
-    configurableProps: {
+    formProps: {
       initialOutputMint,
       fixedOutputMint,
     },
@@ -42,21 +41,24 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
   }, [walletPublicKey, accounts, form.fromMint]);
 
-  const isDisabled = useMemo(() => {
+  const [isDisabled, setIsDisabled] = useState(false);
+  useEffect(() => {
     if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !selectedSwapRoute || loading) {
       setErrors({});
-      return true;
+      setIsDisabled(true);
+      return;
     }
 
     if (Number(form.fromValue) > balance) {
       setErrors({
         fromValue: { title: 'Insufficient balance', message: '' },
       });
-      return true;
+      setIsDisabled(true);
+      return;
     }
 
     setErrors({});
-    return false;
+    setIsDisabled(false);
   }, [form, balance]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);

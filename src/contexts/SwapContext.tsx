@@ -25,7 +25,7 @@ import {
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
-import { ConfigurableProps, IInit } from 'src/types';
+import { FormProps, IInit } from 'src/types';
 import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -59,7 +59,7 @@ export interface ISwapContext {
   setSelectedSwapRoute: Dispatch<SetStateAction<RouteInfo | null>>;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
-  configurableProps: ConfigurableProps;
+  formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
   swapping: {
@@ -78,10 +78,6 @@ export interface ISwapContext {
     priorityFeeInSOL: number;
     setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
   };
-  
-  /** Deprecated, use configurableProps */
-  mode: IInit['mode'];
-  mint: IInit['mint'];
 }
 
 export const initialSwapContext: ISwapContext = {
@@ -101,7 +97,7 @@ export const initialSwapContext: ISwapContext = {
   onSubmit: async () => null,
   lastSwapResult: null,
   displayMode: 'modal',
-  configurableProps: {
+  formProps: {
     swapMode: SwapMode.ExactIn,
     initialAmount: undefined,
     fixedAmount: undefined,
@@ -130,10 +126,6 @@ export const initialSwapContext: ISwapContext = {
     priorityFeeInSOL: 0,
     setPriorityFeeInSOL() { },
   },
-
-  /** Deprecated, use configurableProps */
-  mode: 'default',
-  mint: undefined,
 };
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
@@ -152,24 +144,16 @@ export const SwapContextProvider: FC<{
   scriptDomain?: string;
   asLegacyTransaction: boolean;
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
-  configurableProps?: ConfigurableProps;
+  formProps?: FormProps;
   children: ReactNode;
-
-  /** Deprecated, use configurableProps */
-  mode: IInit['mode'];
-  mint: IInit['mint'];
 }> = (props) => {
   const {
     displayMode,
     scriptDomain,
     asLegacyTransaction,
     setAsLegacyTransaction,
-    configurableProps: originalConfigurableProps,
+    formProps: originalFormProps,
     children,
-
-    /** Deprecated, use configurableProps */
-    mode,
-    mint,
   } = props;
 
   const { tokenMap } = useTokenContext();
@@ -177,24 +161,16 @@ export const SwapContextProvider: FC<{
   const { refresh: refreshAccount } = useAccounts();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const configurableProps: ConfigurableProps = useMemo(() => {
-    // mode === default, nothing to do
-    // mode === outputOnly, we fix iniitlaOutputMint, and fixedOutputMint
-    if (mode === 'outputOnly' && mint) {
-      return { ...originalConfigurableProps, initialOutputMint: originalConfigurableProps?.initialOutputMint, fixedOutputMint: true };
-    }
-
-    return { ...initialSwapContext.configurableProps, ...originalConfigurableProps };
-  }, [originalConfigurableProps])
+  const formProps: FormProps = useMemo(() => ({ ...initialSwapContext.formProps, ...originalFormProps }), [originalFormProps])
 
   const [form, setForm] = useState<IForm>({
-    fromMint: configurableProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: configurableProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
+    fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
   });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
-  const jupiterSwapMode = useMemo(() => configurableProps?.swapMode ? SwapMode[configurableProps?.swapMode] : SwapMode.ExactIn, [configurableProps?.swapMode]);
+  const jupiterSwapMode = useMemo(() => formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn, [formProps?.swapMode]);
 
   const fromTokenInfo = useMemo(() => {
     const tokenInfo = form.fromMint ? tokenMap.get(form.fromMint) : null;
@@ -208,12 +184,12 @@ export const SwapContextProvider: FC<{
 
   // Set value given initial amount
   useEffect(() => {
-    if (!configurableProps?.initialAmount) return;
+    if (!formProps?.initialAmount) return;
 
     const toUiAmount = (mint: string) => {
       const tokenInfo = mint ? tokenMap.get(mint) : undefined;
       if (!tokenInfo) return;
-      return String(fromLamports(JSBI.BigInt(configurableProps.initialAmount ?? 0), tokenInfo.decimals));
+      return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
     };
 
     if (jupiterSwapMode === SwapMode.ExactOut) {
@@ -221,7 +197,7 @@ export const SwapContextProvider: FC<{
     } else {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
     }
-  }, [configurableProps?.initialAmount, jupiterSwapMode, tokenMap]);
+  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
   const nativeAmount = useMemo(() => {
     if (jupiterSwapMode === SwapMode.ExactOut) {
@@ -378,7 +354,7 @@ export const SwapContextProvider: FC<{
         reset,
 
         displayMode,
-        configurableProps,
+        formProps,
         scriptDomain,
         swapping: {
           totalTxs,
@@ -398,10 +374,6 @@ export const SwapContextProvider: FC<{
           priorityFeeInSOL,
           setPriorityFeeInSOL,
         },
-
-        /** Deprecated, use configurableProps */
-        mode,
-        mint,
       }}
     >
       {children}

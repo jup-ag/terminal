@@ -107,16 +107,16 @@ window.Jupiter.init({
 
 ---
 
-### Mode (Deprecated)
+### Mode (Deprecated in v1)
 
-`configurableProps` provides more flexibility in customising interactions.
-Existing user on `mode` props will have their capability unaffected, and mapped accordingly to `configurableProps`
+`formProps` provides more flexibility in customising interactions.
+Existing user on `mode` props will have their capability unaffected, and mapped accordingly to `formProps`
 
 - `default`: Default mode, user can swap between any token pair.
   Will be mapped to:
   ```tsx
   // Mode prop deprecated, will be mapped to:
-  const configurableProps = {
+  const formProps = {
     fixedInputMint: undefined,
     fixedOutputMint: undefined,
     swapModeExactOut: undefined,
@@ -134,7 +134,7 @@ window.Jupiter.init({
 });
 
 // Mode prop deprecated, will be mapped to:
-const configurableProps = {
+const formProps = {
   fixedInputMint: undefined,
   swapModeExactOut: undefined,
   fixedAmount: undefined,
@@ -145,7 +145,7 @@ const configurableProps = {
 
 ---
 
-### configurableProps
+### formProps
 
 Configure Terminal's behaviour and allowed actions for the user.
 

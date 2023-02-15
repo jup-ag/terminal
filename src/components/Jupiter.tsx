@@ -38,11 +38,7 @@ const JupiterApp = (props: IInit) => {
   const {
     displayMode,
     platformFeeAndAccounts,
-    configurableProps,
-
-    /** Deprecated, use configurableProps */
-    mode,
-    mint,
+    formProps,
   } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
@@ -71,9 +67,7 @@ const JupiterApp = (props: IInit) => {
         >
           <SwapContextProvider
             displayMode={displayMode}
-            mode={mode}
-            mint={mint}
-            configurableProps={configurableProps}
+            formProps={formProps}
             scriptDomain={props.scriptDomain}
             asLegacyTransaction={asLegacyTransaction}
             setAsLegacyTransaction={setAsLegacyTransaction}
