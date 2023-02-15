@@ -37,7 +37,7 @@ if ((isDeveloping || isPreview) && typeof window !== 'undefined') {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
-  const [tab, setTab] = useState<IInit['displayMode']>('widget');
+  const [tab, setTab] = useState<IInit['displayMode']>('integrated');
 
   // Cleanup on tab change
   useEffect(() => {

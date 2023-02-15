@@ -8,7 +8,7 @@ Demo: https://terminal.jup.ag
 
 ## Core features
 
-- `main.js` bundle ~66kb gzipped
+- `main-v1.js` bundle ~70Kb gzipped
   - app bundle (~900Kb) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 - Built-in wallets, or passthrough wallets from your dApp
@@ -22,10 +22,10 @@ Demo: https://terminal.jup.ag
 
 ### Integrating the widget
 
-In your document, link and embed `main.js`.
+In your document, link and embed `main-v1.js`.
 
 ```tsx
-<script src="https://terminal.jup.ag/main.js" data-preload />
+<script src="https://terminal.jup.ag/main-v1.js" data-preload />
 ```
 
 ### Preloading Terminal
@@ -33,7 +33,7 @@ In your document, link and embed `main.js`.
 Assign the attribute `data-preload` to the script tag, the full application will be preloaded on your browser's `(document.readyState === "complete")` event.
 
 ```tsx
-<script src="https://terminal.jup.ag/main.js" data-preload />
+<script src="https://terminal.jup.ag/main-v1.js" data-preload />
 ```
 
 Then,
