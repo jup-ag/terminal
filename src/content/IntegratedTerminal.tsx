@@ -1,8 +1,9 @@
 import { Wallet } from '@solana/wallet-adapter-react';
 import React, { useEffect, useState } from 'react';
 import { FormProps } from 'src/types';
+import { useDebouncedEffect } from 'src/misc/utils';
 
-const IntegratedTerminal = ({ rpcUrl,  formProps, fakeWallet }: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
+const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   const launchTerminal = () => {
@@ -12,8 +13,8 @@ const IntegratedTerminal = ({ rpcUrl,  formProps, fakeWallet }: { rpcUrl: string
       endpoint: rpcUrl,
       formProps,
       passThroughWallet: fakeWallet,
-    });
-  };
+    })
+  }
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -28,11 +29,11 @@ const IntegratedTerminal = ({ rpcUrl,  formProps, fakeWallet }: { rpcUrl: string
     }
   }, []);
 
-  useEffect(() => {
+  useDebouncedEffect(() => {
     if (isLoaded && Boolean(window.Jupiter.init)) {
       launchTerminal();
     }
-  }, [isLoaded, formProps, fakeWallet])
+  }, [isLoaded, formProps, fakeWallet], 1000)
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">

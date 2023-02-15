@@ -1,13 +1,18 @@
 import { SwapMode } from '@jup-ag/core';
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import React from 'react';
+import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
+import InfoIconSVG from 'src/icons/InfoIconSVG';
+import { FormConfigurator } from 'src/pages/_app';
 import { FormProps } from 'src/types';
 import Toggle from './Toggle';
+import Tooltip from './Tooltip';
 
-const templateOptions: { name: string; values: FormProps }[] = [
+const templateOptions: { name: string; description: string; values: FormProps }[] = [
   {
     name: 'Default',
+    description: 'Full functionality and swap experience of Terminal.',
     values: {
       swapMode: SwapMode.ExactIn,
       initialAmount: '',
@@ -19,31 +24,12 @@ const templateOptions: { name: string; values: FormProps }[] = [
     },
   },
   {
-    name: 'Only allowed to buy specific token',
-    values: {
-      swapMode: SwapMode.ExactIn,
-      initialAmount: '',
-      fixedAmount: false,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: true,
-    },
-  },
-  {
-    name: 'Specify desired output amount (ExactOut)',
-    values: {
-      swapMode: SwapMode.ExactOut,
-      initialAmount: '',
-      fixedAmount: false,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: false,
-    },
-  },
-  {
-    name: 'To Pay for NFT',
+    name: 'For payments',
+    description: `
+    Purchase a specified amount of specific token.
+    e.g. Imagine paying for 1 NFT at the price of 1 SOL.
+    e.g. Paying for RPC service at the price of 100 USDC.
+    `,
     values: {
       swapMode: SwapMode.ExactOut,
       initialAmount: '1000000000',
@@ -54,43 +40,64 @@ const templateOptions: { name: string; values: FormProps }[] = [
       fixedOutputMint: true,
     },
   },
+  {
+    name: 'Buy a project token',
+    description: `To purchase a specific token.`,
+    values: {
+      swapMode: SwapMode.ExactIn,
+      initialAmount: '',
+      fixedAmount: false,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: true,
+    },
+  },
+  {
+    name: 'Exact Out',
+    description: `
+    On Exact Out mode, user specify the amount of token to receive instead.
+    `,
+    values: {
+      swapMode: SwapMode.ExactOut,
+      initialAmount: '',
+      fixedAmount: false,
+      initialInputMint: '',
+      fixedInputMint: false,
+      initialOutputMint: '',
+      fixedOutputMint: false,
+    },
+  },
 ];
 const FormConfigurator = ({
   fixedInputMint,
-  setFixedInputMint,
   fixedOutputMint,
-  setFixedOutputMint,
   swapMode,
-  setSwapMode,
   fixedAmount,
-  setFixedAmount,
   initialAmount,
-  setInitialAmount,
   useWalletPassthrough,
-  setUseWalletPassthrough,
+
+  // Hook form
+  reset,
+  setValue,
+  formState,
 }: {
   fixedInputMint: boolean;
-  setFixedInputMint: React.Dispatch<React.SetStateAction<boolean>>;
   fixedOutputMint: boolean;
-  setFixedOutputMint: React.Dispatch<React.SetStateAction<boolean>>;
   swapMode: SwapMode;
-  setSwapMode: React.Dispatch<React.SetStateAction<SwapMode>>;
   fixedAmount: boolean;
-  setFixedAmount: React.Dispatch<React.SetStateAction<boolean>>;
   initialAmount: string;
-  setInitialAmount: React.Dispatch<React.SetStateAction<string>>;
   useWalletPassthrough: boolean;
-  setUseWalletPassthrough: React.Dispatch<React.SetStateAction<boolean>>;
+
+  // Hook form
+  reset: UseFormReset<FormConfigurator>,
+  setValue: UseFormSetValue<FormConfigurator>
+  formState: FormState<FormConfigurator>
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
 
   const onSelect = (index: number) => {
-    setActive(index);
-    setIsOpen(false);
-  };
-
-  useEffect(() => {
     const {
       swapMode,
       initialAmount,
@@ -99,30 +106,17 @@ const FormConfigurator = ({
       fixedInputMint,
       initialOutputMint,
       fixedOutputMint,
-    } = templateOptions[active].values;
-
-    if (typeof swapMode !== 'undefined') {
-      setSwapMode(swapMode)
-    }
-    if (typeof initialAmount !== 'undefined') {
-      setInitialAmount(initialAmount)
-    }
-    if (typeof fixedAmount !== 'undefined') {
-      setFixedAmount(fixedAmount)
-    }
-    // if (typeof initialInputMint !== 'undefined') {
-    //   setInitialInputMint(initialInputMint)
-    // }
-    if (typeof fixedInputMint !== 'undefined') {
-      setFixedInputMint(fixedInputMint)
-    }
-    // if (typeof initialOutputMint !== 'undefined') {
-    //   setInitialOutputMint(initialOutputMint)
-    // }
-    if (typeof fixedOutputMint !== 'undefined') {
-      setFixedOutputMint(fixedOutputMint)
-    }
-  }, [active]);
+    } = templateOptions[index].values;
+    reset({
+      swapMode,
+      initialAmount,
+      fixedAmount,
+      fixedInputMint,
+      fixedOutputMint,
+    })
+    setActive(index);
+    setIsOpen(false);
+  };
 
   return (
     <div className="w-full max-w-full md:max-w-[300px] bg-white/5 rounded-xl p-4">
@@ -139,13 +133,32 @@ const FormConfigurator = ({
               aria-expanded="true"
               aria-haspopup="true"
             >
-              <p>{templateOptions[active].name}</p>
+              <div className='flex items-center justify-center space-x-2.5'>
+                <p>{templateOptions[active].name}</p>
+                
+                <Tooltip
+                  variant="dark"
+                  content={
+                    <pre className='text-white text-xs'>{templateOptions[active].description}</pre>
+                  }>
+                  <div className="flex items-center text-white-35 fill-current">
+                    <InfoIconSVG width={12} height={12} />
+                  </div>
+                </Tooltip>
+
+                {formState?.isDirty ? (
+                  <p className='text-[10px] text-white/50 rounded-xl py-1 px-2 border border-white/50 leading-none'>
+                    Custom
+                  </p>
+                ) : null}
+              </div>
+
               <ChevronDownIcon />
             </button>
 
             {isOpen ? (
               <div
-                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md overflow-hidden shadow-xl bg-zinc-700 w-full border border-white/20"
+                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-zinc-700 w-full border border-white/20"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
@@ -156,12 +169,12 @@ const FormConfigurator = ({
                     onClick={() => onSelect(index)}
                     type="button"
                     className={classNames(
-                      'w-full block px-4 py-2 text-sm hover:bg-white/20 text-left',
+                      'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
                       active === index ? '' : '',
                       index !== templateOptions.length - 1 ? 'border-b border-white/10' : '',
                     )}
                   >
-                    {item.name}
+                    <span>{item.name}</span>
                   </button>
                 ))}
               </div>
@@ -177,7 +190,7 @@ const FormConfigurator = ({
           <p className="text-sm text-white/75">Fixed input mint</p>
           <p className="text-xs text-white/30">Input mint cannot be changed</p>
         </div>
-        <Toggle className="min-w-[40px]" active={fixedInputMint} onClick={() => setFixedInputMint(!fixedInputMint)} />
+        <Toggle className="min-w-[40px]" active={fixedInputMint} onClick={() => setValue('fixedInputMint', !fixedInputMint, { shouldDirty: true })} />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
@@ -190,7 +203,7 @@ const FormConfigurator = ({
         <Toggle
           className="min-w-[40px]"
           active={fixedOutputMint}
-          onClick={() => setFixedOutputMint(!fixedOutputMint)}
+          onClick={() => setValue('fixedOutputMint', !fixedOutputMint, { shouldDirty: true })}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -204,7 +217,7 @@ const FormConfigurator = ({
         <Toggle
           className="min-w-[40px]"
           active={swapMode === SwapMode.ExactOut}
-          onClick={() => setSwapMode(swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn)}
+          onClick={() => setValue('swapMode', swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, { shouldDirty: true })}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -215,7 +228,7 @@ const FormConfigurator = ({
           <p className="text-sm text-white/75">Fixed amount</p>
           <p className="text-xs text-white/30">Depending on Exact In / Exact Out, the amount cannot be changed</p>
         </div>
-        <Toggle className="min-w-[40px]" active={fixedAmount} onClick={() => setFixedAmount(!fixedAmount)} />
+        <Toggle className="min-w-[40px]" active={fixedAmount} onClick={() => setValue('fixedAmount', !fixedAmount, { shouldDirty: true })} />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
@@ -234,7 +247,7 @@ const FormConfigurator = ({
           const regex = /^[0-9\b]+$/;
           const value = e.target.value;
           if (value === '' || regex.test(value)) {
-            setInitialAmount(value);
+            setValue('initialAmount', value)
           }
         }}
       />
@@ -249,7 +262,7 @@ const FormConfigurator = ({
         <Toggle
           className="min-w-[40px]"
           active={useWalletPassthrough}
-          onClick={() => setUseWalletPassthrough(!useWalletPassthrough)}
+          onClick={() => setValue('useWalletPassthrough', !useWalletPassthrough)}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />

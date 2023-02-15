@@ -19,6 +19,18 @@ import { SwapMode } from '@jup-ag/react-hook';
 import { Wallet } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
+import { useForm } from 'react-hook-form';
+
+export interface FormConfigurator {
+  fixedInputMint: boolean;
+  fixedOutputMint: boolean;
+  swapMode: SwapMode;
+  fixedAmount: boolean;
+  initialAmount: string;
+  useWalletPassthrough: boolean;
+  initialInputMint: string;
+  initialOutputMint: string;
+}
 
 const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
 // In NextJS preview env settings
@@ -48,36 +60,25 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const rpcUrl = JUPITER_DEFAULT_RPC;
 
-  const [fixedInputMint, setFixedInputMint] = useState(false);
-  const [fixedOutputMint, setFixedOutputMint] = useState(false);
-  const [swapMode, setSwapMode] = useState<SwapMode>(SwapMode.ExactIn);
-  const [fixedAmount, setFixedAmount] = useState(false);
-  const [initialAmount, setInitialAmount] = useState('');
-  const [useWalletPassthrough, setUseWalletPassthrough] = useState(false);
-
-  const formProps: FormProps = useMemo(() => {
-    return {
-      swapMode,
-      initialAmount,
-      fixedAmount,
+  const { watch, reset, setValue, formState } = useForm<FormConfigurator>({
+    defaultValues: {
+      fixedInputMint: false,
+      fixedOutputMint: false,
+      swapMode: SwapMode.ExactIn,
+      fixedAmount: false,
+      initialAmount: '',
+      useWalletPassthrough: false,
       initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      fixedInputMint,
       initialOutputMint: WRAPPED_SOL_MINT.toString(),
-      fixedOutputMint,
-    };
-  }, [
-    fixedInputMint,
-    fixedOutputMint,
-    swapMode,
-    fixedAmount,
-    initialAmount,
-    useWalletPassthrough,
-  ]);
+    },
+  });
+
+  const watchAllFields = watch();
 
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
-    if (!useWalletPassthrough) {
+    if (!watchAllFields.useWalletPassthrough) {
       setWallet(null);
       return;
     }
@@ -90,7 +91,7 @@ export default function App({ Component, pageProps }: AppProps) {
     fakeWallet.adapter.connect().then(() => {
       setWallet(fakeWallet);
     });
-  }, [useWalletPassthrough]);
+  }, [watchAllFields.useWalletPassthrough]);
 
   return (
     <div className="bg-jupiter-dark-bg h-screen w-screen overflow-auto flex flex-col justify-between">
@@ -112,80 +113,67 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <div className='flex justify-center'>
             <div className='max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4'>
-              <FormConfigurator
-                fixedInputMint={fixedInputMint}
-                setFixedInputMint={setFixedInputMint}
-                fixedOutputMint={fixedOutputMint}
-                setFixedOutputMint={setFixedOutputMint}
-                swapMode={swapMode}
-                setSwapMode={setSwapMode}
-                initialAmount={initialAmount}
-                setInitialAmount={setInitialAmount}
-                fixedAmount={fixedAmount}
-                setFixedAmount={setFixedAmount}
-                useWalletPassthrough={useWalletPassthrough}
-                setUseWalletPassthrough={setUseWalletPassthrough}
-              />
+              <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
 
               <div className='mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col'>
-                  <div className="mt-4 flex justify-center ">
-                    <button
-                      onClick={() => {
-                        setTab('modal');
-                      }}
-                      type="button"
-                      className={classNames('!bg-none relative px-4 justify-center', tab === 'modal' ? '' : 'opacity-20 hover:opacity-70')}
-                    >
-                      <div className="flex items-center text-md text-white">
-                        Modal
-                      </div>
+                <div className="mt-4 flex justify-center ">
+                  <button
+                    onClick={() => {
+                      setTab('modal');
+                    }}
+                    type="button"
+                    className={classNames('!bg-none relative px-4 justify-center', tab === 'modal' ? '' : 'opacity-20 hover:opacity-70')}
+                  >
+                    <div className="flex items-center text-md text-white">
+                      Modal
+                    </div>
 
-                      {tab === 'modal'
-                        ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                        : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
-                    </button>
+                    {tab === 'modal'
+                      ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
+                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                  </button>
 
-                    <button
-                      onClick={() => {
-                        setTab('integrated');
-                      }}
-                      type="button"
-                      className={classNames('!bg-none relative px-4 justify-center', tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70')}
-                    >
-                      <div className="flex items-center text-md text-white">
-                        Integrated
-                      </div>
-                      {tab === 'integrated' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                        : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
-                    </button>
+                  <button
+                    onClick={() => {
+                      setTab('integrated');
+                    }}
+                    type="button"
+                    className={classNames('!bg-none relative px-4 justify-center', tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70')}
+                  >
+                    <div className="flex items-center text-md text-white">
+                      Integrated
+                    </div>
+                    {tab === 'integrated' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
+                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                  </button>
 
-                    <button
-                      onClick={() => {
-                        setTab('widget');
-                      }}
-                      type="button"
-                      className={classNames('!bg-none relative px-4 justify-center', tab === 'widget' ? '' : 'opacity-20 hover:opacity-70')}
-                    >
-                      <div className="flex items-center text-md text-white">
-                        Widget
-                      </div>
-                      {tab === 'widget' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                        : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setTab('widget');
+                    }}
+                    type="button"
+                    className={classNames('!bg-none relative px-4 justify-center', tab === 'widget' ? '' : 'opacity-20 hover:opacity-70')}
+                  >
+                    <div className="flex items-center text-md text-white">
+                      Widget
+                    </div>
+                    {tab === 'widget' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
+                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                  </button>
+                </div>
 
-                  <span className="flex justify-center text-center text-xs text-[#9D9DA6] mt-4">
-                    {tab === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
-                    {tab === 'integrated' ? 'Jupiter renders as a part of your dApp.' : null}
-                    {tab === 'widget'
-                      ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.'
-                      : null}
-                  </span>
+                <span className="flex justify-center text-center text-xs text-[#9D9DA6] mt-4">
+                  {tab === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
+                  {tab === 'integrated' ? 'Jupiter renders as a part of your dApp.' : null}
+                  {tab === 'widget'
+                    ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.'
+                    : null}
+                </span>
 
                 <div className="flex flex-grow items-center justify-center text-white/75">
-                  {tab === 'modal' ? <ModalTerminal rpcUrl={rpcUrl} formProps={formProps} fakeWallet={wallet} /> : null}
-                  {tab === 'integrated' ? <IntegratedTerminal rpcUrl={rpcUrl} formProps={formProps} fakeWallet={wallet} /> : null}
-                  {tab === 'widget' ? <WidgetTerminal rpcUrl={rpcUrl} formProps={formProps} fakeWallet={wallet} /> : null}
+                  {tab === 'modal' ? <ModalTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
+                  {tab === 'integrated' ? <IntegratedTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
+                  {tab === 'widget' ? <WidgetTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
                 </div>
               </div>
             </div>

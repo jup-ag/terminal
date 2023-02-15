@@ -109,3 +109,13 @@ export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseE
     };
   }, [ref, handler]);
 }
+
+export function useDebouncedEffect(fn: Function, deps: any[], time: number) {
+  const dependencies = [...deps, fn, time] 
+  useEffect(() => {
+    const timeout = setTimeout(fn, time);
+    return () => {
+      clearTimeout(timeout);
+    }
+  }, dependencies);
+}

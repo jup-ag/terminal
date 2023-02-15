@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
+import { useDebouncedEffect } from 'src/misc/utils';
 import { FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
 const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
@@ -37,11 +38,11 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
     }
   }, []);
 
-  useEffect(() => {
+  useDebouncedEffect(() => {
     if (isLoaded && Boolean(window.Jupiter.init)) {
       launchTerminal();
     }
-  }, [isLoaded, props, position, size]);
+  }, [isLoaded, props, position, size], 1000)
 
   return (
     <div className="flex flex-col items-center">
