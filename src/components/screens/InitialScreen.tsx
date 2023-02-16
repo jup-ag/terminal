@@ -16,7 +16,6 @@ interface Props {
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-// TODO: make this flexible
 const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
@@ -36,7 +35,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  // TODO: Dedupe the balance
   const balance = useMemo(() => {
     return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
   }, [walletPublicKey, accounts, form.fromMint]);
