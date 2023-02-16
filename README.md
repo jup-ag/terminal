@@ -108,12 +108,11 @@ window.Jupiter.init({
 ---
 
 ### Mode (Deprecated in v1)
-
-`formProps` provides more flexibility in customising interactions.
-Existing user on `mode` props will have their capability unaffected, and mapped accordingly to `formProps`
+Integrators on `mode` props needs to migrate to `formProps`.
+`formProps` offers more flexibility in customising interactions, and have more capabilities.
 
 - `default`: Default mode, user can swap between any token pair.
-  Will be mapped to:
+  Can be mapped to
   ```tsx
   // Mode prop deprecated, will be mapped to:
   const formProps = {
@@ -133,7 +132,7 @@ window.Jupiter.init({
   passThroughWallet: wallet,
 });
 
-// Mode prop deprecated, will be mapped to:
+// Can be mapped to:
 const formProps = {
   fixedInputMint: undefined,
   swapModeExactOut: undefined,
