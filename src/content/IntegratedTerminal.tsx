@@ -33,7 +33,7 @@ const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string,
     if (isLoaded && Boolean(window.Jupiter.init)) {
       launchTerminal();
     }
-  }, [isLoaded, formProps, fakeWallet], 1000)
+  }, [isLoaded, formProps, fakeWallet], 200)
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">

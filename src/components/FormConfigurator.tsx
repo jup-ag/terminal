@@ -4,7 +4,7 @@ import React from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
-import { FormConfigurator } from 'src/pages/_app';
+import { IFormConfigurator } from 'src/pages/_app';
 import { FormProps } from 'src/types';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
@@ -90,9 +90,9 @@ const FormConfigurator = ({
   useWalletPassthrough: boolean;
 
   // Hook form
-  reset: UseFormReset<FormConfigurator>,
-  setValue: UseFormSetValue<FormConfigurator>
-  formState: FormState<FormConfigurator>
+  reset: UseFormReset<IFormConfigurator>,
+  setValue: UseFormSetValue<IFormConfigurator>
+  formState: FormState<IFormConfigurator>
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
