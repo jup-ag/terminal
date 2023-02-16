@@ -7,6 +7,17 @@ import { SwapMode, WRAPPED_SOL_MINT } from '@jup-ag/core';
 import { IFormConfigurator } from 'src/pages/_app';
 import { IInit } from 'src/types';
 
+function addInlinesToCode(code: string, insertLines: string) {
+  let lines = code.split('\n');
+  lines = [
+    ...lines.slice(0, lines.length - 1),
+    insertLines,
+    ...lines.slice(lines.length - 1, lines.length),
+  ]
+  
+  return lines.join('\n');
+}
+
 const CodeBlocks = ({
   formProps,
   displayMode,
@@ -54,7 +65,11 @@ const { wallet } = useWallet();
 
   const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
 
-  const snippet = formProps.useWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
+  let snippet = formProps.useWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
+
+  if (formProps.useWalletPassthrough) {
+    snippet = addInlinesToCode(snippet, `\t"passThroughWallet": wallet,`);
+  }
 
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
