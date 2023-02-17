@@ -46,7 +46,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
           ref={ref}
           role="menu"
         >
-          <li onClick={onClickDisconnect} className="wallet-adapter-dropdown-list-item" role="menuitem">
+          <li onClick={onClickDisconnect} role="menuitem">
             <span>Disconnect</span>
           </li>
         </ul>

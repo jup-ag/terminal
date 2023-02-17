@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { AppProps } from 'next/app';
 
 import 'tailwindcss/tailwind.css';
@@ -10,7 +10,7 @@ import Footer from 'src/components/Footer/Footer';
 
 import ModalTerminal from 'src/content/ModalTerminal';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
-import { FormProps, IInit } from 'src/types';
+import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { JUPITER_DEFAULT_RPC, WRAPPED_SOL_MINT } from 'src/constants';
 import classNames from 'classnames';
@@ -20,8 +20,9 @@ import { Wallet } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useForm } from 'react-hook-form';
+import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 
-export interface FormConfigurator {
+export interface IFormConfigurator {
   fixedInputMint: boolean;
   fixedOutputMint: boolean;
   swapMode: SwapMode;
@@ -60,7 +61,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const rpcUrl = JUPITER_DEFAULT_RPC;
 
-  const { watch, reset, setValue, formState } = useForm<FormConfigurator>({
+  const { watch, reset, setValue, formState } = useForm<IFormConfigurator>({
     defaultValues: {
       fixedInputMint: false,
       fixedOutputMint: false,
@@ -94,11 +95,11 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [watchAllFields.useWalletPassthrough]);
 
   return (
-    <div className="bg-jupiter-dark-bg h-screen w-screen overflow-auto flex flex-col justify-between">
+    <div className="bg-jupiter-dark-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
       <div>
         <AppHeader />
 
-        <div className=''>
+        <div className="">
           <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
             <div className="flex flex-col justify-center items-center text-center">
               <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
@@ -111,26 +112,29 @@ export default function App({ Component, pageProps }: AppProps) {
             </div>
           </div>
 
-          <div className='flex justify-center'>
-            <div className='max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4'>
+          <div className="flex justify-center">
+            <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4">
               <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
 
-              <div className='mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col'>
+              <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                 <div className="mt-4 flex justify-center ">
                   <button
                     onClick={() => {
                       setTab('modal');
                     }}
                     type="button"
-                    className={classNames('!bg-none relative px-4 justify-center', tab === 'modal' ? '' : 'opacity-20 hover:opacity-70')}
+                    className={classNames(
+                      '!bg-none relative px-4 justify-center',
+                      tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
+                    )}
                   >
-                    <div className="flex items-center text-md text-white">
-                      Modal
-                    </div>
+                    <div className="flex items-center text-md text-white">Modal</div>
 
-                    {tab === 'modal'
-                      ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                    {tab === 'modal' ? (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                    ) : (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
+                    )}
                   </button>
 
                   <button
@@ -138,13 +142,17 @@ export default function App({ Component, pageProps }: AppProps) {
                       setTab('integrated');
                     }}
                     type="button"
-                    className={classNames('!bg-none relative px-4 justify-center', tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70')}
+                    className={classNames(
+                      '!bg-none relative px-4 justify-center',
+                      tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
+                    )}
                   >
-                    <div className="flex items-center text-md text-white">
-                      Integrated
-                    </div>
-                    {tab === 'integrated' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                    <div className="flex items-center text-md text-white">Integrated</div>
+                    {tab === 'integrated' ? (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                    ) : (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
+                    )}
                   </button>
 
                   <button
@@ -152,13 +160,17 @@ export default function App({ Component, pageProps }: AppProps) {
                       setTab('widget');
                     }}
                     type="button"
-                    className={classNames('!bg-none relative px-4 justify-center', tab === 'widget' ? '' : 'opacity-20 hover:opacity-70')}
+                    className={classNames(
+                      '!bg-none relative px-4 justify-center',
+                      tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
+                    )}
                   >
-                    <div className="flex items-center text-md text-white">
-                      Widget
-                    </div>
-                    {tab === 'widget' ? <div className='absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]' />
-                      : <div className='absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50' />}
+                    <div className="flex items-center text-md text-white">Widget</div>
+                    {tab === 'widget' ? (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                    ) : (
+                      <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
+                    )}
                   </button>
                 </div>
 
@@ -171,9 +183,15 @@ export default function App({ Component, pageProps }: AppProps) {
                 </span>
 
                 <div className="flex flex-grow items-center justify-center text-white/75">
-                  {tab === 'modal' ? <ModalTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
-                  {tab === 'integrated' ? <IntegratedTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
-                  {tab === 'widget' ? <WidgetTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} /> : null}
+                  {tab === 'modal' ? (
+                    <ModalTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                  ) : null}
+                  {tab === 'integrated' ? (
+                    <IntegratedTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                  ) : null}
+                  {tab === 'widget' ? (
+                    <WidgetTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -181,9 +199,11 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
       </div>
 
+      <CodeBlocks formProps={watchAllFields} displayMode={tab} />
+
       <div className="w-full bg-jupiter-bg mt-12">
         <Footer />
       </div>
-    </div >
+    </div>
   );
 }
