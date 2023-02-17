@@ -1,5 +1,5 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useMemo } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 
 import CoinBalance from './Coinbalance';
@@ -11,6 +11,7 @@ const FormPairRow: React.FC<{
   style: CSSProperties;
   onSubmit(item: TokenInfo): void;
 }> = ({ item, style, onSubmit }) => {
+  const isUnknown = useMemo(() => item.tags?.length === 0, [item.tags])
   return (
     <li
       className={`cursor-pointer list-none `}
@@ -23,7 +24,7 @@ const FormPairRow: React.FC<{
       >
         <div className="flex-shrink-0">
           <div className="h-6 w-6 rounded-full">
-            <TokenIcon tokenInfo={item} />
+            <TokenIcon tokenInfo={item} width={24} height={24} />
           </div>
         </div>
         <div className="flex-1 min-w-0">
@@ -32,6 +33,12 @@ const FormPairRow: React.FC<{
             <CoinBalance mintAddress={item.address} hideZeroBalance /> {item.symbol}
           </p>
         </div>
+
+        {isUnknown ? (
+          <p className="ml-auto border rounded-md text-xxs py-[1px] px-1 border-warning text-warning">
+            <span>Unknown</span>
+          </p>
+        ) : null}
       </div>
     </li>
   );

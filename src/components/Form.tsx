@@ -22,6 +22,7 @@ import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
+import { useTokenContext } from 'src/contexts/TokenContextProvider';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -262,7 +263,7 @@ const Form: React.FC<{
                 <RoutesSVG width={7} height={9} />
               </div>
               <span className="text-white/30">using</span>
-              <span className="text-white/50">{marketRoutes}</span>
+              <span className="text-white/50 overflow-hidden whitespace-nowrap text-ellipsis max-w-[70%]">{marketRoutes}</span>
             </div>
           ) : null}
         </div>

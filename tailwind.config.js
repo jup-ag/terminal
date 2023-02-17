@@ -19,6 +19,10 @@ module.exports = {
         'jupiter-dark-bg': '#292A33',
         'jupiter-jungle-green': '#24AE8F',
         'jupiter-primary': '#FBA43A',
+        warning: '#FAA63C',
+      },
+      fontSize: {
+        xxs: ['0.625rem', '1rem'],
       },
       backgroundImage: {
         'jupiter-gradient': 'linear-gradient(91.26deg, #FCC00A 15.73%, #4EBAE9 83.27%)',

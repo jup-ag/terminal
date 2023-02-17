@@ -15,6 +15,8 @@ import { detectedSeparator, formatNumber } from 'src/misc/utils';
 import { DEFAULT_SLIPPAGE, useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
 import { PRIORITY_HIGH, PRIORITY_MAXIMUM_SUGGESTED, PRIORITY_NONE, PRIORITY_TURBO, useSwapContext } from 'src/contexts/SwapContext';
 import Toggle from '../Toggle';
+import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
+import ExternalIcon from 'src/icons/ExternalIcon';
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
@@ -28,6 +30,7 @@ export type Forms = {
   onlyDirectRoutes: boolean;
   useWSol: boolean;
   asLegacyTransaction: boolean;
+  preferredTokenListMode: PreferredTokenListMode
 };
 
 const MINIMUM_SLIPPAGE = 0;
@@ -46,6 +49,7 @@ const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO]
 const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const { jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL } } = useSwapContext();
   const { slippage, setSlippage } = useSlippageConfig();
+  const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
 
   const SLIPPAGE_PRESET = useMemo(() => ['0.1', String(DEFAULT_SLIPPAGE), '1.0'], [DEFAULT_SLIPPAGE]);
 
@@ -75,6 +79,8 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
         : {
           priorityInSOLInput: priorityFeeInSOL,
         }),
+        asLegacyTransaction,
+        preferredTokenListMode,
     },
   });
 
@@ -141,6 +147,8 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
     return isSlippageDisabled || isPriorityInputDisabled;
   })();
 
+  const asLegacyTransactionInput = form.watch('asLegacyTransaction');
+  const preferredTokenListModeInput = form.watch('preferredTokenListMode');
   const onClickSave = () => {
     if (isDisabled) return;
 
@@ -153,6 +161,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
     if (typeof priority === 'number') {
       setPriorityFeeInSOL(priority);
     }
+
+    setAsLegacyTransaction(asLegacyTransactionInput)
+    setPreferredTokenListMode(preferredTokenListModeInput)
     closeModal();
   };
 
@@ -405,16 +416,42 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             <Separator />
 
             <div className='flex items-center justify-between mt-2'>
-              <p className='text-sm font-semibold'>Versioned Tx.</p>
+              <div className='flex items-center space-x-2'>
+                <p className='text-sm font-semibold'>Versioned Tx.</p>
+
+                <a href='https://docs.jup.ag/integrating-jupiter-1/additional-guides/composing-with-versioned-transactions#what-are-versioned-transactions' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                  <ExternalIcon />
+                </a>
+              </div>
+
               <Toggle
-                active={!asLegacyTransaction}
-                onClick={() => setAsLegacyTransaction(!asLegacyTransaction)}
+                active={!asLegacyTransactionInput}
+                onClick={() => form.setValue('asLegacyTransaction', !asLegacyTransactionInput)}
               />
             </div>
             <p className='mt-2 text-xs text-white/50'>
               Versioned Tx is a significant upgrade that allows for more advanced routings and better prices! Make
               sure your connected wallet is compatible before toggling on Ver. Tx. Current compatible wallets:
               Phantom, Solflare, Glow and Backpack.
+            </p>
+
+            <Separator />
+
+            <div className='flex items-center justify-between mt-2'>
+              <div className='flex items-center space-x-2'>
+                <p className='text-sm font-semibold'>Strict Token list</p>
+
+                <a href='https://docs.jup.ag/api/token-list-api' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                  <ExternalIcon />
+                </a>
+              </div>
+              <Toggle
+                active={preferredTokenListModeInput === 'strict'}
+                onClick={() => form.setValue('preferredTokenListMode', preferredTokenListModeInput === 'strict' ? 'all' : 'strict')}
+              />
+            </div>
+            <p className='mt-2 text-xs text-white/50'>
+              {`The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".`}
             </p>
           </div>
 
