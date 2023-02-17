@@ -184,8 +184,8 @@ export const SwapContextProvider: FC<{
   }, [form.toMint, tokenMap]);
 
   // Set value given initial amount
-  useEffect(() => {
-    if (!formProps?.initialAmount) return;
+  const setupInitialAmount = useCallback(() => {
+    if (!formProps?.initialAmount || tokenMap.size === 0 || !fromTokenInfo || !toTokenInfo) return;
 
     const toUiAmount = (mint: string) => {
       const tokenInfo = mint ? tokenMap.get(mint) : undefined;
@@ -194,10 +194,16 @@ export const SwapContextProvider: FC<{
     };
 
     if (jupiterSwapMode === SwapMode.ExactOut) {
-      setForm((prev) => ({ ...prev, toValue: toUiAmount(prev.toMint) ?? '' }));
+      setForm((prev) => {
+        return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
+      });
     } else {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
     }
+  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+
+  useEffect(() => {
+    setupInitialAmount();
   }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
   const nativeAmount = useMemo(() => {
@@ -230,7 +236,6 @@ export const SwapContextProvider: FC<{
     slippageBps: Math.ceil(slippage * 100),
     asLegacyTransaction,
   });
-  
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
@@ -319,7 +324,8 @@ export const SwapContextProvider: FC<{
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
     setTimeout(() => {
       if (resetValues) {
-        setForm(initialSwapContext.form);
+        setForm({ ...initialSwapContext.form, ...formProps });
+        setupInitialAmount();
       }
 
       setSelectedSwapRoute(null);
@@ -329,7 +335,7 @@ export const SwapContextProvider: FC<{
       setTotalTxs(initialSwapContext.swapping.totalTxs);
       refreshAccount();
     }, 0)
-  }, []);
+  }, [setupInitialAmount]);
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
   const computeUnitPriceMicroLamports = useMemo(() => {
