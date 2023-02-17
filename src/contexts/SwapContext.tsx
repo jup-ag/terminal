@@ -1,3 +1,4 @@
+import { ZERO } from '@jup-ag/math';
 import {
   IConfirmationTxDescription,
   OnTransaction,
@@ -211,6 +212,7 @@ export const SwapContextProvider: FC<{
 
   const { slippage } = useSlippageConfig();
 
+  const amount = JSBI.BigInt(nativeAmount)
   const {
     routes: swapRoutes,
     allTokenMints,
@@ -221,14 +223,14 @@ export const SwapContextProvider: FC<{
     lastRefreshTimestamp,
     error,
   } = useJupiter({
-    amount: JSBI.BigInt(nativeAmount),
+    amount,
     inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
     asLegacyTransaction,
   });
-
+  
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
@@ -315,16 +317,18 @@ export const SwapContextProvider: FC<{
   };
 
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
-    if (resetValues) {
-      setForm(initialSwapContext.form);
-    }
+    setTimeout(() => {
+      if (resetValues) {
+        setForm(initialSwapContext.form);
+      }
 
-    setSelectedSwapRoute(null);
-    setErrors(initialSwapContext.errors);
-    setLastSwapResult(initialSwapContext.lastSwapResult);
-    setTxStatus(initialSwapContext.swapping.txStatus);
-    setTotalTxs(initialSwapContext.swapping.totalTxs);
-    refreshAccount();
+      setSelectedSwapRoute(null);
+      setErrors(initialSwapContext.errors);
+      setLastSwapResult(initialSwapContext.lastSwapResult);
+      setTxStatus(initialSwapContext.swapping.txStatus);
+      setTotalTxs(initialSwapContext.swapping.totalTxs);
+      refreshAccount();
+    }, 0)
   }, []);
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
@@ -361,7 +365,7 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          routes: swapRoutes,
+          routes: JSBI.GT(amount, ZERO) ? swapRoutes : undefined,
           allTokenMints,
           routeMap,
           exchange,
