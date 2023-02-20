@@ -9,7 +9,6 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { IInit } from 'src/types';
 import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
 
-import { WRAPPED_SOL_MINT } from '../constants';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';
@@ -18,7 +17,6 @@ import SwappingScreen from './screens/SwappingScreen';
 
 const Content = () => {
   const { screen } = useScreenState();
-  const { mint } = useSwapContext();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   return (
@@ -26,11 +24,7 @@ const Content = () => {
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
-          <InitialScreen
-            mint={mint || WRAPPED_SOL_MINT.toString()}
-            isWalletModalOpen={isWalletModalOpen}
-            setIsWalletModalOpen={setIsWalletModalOpen}
-          />
+          <InitialScreen isWalletModalOpen={isWalletModalOpen} setIsWalletModalOpen={setIsWalletModalOpen} />
         </>
       ) : null}
 
@@ -41,10 +35,13 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const { mode, mint, displayMode, platformFeeAndAccounts } = props;
-  const { wallet } = useWalletPassThrough();
+  const {
+    displayMode,
+    platformFeeAndAccounts,
+    formProps,
+  } = props;
   const { connection } = useConnection();
-
+  const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
   const [asLegacyTransaction, setAsLegacyTransaction] = useState(true);
@@ -70,8 +67,7 @@ const JupiterApp = (props: IInit) => {
         >
           <SwapContextProvider
             displayMode={displayMode}
-            mode={mode}
-            mint={mint}
+            formProps={formProps}
             scriptDomain={props.scriptDomain}
             asLegacyTransaction={asLegacyTransaction}
             setAsLegacyTransaction={setAsLegacyTransaction}

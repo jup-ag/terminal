@@ -13,7 +13,7 @@ const Toggle = ({ active, onClick, className, dotClassName }: Props) => {
   return (
     <button
       type="button"
-      className={classNames('w-16 h-9 flex items-center rounded-full p-1 cursor-pointer', className, {
+      className={classNames('w-10 h-[22px] flex items-center rounded-full p-[1px] cursor-pointer', className, {
         'bg-jupiter-jungle-green': active,
         'bg-[#010101]': !active,
       })}
@@ -21,7 +21,7 @@ const Toggle = ({ active, onClick, className, dotClassName }: Props) => {
     >
       <div
         className={classNames(
-          `h-7 w-7 rounded-full shadow-md transform duration-300 ease-in-out`,
+          `w-[18px] h-[18px] rounded-full shadow-md transform duration-300 ease-in-out`,
           active ? activeClass : inactiveClass,
           dotClassName,
         )}

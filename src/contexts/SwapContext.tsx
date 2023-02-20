@@ -1,3 +1,4 @@
+import { ZERO } from '@jup-ag/math';
 import {
   IConfirmationTxDescription,
   OnTransaction,
@@ -25,7 +26,7 @@ import {
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, toLamports } from 'src/misc/utils';
-import { IInit } from 'src/types';
+import { FormProps, IInit } from 'src/types';
 import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -59,9 +60,8 @@ export interface ISwapContext {
   setSelectedSwapRoute: Dispatch<SetStateAction<RouteInfo | null>>;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
-  mode: IInit['mode'];
+  formProps: FormProps;
   displayMode: IInit['displayMode'];
-  mint: IInit['mint'];
   scriptDomain: IInit['scriptDomain'];
   swapping: {
     totalTxs: number;
@@ -97,9 +97,16 @@ export const initialSwapContext: ISwapContext = {
   setSelectedSwapRoute() { },
   onSubmit: async () => null,
   lastSwapResult: null,
-  mode: 'default',
   displayMode: 'modal',
-  mint: undefined,
+  formProps: {
+    swapMode: SwapMode.ExactIn,
+    initialAmount: undefined,
+    fixedAmount: undefined,
+    initialInputMint: undefined,
+    fixedInputMint: undefined,
+    initialOutputMint: undefined,
+    fixedOutputMint: undefined,
+  },
   scriptDomain: '',
   swapping: {
     totalTxs: 0,
@@ -135,25 +142,36 @@ export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
 
 export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
-  mode: IInit['mode'];
-  mint: IInit['mint'];
   scriptDomain?: string;
   asLegacyTransaction: boolean;
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
+  formProps?: FormProps;
   children: ReactNode;
-}> = ({ displayMode, mode, mint, scriptDomain, asLegacyTransaction, setAsLegacyTransaction, children }) => {
+}> = (props) => {
+  const {
+    displayMode,
+    scriptDomain,
+    asLegacyTransaction,
+    setAsLegacyTransaction,
+    formProps: originalFormProps,
+    children,
+  } = props;
+
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
+  const formProps: FormProps = useMemo(() => ({ ...initialSwapContext.formProps, ...originalFormProps }), [originalFormProps])
+
   const [form, setForm] = useState<IForm>({
-    fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: WRAPPED_SOL_MINT.toString(),
+    fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+    toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
   });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
+  const jupiterSwapMode = useMemo(() => formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn, [formProps?.swapMode]);
 
   const fromTokenInfo = useMemo(() => {
     const tokenInfo = form.fromMint ? tokenMap.get(form.fromMint) : null;
@@ -165,14 +183,42 @@ export const SwapContextProvider: FC<{
     return tokenInfo;
   }, [form.toMint, tokenMap]);
 
-  const amountInLamports = useMemo(() => {
-    if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
+  // Set value given initial amount
+  const setupInitialAmount = useCallback(() => {
+    if (!formProps?.initialAmount || tokenMap.size === 0 || !fromTokenInfo || !toTokenInfo) return;
 
-    return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
-  }, [form.fromValue, form.fromMint, fromTokenInfo]);
+    const toUiAmount = (mint: string) => {
+      const tokenInfo = mint ? tokenMap.get(mint) : undefined;
+      if (!tokenInfo) return;
+      return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
+    };
+
+    if (jupiterSwapMode === SwapMode.ExactOut) {
+      setForm((prev) => {
+        return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
+      });
+    } else {
+      setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+    }
+  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+
+  useEffect(() => {
+    setupInitialAmount();
+  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+
+  const nativeAmount = useMemo(() => {
+    if (jupiterSwapMode === SwapMode.ExactOut) {
+      if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
+      return toLamports(Number(form.toValue), Number(toTokenInfo.decimals));
+    } else {
+      if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
+      return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
+    }
+  }, [form.fromValue, form.fromMint, fromTokenInfo, form.toValue, form.toMint, toTokenInfo, jupiterSwapMode]);
 
   const { slippage } = useSlippageConfig();
 
+  const amount = JSBI.BigInt(nativeAmount)
   const {
     routes: swapRoutes,
     allTokenMints,
@@ -183,35 +229,42 @@ export const SwapContextProvider: FC<{
     lastRefreshTimestamp,
     error,
   } = useJupiter({
-    amount: JSBI.BigInt(amountInLamports),
+    amount,
     inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
+    swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
-    swapMode: SwapMode.ExactIn,
     asLegacyTransaction,
   });
-
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
   const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(null);
   useEffect(() => {
-    const found = swapRoutes?.find((item) => JSBI.GT(item.outAmount, 0));
-    if (found) {
-      setSelectedSwapRoute(found);
-    } else {
+    if (!swapRoutes || swapRoutes.length === 0) {
       setSelectedSwapRoute(null);
+      return;
     }
-  }, [swapRoutes]);
+    // the UI sorts the best route depending on ExactIn or ExactOut
+    setSelectedSwapRoute(swapRoutes[0])
+  }, [jupiterSwapMode, swapRoutes]);
 
   useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      toValue: selectedSwapRoute?.outAmount
-        ? String(fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0))
-        : '',
-    }));
-  }, [selectedSwapRoute]);
+    setForm((prev) => {
+      const newValue = { ...prev };
+
+      if (jupiterSwapMode === SwapMode.ExactIn) {
+        newValue.toValue = selectedSwapRoute?.outAmount
+          ? String(fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0))
+          : '';
+      } else {
+        newValue.fromValue = selectedSwapRoute?.inAmount
+          ? String(fromLamports(selectedSwapRoute?.inAmount, fromTokenInfo?.decimals || 0))
+          : '';
+      }
+      return newValue;
+    });
+  }, [selectedSwapRoute, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
 
   const [totalTxs, setTotalTxs] = useState(0);
   const [txStatus, setTxStatus] = useState<
@@ -269,17 +322,20 @@ export const SwapContextProvider: FC<{
   };
 
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
-    if (resetValues) {
-      setForm(initialSwapContext.form);
-    }
+    setTimeout(() => {
+      if (resetValues) {
+        setForm({ ...initialSwapContext.form, ...formProps });
+        setupInitialAmount();
+      }
 
-    setSelectedSwapRoute(null);
-    setErrors(initialSwapContext.errors);
-    setLastSwapResult(initialSwapContext.lastSwapResult);
-    setTxStatus(initialSwapContext.swapping.txStatus);
-    setTotalTxs(initialSwapContext.swapping.totalTxs);
-    refreshAccount();
-  }, []);
+      setSelectedSwapRoute(null);
+      setErrors(initialSwapContext.errors);
+      setLastSwapResult(initialSwapContext.lastSwapResult);
+      setTxStatus(initialSwapContext.swapping.txStatus);
+      setTotalTxs(initialSwapContext.swapping.totalTxs);
+      refreshAccount();
+    }, 0)
+  }, [setupInitialAmount]);
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
   const computeUnitPriceMicroLamports = useMemo(() => {
@@ -306,16 +362,16 @@ export const SwapContextProvider: FC<{
         onSubmit,
         lastSwapResult,
         reset,
-        mode,
+
         displayMode,
-        mint,
+        formProps,
         scriptDomain,
         swapping: {
           totalTxs,
           txStatus,
         },
         jupiter: {
-          routes: swapRoutes,
+          routes: JSBI.GT(amount, ZERO) ? swapRoutes : undefined,
           allTokenMints,
           routeMap,
           exchange,

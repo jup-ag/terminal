@@ -1,8 +1,9 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
 import { useAccounts } from '../contexts/accounts';
 
-import { MINIMUM_SOL_BALANCE } from '../misc/constants';
+import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE } from '../misc/constants';
 
 import CoinBalance from './Coinbalance';
 import FormError from './FormError';
@@ -20,6 +21,9 @@ import PriceInfo from './PriceInfo/index';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
+import { SwapMode } from '@jup-ag/react-hook';
+import classNames from 'classnames';
+import { detectedSeparator } from 'src/misc/utils';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -37,7 +41,12 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     selectedSwapRoute,
-    mode,
+    formProps: {
+      swapMode,
+      fixedAmount,
+      fixedInputMint,
+      fixedOutputMint,
+    },
     jupiter: { routes, loading, refresh },
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
@@ -57,12 +66,28 @@ const Form: React.FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const onChangeFromValue = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const isInvalid = Number.isNaN(Number(e.target.value));
+  const onChangeFromValue = (value: string) => {
+    if (value === '') {
+      setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
+      return;
+    }
+
+    const isInvalid = Number.isNaN(value);
     if (isInvalid) return;
 
-    setForm((form) => ({ ...form, fromValue: e.target.value }));
+    setForm((form) => ({ ...form, fromValue: value }));
+  };
+
+  const onChangeToValue = (value: string) => {
+    if (value === '') {
+      setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
+      return;
+    }
+
+    const isInvalid = Number.isNaN(value);
+    if (isInvalid) return;
+
+    setForm((form) => ({ ...form, toValue: value }));
   };
 
   const balance = useMemo(() => {
@@ -91,31 +116,67 @@ const Form: React.FC<{
   );
 
   const onClickSwitchPair = () => {
-    if (mode === 'default') {
-      setForm((prev) => ({
-        ...prev,
-        fromValue: '',
-        toValue: '',
-        fromMint: prev.toMint,
-        toMint: prev.fromMint,
-      }));
-    }
+    setForm((prev) => ({
+      ...prev,
+      fromValue: '',
+      toValue: '',
+      fromMint: prev.toMint,
+      toMint: prev.fromMint,
+    }));
   };
 
+  const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
+  const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
+    const result = { inputAmountDisabled: true, outputAmountDisabled: true };
+    if (!fixedAmount) {
+      if (swapMode === SwapMode.ExactOut) {
+        result.outputAmountDisabled = false;
+      } else {
+        result.inputAmountDisabled = false;
+      }
+    }
+    return result;
+  }, [fixedAmount, swapMode]);
+
   const marketRoutes = selectedSwapRoute ? selectedSwapRoute.marketInfos.map(({ label }) => label).join(', ') : '';
+
+  const onClickSelectFromMint = useCallback(() => {
+    if (fixedInputMint) return;
+    setSelectPairSelector('fromMint')
+  }, [fixedInputMint])
+
+  const onClickSelectToMint = useCallback(() => {
+    if (fixedOutputMint) return;
+    setSelectPairSelector('toMint')
+  }, [fixedOutputMint])
+
+  const fixedOutputFomMintClass = useMemo(() => {
+    if (swapMode === 'ExactOut' && !form.toValue) return 'opacity-20 hover:opacity-100';
+    return '';
+  }, [fixedOutputMint, form.toValue])
+
+
+  const thousandSeparator = useMemo(() => detectedSeparator === ',' ? '.' : ',', []);
+  // Allow empty input, and input lower than max limit
+  const withValueLimit = useCallback(
+    ({ floatValue }: NumberFormatValues) =>
+      !floatValue || floatValue <= MAX_INPUT_LIMIT,
+    []);
+
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div className="border-b border-transparent bg-[#212128] rounded-xl">
-            <div className="px-x border-transparent rounded-xl">
+          <div className={classNames("border-b border-transparent bg-[#212128] rounded-xl transition-all", fixedOutputFomMintClass)}>
+            <div className={classNames("px-x border-transparent rounded-xl ")}>
               <div>
-                <div className="py-5 px-4 flex flex-col dark:text-white">
+                <div className={classNames("py-5 px-4 flex flex-col dark:text-white")}>
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
-                      onClick={() => setSelectPairSelector('fromMint')}
+                      disabled={fixedInputMint}
+                      onClick={onClickSelectFromMint}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={fromTokenInfo} width={20} height={20} />
@@ -123,25 +184,32 @@ const Form: React.FC<{
                       <div className="ml-4 mr-2 font-semibold" translate="no">
                         {fromTokenInfo?.symbol}
                       </div>
-
-                      <span className="text-white/25 fill-current">
-                        <ChevronDownIcon />
-                      </span>
+                      {fixedInputMint ? null : (
+                        <span className="text-white/25 fill-current">
+                          <ChevronDownIcon />
+                        </span>
+                      )}
                     </button>
 
                     <div className="text-right">
-                      <input
-                        placeholder="0.00"
-                        className="h-full w-full bg-transparent disabled:opacity-100 disabled:text-black text-white text-right font-semibold dark:placeholder:text-white/25 text-2xl !outline-none"
-                        value={form.fromValue}
-                        onChange={(e) => onChangeFromValue(e)}
+                      <NumericFormat
+                        value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
+                        decimalScale={fromTokenInfo?.decimals}
+                        thousandSeparator={thousandSeparator}
+                        allowNegative={false}
+                        valueIsNumericString
+                        onValueChange={({ value }) => onChangeFromValue(value)}
+                        placeholder={'0.00'}
+                        className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg", { 'cursor-not-allowed': inputAmountDisabled })}
+                        decimalSeparator={detectedSeparator}
+                        isAllowed={withValueLimit}
                       />
                     </div>
                   </div>
 
                   {fromTokenInfo?.address ? (
                     <div
-                      className="flex mt-3 cursor-pointer space-x-1 text-xs items-center text-white/30 fill-current"
+                      className={classNames("flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current", { "cursor-pointer": swapMode !== 'ExactOut' })}
                       onClick={onClickMax}
                     >
                       <WalletIcon width={10} height={10} />
@@ -154,7 +222,7 @@ const Form: React.FC<{
             </div>
           </div>
 
-          <div className="my-2">{mode === 'default' ? <SwitchPairButton onClick={onClickSwitchPair} /> : null}</div>
+          <div className={"my-2"}>{hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} className={classNames("transition-all", fixedOutputFomMintClass)} />}</div>
 
           <div className="border-b border-transparent bg-[#212128] rounded-xl">
             <div className="px-x border-transparent rounded-xl">
@@ -164,8 +232,8 @@ const Form: React.FC<{
                     <button
                       type="button"
                       className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
-                      disabled={mode === 'outputOnly'}
-                      onClick={mode === 'default' ? () => setSelectPairSelector('toMint') : () => {}}
+                      disabled={fixedOutputMint}
+                      onClick={onClickSelectToMint}
                     >
                       <div className="h-5 w-5">
                         <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
@@ -174,18 +242,25 @@ const Form: React.FC<{
                         {toTokenInfo?.symbol}
                       </div>
 
-                      {mode === 'default' ? (
+                      {fixedOutputMint ? null : (
                         <span className="text-white/25 fill-current">
                           <ChevronDownIcon />
                         </span>
-                      ) : null}
+                      )}
                     </button>
 
                     <div className="text-right">
-                      <input
-                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg"
-                        value={form.toValue}
-                        disabled
+                      <NumericFormat
+                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                        decimalScale={toTokenInfo?.decimals}
+                        thousandSeparator={thousandSeparator}
+                        allowNegative={false}
+                        valueIsNumericString
+                        onValueChange={({ value }) => onChangeToValue(value)}
+                        placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
+                        className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 placeholder:text-sm placeholder:font-normal text-lg")}
+                        decimalSeparator={detectedSeparator}
+                        isAllowed={withValueLimit}
                       />
                     </div>
                   </div>

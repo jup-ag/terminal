@@ -1,21 +1,27 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { Wallet } from '@solana/wallet-adapter-react';
+import React, { useEffect, useState } from 'react';
+import { FormProps } from 'src/types';
+import { useDebouncedEffect } from 'src/misc/utils';
 
-const IntegratedTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
+const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const launchTerminal = () => {
+    window.Jupiter.init({
+      displayMode: 'integrated',
+      integratedTargetId: 'integrated-terminal',
+      endpoint: rpcUrl,
+      formProps,
+      passThroughWallet: fakeWallet,
+    })
+  }
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
-    if (!isLoaded) {
+    if (!isLoaded || !window.Jupiter.init) {
       intervalId = setInterval(() => {
-        setIsLoaded(Boolean(window.Jupiter));
+        setIsLoaded(Boolean(window.Jupiter.init));
       }, 500);
-
-      window.Jupiter.init({
-        mode: 'default',
-        displayMode: 'integrated',
-        integratedTargetId: 'integrated-terminal',
-        endpoint: rpcUrl,
-      });
     }
 
     if (intervalId) {
@@ -23,8 +29,14 @@ const IntegratedTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
     }
   }, []);
 
+  useDebouncedEffect(() => {
+    if (isLoaded && Boolean(window.Jupiter.init)) {
+      launchTerminal();
+    }
+  }, [isLoaded, formProps, fakeWallet], 200)
+
   return (
-    <div className="min-h-[600px] h-[600px] w-full bg-[#282830] rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden">
+    <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
         <div className="w-full h-full rounded-xl overflow-hidden flex justify-center">
           {/* Loading state */}
@@ -36,7 +48,7 @@ const IntegratedTerminal = ({ rpcUrl }: { rpcUrl: string }) => {
 
           <div
             id="integrated-terminal"
-            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center ${!isLoaded ? 'hidden' : ''}`}
+            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-[#282830] rounded-xl ${!isLoaded ? 'hidden' : ''}`}
           />
         </div>
       </div>

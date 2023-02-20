@@ -10,15 +10,13 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import RouteSelectionScreen from './RouteSelectionScreen';
-import { SOL_MINT_TOKEN_INFO } from 'src/constants';
 
 interface Props {
-  mint: string;
   isWalletModalOpen: boolean;
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props) => {
+const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
@@ -27,37 +25,38 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
     setForm,
     setErrors,
     selectedSwapRoute,
-    mode,
+    formProps: {
+      initialOutputMint,
+      fixedOutputMint,
+    },
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  useEffect(() => {
-    setForm((prev) => ({ ...prev, toMint: mint }));
-  }, [mint]);
-
-  // TODO: Dedupe the balance
   const balance = useMemo(() => {
     return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
   }, [walletPublicKey, accounts, form.fromMint]);
 
-  const isDisabled = useMemo(() => {
+  const [isDisabled, setIsDisabled] = useState(false);
+  useEffect(() => {
     if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !selectedSwapRoute || loading) {
       setErrors({});
-      return true;
+      setIsDisabled(true);
+      return;
     }
 
     if (Number(form.fromValue) > balance) {
       setErrors({
         fromValue: { title: 'Insufficient balance', message: '' },
       });
-      return true;
+      setIsDisabled(true);
+      return;
     }
 
     setErrors({});
-    return false;
+    setIsDisabled(false);
   }, [form, balance]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
@@ -70,12 +69,22 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
           ...prev,
           fromMint: tokenInfo.address,
           fromValue: '',
+
+          // Prevent same token to same token;
+          ...(prev.toMint === tokenInfo.address)
+            ? { toMint: prev.fromMint }
+            : undefined
         }));
       } else {
         setForm((prev) => ({
           ...prev,
           toMint: tokenInfo.address,
           toValue: '',
+
+          // Prevent same token to same token;
+          ...(prev.fromMint === tokenInfo.address)
+            ? { fromMint: prev.toMint }
+            : undefined
         }));
       }
       setSelectPairSelector(null);
@@ -84,28 +93,14 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
   );
 
   const availableMints: TokenInfo[] = useMemo(() => {
-    if (Object.keys(accounts).length === 0) return [];
-
-    let result;
-    // Only allows user's tokens to be selected
-    if (mode === 'outputOnly') {
-      result = Object.keys(accounts)
-        .map((mintAddress) => tokenMap.get(mintAddress))
-        .filter(Boolean)
-        .filter((tokenInfo) => tokenInfo?.address !== mint) as TokenInfo[]; // Prevent same token to same token
-
-      // This is to handle user who have wSOL, so we filter it out to prevent duplication
-      const haveSOL = result.find((tokenInfo) => tokenInfo.address === SOL_MINT_TOKEN_INFO.address);
-      if (!haveSOL) {
-        result = [...result, SOL_MINT_TOKEN_INFO];
-      }
-    } else {
-      // Allow all tokens
-      result = [...tokenMap.values()];
+    let result = [...tokenMap.values()]
+    // On fixedOutputMint, prevent user from selecting the same token as output
+    if (fixedOutputMint) {
+      result = result.filter(item => item.address !== initialOutputMint)
     }
 
-    return [...result];
-  }, [accounts, tokenMap]);
+    return result;
+  }, [tokenMap, fixedOutputMint, initialOutputMint]);
 
   const onSubmitToConfirmation = useCallback(() => {
     setScreen('Confirmation');
@@ -130,7 +125,6 @@ const InitialScreen = ({ mint, setIsWalletModalOpen, isWalletModalOpen }: Props)
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
-            setIsWalletModalOpen={setIsWalletModalOpen}
           />
         </div>
       ) : null}

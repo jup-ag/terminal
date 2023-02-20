@@ -407,8 +407,6 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             <div className='flex items-center justify-between mt-2'>
               <p className='text-sm font-semibold'>Versioned Tx.</p>
               <Toggle
-                className="!w-10 !h-[22px] !p-[1px]"
-                dotClassName="!w-[18px] !h-[18px]"
                 active={!asLegacyTransaction}
                 onClick={() => setAsLegacyTransaction(!asLegacyTransaction)}
               />

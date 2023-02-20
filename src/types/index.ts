@@ -3,7 +3,7 @@ import { Root } from 'react-dom/client';
 
 import { Wallet } from '@solana/wallet-adapter-react';
 import { PublicKey, TransactionError } from '@solana/web3.js';
-import { SwapResult } from '@jup-ag/react-hook';
+import { SwapMode, SwapResult } from '@jup-ag/react-hook';
 
 declare global {
   interface Window {
@@ -19,12 +19,21 @@ export declare type PlatformFeeAndAccounts = {
   feeAccounts: Map<string, PublicKey>;
 };
 
+export interface FormProps {
+  swapMode?: SwapMode;
+  initialAmount?: string;
+  fixedAmount?: boolean;
+  initialInputMint?: string;
+  fixedInputMint?: boolean;
+  initialOutputMint?: string;
+  fixedOutputMint?: boolean;
+}
+
 export interface IInit {
-  mode: 'default' | 'outputOnly';
-  mint?: string;
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
-
+  formProps?: FormProps;
+  
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';
   integratedTargetId?: string;
@@ -34,12 +43,12 @@ export interface IInit {
   };
   containerStyles?: CSSProperties;
   containerClassName?: string;
-
+  
   // Passthrough & Callbacks
   passThroughWallet?: Wallet | null;
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
   onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
-
+  
   // Internal resolves
   scriptDomain?: string;
 }

@@ -213,17 +213,11 @@ const RenderWidgetShell = (props: IInit) => {
 
 async function init(props: IInit) {
   const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
-
-  if (props.mode === 'outputOnly' && !props.mint) {
-    throw new Error('outputOnly mode requires a mint!');
-  }
-
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);
 
-  // If there's existing instance, just show it
+  // Remove previous instance
   if (instanceExist) {
-    window.Jupiter.root?.unmount();
     window.Jupiter._instance = null;
     instanceExist?.remove();
   }
