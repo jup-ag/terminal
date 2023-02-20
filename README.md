@@ -2,7 +2,9 @@
 
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
-Demo: https://terminal.jup.ag
+Visit our Demo / Playground over at https://terminal.jup.ag
+
+With several templates to get you started, and auto generated code snippets.
 
 ---
 
@@ -11,10 +13,12 @@ Demo: https://terminal.jup.ag
 - `main-v1.js` bundle ~70Kb gzipped
   - app bundle (~900Kb) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
-- Built-in wallets, or passthrough wallets from your dApp
-- Modal, Integrated, or Widget mode.
-- Mode (default, outputOnly) to allow user to swap between any token pair, or only swap to destination pair.
+- Several major built-in wallets, or passthrough wallets from your dApp
+- Flexbile display modes, `Modal`, `Integrated`, or `Widget`.
+- Flexible form customisation, e.g. Full swap experience, Payment flow.
 - Fee supports
+- Support ExactIn, and ExactOut swap mode
+- Auto wallet detection for Versioned Tx.
 
 ---
 
@@ -108,66 +112,54 @@ window.Jupiter.init({
 ---
 
 ### Mode (Deprecated in v1)
-Integrators on `mode` props needs to migrate to `formProps`.
-`formProps` offers more flexibility in customising interactions, and have more capabilities.
 
-- `default`: Default mode, user can swap between any token pair.
-  Can be mapped to
-  ```tsx
-  // Mode prop deprecated, will be mapped to:
-  const formProps = {
-    fixedInputMint: undefined,
-    fixedOutputMint: undefined,
-    swapModeExactOut: undefined,
-    fixedAmount: undefined,
-  };
-  ```
+Integrators on `mode` props needs to migrate to `formProps`, which offers more flexibility in customising interactions, and more capabilities.
+
+Example on how to migrate from `mode` to `formProps`:
+
+- `default`: Default mode, user can swap between any token pair. No action required.
+
 - `outputOnly`: Output only mode, user can only swap to destination pair.
 
-```ts
-window.Jupiter.init({
-  mode: 'outputOnly',
-  mint: 'So11111111111111111111111111111111111111112',
-  endpoint: 'https://api.mainnet-beta.solana.com',
-  passThroughWallet: wallet,
-});
-
-// Can be mapped to:
-const formProps = {
-  fixedInputMint: undefined,
-  swapModeExactOut: undefined,
-  fixedAmount: undefined,
-  initialOutputMint: 'So11111111111111111111111111111111111111112',
-  fixedOutputMint: true,
-};
-```
+  ```ts
+  // Can be mapped to:
+  window.Jupiter.init({
+    endpoint: 'https://api.mainnet-beta.solana.com',
+    formProps: {
+      fixedInputMint: undefined,
+      swapModeExactOut: undefined,
+      fixedAmount: undefined,
+      initialOutputMint: 'So11111111111111111111111111111111111111112',
+      fixedOutputMint: true,
+    },
+  });
+  ```
 
 ---
 
-### formProps
+### formProps (Available on v1)
 
-Configure Terminal's behaviour and allowed actions for the user.
+Configure Terminal's behaviour and allowed actions for your user
 
-Refer to `<ModalTerminal />` to see how it is used.
-
-- swapMode?: SwapMode.ExactIn | SwapMode.ExactOut;
-  - Default to ExactIn, where user input the amount of token they want to swap.
-  - On Exactout, user input the desired amount of token they want to receive.
-- initialAmount?: string;
-  - The initial input amount
-- fixedAmount?: boolean;
-  - The output amount is fixed, user cannot change the amount.
-- initialInputMint?: string;
+- swapMode?: `SwapMode.ExactIn | SwapMode.ExactOut`
+  - Default to `ExactIn`, where user input the amount of token they want to swap.
+  - On `ExactOut`, user input the desired amount of token they want to receive.
+- initialAmount?: `string`
+  - The initial amount
+- fixedAmount?: `boolean`
+  - The initial amount is fixed, user cannot change the amount.
+  - Depending on swapMode, fixedAmount will be applied to input or output amount.
+- initialInputMint?: `string`
   - The default input mint
-  - can be used with fixedInputMint
-- fixedInputMint?: boolean;
-  - must be used with initialInputMint
+  - can be used with `fixedInputMint`
+- fixedInputMint?: `boolean`
+  - must be used with `initialInputMint`
   - user cannot change the input mint
-- initialOutputMint?: string;
+- initialOutputMint?: `string`
   - The default output mint
-  - can be used with fixedOutputMint
-- fixedOutputMint?: boolean;
-  - must be used with initialInputMint
+  - can be used with `fixedOutputMint`
+- fixedOutputMint?: `boolean`
+  - must be used with `initialInputMint`
   - user cannot change the input mint
 
 ---
