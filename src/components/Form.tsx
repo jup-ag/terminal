@@ -190,9 +190,8 @@ const Form: React.FC<{
                         decimalScale={fromTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}
-                        onValueChange={({ floatValue }) => {
-                          onChangeFromValue(floatValue)
-                        }}
+                        valueIsNumericString
+                        onValueChange={({ floatValue }) => onChangeFromValue(floatValue)}
                         maxLength={12}
                         placeholder={'0.00'}
                         className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg", { 'cursor-not-allowed': inputAmountDisabled })}
@@ -249,6 +248,7 @@ const Form: React.FC<{
                         decimalScale={toTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}
+                        valueIsNumericString
                         onValueChange={({ floatValue }) => {
                           onChangeToValue(floatValue)
                         }}
