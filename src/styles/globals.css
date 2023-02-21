@@ -27,11 +27,11 @@
 }
 
 /* Custom scroll bar */
-#jupiter-terminal .webkit-scrollbar::-webkit-scrollbar {
+.webkit-scrollbar::-webkit-scrollbar {
   width: 8px;
 }
 
-#jupiter-terminal .webkit-scrollbar::-webkit-scrollbar-thumb {
+.webkit-scrollbar::-webkit-scrollbar-thumb {
   margin: 2px;
   -webkit-border-radius: 10px;
   border-radius: 10px;

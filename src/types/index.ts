@@ -29,10 +29,13 @@ export interface FormProps {
   fixedOutputMint?: boolean;
 }
 
+export type DEFAULT_EXPLORER = 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';
 export interface IInit {
   endpoint: string;
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
   formProps?: FormProps;
+  strictTokenList?: boolean;
+  defaultExplorer?: DEFAULT_EXPLORER;
   
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';

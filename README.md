@@ -210,6 +210,24 @@ window.Jupiter.init({
 });
 ```
 
+### Strict Token List 
+- `strictTokenList?: boolean;`
+- Default: `true`
+
+The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".
+
+Learn more at: https://docs.jup.ag/api/token-list-api
+
+---
+
+### Default Explorer
+- `defaultExplorer?: 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';` 
+- Default: `Solana Explorer`
+
+The default explorer is set to `Solana Explorer`;
+
+You can change the default explorer by passing in the explorer name to the `defaultExplorer` prop.
+
 ---
 
 ### onSuccess/onSwapError callback
@@ -270,7 +288,16 @@ window.Jupiter.init({
 
 ---
 
-### Known issue
+### Typescript Support
+Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.ts` file in your project, and copy the contents in `src/types/index.ts`.
 
-~~- Wallet passthrough supports does not work for Solflare~~
-~~- Jupiter Terminal currently prompts the user to connect their Solflare wallet again, to perform swap.~~ (Issue fixed in 0.1.10)
+```tsx
+declare global {
+  interface Window {
+    Jupiter: JupiterTerminal;
+  }
+}
+// ...
+// ...
+// ...
+```

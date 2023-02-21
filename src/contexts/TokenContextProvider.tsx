@@ -1,8 +1,9 @@
 import { Cluster } from '@solana/web3.js';
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
+import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { ENV as ChainID, TokenInfo, TokenListContainer } from '@solana/spl-token-registry';
 import { TOKEN_LIST_URL } from '@jup-ag/react-hook';
 import { useConnection } from '@solana/wallet-adapter-react';
+import { IInit } from 'src/types';
 
 export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';
 export const CLUSTER_TO_CHAIN_ID: Record<ENV, ChainID> = {
@@ -38,9 +39,13 @@ const fetchAllMints = async (env: ENV, preferredTokenListMode: PreferredTokenLis
   }, new Map());
 };
 
-export function TokenContextProvider({ children }: { children: ReactNode }) {
+export function TokenContextProvider({ strictTokenList, children }: IInit & { children: ReactNode }) {
   const { connection } = useConnection();
-  const [preferredTokenListMode, setPreferredTokenListMode] = useState<PreferredTokenListMode>('strict');
+  const defaultPreferredTokenListMode = useMemo(() => {
+    if (typeof strictTokenList === 'undefined') return 'strict';
+    return strictTokenList ? 'strict' : 'all';
+  }, [strictTokenList])
+  const [preferredTokenListMode, setPreferredTokenListMode] = useState<PreferredTokenListMode>(defaultPreferredTokenListMode);
 
   const [{ tokenMap, isLoaded }, setState] = useState({
     isLoaded: false,

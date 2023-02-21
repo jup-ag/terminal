@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { WalletAdapterNetwork, WalletError } from '@solana/wallet-adapter-base';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 
@@ -12,6 +12,8 @@ import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
 import { GlowWalletAdapter } from '@solana/wallet-adapter-glow';
+import { PreferredExplorerProvider } from './preferredExplorer';
+import { IInit } from 'src/types';
 
 const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({ endpoint, children }) => {
   const { autoConnect } = useAutoConnect();
@@ -50,12 +52,16 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
   );
 };
 
-export const ContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({ endpoint, children }) => {
+export const ContextProvider: React.FC<PropsWithChildren<IInit>> = ({ endpoint, defaultExplorer, children }) => {
   return (
     <>
       <NetworkConfigurationProvider>
         <AutoConnectProvider>
-          <WalletContextProvider endpoint={endpoint}>{children}</WalletContextProvider>
+          <WalletContextProvider endpoint={endpoint}>
+            <PreferredExplorerProvider defaultExplorer={defaultExplorer}>
+              {children}
+            </PreferredExplorerProvider>
+          </WalletContextProvider>
         </AutoConnectProvider>
       </NetworkConfigurationProvider>
     </>

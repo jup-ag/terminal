@@ -10,7 +10,7 @@ import Footer from 'src/components/Footer/Footer';
 
 import ModalTerminal from 'src/content/ModalTerminal';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
-import { IInit } from 'src/types';
+import { DEFAULT_EXPLORER, IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { JUPITER_DEFAULT_RPC, WRAPPED_SOL_MINT } from 'src/constants';
 import classNames from 'classnames';
@@ -31,6 +31,8 @@ export interface IFormConfigurator {
   useWalletPassthrough: boolean;
   initialInputMint: string;
   initialOutputMint: string;
+  strictTokenList: boolean;
+  defaultExplorer: DEFAULT_EXPLORER;
 }
 
 const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
@@ -71,6 +73,8 @@ export default function App({ Component, pageProps }: AppProps) {
       useWalletPassthrough: false,
       initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
       initialOutputMint: WRAPPED_SOL_MINT.toString(),
+      strictTokenList: true,
+      defaultExplorer: 'Solana Explorer'
     },
   });
 
@@ -184,13 +188,31 @@ export default function App({ Component, pageProps }: AppProps) {
 
                 <div className="flex flex-grow items-center justify-center text-white/75">
                   {tab === 'modal' ? (
-                    <ModalTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                    <ModalTerminal
+                      rpcUrl={rpcUrl}
+                      formProps={watchAllFields}
+                      fakeWallet={wallet}
+                      strictTokenList={watchAllFields.strictTokenList}
+                      defaultExplorer={watchAllFields.defaultExplorer}
+                    />
                   ) : null}
                   {tab === 'integrated' ? (
-                    <IntegratedTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                    <IntegratedTerminal
+                      rpcUrl={rpcUrl}
+                      formProps={watchAllFields}
+                      fakeWallet={wallet}
+                      strictTokenList={watchAllFields.strictTokenList}
+                      defaultExplorer={watchAllFields.defaultExplorer}
+                    />
                   ) : null}
                   {tab === 'widget' ? (
-                    <WidgetTerminal rpcUrl={rpcUrl} formProps={watchAllFields} fakeWallet={wallet} />
+                    <WidgetTerminal
+                      rpcUrl={rpcUrl}
+                      formProps={watchAllFields}
+                      fakeWallet={wallet}
+                      strictTokenList={watchAllFields.strictTokenList}
+                      defaultExplorer={watchAllFields.defaultExplorer}
+                    />
                   ) : null}
                 </div>
               </div>
@@ -199,7 +221,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
       </div>
 
-      <CodeBlocks formProps={watchAllFields} displayMode={tab} />
+      <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
 
       <div className="w-full bg-jupiter-bg mt-12">
         <Footer />
