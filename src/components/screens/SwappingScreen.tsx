@@ -210,9 +210,11 @@ const SwappingScreen = () => {
             </SexyChameleonText>
           </JupButton>
 
-          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onClose}>
-            <span className="text-sm">Close</span>
-          </JupButton>
+          {displayMode !== 'integrated' ? (
+            <JupButton size="lg" className="w-full mt-4" type="button" onClick={onClose}>
+              <span className="text-sm">Close</span>
+            </JupButton>
+          ) : null}
         </div>
       </>
     );

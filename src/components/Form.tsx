@@ -1,8 +1,9 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
+import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
 import { useAccounts } from '../contexts/accounts';
 
-import { MINIMUM_SOL_BALANCE } from '../misc/constants';
+import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE } from '../misc/constants';
 
 import CoinBalance from './Coinbalance';
 import FormError from './FormError';
@@ -23,6 +24,7 @@ import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
+import { detectedSeparator } from 'src/misc/utils';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -65,23 +67,28 @@ const Form: React.FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const onChangeFromValue = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const isInvalid = Number.isNaN(Number(e.target.value));
+  const onChangeFromValue = (value: string) => {
+    if (value === '') {
+      setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
+      return;
+    }
+
+    const isInvalid = Number.isNaN(value);
     if (isInvalid) return;
 
-    setForm((form) => ({ ...form, fromValue: e.target.value }));
+    setForm((form) => ({ ...form, fromValue: value }));
   };
 
-  const onChangeToValue = (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const isInvalid = Number.isNaN(Number(e.target.value));
-    if (isInvalid) {
-      setForm((form) => ({ ...form, fromValue: '', toValue: e.target.value }));
+  const onChangeToValue = (value: string) => {
+    if (value === '') {
+      setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
-    };
+    }
 
-    setForm((form) => ({ ...form, toValue: e.target.value }));
+    const isInvalid = Number.isNaN(value);
+    if (isInvalid) return;
+
+    setForm((form) => ({ ...form, toValue: value }));
   };
 
   const balance = useMemo(() => {
@@ -149,6 +156,14 @@ const Form: React.FC<{
     return '';
   }, [fixedOutputMint, form.toValue])
 
+
+  const thousandSeparator = useMemo(() => detectedSeparator === ',' ? '.' : ',', []);
+  // Allow empty input, and input lower than max limit
+  const withValueLimit = useCallback(
+    ({ floatValue }: NumberFormatValues) =>
+      !floatValue || floatValue <= MAX_INPUT_LIMIT,
+    []);
+
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
@@ -178,12 +193,17 @@ const Form: React.FC<{
                     </button>
 
                     <div className="text-right">
-                      <input
-                        placeholder="0.00"
+                      <NumericFormat
+                        value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
+                        decimalScale={fromTokenInfo?.decimals}
+                        thousandSeparator={thousandSeparator}
+                        allowNegative={false}
+                        valueIsNumericString
+                        onValueChange={({ value }) => onChangeFromValue(value)}
+                        placeholder={'0.00'}
                         className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg", { 'cursor-not-allowed': inputAmountDisabled })}
-                        value={form.fromValue}
-                        disabled={inputAmountDisabled}
-                        onChange={onChangeFromValue}
+                        decimalSeparator={detectedSeparator}
+                        isAllowed={withValueLimit}
                       />
                     </div>
                   </div>
@@ -231,12 +251,17 @@ const Form: React.FC<{
                     </button>
 
                     <div className="text-right">
-                      <input
-                        className="h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 placeholder:text-sm placeholder:font-normal text-lg"
+                      <NumericFormat
+                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                        decimalScale={toTokenInfo?.decimals}
+                        thousandSeparator={thousandSeparator}
+                        allowNegative={false}
+                        valueIsNumericString
+                        onValueChange={({ value }) => onChangeToValue(value)}
                         placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
-                        value={form.toValue}
-                        disabled={outputAmountDisabled}
-                        onChange={onChangeToValue}
+                        className={classNames("h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 placeholder:text-sm placeholder:font-normal text-lg")}
+                        decimalSeparator={detectedSeparator}
+                        isAllowed={withValueLimit}
                       />
                     </div>
                   </div>

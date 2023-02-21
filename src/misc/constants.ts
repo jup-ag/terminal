@@ -12,3 +12,5 @@ export const PAIR_SELECTOR_TOP_TOKENS = [
   '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R', // RAY
   'A9mUU4qviSctJVPJdBJWkb28deg915LYJKrzQ19ji3FM', // USDCet
 ];
+
+export const MAX_INPUT_LIMIT = 100_000_000_000;

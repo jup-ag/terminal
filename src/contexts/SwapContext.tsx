@@ -1,3 +1,4 @@
+import { ZERO } from '@jup-ag/math';
 import {
   IConfirmationTxDescription,
   OnTransaction,
@@ -183,8 +184,8 @@ export const SwapContextProvider: FC<{
   }, [form.toMint, tokenMap]);
 
   // Set value given initial amount
-  useEffect(() => {
-    if (!formProps?.initialAmount) return;
+  const setupInitialAmount = useCallback(() => {
+    if (!formProps?.initialAmount || tokenMap.size === 0 || !fromTokenInfo || !toTokenInfo) return;
 
     const toUiAmount = (mint: string) => {
       const tokenInfo = mint ? tokenMap.get(mint) : undefined;
@@ -193,10 +194,16 @@ export const SwapContextProvider: FC<{
     };
 
     if (jupiterSwapMode === SwapMode.ExactOut) {
-      setForm((prev) => ({ ...prev, toValue: toUiAmount(prev.toMint) ?? '' }));
+      setForm((prev) => {
+        return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
+      });
     } else {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
     }
+  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+
+  useEffect(() => {
+    setupInitialAmount();
   }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
   const nativeAmount = useMemo(() => {
@@ -211,6 +218,7 @@ export const SwapContextProvider: FC<{
 
   const { slippage } = useSlippageConfig();
 
+  const amount = JSBI.BigInt(nativeAmount)
   const {
     routes: swapRoutes,
     allTokenMints,
@@ -221,14 +229,13 @@ export const SwapContextProvider: FC<{
     lastRefreshTimestamp,
     error,
   } = useJupiter({
-    amount: JSBI.BigInt(nativeAmount),
+    amount,
     inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
     outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
     asLegacyTransaction,
   });
-
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
@@ -315,17 +322,20 @@ export const SwapContextProvider: FC<{
   };
 
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
-    if (resetValues) {
-      setForm(initialSwapContext.form);
-    }
+    setTimeout(() => {
+      if (resetValues) {
+        setForm({ ...initialSwapContext.form, ...formProps });
+        setupInitialAmount();
+      }
 
-    setSelectedSwapRoute(null);
-    setErrors(initialSwapContext.errors);
-    setLastSwapResult(initialSwapContext.lastSwapResult);
-    setTxStatus(initialSwapContext.swapping.txStatus);
-    setTotalTxs(initialSwapContext.swapping.totalTxs);
-    refreshAccount();
-  }, []);
+      setSelectedSwapRoute(null);
+      setErrors(initialSwapContext.errors);
+      setLastSwapResult(initialSwapContext.lastSwapResult);
+      setTxStatus(initialSwapContext.swapping.txStatus);
+      setTotalTxs(initialSwapContext.swapping.totalTxs);
+      refreshAccount();
+    }, 0)
+  }, [setupInitialAmount]);
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
   const computeUnitPriceMicroLamports = useMemo(() => {
@@ -361,7 +371,7 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          routes: swapRoutes,
+          routes: JSBI.GT(amount, ZERO) ? swapRoutes : undefined,
           allTokenMints,
           routeMap,
           exchange,
