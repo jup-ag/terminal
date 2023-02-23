@@ -5,8 +5,7 @@ overrides:
   '@solana/buffer-layout': 4.0.0
 
 specifiers:
-  '@jup-ag/core': 4.0.0-beta.9
-  '@jup-ag/math': 4.0.0-beta.9
+  '@jup-ag/math': 4.0.0-beta.11
   '@jup-ag/react-hook': 4.0.0-beta.11
   '@project-serum/anchor': ^0.24.2
   '@rive-app/react-canvas': ^3.0.33
@@ -73,8 +72,7 @@ specifiers:
   webpack-cli: ^4.10.0
 
 dependencies:
-  '@jup-ag/core': 4.0.0-beta.9_@solana+web3.js@1.73.0
-  '@jup-ag/math': 4.0.0-beta.9
+  '@jup-ag/math': 4.0.0-beta.11
   '@jup-ag/react-hook': 4.0.0-beta.11_rxupii4s52jeacpwn3d7xdhi4u
   '@project-serum/anchor': 0.24.2
   '@rive-app/react-canvas': 3.0.33_react@18.2.0
@@ -1922,54 +1920,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@jup-ag/core/4.0.0-beta.9_@solana+web3.js@1.73.0:
-    resolution: {integrity: sha512-EgokCqM1ZR3EmTwPKevYzuIFO4nkNI9iu2RdDagSL7O1UHRnSi2syJzy7y+qOqqOVMHbAMsYuUyQLLdPETxKEA==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@solana/buffer-layout': ^3 || ^4
-      '@solana/web3.js': '>=1.42.0'
-    dependencies:
-      '@jup-ag/crema-sdk-v2': 2.1.6
-      '@jup-ag/cykura-sdk': 0.1.25
-      '@jup-ag/cykura-sdk-core': 0.1.8
-      '@jup-ag/deltafi-sdk': 0.0.2_@solana+web3.js@1.73.0
-      '@jup-ag/dradex-idl': 0.2.1_@solana+web3.js@1.73.0
-      '@jup-ag/dradex-sdk': 0.2.3_nwooxxictht3heoss7kbmyb67e
-      '@jup-ag/goosefx-ssl-sdk': 1.2.17
-      '@jup-ag/invariant': 0.9.35
-      '@jup-ag/lifinity-sdk': 0.1.72
-      '@jup-ag/lifinity-sdk-v2': 1.0.8
-      '@jup-ag/math': 4.0.0-beta.9
-      '@jup-ag/raydium-clmm-sdk': 1.0.5
-      '@jup-ag/whirlpools-sdk': 0.7.2
-      '@mercurial-finance/dynamic-amm-sdk': 0.2.0
-      '@mercurial-finance/optimist': 0.2.0_3uu5xgoq3e7kvunyrzjtujz4mu
-      '@mercurial-finance/vault-sdk': 0.3.10
-      '@noble/hashes': 1.1.2
-      '@project-serum/anchor': 0.24.2
-      '@project-serum/serum': 0.13.65
-      '@pythnetwork/client': 2.7.3_@solana+web3.js@1.73.0
-      '@saberhq/stableswap-sdk': 1.13.6_iziyofpkyexr3iekamwp24a3lm
-      '@solana/spl-token': 0.1.8
-      '@solana/web3.js': 1.73.0
-      bignumber.js: 9.1.0
-      bn.js: 5.2.1
-      cross-fetch: 3.1.5
-      decimal.js: 10.4.2
-      fzstd: 0.0.4
-      jsbi: 4.3.0
-      lru-cache: 7.14.1
-      promise-retry: 2.0.1
-    transitivePeerDependencies:
-      - '@saberhq/solana-contrib'
-      - '@saberhq/token-utils'
-      - bufferutil
-      - debug
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /@jup-ag/crema-sdk-v2/2.1.6:
     resolution: {integrity: sha512-YhYfzbZCB0G0XciDO0vFXOpJsIn6kveVYolXuJ0toj2t7W0OM9NfvdtUvboUbhE92nJfzpHBScb3X9Qosb8KOA==}
     dependencies:
@@ -2130,14 +2080,6 @@ packages:
 
   /@jup-ag/math/4.0.0-beta.11:
     resolution: {integrity: sha512-OSbyMiLwHqyGAxvv6rJbfscz8aeEshj/snPB3vAe82iO7a0YjKD9ix0z+b8nMeI4CmFgxWPJt7RFGTrNr4uFCA==}
-    engines: {node: '>=10'}
-    dependencies:
-      decimal.js: 10.4.2
-      jsbi: 4.3.0
-    dev: false
-
-  /@jup-ag/math/4.0.0-beta.9:
-    resolution: {integrity: sha512-k8DwKBtk6Cagk8peJPslXqOUGzwKljbjH+TiP0ZCcEFxMhyhxQqWVoy/bgYmOLeFvW20A1LYe1PUSYHZH3T9Uw==}
     engines: {node: '>=10'}
     dependencies:
       decimal.js: 10.4.2
@@ -2347,34 +2289,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@mercurial-finance/dynamic-amm-sdk/0.2.0:
-    resolution: {integrity: sha512-mEhPfDTfFlvCY7rZnjy9xAAHR/F2vwQfiARDQdfVm5XHOnz1vcWrWhm21jUBB3rrWB0nbCBvwaBDZuZ4khHVrw==}
-    peerDependencies:
-      '@solana/buffer-layout': ^3 || ^4
-    dependencies:
-      '@mercurial-finance/vault-sdk': 0.3.10_plhixtjxfbfr3mbxehj34lupl4
-      '@project-serum/anchor': 0.24.2
-      '@saberhq/anchor-contrib': 1.14.11_ye4pmluxnapcgtgk44qwvoptby
-      '@saberhq/stableswap-sdk': 1.14.11_iziyofpkyexr3iekamwp24a3lm
-      '@saberhq/token-utils': 1.13.32_iziyofpkyexr3iekamwp24a3lm
-      '@solana/spl-token': 0.1.8
-      '@solana/spl-token-registry': 0.2.1105
-      '@solana/web3.js': 1.73.0
-      bn-sqrt: 1.0.0
-      bn.js: 5.2.1
-      decimal.js: 10.4.3
-      dotenv: 16.0.3
-      invariant: 2.2.4
-      jsbi: 4.3.0
-    transitivePeerDependencies:
-      - '@saberhq/solana-contrib'
-      - bufferutil
-      - debug
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
   /@mercurial-finance/dynamic-amm-sdk/0.2.3:
     resolution: {integrity: sha512-uMFeGaZJOvZZi4LDq9PqETG+VYS3ntJkpvCVMuA2CHUDc98KRSrlVcuaT1HjMOqks9i2iZbrRXOcVeEu7ApFXw==}
     peerDependencies:
@@ -2493,72 +2407,6 @@ packages:
       lodash: 4.17.21
     transitivePeerDependencies:
       - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@mercurial-finance/vault-sdk/0.3.10:
-    resolution: {integrity: sha512-MVxkyRW1/nboTjZhKMzwM/NtPWqXMXNgxaOtKQ3iepKZxviwt+lSctZHBF0FgOVRHEbjcsfJxsotCc2D644HFQ==}
-    dependencies:
-      '@blockworks-foundation/mango-client': 3.6.20
-      '@mercurial-finance/apricot-sdk': 0.17.6
-      '@mercurial-finance/drift-sdk': 1.0.3
-      '@mercurial-finance/frakt-sdk': 0.0.2
-      '@mercurial-finance/francium-sdk': 1.4.3
-      '@mercurial-finance/optimist': 0.1.9_3uu5xgoq3e7kvunyrzjtujz4mu
-      '@mercurial-finance/port-sdk': 0.2.69_2c3thrgaemkadsehqvxmpc5dbe
-      '@mercurial-finance/solend-sdk': 0.6.5
-      '@mercurial-finance/tulip-platform-sdk': 2.0.30
-      '@project-serum/anchor': 0.24.2
-      '@quarryprotocol/quarry-sdk': 5.0.2_ygeu3ygweql76xco3dwynaipxu
-      '@saberhq/anchor-contrib': 1.14.11_ye4pmluxnapcgtgk44qwvoptby
-      '@solana/buffer-layout': 4.0.0
-      '@solana/spl-token': 0.1.8
-      '@solana/spl-token-registry': 0.2.1105
-      '@solana/web3.js': 1.73.0
-      bn.js: 5.2.1
-      cross-fetch: 3.1.5
-      decimal.js: 10.3.1
-      jsbi: 4.3.0
-    transitivePeerDependencies:
-      - '@saberhq/solana-contrib'
-      - '@saberhq/token-utils'
-      - bufferutil
-      - debug
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@mercurial-finance/vault-sdk/0.3.10_plhixtjxfbfr3mbxehj34lupl4:
-    resolution: {integrity: sha512-MVxkyRW1/nboTjZhKMzwM/NtPWqXMXNgxaOtKQ3iepKZxviwt+lSctZHBF0FgOVRHEbjcsfJxsotCc2D644HFQ==}
-    dependencies:
-      '@blockworks-foundation/mango-client': 3.6.20
-      '@mercurial-finance/apricot-sdk': 0.17.6
-      '@mercurial-finance/drift-sdk': 1.0.3
-      '@mercurial-finance/frakt-sdk': 0.0.2
-      '@mercurial-finance/francium-sdk': 1.4.3
-      '@mercurial-finance/optimist': 0.1.9_3uu5xgoq3e7kvunyrzjtujz4mu
-      '@mercurial-finance/port-sdk': 0.2.69_2c3thrgaemkadsehqvxmpc5dbe
-      '@mercurial-finance/solend-sdk': 0.6.5
-      '@mercurial-finance/tulip-platform-sdk': 2.0.30
-      '@project-serum/anchor': 0.24.2
-      '@quarryprotocol/quarry-sdk': 5.0.2_zpb64bnhglokejpe42gvi32sxe
-      '@saberhq/anchor-contrib': 1.14.11_ye4pmluxnapcgtgk44qwvoptby
-      '@solana/buffer-layout': 4.0.0
-      '@solana/spl-token': 0.1.8
-      '@solana/spl-token-registry': 0.2.1105
-      '@solana/web3.js': 1.73.0
-      bn.js: 5.2.1
-      cross-fetch: 3.1.5
-      decimal.js: 10.3.1
-      jsbi: 4.3.0
-    transitivePeerDependencies:
-      - '@saberhq/solana-contrib'
-      - '@saberhq/token-utils'
-      - bufferutil
-      - debug
       - encoding
       - supports-color
       - utf-8-validate
@@ -5783,7 +5631,7 @@ packages:
   /axios/1.3.3:
     resolution: {integrity: sha512-eYq77dYIFS77AQlhzEL937yUBSepBfPIe8FcgEDN35vMNZKMrs81pgnyrQpwfy4NF4b4XWX1Zgx7yX+25w8QJA==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.2
+      follow-redirects: 1.15.2
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:

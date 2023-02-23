@@ -2,19 +2,28 @@ import { Wallet } from '@solana/wallet-adapter-react';
 import React, { useEffect, useState } from 'react';
 import { FormProps } from 'src/types';
 import { useDebouncedEffect } from 'src/misc/utils';
+import { getPlatformFeeAccounts, JUPITER_FEE_OWNER } from '@jup-ag/react-hook';
+import { Connection } from '@solana/web3.js';
 
-const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
+const IntegratedTerminal = ({
+  rpcUrl,
+  formProps,
+  fakeWallet,
+}: {
+  rpcUrl: string;
+  formProps: FormProps;
+  fakeWallet: Wallet | null;
+}) => {
   const [isLoaded, setIsLoaded] = useState(false);
-
-  const launchTerminal = () => {
+  const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
       endpoint: rpcUrl,
       formProps,
       passThroughWallet: fakeWallet,
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -29,11 +38,15 @@ const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string,
     }
   }, []);
 
-  useDebouncedEffect(() => {
-    if (isLoaded && Boolean(window.Jupiter.init)) {
-      launchTerminal();
-    }
-  }, [isLoaded, formProps, fakeWallet], 200)
+  useDebouncedEffect(
+    () => {
+      if (isLoaded && Boolean(window.Jupiter.init)) {
+        launchTerminal();
+      }
+    },
+    [isLoaded, formProps, fakeWallet],
+    200,
+  );
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">
@@ -48,7 +61,9 @@ const IntegratedTerminal = ({ rpcUrl, formProps, fakeWallet }: { rpcUrl: string,
 
           <div
             id="integrated-terminal"
-            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-[#282830] rounded-xl ${!isLoaded ? 'hidden' : ''}`}
+            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-[#282830] rounded-xl ${
+              !isLoaded ? 'hidden' : ''
+            }`}
           />
         </div>
       </div>
