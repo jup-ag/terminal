@@ -289,7 +289,7 @@ window.Jupiter.init({
 ---
 
 ### Typescript Support
-Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.ts` file in your project, and copy the contents in `src/types/index.ts`.
+Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.d.ts` file in your project, and copy the contents in `src/types/index.d.ts`.
 
 ```tsx
 declare global {
