@@ -3,11 +3,16 @@ import React, { useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useDebouncedEffect } from 'src/misc/utils';
 
-const IntegratedTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null, strictTokenList: boolean, defaultExplorer: DEFAULT_EXPLORER }) => {
+const IntegratedTerminal = (props: {
+  rpcUrl: string;
+  formProps: FormProps;
+  fakeWallet: Wallet | null;
+  strictTokenList: boolean;
+  defaultExplorer: DEFAULT_EXPLORER;
+}) => {
   const { rpcUrl, formProps, fakeWallet, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
-
-  const launchTerminal = () => {
+  const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
@@ -16,8 +21,8 @@ const IntegratedTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeW
       passThroughWallet: fakeWallet,
       strictTokenList,
       defaultExplorer,
-    })
-  }
+    });
+  };
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -32,11 +37,15 @@ const IntegratedTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeW
     }
   }, []);
 
-  useDebouncedEffect(() => {
-    if (isLoaded && Boolean(window.Jupiter.init)) {
-      launchTerminal();
-    }
-  }, [isLoaded, props, fakeWallet], 200)
+  useDebouncedEffect(
+    () => {
+      if (isLoaded && Boolean(window.Jupiter.init)) {
+        launchTerminal();
+      }
+    },
+    [isLoaded, formProps, fakeWallet],
+    200,
+  );
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">
@@ -51,7 +60,9 @@ const IntegratedTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeW
 
           <div
             id="integrated-terminal"
-            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-[#282830] rounded-xl ${!isLoaded ? 'hidden' : ''}`}
+            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-[#282830] rounded-xl ${
+              !isLoaded ? 'hidden' : ''
+            }`}
           />
         </div>
       </div>

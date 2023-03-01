@@ -3,18 +3,15 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import classNames from 'classnames';
 
-import { SwapMode, WRAPPED_SOL_MINT } from '@jup-ag/core';
+import { SwapMode } from '@jup-ag/react-hook';
 import { IFormConfigurator } from 'src/pages/_app';
 import { IInit } from 'src/types';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 function addInlinesToCode(code: string, insertLines: string) {
   let lines = code.split('\n');
-  lines = [
-    ...lines.slice(0, lines.length - 1),
-    insertLines,
-    ...lines.slice(lines.length - 1, lines.length),
-  ]
-  
+  lines = [...lines.slice(0, lines.length - 1), insertLines, ...lines.slice(lines.length - 1, lines.length)];
+
   return lines.join('\n');
 }
 

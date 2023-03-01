@@ -1,4 +1,4 @@
-import { SwapMode } from '@jup-ag/core';
+import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
 import React from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
@@ -95,9 +95,9 @@ const FormConfigurator = ({
   defaultExplorer: DEFAULT_EXPLORER;
 
   // Hook form
-  reset: UseFormReset<IFormConfigurator>,
-  setValue: UseFormSetValue<IFormConfigurator>
-  formState: FormState<IFormConfigurator>
+  reset: UseFormReset<IFormConfigurator>;
+  setValue: UseFormSetValue<IFormConfigurator>;
+  formState: FormState<IFormConfigurator>;
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
@@ -119,7 +119,7 @@ const FormConfigurator = ({
       fixedAmount,
       fixedInputMint,
       fixedOutputMint,
-    })
+    });
     setActive(index);
     setIsOpen(false);
   };
@@ -139,21 +139,20 @@ const FormConfigurator = ({
               aria-expanded="true"
               aria-haspopup="true"
             >
-              <div className='flex items-center justify-center space-x-2.5'>
+              <div className="flex items-center justify-center space-x-2.5">
                 <p>{templateOptions[active].name}</p>
 
                 <Tooltip
                   variant="dark"
-                  content={
-                    <pre className='text-white text-xs'>{templateOptions[active].description}</pre>
-                  }>
+                  content={<pre className="text-white text-xs">{templateOptions[active].description}</pre>}
+                >
                   <div className="flex items-center text-white-35 fill-current">
                     <InfoIconSVG width={12} height={12} />
                   </div>
                 </Tooltip>
 
                 {formState?.isDirty ? (
-                  <p className='text-[10px] text-white/50 rounded-xl py-1 px-2 border border-white/50 leading-none'>
+                  <p className="text-[10px] text-white/50 rounded-xl py-1 px-2 border border-white/50 leading-none">
                     Custom
                   </p>
                 ) : null}
@@ -196,7 +195,11 @@ const FormConfigurator = ({
           <p className="text-sm text-white/75">Fixed input mint</p>
           <p className="text-xs text-white/30">Input mint cannot be changed</p>
         </div>
-        <Toggle className="min-w-[40px]" active={fixedInputMint} onClick={() => setValue('fixedInputMint', !fixedInputMint, { shouldDirty: true })} />
+        <Toggle
+          className="min-w-[40px]"
+          active={fixedInputMint}
+          onClick={() => setValue('fixedInputMint', !fixedInputMint, { shouldDirty: true })}
+        />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
@@ -223,7 +226,11 @@ const FormConfigurator = ({
         <Toggle
           className="min-w-[40px]"
           active={swapMode === SwapMode.ExactOut}
-          onClick={() => setValue('swapMode', swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, { shouldDirty: true })}
+          onClick={() =>
+            setValue('swapMode', swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, {
+              shouldDirty: true,
+            })
+          }
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -234,7 +241,11 @@ const FormConfigurator = ({
           <p className="text-sm text-white/75">Fixed amount</p>
           <p className="text-xs text-white/30">Depending on Exact In / Exact Out, the amount cannot be changed</p>
         </div>
-        <Toggle className="min-w-[40px]" active={fixedAmount} onClick={() => setValue('fixedAmount', !fixedAmount, { shouldDirty: true })} />
+        <Toggle
+          className="min-w-[40px]"
+          active={fixedAmount}
+          onClick={() => setValue('fixedAmount', !fixedAmount, { shouldDirty: true })}
+        />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
@@ -253,7 +264,7 @@ const FormConfigurator = ({
           const regex = /^[0-9\b]+$/;
           const value = e.target.value;
           if (value === '' || regex.test(value)) {
-            setValue('initialAmount', value)
+            setValue('initialAmount', value);
           }
         }}
       />

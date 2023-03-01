@@ -193,7 +193,7 @@ Refer to [Adding your own fees](https://docs.jup.ag/integrating-jupiter/addition
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
 ```tsx
-import { getPlatformFeeAccounts } from '@jup-ag/core';
+import { getPlatformFeeAccounts } from '@jup-ag/react-hook';
 
 // Jupiter Core provides a helper function that returns all your feeAccounts
 const platformFeeAndAccounts = {

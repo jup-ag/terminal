@@ -48,7 +48,11 @@ export function fromLamports(lamportsAmount?: JSBI | BN | number, decimals?: num
 }
 
 export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
-  const amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
+  let amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
+
+  if (Number.isNaN(amount)) {
+    amount = 0;
+  }
   const precision = Math.pow(10, decimals);
 
   return Math.floor(amount * precision);
@@ -111,11 +115,11 @@ export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseE
 }
 
 export function useDebouncedEffect(fn: Function, deps: any[], time: number) {
-  const dependencies = [...deps, fn, time] 
+  const dependencies = [...deps, fn, time];
   useEffect(() => {
     const timeout = setTimeout(fn, time);
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, dependencies);
 }
