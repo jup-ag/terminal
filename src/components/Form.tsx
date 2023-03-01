@@ -51,7 +51,6 @@ const Form: React.FC<{
     jupiter: { routes, loading, refresh },
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
-
   useEffect(() => {
     if (hasExpired) {
       refresh();
@@ -194,6 +193,7 @@ const Form: React.FC<{
 
                     <div className="text-right">
                       <NumericFormat
+                        disabled={swapMode === 'ExactOut'}
                         value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
                         decimalScale={fromTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
@@ -252,6 +252,7 @@ const Form: React.FC<{
 
                     <div className="text-right">
                       <NumericFormat
+                        disabled={!swapMode || swapMode === 'ExactIn'}
                         value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                         decimalScale={toTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
