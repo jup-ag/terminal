@@ -45,7 +45,6 @@ const { wallet } = useWallet();
     fixedAmount: true,
   };
 
-  console.log('##', formConfigurator.defaultExplorer)
   const formPropsToFormat = {
     ...(formConfigurator.fixedInputMint ? FIXED_INPUT_MINT_VALUES : undefined),
     ...(formConfigurator.fixedOutputMint ? FIXED_OUTPUT_MINT_VALUES : undefined),
