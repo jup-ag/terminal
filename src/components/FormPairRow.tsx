@@ -1,10 +1,10 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import React, { CSSProperties, useMemo } from 'react';
-import { WRAPPED_SOL_MINT } from 'src/constants';
 
 import CoinBalance from './Coinbalance';
 import { PAIR_ROW_HEIGHT } from './FormPairSelector';
 import TokenIcon from './TokenIcon';
+import TokenLink from './TokenLink';
 
 const FormPairRow: React.FC<{
   item: TokenInfo;
@@ -19,7 +19,7 @@ const FormPairRow: React.FC<{
       translate="no"
     >
       <div
-        className="flex items-center rounded-xl space-x-4 my-2 p-4 bg-[#2C2D33] hover:bg-black/10"
+        className="flex items-center rounded-xl space-x-4 my-2 p-3 justify-between bg-[#2C2D33] hover:bg-black/10"
         onClick={() => onSubmit(item)}
       >
         <div className="flex-shrink-0">
@@ -27,9 +27,16 @@ const FormPairRow: React.FC<{
             <TokenIcon tokenInfo={item} width={24} height={24} />
           </div>
         </div>
+        
         <div className="flex-1 min-w-0">
-          <p className="text-sm text-white truncate">{item.symbol}</p>
-          <p className="text-xs text-gray-500 truncate">
+          <div className='flex flex-row space-x-2'>
+            <p className="text-sm text-white truncate">
+              {item.symbol}
+            </p>
+            <TokenLink tokenInfo={item} />
+          </div>
+
+          <p className="mt-1 text-xs text-gray-500 truncate">
             <CoinBalance mintAddress={item.address} hideZeroBalance /> {item.symbol}
           </p>
         </div>
