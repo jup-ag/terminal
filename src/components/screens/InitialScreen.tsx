@@ -10,6 +10,7 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import RouteSelectionScreen from './RouteSelectionScreen';
+import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -25,10 +26,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     setForm,
     setErrors,
     selectedSwapRoute,
-    formProps: {
-      initialOutputMint,
-      fixedOutputMint,
-    },
+    formProps: { initialOutputMint, fixedOutputMint },
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -61,9 +59,16 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
   const [showRouteSelector, setShowRouteSelector] = useState<boolean>(false);
+  const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);
 
   const onSelectMint = useCallback(
-    (tokenInfo: TokenInfo) => {
+    (tokenInfo: TokenInfo, approved: boolean = false) => {
+      const isUnknown = tokenInfo.tags?.length === 0;
+      if (isUnknown && approved === false) {
+        setShowUnknownToken(tokenInfo);
+        return;
+      }
+
       if (selectPairSelector === 'fromMint') {
         setForm((prev) => ({
           ...prev,
@@ -71,9 +76,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
           fromValue: '',
 
           // Prevent same token to same token;
-          ...(prev.toMint === tokenInfo.address)
-            ? { toMint: prev.fromMint }
-            : undefined
+          ...(prev.toMint === tokenInfo.address ? { toMint: prev.fromMint } : undefined),
         }));
       } else {
         setForm((prev) => ({
@@ -82,9 +85,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
           toValue: '',
 
           // Prevent same token to same token;
-          ...(prev.fromMint === tokenInfo.address)
-            ? { fromMint: prev.toMint }
-            : undefined
+          ...(prev.fromMint === tokenInfo.address ? { fromMint: prev.toMint } : undefined),
         }));
       }
       setSelectPairSelector(null);
@@ -93,10 +94,10 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   );
 
   const availableMints: TokenInfo[] = useMemo(() => {
-    let result = [...tokenMap.values()]
+    let result = [...tokenMap.values()];
     // On fixedOutputMint, prevent user from selecting the same token as output
     if (fixedOutputMint) {
-      result = result.filter(item => item.address !== initialOutputMint)
+      result = result.filter((item) => item.address !== initialOutputMint);
     }
 
     return result;
@@ -138,6 +139,19 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       {isWalletModalOpen ? (
         <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
           <WalletModal setIsWalletModalOpen={setIsWalletModalOpen} />
+        </div>
+      ) : null}
+
+      {showUnknownToken ? (
+        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
+          <UnknownTokenModal
+            tokensInfo={[showUnknownToken]}
+            onClickAccept={() => {
+              onSelectMint(showUnknownToken, true)
+              setShowUnknownToken(null)
+            }}
+            onClickReject={() => setShowUnknownToken(null)}
+          />
         </div>
       ) : null}
     </>

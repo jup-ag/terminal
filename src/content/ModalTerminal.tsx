@@ -2,24 +2,32 @@ import React from 'react';
 
 import { Wallet } from '@solana/wallet-adapter-react';
 
-import { FormProps } from 'src/types';
+import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 
-const ModalTerminal = ({
-  rpcUrl,
-  formProps,
-  fakeWallet,
-}: {
+const ModalTerminal = (props: {
   rpcUrl: string;
   formProps: FormProps;
   fakeWallet: Wallet | null;
+  strictTokenList: boolean;
+  defaultExplorer: DEFAULT_EXPLORER;
 }) => {
+  const {
+    rpcUrl,
+    formProps,
+    fakeWallet,
+    strictTokenList,
+    defaultExplorer
+  } = props;
+  
   const launchTerminal = () => {
     window.Jupiter.init({
       endpoint: rpcUrl,
       formProps,
       passThroughWallet: fakeWallet,
+      strictTokenList,
+      defaultExplorer
     });
   };
 

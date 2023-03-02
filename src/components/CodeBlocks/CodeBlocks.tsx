@@ -16,10 +16,10 @@ function addInlinesToCode(code: string, insertLines: string) {
 }
 
 const CodeBlocks = ({
-  formProps,
+  formConfigurator,
   displayMode,
 }: {
-  formProps: IFormConfigurator;
+  formConfigurator: IFormConfigurator;
   displayMode: IInit['displayMode'];
 }) => {
   const USE_WALLET_SNIPPET = `import { useWallet } from '@solana/wallet-adapter-react';
@@ -41,20 +41,22 @@ const { wallet } = useWallet();
     fixedOutputMint: true,
   };
   const FIXED_AMOUNT_VALUES = {
-    initialAmount: formProps.initialAmount,
+    initialAmount: formConfigurator.initialAmount,
     fixedAmount: true,
   };
 
   const formPropsToFormat = {
-    ...(formProps.fixedInputMint ? FIXED_INPUT_MINT_VALUES : undefined),
-    ...(formProps.fixedOutputMint ? FIXED_OUTPUT_MINT_VALUES : undefined),
-    ...(formProps.fixedAmount ? FIXED_AMOUNT_VALUES : undefined),
-    ...(formProps.initialAmount ? { initialAmount: formProps.initialAmount } : undefined),
-    ...(formProps.swapMode === SwapMode.ExactOut ? { swapMode: formProps.swapMode } : undefined),
+    ...(formConfigurator.fixedInputMint ? FIXED_INPUT_MINT_VALUES : undefined),
+    ...(formConfigurator.fixedOutputMint ? FIXED_OUTPUT_MINT_VALUES : undefined),
+    ...(formConfigurator.fixedAmount ? FIXED_AMOUNT_VALUES : undefined),
+    ...(formConfigurator.initialAmount ? { initialAmount: formConfigurator.initialAmount } : undefined),
+    ...(formConfigurator.swapMode === SwapMode.ExactOut ? { swapMode: formConfigurator.swapMode } : undefined),
   };
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
     endpoint: 'https://api.mainnet-beta.solana.com',
+    ...formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined,
+    ...formConfigurator.defaultExplorer !== 'Solana Explorer' ? { defaultExplorer: formConfigurator.defaultExplorer } : undefined,
     ...(Object.keys(formPropsToFormat).length > 0 ? { formProps: formPropsToFormat } : undefined),
   };
 
@@ -62,9 +64,9 @@ const { wallet } = useWallet();
 
   const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
 
-  let snippet = formProps.useWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
+  let snippet = formConfigurator.useWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
 
-  if (formProps.useWalletPassthrough) {
+  if (formConfigurator.useWalletPassthrough) {
     snippet = addInlinesToCode(snippet, `\t"passThroughWallet": wallet,`);
   }
 

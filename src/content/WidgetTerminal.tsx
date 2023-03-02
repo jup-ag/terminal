@@ -4,10 +4,10 @@ import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import { useDebouncedEffect } from 'src/misc/utils';
-import { FormProps, WidgetPosition, WidgetSize } from 'src/types';
+import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null }) => {
-  const { rpcUrl, fakeWallet, formProps } = props;
+const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null, strictTokenList: boolean, defaultExplorer: DEFAULT_EXPLORER }) => {
+  const { rpcUrl, fakeWallet, formProps, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -22,6 +22,8 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
       formProps,
       passThroughWallet: fakeWallet,
       endpoint: rpcUrl,
+      strictTokenList,
+      defaultExplorer
     });
   };
 

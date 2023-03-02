@@ -9,9 +9,9 @@ import { IInit } from './types';
 
 const RenderJupiter = (props: IInit) => {
   return (
-    <ContextProvider endpoint={props.endpoint}>
+    <ContextProvider {...props}>
       <WalletPassthroughProvider>
-        <TokenContextProvider>
+        <TokenContextProvider {...props}>
           <ScreenProvider>
             <JupiterApp {...props} />
           </ScreenProvider>

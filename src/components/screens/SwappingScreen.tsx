@@ -9,6 +9,7 @@ import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
 import PriceInfo from '../PriceInfo/index';
 import { fromLamports } from 'src/misc/utils';
+import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 
 const ErrorIcon = () => {
   return (
@@ -104,6 +105,8 @@ const SwappingScreen = () => {
     return 'loading';
   }, [txStatus]);
 
+  const { explorer, getExplorer } = usePreferredExplorer();
+
   const Content = () => {
     return (
       <>
@@ -154,7 +157,7 @@ const SwappingScreen = () => {
       return null;
     }
 
-    const solscanLink = (lastSwapResult as any).txid ? `https://solscan.io/tx/${(lastSwapResult as any).txid}` : null;
+    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null
 
     return (
       <>
@@ -192,14 +195,14 @@ const SwappingScreen = () => {
           </div>
         </div>
 
-        {solscanLink ? (
+        {explorerLink ? (
           <a
-            href={solscanLink}
+            href={explorerLink}
             target="_blank"
             rel="noopener noreferrer"
             className="cursor-pointer text-white/50 mt-2 ml-2 text-xs hover:underline"
           >
-            View on Solscan
+            View on {explorer}
           </a>
         ) : null}
 

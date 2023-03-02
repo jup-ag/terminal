@@ -1,19 +1,16 @@
 import { Wallet } from '@solana/wallet-adapter-react';
 import React, { useEffect, useState } from 'react';
-import { FormProps } from 'src/types';
+import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useDebouncedEffect } from 'src/misc/utils';
-import { getPlatformFeeAccounts, JUPITER_FEE_OWNER } from '@jup-ag/react-hook';
-import { Connection } from '@solana/web3.js';
 
-const IntegratedTerminal = ({
-  rpcUrl,
-  formProps,
-  fakeWallet,
-}: {
+const IntegratedTerminal = (props: {
   rpcUrl: string;
   formProps: FormProps;
   fakeWallet: Wallet | null;
+  strictTokenList: boolean;
+  defaultExplorer: DEFAULT_EXPLORER;
 }) => {
+  const { rpcUrl, formProps, fakeWallet, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const launchTerminal = async () => {
     window.Jupiter.init({
@@ -22,6 +19,8 @@ const IntegratedTerminal = ({
       endpoint: rpcUrl,
       formProps,
       passThroughWallet: fakeWallet,
+      strictTokenList,
+      defaultExplorer,
     });
   };
 
