@@ -105,7 +105,10 @@ Widget mode renders Jupiter Terminal as a widget that can be placed at different
 ```tsx
 window.Jupiter.init({
   displayMode: 'widget',
-  widgetPosition: 'bottom-right', // 'bottom-left', 'top-right', 'top-left'
+  widgetStyle: {
+        position: 'bottom-right', // 'bottom-left', 'top-left', 'top-right'
+        size: 'default', // 'sm' 
+      },
 });
 ````
 
