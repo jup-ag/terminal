@@ -4,6 +4,7 @@ import { useDebounce, useLocalStorage } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
+import { useSwapContext } from './SwapContext';
 
 const MAXIMUM_PARAM_SUPPORT = 100;
 const CACHE_EXPIRE_TIME = 1000 * 60 * 1; // 1 min
@@ -43,12 +44,14 @@ const hasExpired = (timestamp: number) => {
 export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
+  const { fromTokenInfo, toTokenInfo,
+  } = useSwapContext();
 
   const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(STORAGE_KEY, {});
   const [addresses, setAddresses] = useState<Set<string>>(new Set());
   const [debouncedAddresses, setDebouncedAddresses] = useState<string[]>([]);
 
-  const [isReady] = useDebounce(
+  useDebounce(
     () => {
       setDebouncedAddresses(Array.from(addresses));
     },
@@ -164,7 +167,7 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!Object.keys(accounts).length || !tokenMap.size ) return;
+    if (!Object.keys(accounts).length || !tokenMap.size) return;
 
     const userAccountAddresses: string[] = Object.keys(accounts)
       .map((key) => {
@@ -180,6 +183,16 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return new Set([...prev, ...userAccountAddresses]);
     });
   }, [accounts, tokenMap]);
+
+  // Make sure form token always have USD values
+  useEffect(() => {
+    setAddresses((prev) => {
+      const newSet = new Set([...prev]);
+      if (fromTokenInfo?.address) newSet.add(fromTokenInfo?.address);
+      if (toTokenInfo?.address) newSet.add(toTokenInfo?.address);
+      return newSet
+    });
+  }, [fromTokenInfo, toTokenInfo])
 
   // use memo so that it avoid a rerendering
   const priceMap = useMemo(() => {

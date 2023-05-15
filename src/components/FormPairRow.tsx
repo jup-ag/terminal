@@ -21,9 +21,10 @@ const FormPairRow: React.FC<{
 
   const totalUsdValue = useMemo(() => {
     const tokenPrice = tokenPriceMap[item.address]?.usd;
-    if (!tokenPrice) return null;
+    const balance = accounts[item.address]?.balance;
+    if (!tokenPrice || !balance) return null;
 
-    const totalAValue = new Decimal(tokenPrice).mul(accounts[item.address].balance);
+    const totalAValue = new Decimal(tokenPrice).mul(balance);
     return totalAValue;
   }, [accounts, tokenPriceMap])
 
@@ -52,7 +53,7 @@ const FormPairRow: React.FC<{
           </div>
 
           <div className="mt-1 text-xs text-gray-500 truncate flex space-x-1">
-            <CoinBalance mintAddress={item.address} hideZeroBalance />
+            <CoinBalance mintAddress={item.address} />
 
             {totalUsdValue && totalUsdValue.gt(0.01) ? (
               <span className='ml-1'>

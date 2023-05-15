@@ -222,7 +222,7 @@ const Form: React.FC<{
 
                       {form.fromValue ? (
                         <span className='text-xs text-white/30'>
-                          <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={new Decimal(form.fromValue)} />
+                          <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={form.fromValue} />
                         </span>
                       ) : null}
                     </div>
@@ -286,7 +286,7 @@ const Form: React.FC<{
 
                       {form.toValue ? (
                         <span className='text-xs text-white/30'>
-                          <CoinBalanceUSD tokenInfo={toTokenInfo} amount={new Decimal(form.toValue)} />
+                          <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
                         </span>
                       ) : null}
                     </div>

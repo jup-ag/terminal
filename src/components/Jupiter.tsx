@@ -61,28 +61,28 @@ const JupiterApp = (props: IInit) => {
   return (
     <QueryClientProvider client={queryClient}>
       <AccountsProvider>
-        <USDValueProvider>
-          <SlippageConfigProvider>
-            <JupiterProvider
-              connection={connection}
-              routeCacheDuration={ROUTE_CACHE_DURATION}
-              wrapUnwrapSOL={true}
-              userPublicKey={walletPublicKey || undefined}
-              platformFeeAndAccounts={platformFeeAndAccounts}
+        <SlippageConfigProvider>
+          <JupiterProvider
+            connection={connection}
+            routeCacheDuration={ROUTE_CACHE_DURATION}
+            wrapUnwrapSOL={true}
+            userPublicKey={walletPublicKey || undefined}
+            platformFeeAndAccounts={platformFeeAndAccounts}
+            asLegacyTransaction={asLegacyTransaction}
+          >
+            <SwapContextProvider
+              displayMode={displayMode}
+              formProps={formProps}
+              scriptDomain={props.scriptDomain}
               asLegacyTransaction={asLegacyTransaction}
+              setAsLegacyTransaction={setAsLegacyTransaction}
             >
-              <SwapContextProvider
-                displayMode={displayMode}
-                formProps={formProps}
-                scriptDomain={props.scriptDomain}
-                asLegacyTransaction={asLegacyTransaction}
-                setAsLegacyTransaction={setAsLegacyTransaction}
-              >
+              <USDValueProvider>
                 <Content />
-              </SwapContextProvider>
-            </JupiterProvider>
-          </SlippageConfigProvider>
-        </USDValueProvider>
+              </USDValueProvider>
+            </SwapContextProvider>
+          </JupiterProvider>
+        </SlippageConfigProvider>
       </AccountsProvider>
     </QueryClientProvider>
   );

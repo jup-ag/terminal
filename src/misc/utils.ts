@@ -129,3 +129,10 @@ export function splitIntoChunks<T>(array: T[], size: number): T[][] {
     array.slice(index * size, (index + 1) * size),
   );
 }
+
+export const hasNumericValue = (amount: string | number) => {
+  if (amount && !Number.isNaN(Number(amount))) {
+    return true;
+  }
+  return false;
+};
