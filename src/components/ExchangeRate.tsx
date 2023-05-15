@@ -5,7 +5,8 @@ import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import * as React from 'react';
 
-import { fromLamports, formatNumber } from '../misc/utils';
+import { formatNumber, fromLamports } from '../misc/utils';
+import PrecisionTickSize from './PrecisionTickSize';
 
 export interface IRateParams {
   inAmount: JSBI;
@@ -17,17 +18,17 @@ export interface IRateParams {
 export const calculateRate = (
   { inAmount, inputDecimal, outAmount, outputDecimal }: IRateParams,
   reverse: boolean,
-): number => {
+): Decimal => {
   const input = fromLamports(inAmount, inputDecimal);
   const output = fromLamports(outAmount, outputDecimal);
 
   const rate = !reverse ? new Decimal(input).div(output) : new Decimal(output).div(input);
 
   if (Number.isNaN(rate.toNumber())) {
-    return 0;
+    return new Decimal(0);
   }
 
-  return Number(rate.toFixed(reverse ? outputDecimal : inputDecimal));
+  return rate;
 };
 
 const ApproxSVG = ({ width = 16, height = 16 }: { width?: string | number; height?: string | number }) => {
@@ -62,10 +63,7 @@ const ExchangeRate = ({
 }: ExchangeRateProps) => {
   const [reverse, setReverse] = React.useState(reversible ?? true);
 
-  const rateText = React.useMemo(
-    () => (loading ? '-' : formatNumber.format(calculateRate(rateParams, reverse))),
-    [loading, reverse, rateParams],
-  );
+  const rate = React.useMemo(() => calculateRate(rateParams, reverse), [loading, reverse, rateParams])
 
   const onReverse: React.MouseEventHandler = React.useCallback((event) => {
     event.stopPropagation();
@@ -77,14 +75,37 @@ const ExchangeRate = ({
       className={classnames(className, 'flex cursor-pointer text-white/30 text-xs align-center')}
       onClick={onReverse}
     >
-      <span className={classnames(textClassName, 'max-w-full whitespace-nowrap')}>
+      <span className={classnames(textClassName, 'max-w-full flex whitespace-nowrap')}>
         {reverse ? (
           <>
-            1 {fromTokenInfo.symbol} ≈ {rateText} {toTokenInfo.symbol}
+            1 {fromTokenInfo.symbol} ≈
+            <div className='flex ml-0.5'>
+              {rate.gt(0.000_01) ?
+                (
+                  `${formatNumber.format(rate.toNumber())} ${toTokenInfo.symbol}`
+                )
+                : (
+                  <>
+                    <PrecisionTickSize value={rate.toNumber()} maxSuffix={6} /> {toTokenInfo.symbol}
+                  </>
+                )}
+            </div>
           </>
         ) : (
           <>
-            1 {toTokenInfo.symbol} ≈ {rateText} {fromTokenInfo.symbol}
+            1 {toTokenInfo.symbol} ≈
+            <div className='flex ml-0.5'>
+
+              {rate.gt(0.000_01) ?
+                (
+                  `${formatNumber.format(rate.toNumber())} ${fromTokenInfo.symbol}`
+                )
+                : (
+                  <>
+                    <PrecisionTickSize value={rate.toNumber()} maxSuffix={6} /> {fromTokenInfo.symbol}
+                  </>
+                )}
+            </div>
           </>
         )}
       </span>

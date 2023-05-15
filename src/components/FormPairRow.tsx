@@ -5,6 +5,9 @@ import CoinBalance from './Coinbalance';
 import { PAIR_ROW_HEIGHT } from './FormPairSelector';
 import TokenIcon from './TokenIcon';
 import TokenLink from './TokenLink';
+import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
+import Decimal from 'decimal.js';
+import { useAccounts } from 'src/contexts/accounts';
 
 const FormPairRow: React.FC<{
   item: TokenInfo;
@@ -12,6 +15,18 @@ const FormPairRow: React.FC<{
   onSubmit(item: TokenInfo): void;
 }> = ({ item, style, onSubmit }) => {
   const isUnknown = useMemo(() => item.tags?.length === 0, [item.tags])
+
+  const { accounts } = useAccounts();
+  const { tokenPriceMap } = useUSDValueProvider();
+
+  const totalUsdValue = useMemo(() => {
+    const tokenPrice = tokenPriceMap[item.address]?.usd;
+    if (!tokenPrice) return null;
+
+    const totalAValue = new Decimal(tokenPrice).mul(accounts[item.address].balance);
+    return totalAValue;
+  }, [accounts, tokenPriceMap])
+
   return (
     <li
       className={`cursor-pointer list-none `}
@@ -27,7 +42,7 @@ const FormPairRow: React.FC<{
             <TokenIcon tokenInfo={item} width={24} height={24} />
           </div>
         </div>
-        
+
         <div className="flex-1 min-w-0">
           <div className='flex flex-row space-x-2'>
             <p className="text-sm text-white truncate">
@@ -36,9 +51,15 @@ const FormPairRow: React.FC<{
             <TokenLink tokenInfo={item} />
           </div>
 
-          <p className="mt-1 text-xs text-gray-500 truncate">
-            <CoinBalance mintAddress={item.address} hideZeroBalance /> {item.symbol}
-          </p>
+          <div className="mt-1 text-xs text-gray-500 truncate flex space-x-1">
+            <CoinBalance mintAddress={item.address} hideZeroBalance />
+
+            {totalUsdValue && totalUsdValue.gt(0.01) ? (
+              <span className='ml-1'>
+                | ${totalUsdValue.toFixed(2)}
+              </span>
+            ) : null}
+          </div>
         </div>
 
         {isUnknown ? (

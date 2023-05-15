@@ -23,8 +23,9 @@ import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
-import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { detectedSeparator } from 'src/misc/utils';
+import CoinBalanceUSD from './CoinBalanceUSD';
+import Decimal from 'decimal.js';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -209,13 +210,21 @@ const Form: React.FC<{
                   </div>
 
                   {fromTokenInfo?.address ? (
-                    <div
-                      className={classNames("flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current", { "cursor-pointer": swapMode !== 'ExactOut' })}
-                      onClick={onClickMax}
-                    >
-                      <WalletIcon width={10} height={10} />
-                      <CoinBalance mintAddress={fromTokenInfo.address} />
-                      <span>{fromTokenInfo.symbol}</span>
+                    <div className='flex justify-between items-center'>
+                      <div
+                        className={classNames("flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current", { "cursor-pointer": swapMode !== 'ExactOut' })}
+                        onClick={onClickMax}
+                      >
+                        <WalletIcon width={10} height={10} />
+                        <CoinBalance mintAddress={fromTokenInfo.address} />
+                        <span>{fromTokenInfo.symbol}</span>
+                      </div>
+
+                      {form.fromValue ? (
+                        <span className='text-xs text-white/30'>
+                          <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={new Decimal(form.fromValue)} />
+                        </span>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>
@@ -268,10 +277,18 @@ const Form: React.FC<{
                   </div>
 
                   {toTokenInfo?.address ? (
-                    <div className="flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current">
-                      <WalletIcon width={10} height={10} />
-                      <CoinBalance mintAddress={toTokenInfo.address} />
-                      <span>{toTokenInfo.symbol}</span>
+                    <div className='flex justify-between items-center'>
+                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current">
+                        <WalletIcon width={10} height={10} />
+                        <CoinBalance mintAddress={toTokenInfo.address} />
+                        <span>{toTokenInfo.symbol}</span>
+                      </div>
+
+                      {form.toValue ? (
+                        <span className='text-xs text-white/30'>
+                          <CoinBalanceUSD tokenInfo={toTokenInfo} amount={new Decimal(form.toValue)} />
+                        </span>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>

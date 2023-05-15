@@ -1,13 +1,15 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
 import { useConnection } from '@solana/wallet-adapter-react';
 import React, { useMemo, useState, useEffect } from 'react';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
-import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
+import { SwapContextProvider } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { IInit } from 'src/types';
 import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
+import { USDValueProvider } from 'src/contexts/USDValueProvider';
 
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
@@ -34,6 +36,8 @@ const Content = () => {
   );
 };
 
+const queryClient = new QueryClient();
+
 const JupiterApp = (props: IInit) => {
   const {
     displayMode,
@@ -55,28 +59,32 @@ const JupiterApp = (props: IInit) => {
   }, [wallet?.adapter]);
 
   return (
-    <AccountsProvider>
-      <SlippageConfigProvider>
-        <JupiterProvider
-          connection={connection}
-          routeCacheDuration={ROUTE_CACHE_DURATION}
-          wrapUnwrapSOL={true}
-          userPublicKey={walletPublicKey || undefined}
-          platformFeeAndAccounts={platformFeeAndAccounts}
-          asLegacyTransaction={asLegacyTransaction}
-        >
-          <SwapContextProvider
-            displayMode={displayMode}
-            formProps={formProps}
-            scriptDomain={props.scriptDomain}
-            asLegacyTransaction={asLegacyTransaction}
-            setAsLegacyTransaction={setAsLegacyTransaction}
-          >
-            <Content />
-          </SwapContextProvider>
-        </JupiterProvider>
-      </SlippageConfigProvider>
-    </AccountsProvider>
+    <QueryClientProvider client={queryClient}>
+      <AccountsProvider>
+        <USDValueProvider>
+          <SlippageConfigProvider>
+            <JupiterProvider
+              connection={connection}
+              routeCacheDuration={ROUTE_CACHE_DURATION}
+              wrapUnwrapSOL={true}
+              userPublicKey={walletPublicKey || undefined}
+              platformFeeAndAccounts={platformFeeAndAccounts}
+              asLegacyTransaction={asLegacyTransaction}
+            >
+              <SwapContextProvider
+                displayMode={displayMode}
+                formProps={formProps}
+                scriptDomain={props.scriptDomain}
+                asLegacyTransaction={asLegacyTransaction}
+                setAsLegacyTransaction={setAsLegacyTransaction}
+              >
+                <Content />
+              </SwapContextProvider>
+            </JupiterProvider>
+          </SlippageConfigProvider>
+        </USDValueProvider>
+      </AccountsProvider>
+    </QueryClientProvider>
   );
 };
 
