@@ -25,7 +25,6 @@ import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
 import { detectedSeparator } from 'src/misc/utils';
 import CoinBalanceUSD from './CoinBalanceUSD';
-import Decimal from 'decimal.js';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -99,7 +98,7 @@ const Form: React.FC<{
     (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
-      if (!balance) return;
+      if (!balance || swapMode === 'ExactOut') return;
 
       if (fromTokenInfo?.address === WRAPPED_SOL_MINT.toBase58()) {
         setForm((prev) => ({

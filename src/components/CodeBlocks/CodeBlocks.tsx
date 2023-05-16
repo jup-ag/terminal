@@ -3,10 +3,8 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 import classNames from 'classnames';
 
-import { SwapMode } from '@jup-ag/react-hook';
-import { IFormConfigurator } from 'src/pages/_app';
-import { IInit } from 'src/types';
-import { WRAPPED_SOL_MINT } from 'src/constants';
+import { FormProps, IInit } from 'src/types';
+import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 
 function addInlinesToCode(code: string, insertLines: string) {
   let lines = code.split('\n');
@@ -31,33 +29,24 @@ const { wallet } = useWallet();
     if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
     if (displayMode === 'widget') return { displayMode: 'widget' };
   })();
+  
+  // Filter out the key that's not default
+  const filteredFormProps = Object.keys(formConfigurator.formProps).reduce<Partial<FormProps>>((acc, key) => {
+    const itemKey = key as keyof FormProps;
+    if (formConfigurator.formProps[itemKey] !== INITIAL_FORM_CONFIG.formProps[itemKey]) {
+      acc[itemKey] = formConfigurator.formProps[itemKey] as any;
+    }
+    return acc;
+  }, {})
 
-  const FIXED_INPUT_MINT_VALUES = {
-    initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    fixedInputMint: true,
-  };
-  const FIXED_OUTPUT_MINT_VALUES = {
-    initialOutputMint: WRAPPED_SOL_MINT.toString(),
-    fixedOutputMint: true,
-  };
-  const FIXED_AMOUNT_VALUES = {
-    initialAmount: formConfigurator.initialAmount,
-    fixedAmount: true,
-  };
-
-  const formPropsToFormat = {
-    ...(formConfigurator.fixedInputMint ? FIXED_INPUT_MINT_VALUES : undefined),
-    ...(formConfigurator.fixedOutputMint ? FIXED_OUTPUT_MINT_VALUES : undefined),
-    ...(formConfigurator.fixedAmount ? FIXED_AMOUNT_VALUES : undefined),
-    ...(formConfigurator.initialAmount ? { initialAmount: formConfigurator.initialAmount } : undefined),
-    ...(formConfigurator.swapMode === SwapMode.ExactOut ? { swapMode: formConfigurator.swapMode } : undefined),
-  };
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
     endpoint: 'https://api.mainnet-beta.solana.com',
-    ...formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined,
-    ...formConfigurator.defaultExplorer !== 'Solana Explorer' ? { defaultExplorer: formConfigurator.defaultExplorer } : undefined,
-    ...(Object.keys(formPropsToFormat).length > 0 ? { formProps: formPropsToFormat } : undefined),
+    ...(formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined),
+    ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
+      ? { defaultExplorer: formConfigurator.defaultExplorer }
+      : undefined),
+    ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';

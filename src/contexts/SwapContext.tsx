@@ -230,8 +230,8 @@ export const SwapContextProvider: FC<{
     error,
   } = useJupiter({
     amount,
-    inputMint: useMemo(() => new PublicKey(form.fromMint), [form.fromMint]),
-    outputMint: useMemo(() => new PublicKey(form.toMint), [form.toMint]),
+    inputMint: useMemo(() => form.fromMint ? new PublicKey(form.fromMint) : PublicKey.default, [form.fromMint]),
+    outputMint: useMemo(() => form.toMint ? new PublicKey(form.toMint) : PublicKey.default, [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
     asLegacyTransaction,

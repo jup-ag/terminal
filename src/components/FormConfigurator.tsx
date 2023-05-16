@@ -4,24 +4,18 @@ import React from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
-import { IFormConfigurator } from 'src/pages/_app';
-import { DEFAULT_EXPLORER, FormProps, IInit } from 'src/types';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
+import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 
-const templateOptions: { name: string; description: string; values: FormProps }[] = [
+const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
     name: 'Default',
     description: 'Full functionality and swap experience of Terminal.',
     values: {
-      swapMode: SwapMode.ExactIn,
-      initialAmount: '',
-      fixedAmount: false,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: false,
+      ...INITIAL_FORM_CONFIG,
+      formProps: INITIAL_FORM_CONFIG.formProps,
     },
   },
   {
@@ -32,26 +26,27 @@ const templateOptions: { name: string; description: string; values: FormProps }[
     e.g. Paying for RPC service at the price of 100 USDC.
     `,
     values: {
-      swapMode: SwapMode.ExactOut,
-      initialAmount: '1000000000',
-      fixedAmount: true,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: true,
+      ...INITIAL_FORM_CONFIG,
+      formProps: {
+        ...INITIAL_FORM_CONFIG.formProps,
+        swapMode: SwapMode.ExactOut,
+        initialAmount: '1000000000',
+        fixedAmount: true,
+        fixedOutputMint: true,
+      }
     },
   },
   {
     name: 'Buy a project token',
     description: `To purchase a specific token.`,
     values: {
-      swapMode: SwapMode.ExactIn,
-      initialAmount: '',
-      fixedAmount: false,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: true,
+      ...INITIAL_FORM_CONFIG,
+      formProps: {
+        ...INITIAL_FORM_CONFIG.formProps,
+        swapMode: SwapMode.ExactIn,
+        initialOutputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+        fixedOutputMint: true,
+      }
     },
   },
   {
@@ -60,40 +55,45 @@ const templateOptions: { name: string; description: string; values: FormProps }[
     On Exact Out mode, user specify the amount of token to receive instead.
     `,
     values: {
-      swapMode: SwapMode.ExactOut,
-      initialAmount: '',
-      fixedAmount: false,
-      initialInputMint: '',
-      fixedInputMint: false,
-      initialOutputMint: '',
-      fixedOutputMint: false,
+      ...INITIAL_FORM_CONFIG,
+      formProps: {
+        ...INITIAL_FORM_CONFIG.formProps,
+        swapMode: SwapMode.ExactOut,
+      }
+    },
+  },
+  {
+    name: 'APE',
+    description: `
+    APE. Just APE.
+    `,
+    values: {
+      ...INITIAL_FORM_CONFIG,
+      strictTokenList: false,
+      formProps: {
+        ...INITIAL_FORM_CONFIG.formProps,
+        initialAmount: '8888888800000',
+        fixedAmount: false,
+        initialInputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
+        fixedInputMint: false,
+        initialOutputMint: 'AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR',
+        fixedOutputMint: true,
+      }
     },
   },
 ];
+
 const FormConfigurator = ({
-  fixedInputMint,
-  fixedOutputMint,
-  swapMode,
-  fixedAmount,
-  initialAmount,
   useWalletPassthrough,
   strictTokenList,
   defaultExplorer,
+  formProps,
 
   // Hook form
   reset,
   setValue,
   formState,
-}: {
-  fixedInputMint: boolean;
-  fixedOutputMint: boolean;
-  swapMode: SwapMode;
-  fixedAmount: boolean;
-  initialAmount: string;
-  useWalletPassthrough: boolean;
-  strictTokenList: boolean;
-  defaultExplorer: DEFAULT_EXPLORER;
-
+}: IFormConfigurator & {
   // Hook form
   reset: UseFormReset<IFormConfigurator>;
   setValue: UseFormSetValue<IFormConfigurator>;
@@ -104,22 +104,7 @@ const FormConfigurator = ({
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
 
   const onSelect = (index: number) => {
-    const {
-      swapMode,
-      initialAmount,
-      fixedAmount,
-      initialInputMint,
-      fixedInputMint,
-      initialOutputMint,
-      fixedOutputMint,
-    } = templateOptions[index].values;
-    reset({
-      swapMode,
-      initialAmount,
-      fixedAmount,
-      fixedInputMint,
-      fixedOutputMint,
-    });
+    reset(templateOptions[index].values);
     setActive(index);
     setIsOpen(false);
   };
@@ -144,7 +129,7 @@ const FormConfigurator = ({
 
                 <Tooltip
                   variant="dark"
-                  content={<pre className="text-white text-xs">{templateOptions[active].description}</pre>}
+                  content={<div className="text-white text-xs">{templateOptions[active].description}</div>}
                 >
                   <div className="flex items-center text-white-35 fill-current">
                     <InfoIconSVG width={12} height={12} />
@@ -197,8 +182,8 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={fixedInputMint}
-          onClick={() => setValue('fixedInputMint', !fixedInputMint, { shouldDirty: true })}
+          active={!!formProps.fixedInputMint}
+          onClick={() => setValue('formProps.fixedInputMint', !formProps.fixedInputMint, { shouldDirty: true })}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -211,8 +196,8 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={fixedOutputMint}
-          onClick={() => setValue('fixedOutputMint', !fixedOutputMint, { shouldDirty: true })}
+          active={!!formProps.fixedOutputMint}
+          onClick={() => setValue('formProps.fixedOutputMint', !formProps.fixedOutputMint, { shouldDirty: true })}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -225,9 +210,9 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={swapMode === SwapMode.ExactOut}
+          active={formProps.swapMode === SwapMode.ExactOut}
           onClick={() =>
-            setValue('swapMode', swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, {
+            setValue('formProps.swapMode', formProps.swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, {
               shouldDirty: true,
             })
           }
@@ -243,8 +228,8 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={fixedAmount}
-          onClick={() => setValue('fixedAmount', !fixedAmount, { shouldDirty: true })}
+          active={!!formProps.fixedAmount}
+          onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
@@ -258,13 +243,13 @@ const FormConfigurator = ({
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-        value={initialAmount}
+        value={formProps.initialAmount}
         inputMode="numeric"
         onChange={(e) => {
           const regex = /^[0-9\b]+$/;
           const value = e.target.value;
           if (value === '' || regex.test(value)) {
-            setValue('initialAmount', value);
+            setValue('formProps.initialAmount', value);
           }
         }}
       />
