@@ -11,7 +11,7 @@ With several templates to get you started, and auto generated code snippets.
 ## Core features
 
 - `main-v1.js` bundle ~70Kb gzipped
-  - app bundle (~900Kb) are loaded on-demand when `init()` is called
+  - app bundle (~1.1Mb) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 - Several major built-in wallets, or passthrough wallets from your dApp
 - Flexbile display modes, `Modal`, `Integrated`, or `Widget`.
@@ -19,6 +19,7 @@ With several templates to get you started, and auto generated code snippets.
 - Fee supports
 - Support ExactIn, and ExactOut swap mode
 - Auto wallet detection for Versioned Tx.
+- Price API integration, high precisions and meme tokens
 
 ---
 

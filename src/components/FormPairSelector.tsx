@@ -9,8 +9,9 @@ import { PAIR_SELECTOR_TOP_TOKENS } from 'src/misc/constants';
 
 import { useAccounts } from '../contexts/accounts';
 
-
 import FormPairRow from './FormPairRow';
+import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
+import Decimal from 'decimal.js';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -33,6 +34,7 @@ const FormPairSelector = ({
   tokenInfos: TokenInfo[];
 }) => {
   const { accounts } = useAccounts();
+  const { tokenPriceMap } = useUSDValueProvider();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
@@ -45,8 +47,21 @@ const FormPairSelector = ({
         if (!accounts[a.address]) return 1;
         if (!accounts[b.address]) return -1;
 
+        const [tokenAPrice, tokenBPrice] = [
+          tokenPriceMap[a.address]?.usd,
+          tokenPriceMap[b.address]?.usd,
+        ]
+        
+        // Sort by USD value
+        if (tokenAPrice && tokenBPrice) {
+          const totalAValue = new Decimal(tokenAPrice).mul(accounts[a.address].balance);
+          const totalBValue = new Decimal(tokenBPrice).mul(accounts[b.address].balance);
+          return totalBValue.gt(totalAValue) ? 1 : -1;
+        }
+
+        // If no usd value, sort by balance
         return accounts[b.address].balance - accounts[a.address].balance;
-      });
+      })
 
     if (searchTerm) {
       const filteredList = sortedList.filter((item) => item.symbol.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -57,6 +72,8 @@ const FormPairSelector = ({
   }, [accounts, tokenInfos, searchTerm]);
 
   const listRef = createRef<FixedSizeList>();
+  const inputRef = createRef<HTMLInputElement>();
+  useEffect(() => inputRef.current?.focus(), [inputRef]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
@@ -82,6 +99,7 @@ const FormPairSelector = ({
           placeholder={`Search`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          ref={inputRef}
         />
       </div>
 

@@ -123,3 +123,16 @@ export function useDebouncedEffect(fn: Function, deps: any[], time: number) {
     };
   }, dependencies);
 }
+
+export function splitIntoChunks<T>(array: T[], size: number): T[][] {
+  return Array.apply<number, T[], T[][]>(0, new Array(Math.ceil(array.length / size))).map((_, index) =>
+    array.slice(index * size, (index + 1) * size),
+  );
+}
+
+export const hasNumericValue = (amount: string | number) => {
+  if (amount && !Number.isNaN(Number(amount))) {
+    return true;
+  }
+  return false;
+};

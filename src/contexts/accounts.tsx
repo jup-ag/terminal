@@ -99,7 +99,10 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   };
 
   const refresh = async () => {
-    if (!publicKey) return;
+    if (!publicKey) {
+      setAccounts({});
+      return;
+    }
 
     // Fetch all tokens balance
     const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
