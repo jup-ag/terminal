@@ -33,11 +33,11 @@ const PrecisionTickSize: React.FC<{ value: number; maxSuffix?: number }> = ({ va
   }
 
   return (
-    <>
+    <span className='flex items-center h-4'>
       0.0
-      {generateSubscriptNumbers(firstSD - 1)}
+      <span className='mb-3 text-xl mx-0.5'>{generateSubscriptNumbers(firstSD - 1)}</span>
       {suffix.slice(0, maxSuffix)}
-    </>
+    </span>
   );
 };
 
