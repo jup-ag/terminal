@@ -1,6 +1,6 @@
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
@@ -8,6 +8,7 @@ import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
+import { useRouter } from 'next/router';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -99,12 +100,37 @@ const FormConfigurator = ({
   setValue: UseFormSetValue<IFormConfigurator>;
   formState: FormState<IFormConfigurator>;
 }) => {
+  const currentTemplate = useRef('');
+  const { query, replace } = useRouter();
+
+  useEffect(() => {
+    const templateName = query?.template
+    if (currentTemplate.current === templateName) return
+
+    if (templateOptions.find(item => item.name === templateName)) {
+      const index = templateOptions.findIndex(item => item.name === templateName)
+      onSelect(index)
+    }
+  }, [query])
+
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
 
   const onSelect = (index: number) => {
     reset(templateOptions[index].values);
+
+    const templateName = templateOptions[index].name;
+    currentTemplate.current = templateName;
+
+    replace({
+      query: templateName === 'Default' ? undefined : {
+        template: templateName
+      }
+    },
+      undefined,
+      { shallow: true })
+
     setActive(index);
     setIsOpen(false);
   };
