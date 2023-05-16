@@ -72,6 +72,8 @@ const FormPairSelector = ({
   }, [accounts, tokenInfos, searchTerm]);
 
   const listRef = createRef<FixedSizeList>();
+  const inputRef = createRef<HTMLInputElement>();
+  useEffect(() => inputRef.current?.focus(), [inputRef]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
@@ -97,6 +99,7 @@ const FormPairSelector = ({
           placeholder={`Search`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          ref={inputRef}
         />
       </div>
 
