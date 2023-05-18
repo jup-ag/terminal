@@ -37,6 +37,7 @@
     "lodash.debounce": "^4.0.8",
     "next": "13.1.2",
     "next-themes": "0.2.1",
+    "next-seo": "5.15.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.42.1",
