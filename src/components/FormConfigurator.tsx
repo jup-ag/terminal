@@ -110,6 +110,12 @@ const FormConfigurator = ({
     const templateString = query?.import
     if (templateString) {
       const data = base64ToJson(templateString as string);
+
+      if (!data) {
+        replace({ query: undefined })
+        return;
+      }
+
       reset({
         ...formState.defaultValues,
         ...data,
