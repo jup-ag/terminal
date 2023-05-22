@@ -29,7 +29,7 @@ export interface IFormConfigurator {
   formProps: FormProps;
 }
 
-export const INITIAL_FORM_CONFIG: IFormConfigurator = {
+export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   useWalletPassthrough: false,
   strictTokenList: true,
   defaultExplorer: 'Solana Explorer',
@@ -42,4 +42,4 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = {
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
   }
-}
+})
