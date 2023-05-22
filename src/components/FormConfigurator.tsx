@@ -107,9 +107,9 @@ const FormConfigurator = ({
     const templateName = query?.template
     if (currentTemplate.current === templateName) return
 
-    if (templateOptions.find(item => item.name === templateName)) {
-      const index = templateOptions.findIndex(item => item.name === templateName)
-      onSelect(index)
+    const foundIndex = templateOptions.findIndex(item => item.name === templateName);
+    if (foundIndex >= 0) {
+      onSelect(foundIndex)
     }
   }, [query])
 
