@@ -44,7 +44,11 @@ Assign the attribute `data-preload` to the script tag, the full application will
 Then,
 
 ```tsx
-window.Jupiter.init({ endpoint: 'https://api.mainnet-beta.solana.com' });
+document.addEventListener('readystatechange', e => {
+  if (document.readyState === "complete") {
+    window.Jupiter.init({ endpoint: 'https://api.mainnet-beta.solana.com' });
+  }
+});
 ```
 
 ---
@@ -108,7 +112,7 @@ window.Jupiter.init({
   displayMode: 'widget',
   widgetStyle: {
         position: 'bottom-right', // 'bottom-left', 'top-left', 'top-right'
-        size: 'default', // 'sm' 
+        size: 'default', // 'sm'
       },
 });
 ````
@@ -214,7 +218,7 @@ window.Jupiter.init({
 });
 ```
 
-### Strict Token List 
+### Strict Token List
 - `strictTokenList?: boolean;`
 - Default: `true`
 
@@ -225,7 +229,7 @@ Learn more at: https://docs.jup.ag/api/token-list-api
 ---
 
 ### Default Explorer
-- `defaultExplorer?: 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';` 
+- `defaultExplorer?: 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';`
 - Default: `Solana Explorer`
 
 The default explorer is set to `Solana Explorer`;
