@@ -118,7 +118,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
             <div className="flex justify-center">
               <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4">
-                <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                {/* Desktop configurator */}
+                <div className='hidden md:flex'>
+                  <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                </div>
 
                 <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                   <div className="mt-4 flex justify-center ">
@@ -216,8 +219,13 @@ export default function App({ Component, pageProps }: AppProps) {
                     ) : null}
                   </div>
                 </div>
+
               </div>
             </div>
+              {/* Mobile configurator */}
+              <div className='flex md:hidden'>
+                <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+              </div>
           </div>
         </div>
 
