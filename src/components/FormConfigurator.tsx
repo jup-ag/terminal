@@ -16,7 +16,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     description: 'Full functionality and swap experience of Terminal.',
     values: {
       ...INITIAL_FORM_CONFIG,
-      formProps: INITIAL_FORM_CONFIG.formProps,
+      formProps: { ...INITIAL_FORM_CONFIG.formProps },
     },
   },
   {
