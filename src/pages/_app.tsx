@@ -11,30 +11,16 @@ import Footer from 'src/components/Footer/Footer';
 
 import ModalTerminal from 'src/content/ModalTerminal';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
-import { DEFAULT_EXPLORER, IInit } from 'src/types';
+import { IInit } from 'src/types';
 import WidgetTerminal from 'src/content/WidgetTerminal';
-import { JUPITER_DEFAULT_RPC, WRAPPED_SOL_MINT } from 'src/constants';
+import { IFormConfigurator, INITIAL_FORM_CONFIG, JUPITER_DEFAULT_RPC } from 'src/constants';
 import classNames from 'classnames';
 import FormConfigurator from 'src/components/FormConfigurator';
-import { SwapMode } from '@jup-ag/react-hook';
 import { Wallet } from '@solana/wallet-adapter-react';
 import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { WalletReadyState } from '@solana/wallet-adapter-base';
 import { useForm } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
-
-export interface IFormConfigurator {
-  fixedInputMint: boolean;
-  fixedOutputMint: boolean;
-  swapMode: SwapMode;
-  fixedAmount: boolean;
-  initialAmount: string;
-  useWalletPassthrough: boolean;
-  initialInputMint: string;
-  initialOutputMint: string;
-  strictTokenList: boolean;
-  defaultExplorer: DEFAULT_EXPLORER;
-}
 
 const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
 // In NextJS preview env settings
@@ -65,18 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const rpcUrl = JUPITER_DEFAULT_RPC;
 
   const { watch, reset, setValue, formState } = useForm<IFormConfigurator>({
-    defaultValues: {
-      fixedInputMint: false,
-      fixedOutputMint: false,
-      swapMode: SwapMode.ExactIn,
-      fixedAmount: false,
-      initialAmount: '',
-      useWalletPassthrough: false,
-      initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      initialOutputMint: WRAPPED_SOL_MINT.toString(),
-      strictTokenList: true,
-      defaultExplorer: 'Solana Explorer'
-    },
+    defaultValues: INITIAL_FORM_CONFIG,
   });
 
   const watchAllFields = watch();
@@ -143,7 +118,10 @@ export default function App({ Component, pageProps }: AppProps) {
 
             <div className="flex justify-center">
               <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4">
-                <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                {/* Desktop configurator */}
+                <div className='hidden md:flex'>
+                  <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                </div>
 
                 <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                   <div className="mt-4 flex justify-center ">
@@ -215,7 +193,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     {tab === 'modal' ? (
                       <ModalTerminal
                         rpcUrl={rpcUrl}
-                        formProps={watchAllFields}
+                        formProps={watchAllFields.formProps}
                         fakeWallet={wallet}
                         strictTokenList={watchAllFields.strictTokenList}
                         defaultExplorer={watchAllFields.defaultExplorer}
@@ -224,7 +202,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     {tab === 'integrated' ? (
                       <IntegratedTerminal
                         rpcUrl={rpcUrl}
-                        formProps={watchAllFields}
+                        formProps={watchAllFields.formProps}
                         fakeWallet={wallet}
                         strictTokenList={watchAllFields.strictTokenList}
                         defaultExplorer={watchAllFields.defaultExplorer}
@@ -233,7 +211,7 @@ export default function App({ Component, pageProps }: AppProps) {
                     {tab === 'widget' ? (
                       <WidgetTerminal
                         rpcUrl={rpcUrl}
-                        formProps={watchAllFields}
+                        formProps={watchAllFields.formProps}
                         fakeWallet={wallet}
                         strictTokenList={watchAllFields.strictTokenList}
                         defaultExplorer={watchAllFields.defaultExplorer}
@@ -241,8 +219,13 @@ export default function App({ Component, pageProps }: AppProps) {
                     ) : null}
                   </div>
                 </div>
+
               </div>
             </div>
+              {/* Mobile configurator */}
+              <div className='flex md:hidden'>
+                <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+              </div>
           </div>
         </div>
 
