@@ -5,8 +5,6 @@ import classNames from 'classnames';
 
 import { FormProps, IInit } from 'src/types';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
-import { SwapMode } from '@jup-ag/react-hook';
-import { WRAPPED_SOL_MINT } from 'src/constants';
 import { jsonToBase64 } from 'src/misc/utils';
 
 function addInlinesToCode(code: string, insertLines: string) {

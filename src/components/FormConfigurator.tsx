@@ -1,16 +1,15 @@
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
-import { DEFAULT_EXPLORER, FormProps, IInit } from 'src/types';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
+import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { useRouter } from 'next/router';
 import { base64ToJson } from 'src/misc/utils';
-import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -18,7 +17,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     description: 'Full functionality and swap experience of Terminal.',
     values: {
       ...INITIAL_FORM_CONFIG,
-      formProps: INITIAL_FORM_CONFIG.formProps,
+      formProps: { ...INITIAL_FORM_CONFIG.formProps },
     },
   },
   {
