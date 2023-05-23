@@ -1,6 +1,6 @@
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
@@ -9,6 +9,7 @@ import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { useRouter } from 'next/router';
+import { base64ToJson } from 'src/misc/utils';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -103,7 +104,26 @@ const FormConfigurator = ({
   const currentTemplate = useRef('');
   const { query, replace } = useRouter();
 
+  const [isImported, setIsImported] = useState(false);
+
   useEffect(() => {
+    const templateString = query?.import
+    if (templateString) {
+      const data = base64ToJson(templateString as string);
+
+      if (!data) {
+        replace({ query: undefined })
+        return;
+      }
+
+      reset({
+        ...formState.defaultValues,
+        ...data,
+      })
+      setIsImported(true);
+      return;
+    }
+
     const templateName = query?.template
     if (currentTemplate.current === templateName) return
 
@@ -151,7 +171,7 @@ const FormConfigurator = ({
               aria-haspopup="true"
             >
               <div className="flex items-center justify-center space-x-2.5">
-                <p>{templateOptions[active].name}</p>
+                <p>{isImported ? `Imported` : templateOptions[active].name}</p>
 
                 <Tooltip
                   variant="dark"

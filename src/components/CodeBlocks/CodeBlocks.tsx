@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { FormProps, IInit } from 'src/types';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
+import { jsonToBase64 } from 'src/misc/utils';
 
 function addInlinesToCode(code: string, insertLines: string) {
   let lines = code.split('\n');
@@ -72,20 +73,50 @@ const { wallet } = useWallet();
     setIsCopied(true);
   };
 
+
+  const [isCopiedShareLink, setIsCopiedShareLink] = useState(false);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsCopiedShareLink(false);
+    }, 2000);
+  }, [isCopiedShareLink]);
+  const copyShareLink = () => {
+    if (typeof window === 'undefined') return;
+
+    const stringifiedQuery = JSON.stringify(jsonToBase64(valuesToFormat));
+    navigator.clipboard.writeText(
+      `${window.location.origin}?import=${stringifiedQuery.replaceAll('"', '')}`
+    );
+    setIsCopiedShareLink(true);
+  }
+
   return (
     <div className="flex flex-col items-center justify-center mt-12">
       <div className="relative w-full max-w-3xl overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
-        <button
-          className={classNames(
-            'absolute top-0 right-4 md:top-10 md:right-2 text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
-            isCopied ? 'opacity-100 cursor-wait' : '',
-          )}
-          onClick={copyToClipboard}
-        >
-          {isCopied ? 'Copied!' : 'Copy to clipboard'}
-        </button>
+        <div className='absolute flex space-x-2 top-0 right-4 md:top-10 md:right-2 '>
+          <button
+            className={classNames(
+              'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
+              isCopied ? 'opacity-100 cursor-wait' : '',
+            )}
+            onClick={copyToClipboard}
+          >
+            {isCopied ? 'Copied!' : 'Copy to clipboard'}
+          </button>
+
+          <button
+            className={classNames(
+              'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
+              isCopiedShareLink ? 'opacity-100 cursor-wait' : '',
+            )}
+            onClick={copyShareLink}
+          >
+            {isCopiedShareLink ? 'Copied share link!' : 'Share'}
+          </button>
+        </div>
+
 
         <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
           {snippet}
