@@ -21,6 +21,35 @@ const Content = () => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
+  const { wallet, connected } = useWalletPassThrough();
+  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+
+  const [mercuryoRedirectURL, setMercuryoRedirectURL] = useState('')
+
+  useEffect(() => {
+    if (!walletPublicKey) {
+      setMercuryoRedirectURL('');
+      return;
+    }
+
+    (async () => {
+      const queryParams = new URLSearchParams({
+        widget_id: '9df1f243-4895-4dff-9b07-79fb9723c77b',
+        type: 'buy',
+        currency: 'SOL',
+        network: 'SOLANA',
+        fix_currency: 'true',
+        address: walletPublicKey.toString(),
+      });
+  
+      const originalUrl = `https://exchange.mercuryo.io?${queryParams.toString()}`;
+      const getSignatureResponse = await fetch('/api/generateMercuryo', { method: 'POST', body: walletPublicKey.toString() });
+      const signature = await getSignatureResponse.json();
+  
+      setMercuryoRedirectURL(`${originalUrl}&signature=${signature.result}`)
+    })()
+  }, [])
+
   return (
     <>
       {screen === 'Initial' ? (
@@ -32,6 +61,15 @@ const Content = () => {
 
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
+
+      {connected && mercuryoRedirectURL ? (
+        <a
+          href={mercuryoRedirectURL}
+          className="text-white text-xs rounded-lg border border-white/10 absolute bottom-4 left-4 flex px-2 py-1 font-semibold cursor-pointer"
+        >
+          {'Buy'}
+        </a>
+      ) : null}
     </>
   );
 };
@@ -39,11 +77,7 @@ const Content = () => {
 const queryClient = new QueryClient();
 
 const JupiterApp = (props: IInit) => {
-  const {
-    displayMode,
-    platformFeeAndAccounts,
-    formProps,
-  } = props;
+  const { displayMode, platformFeeAndAccounts, formProps } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -52,10 +86,10 @@ const JupiterApp = (props: IInit) => {
   // Auto detech if wallet supports it, and enable it if it does
   useEffect(() => {
     if (wallet?.adapter?.supportedTransactionVersions?.has(0)) {
-      setAsLegacyTransaction(false)
+      setAsLegacyTransaction(false);
       return;
     }
-    setAsLegacyTransaction(true)
+    setAsLegacyTransaction(true);
   }, [wallet?.adapter]);
 
   return (
