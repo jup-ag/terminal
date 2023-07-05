@@ -48,7 +48,7 @@ const Content = () => {
   
       setMercuryoRedirectURL(`${originalUrl}&signature=${signature.result}`)
     })()
-  }, [])
+  }, [walletPublicKey])
 
   return (
     <>
