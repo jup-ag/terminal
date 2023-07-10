@@ -121,7 +121,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       </form>
 
       {selectPairSelector !== null ? (
-        <div className="absolute top-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
+        <div className="absolute top-0 left-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
           <FormPairSelector
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
@@ -131,7 +131,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       ) : null}
 
       {showRouteSelector ? (
-        <div className="absolute top-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
+        <div className="absolute top-0 left-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
           <RouteSelectionScreen onClose={() => setShowRouteSelector(false)} />
         </div>
       ) : null}
