@@ -278,7 +278,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         }}
                         maxLength={12}
                         placeholder={'0.0000'}
-                        className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1ring-white/5 text-white/50 pointer-events-all relative`}
+                        className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
                         decimalSeparator={detectedSeparator}
                       />
                     );

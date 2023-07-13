@@ -4,6 +4,8 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import JupiterLogo from './icons/JupiterLogo';
+import ChevronDownIcon from './icons/ChevronDownIcon';
+import classNames from 'classnames';
 
 const containerId = 'jupiter-terminal';
 const packageJson = require('../package.json');
@@ -196,7 +198,16 @@ const RenderWidgetShell = (props: IInit) => {
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
+        {isOpen
+          ? (
+            <div className={classNames('text-white fill-current pt-1',
+              {
+                'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
+              })}>
+              <ChevronDownIcon width={classes.widgetLogoSize * 0.4} height={classes.widgetLogoSize * 0.4} />
+            </div>
+          )
+          : <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />}
       </div>
 
       <div
