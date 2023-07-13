@@ -61,7 +61,7 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
               {/* Top left  */}
               <div
                 className={classNames('absolute left-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
-                  'jup-gradient': position === 'top-left',
+                  'ring-1 ring-white/50': position === 'top-left',
                 })}
                 onClick={() => setPosition('top-left')}
               >
@@ -73,7 +73,7 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
               {/* Top right  */}
               <div
                 className={classNames('absolute right-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
-                  'jup-gradient': position === 'top-right',
+                  'ring-1 ring-white/50': position === 'top-right',
                 })}
                 onClick={() => setPosition('top-right')}
               >
@@ -85,7 +85,7 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
               {/* Bottom left  */}
               <div
                 className={classNames('absolute left-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
-                  'jup-gradient': position === 'bottom-left',
+                  'ring-1 ring-white/50': position === 'bottom-left',
                 })}
                 onClick={() => setPosition('bottom-left')}
               >
@@ -97,7 +97,7 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
               {/* Bottom right  */}
               <div
                 className={classNames('absolute right-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
-                  'jup-gradient': position === 'bottom-right',
+                  'ring-1 ring-white/50': position === 'bottom-right',
                 })}
                 onClick={() => setPosition('bottom-right')}
               >
