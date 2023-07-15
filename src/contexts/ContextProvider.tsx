@@ -12,6 +12,7 @@ import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
 import { BackpackWalletAdapter } from '@solana/wallet-adapter-backpack';
 import { GlowWalletAdapter } from '@solana/wallet-adapter-glow';
+import { WalletConnectWalletAdapter } from '@solana/wallet-adapter-wallets';
 import { PreferredExplorerProvider } from './preferredExplorer';
 import { IInit } from 'src/types';
 
@@ -36,6 +37,19 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
       new SolflareWalletAdapter(),
       new BackpackWalletAdapter(),
       new GlowWalletAdapter(),
+      new WalletConnectWalletAdapter({
+        network: WalletAdapterNetwork.Mainnet,
+        options: {
+          relayUrl: 'wss://relay.walletconnect.com',
+          projectId: '4a4e231c4004ef7b77076a87094fba61',
+          metadata: {
+            name: 'Jupiter Aggregator',
+            description: 'Jupiter: The best swap aggregator on Solana.  Built for smart traders who like money.',
+            url: 'https://jup.ag',
+            icons: ['https://jup.ag/svg/jupiter-logo.svg'],
+          },
+        },
+      }),
     ];
   }, [network]);
 
