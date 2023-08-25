@@ -9,8 +9,6 @@ import { WalletModal } from 'src/components/WalletComponents/components/WalletMo
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import RouteSelectionScreen from './RouteSelectionScreen';
-import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -25,9 +23,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     form,
     setForm,
     setErrors,
-    selectedSwapRoute,
     formProps: { initialOutputMint, fixedOutputMint },
-    jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
 
@@ -38,8 +34,10 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   }, [walletPublicKey, accounts, form.fromMint]);
 
   const [isDisabled, setIsDisabled] = useState(false);
+  const loading = false;
+
   useEffect(() => {
-    if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !selectedSwapRoute || loading) {
+    if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || loading) {
       setErrors({});
       setIsDisabled(true);
       return;
@@ -58,17 +56,9 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   }, [form, balance]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
-  const [showRouteSelector, setShowRouteSelector] = useState<boolean>(false);
-  const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);
 
   const onSelectMint = useCallback(
     (tokenInfo: TokenInfo, approved: boolean = false) => {
-      const isUnknown = tokenInfo.tags?.length === 0;
-      if (isUnknown && approved === false) {
-        setShowUnknownToken(tokenInfo);
-        return;
-      }
-
       if (selectPairSelector === 'fromMint') {
         setForm((prev) => ({
           ...prev,
@@ -116,7 +106,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
           isDisabled={isDisabled}
           setSelectPairSelector={setSelectPairSelector}
           setIsWalletModalOpen={setIsWalletModalOpen}
-          setShowRouteSelector={setShowRouteSelector}
         />
       </form>
 
@@ -130,28 +119,9 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
         </div>
       ) : null}
 
-      {showRouteSelector ? (
-        <div className="absolute top-0 left-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
-          <RouteSelectionScreen onClose={() => setShowRouteSelector(false)} />
-        </div>
-      ) : null}
-
       {isWalletModalOpen ? (
         <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
           <WalletModal setIsWalletModalOpen={setIsWalletModalOpen} />
-        </div>
-      ) : null}
-
-      {showUnknownToken ? (
-        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
-          <UnknownTokenModal
-            tokensInfo={[showUnknownToken]}
-            onClickAccept={() => {
-              onSelectMint(showUnknownToken, true)
-              setShowUnknownToken(null)
-            }}
-            onClickReject={() => setShowUnknownToken(null)}
-          />
         </div>
       ) : null}
     </>

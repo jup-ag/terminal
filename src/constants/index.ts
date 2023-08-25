@@ -4,7 +4,9 @@ import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 
 export const JUPITER_DEFAULT_RPC = process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC || 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
 
+export const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112');
+export const BONK_MINT = new PublicKey('DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263');
 export const SOL_MINT_TOKEN_INFO = {
   chainId: 101,
   address: 'So11111111111111111111111111111111111111112',
