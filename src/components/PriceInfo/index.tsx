@@ -1,5 +1,5 @@
 import { ZERO } from '@jup-ag/math';
-import { RouteInfo, SwapMode, TransactionFeeInfo } from '@jup-ag/react-hook';
+import { QuoteResponse, SwapMode, TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
@@ -12,18 +12,17 @@ import ExchangeRate from '../ExchangeRate';
 import Deposits from './Deposits';
 import Fees from './Fees';
 import TransactionFee from './TransactionFee';
+import { useAccounts } from 'src/contexts/accounts';
 
 const Index = ({
-  routes,
-  selectedSwapRoute,
+  quoteResponse,
   fromTokenInfo,
   toTokenInfo,
   loading,
   showFullDetails = false,
   containerClassName,
 }: {
-  routes: RouteInfo[];
-  selectedSwapRoute: RouteInfo;
+  quoteResponse: QuoteResponse;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
   loading: boolean;
@@ -31,44 +30,57 @@ const Index = ({
   containerClassName?: string;
 }) => {
   const rateParams = {
-    inAmount: selectedSwapRoute?.inAmount || routes?.[0]?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
+    inAmount: quoteResponse?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
     inputDecimal: fromTokenInfo.decimals,
-    outAmount: selectedSwapRoute?.outAmount || routes?.[0]?.outAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
+    outAmount: quoteResponse?.outAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
     outputDecimal: toTokenInfo.decimals,
   };
+
+  const { accounts } = useAccounts();
 
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const priceImpact = formatNumber.format(
-    new Decimal(selectedSwapRoute?.priceImpactPct || 0).mul(100).toDP(4).toNumber(),
-  );
+  const priceImpact = formatNumber.format(new Decimal(quoteResponse?.priceImpactPct || 0).mul(100).toDP(4).toNumber());
   const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format(0.1)}%` : `~ ${priceImpact}%`;
 
   const otherAmountThresholdText = useMemo(() => {
-    if (selectedSwapRoute?.otherAmountThreshold) {
-      const amount = new Decimal(selectedSwapRoute.otherAmountThreshold.toString()).div(
-        Math.pow(10, toTokenInfo.decimals),
-      );
+    if (quoteResponse?.otherAmountThreshold) {
+      const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
 
       const amountText = formatNumber.format(amount.toNumber());
       return `${amountText} ${toTokenInfo.symbol}`;
     }
     return '-';
-  }, [selectedSwapRoute]);
+  }, [quoteResponse]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
+
+  const mintToAccountMap = useMemo(() => {
+    return new Map(Object.entries(accounts).map((acc) => [acc[0], acc[1].pubkey.toString()]));
+  }, [accounts]);
+
   useEffect(() => {
-    setFeeInformation(undefined);
-    if (selectedSwapRoute.fees) {
-      setFeeInformation(selectedSwapRoute.fees);
+    if (quoteResponse) {
+      const fee = calculateFeeForSwap(
+        quoteResponse,
+        mintToAccountMap,
+        new Map(), // we can ignore this as we are using shared accounts
+        true,
+        true,
+      );
+      setFeeInformation(fee);
+    } else {
+      setFeeInformation(undefined);
     }
-  }, [selectedSwapRoute, walletPublicKey]);
+  }, [quoteResponse, walletPublicKey, mintToAccountMap]);
 
   const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
-  const { jupiter: { priorityFeeInSOL} } = useSwapContext();
+  const {
+    jupiter: { priorityFeeInSOL },
+  } = useSwapContext();
 
   return (
     <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
@@ -96,26 +108,20 @@ const Index = ({
 
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/30">
-          {selectedSwapRoute?.swapMode === SwapMode.ExactIn ? (
-            <span>Minimum Received</span>
-          ) : (
-            <span>Maximum Consumed</span>
-          )}
+          {quoteResponse?.swapMode === SwapMode.ExactIn ? <span>Minimum Received</span> : <span>Maximum Consumed</span>}
         </div>
         <div className="text-white/30">{otherAmountThresholdText}</div>
       </div>
 
       {showFullDetails ? (
         <>
-          <Fees marketInfos={selectedSwapRoute?.marketInfos} />
+          <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
 
           {priorityFeeInSOL > 0 ? (
             <div className="flex items-center justify-between text-xs">
-              <div className="text-white/30">
-                Priority Fee
-              </div>
+              <div className="text-white/30">Priority Fee</div>
               <div className="text-white/30">{new Decimal(priorityFeeInSOL).toString()}</div>
             </div>
           ) : null}

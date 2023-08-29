@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import RefreshSVG from 'src/icons/RefreshSVG';
 import SettingsSVG from 'src/icons/SettingsSVG';
 import { formatNumber } from 'src/misc/utils';

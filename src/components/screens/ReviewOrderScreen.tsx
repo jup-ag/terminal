@@ -12,8 +12,8 @@ const ConfirmationScreen = () => {
     fromTokenInfo,
     toTokenInfo,
     onSubmit: onSubmitJupiter,
-    selectedSwapRoute,
-    jupiter: { routes, loading, refresh },
+    quoteReponseMeta,
+    jupiter: { loading, refresh },
   } = useSwapContext();
 
   const [hasExpired] = useTimeDiff();
@@ -42,10 +42,9 @@ const ConfirmationScreen = () => {
       </div>
 
       <div>
-        {routes && selectedSwapRoute && fromTokenInfo && toTokenInfo ? (
+        {quoteReponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            routes={routes}
-            selectedSwapRoute={selectedSwapRoute}
+            quoteResponse={quoteReponseMeta.quoteResponse}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}
