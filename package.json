@@ -17,7 +17,7 @@
     "@jup-ag/react-hook": "6.0.0-beta.2",
     "@project-serum/anchor": "^0.26.0",
     "@rive-app/react-canvas": "^4.1.6",
-    "@solana/spl-token": "0.3.8",
+    "@solana/spl-token": "0.1.8",
     "@solana/spl-token-registry": "~0.2.4574",
     "@solana/wallet-adapter-backpack": "0.1.14",
     "@solana/wallet-adapter-base": "0.9.23",

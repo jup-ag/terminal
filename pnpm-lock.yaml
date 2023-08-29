@@ -22,8 +22,8 @@ dependencies:
     specifier: ^4.1.6
     version: 4.1.6(react@18.2.0)
   '@solana/spl-token':
-    specifier: 0.3.8
-    version: 0.3.8(@solana/web3.js@1.78.4)
+    specifier: 0.1.8
+    version: 0.1.8
   '@solana/spl-token-registry':
     specifier: ~0.2.4574
     version: 0.2.4574

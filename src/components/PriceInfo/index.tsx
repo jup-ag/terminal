@@ -115,7 +115,7 @@ const Index = ({
 
       {showFullDetails ? (
         <>
-          <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode} />
+          <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
 
