@@ -37,7 +37,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const loading = false;
 
   useEffect(() => {
-    if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || loading) {
+    if (!form.fromValue || !form.fromMint || !form.toMint || loading) {
       setErrors({});
       setIsDisabled(true);
       return;

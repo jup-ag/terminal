@@ -21,39 +21,10 @@ import JupButton from './JupButton';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import useJupiterSwapPriceFetcher from 'src/hooks/useJupiterSwapPriceFetcher';
 import Decimal from 'decimal.js';
-import { useSwapContext } from 'src/contexts/SwapContext';
+import { LOCKING_PLAN, useSwapContext } from 'src/contexts/SwapContext';
+import { setupDCA } from 'src/dca';
 
-type ILockingPlan = {
-  name: '30 days' | '60 days' | '90 days';
-  valueInDay: number;
-  minAmountInUSD: number;
-  maxAmountInUSD: number;
-  incetivesPct: number;
-};
 
-const LOCKING_PLAN: ILockingPlan[] = [
-  {
-    name: `30 days`,
-    valueInDay: 30,
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 5,
-  },
-  {
-    name: `60 days`,
-    valueInDay: 60,
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 20,
-  },
-  {
-    name: `90 days`,
-    valueInDay: 90,
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 30,
-  },
-];
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -64,7 +35,14 @@ const Form: React.FC<{
   const { connect, wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
 
-  const { form, setForm, errors, fromTokenInfo, toTokenInfo } = useSwapContext();
+  const {
+    form,
+    setForm,
+    errors,
+    fromTokenInfo,
+    toTokenInfo,
+    dca: { program, dcaClient, provider },
+  } = useSwapContext();
 
   const loading = false;
 
@@ -215,7 +193,9 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current cursor-pointer')}
+                        className={classNames(
+                          'flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current cursor-pointer',
+                        )}
                         onClick={onClickMax}
                       >
                         <WalletIcon width={10} height={10} />
@@ -260,7 +240,9 @@ const Form: React.FC<{
               <div className="flex w-full justify-between">
                 <span>Market Rate:</span>
                 <span>
-                  1 {fromTokenInfo.symbol} ≈ {formatNumber.format(swapMarketPrice?.toDP(toTokenInfo.decimals).toNumber() || 0)} {toTokenInfo.symbol}
+                  1 {fromTokenInfo.symbol} ≈{' '}
+                  {formatNumber.format(swapMarketPrice?.toDP(toTokenInfo.decimals).toNumber() || 0)}{' '}
+                  {toTokenInfo.symbol}
                 </span>
               </div>
             ) : (

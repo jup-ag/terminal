@@ -7,9 +7,9 @@ import JupButton from '../JupButton';
 import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
-import PriceInfo from '../PriceInfo/index';
 import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
+import TokenIcon from '../TokenIcon';
 
 const ErrorIcon = () => {
   return (
@@ -41,10 +41,8 @@ const SwappingScreen = () => {
     reset,
     scriptDomain,
     swapping: { totalTxs, txStatus },
-    selectedSwapRoute,
     fromTokenInfo,
     toTokenInfo,
-    jupiter: { routes, refresh },
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
@@ -54,14 +52,12 @@ const SwappingScreen = () => {
     reset();
     setErrorMessage('');
     setScreen('Initial');
-    refresh();
   };
 
   const onGoBack = () => {
     reset({ resetValues: false });
     setErrorMessage('');
     setScreen('Initial');
-    refresh();
   };
 
   useEffect(() => {
@@ -111,7 +107,17 @@ const SwappingScreen = () => {
     return (
       <>
         <div className="flex w-full justify-center">
-          <div className="text-white">{swapState === 'loading' ? 'Performing Swap' : ''}</div>
+          <div className="text-white">
+            {swapState === 'loading' ? (
+              <div className="flex justify-center space-x-1">
+                <span>Locking for </span>
+                <TokenIcon tokenInfo={toTokenInfo} />
+                <span>{toTokenInfo?.symbol}</span>
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
 
         <div className="flex w-full justify-center items-center mt-9">
@@ -153,11 +159,11 @@ const SwappingScreen = () => {
   };
 
   const SuccessContent = () => {
-    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo || !routes || !selectedSwapRoute) {
+    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo) {
       return null;
     }
 
-    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null
+    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null;
 
     return (
       <>
@@ -182,16 +188,6 @@ const SwappingScreen = () => {
                 {fromLamports((lastSwapResult as any).outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
               </p>
             </div>
-
-            <PriceInfo
-              routes={routes}
-              selectedSwapRoute={selectedSwapRoute}
-              fromTokenInfo={fromTokenInfo}
-              toTokenInfo={toTokenInfo}
-              loading={false}
-              showFullDetails
-              containerClassName="bg-[#25252D] border-none mt-0"
-            />
           </div>
         </div>
 

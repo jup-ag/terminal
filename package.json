@@ -45,7 +45,9 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-use": "^17.4.0",
     "react-virtualized-auto-sizer": "1.0.7",
-    "react-window": "1.8.8"
+    "react-window": "1.8.8",
+    "@coral-xyz/anchor": "^0.28.0",
+    "@jup-ag/dca-sdk": "^2.3.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.5.0",

@@ -1,35 +1,38 @@
-import {
-  IConfirmationTxDescription,
-  OnTransaction,
-  SwapMode,
-  SwapResult,
-} from '@jup-ag/react-hook';
+import { AnchorProvider, Program } from '@coral-xyz/anchor';
+import { DCA, Network } from '@jup-ag/dca-sdk';
+import { IConfirmationTxDescription, OnTransaction, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import Decimal from 'decimal.js';
-import JSBI from 'jsbi';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useMemo,
   useState,
 } from 'react';
 import { BONK_MINT, WRAPPED_SOL_MINT } from 'src/constants';
-import { toLamports } from 'src/misc/utils';
+import { DcaIntegration, IDL } from 'src/dca/idl';
 import { FormProps, IInit } from 'src/types';
-import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
+import { useAccounts } from './accounts';
+import Decimal from 'decimal.js';
+import { setupDCA } from 'src/dca';
+import { BN } from 'bn.js';
+import { TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
+import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
 
 export interface IForm {
   fromMint: string;
   toMint: string;
   fromValue: string;
   toValue: string;
+  selectedPlan: ILockingPlan['name'];
 }
 
 export interface ISwapContext {
@@ -49,7 +52,7 @@ export interface ISwapContext {
   >;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
-  onSubmit: () => Promise<SwapResult | null>;
+  onSubmit: () => Promise<any>;
   lastSwapResult: SwapResult | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
@@ -62,6 +65,11 @@ export interface ISwapContext {
       status: 'loading' | 'fail' | 'success';
     }>;
   };
+  dca: {
+    program: Program<DcaIntegration> | null;
+    dcaClient: DCA | null;
+    provider: AnchorProvider | null;
+  };
   reset: (props?: { resetValues: boolean }) => void;
 }
 
@@ -71,10 +79,11 @@ export const initialSwapContext: ISwapContext = {
     toMint: WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
+    selectedPlan: '30 days',
   },
-  setForm() { },
+  setForm() {},
   errors: {},
-  setErrors() { },
+  setErrors() {},
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
   onSubmit: async () => null,
@@ -94,8 +103,50 @@ export const initialSwapContext: ISwapContext = {
     totalTxs: 0,
     txStatus: [],
   },
-  reset() { },
+  dca: {
+    program: null,
+    dcaClient: null,
+    provider: null,
+  },
+  reset() {},
 };
+
+export type ILockingPlan = {
+  name: '30 days' | '60 days' | '90 days';
+  numberOfTrade: number;
+  minAmountInUSD: number;
+  maxAmountInUSD: number;
+  incetivesPct: number;
+};
+
+export const LOCKING_PLAN: ILockingPlan[] = [
+  {
+    name: `30 days`,
+    numberOfTrade: 5, // TODO: Change this to 30
+    minAmountInUSD: 10,
+    maxAmountInUSD: 1000,
+    incetivesPct: 5,
+  },
+  {
+    name: `60 days`,
+    numberOfTrade: 60,
+    minAmountInUSD: 10,
+    maxAmountInUSD: 1000,
+    incetivesPct: 20,
+  },
+  {
+    name: `90 days`,
+    numberOfTrade: 90,
+    minAmountInUSD: 10,
+    maxAmountInUSD: 1000,
+    incetivesPct: 30,
+  },
+];
+
+export const SECONDS_IN_MINUTE = 60; // 1 minute
+export const SECONDS_IN_DAY = 86400; // 1 day
+// TODO: Change this to day
+export const DEFAULT_FREQUENCY = SECONDS_IN_MINUTE;
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
 
@@ -116,25 +167,24 @@ export const SwapContextProvider: FC<{
   formProps?: FormProps;
   children: ReactNode;
 }> = (props) => {
-  const {
-    displayMode,
-    scriptDomain,
-    formProps: originalFormProps,
-    children,
-  } = props;
+  const { displayMode, scriptDomain, formProps: originalFormProps, children } = props;
 
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
-  const formProps: FormProps = useMemo(() => ({ ...initialSwapContext.formProps, ...originalFormProps }), [originalFormProps])
+  const formProps: FormProps = useMemo(
+    () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
+    [originalFormProps],
+  );
 
   const [form, setForm] = useState<IForm>({
     fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: BONK_MINT.toString(),
+    toMint: WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
+    selectedPlan: '30 days',
   });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
 
@@ -148,12 +198,6 @@ export const SwapContextProvider: FC<{
     return tokenInfo;
   }, [form.toMint, tokenMap]);
 
-  const nativeAmount = useMemo(() => {
-    if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
-      return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
-  }, [form.fromValue, form.fromMint, fromTokenInfo, form.toValue, form.toMint, toTokenInfo]);
-
-  const amount = JSBI.BigInt(nativeAmount)
   const [totalTxs, setTotalTxs] = useState(0);
   const [txStatus, setTxStatus] = useState<
     Array<{
@@ -183,19 +227,6 @@ export const SwapContextProvider: FC<{
   };
 
   const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
-  const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter) {
-      return null;
-    }
-
-    try {
-      // TODO: 
-      return null;
-    } catch (error) {
-      console.log('Swap error', error);
-      return null;
-    }
-  }, [walletPublicKey]);
 
   const refreshAll = () => {
     refreshAccount();
@@ -212,19 +243,55 @@ export const SwapContextProvider: FC<{
       setTxStatus(initialSwapContext.swapping.txStatus);
       setTotalTxs(initialSwapContext.swapping.totalTxs);
       refreshAccount();
-    }, 0)
+    }, 0);
   }, []);
 
-  const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
-  const computeUnitPriceMicroLamports = useMemo(() => {
-    if (priorityFeeInSOL === undefined) return 0;
-    return new Decimal(priorityFeeInSOL)
-      .mul(10 ** 9) // sol into lamports
-      .mul(10 ** 6) // lamports into microlamports
-      .div(1_400_000) // divide by CU
-      .round()
-      .toNumber();
-  }, [priorityFeeInSOL]);
+  const { signTransaction } = useWallet();
+  const { connection } = useConnection();
+  const programId = new PublicKey('5mrhiqFFXyfJMzAJc5vsEQ4cABRhfsP7MgSVgGQjfcrR');
+  const provider = new AnchorProvider(connection, {} as any, AnchorProvider.defaultOptions());
+  const program = new Program(IDL, programId, provider);
+  const dcaClient = new DCA(connection, Network.MAINNET);
+
+  const onSubmit = useCallback(async () => {
+    const plan = LOCKING_PLAN.find((plan) => plan.name === form.selectedPlan);
+    if (!program || !dcaClient || !plan || !fromTokenInfo || !walletPublicKey || !signTransaction) return;
+
+    try {
+      const frequency = plan.numberOfTrade;
+      const inAmount = new Decimal(form.fromValue).mul(10 ** fromTokenInfo.decimals);
+      const userInTokenAccount = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        new PublicKey(form.fromMint),
+        walletPublicKey,
+      );
+
+      let tx = await setupDCA({
+        program,
+        dcaClient,
+        connection,
+        userPublicKey: walletPublicKey,
+        userInTokenAccount,
+        inputMint: new PublicKey(form.fromMint),
+        outputMint: new PublicKey(form.toMint),
+        inAmount: new BN(inAmount.toString()),
+        inAmountPerCycle: new BN(inAmount.div(new Decimal(frequency)).floor().toString()),
+        cycleSecondsApart: new BN(DEFAULT_FREQUENCY),
+      });
+
+      tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
+      tx.feePayer = walletPublicKey;
+      tx = await signTransaction(tx);
+      const rawTransaction = tx.serialize();
+      const txid = await connection.sendRawTransaction(rawTransaction, {
+        skipPreflight: true,
+      });
+      console.log(txid);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [form, walletPublicKey]);
 
   return (
     <SwapContext.Provider
@@ -245,6 +312,11 @@ export const SwapContextProvider: FC<{
         swapping: {
           totalTxs,
           txStatus,
+        },
+        dca: {
+          program,
+          dcaClient,
+          provider,
         },
       }}
     >
