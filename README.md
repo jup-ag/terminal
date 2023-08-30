@@ -1,7 +1,17 @@
 # Locked DCA
+
 A demo app experience for Locked DCA.
 
+## Demo 
+<img src="public/demo/demo-1.png" width="300" />
+<img src="public/demo/demo-2.png" width="300" />
+<img src="public/demo/demo-3.png" width="300" />
+<img src="public/demo/demo-4.png" width="300" />
+<img src="public/demo/demo-5.png" width="300" />
+<img src="public/demo/demo-6.png" width="300" />
+
 ## Getting Started
+
 - Clone the repo
 - pnpm i
 - pnpm dev
@@ -10,6 +20,7 @@ A demo app experience for Locked DCA.
 
 - Plans are hardcoded on the Frontend, and enforce-able on the contract.
 - src/contexts/SwapContext.tsx
+
 ```tsx
 export const SECONDS_IN_MINUTE = 60; // 1 minute
 export const SECONDS_IN_DAY = 86400; // 1 day
@@ -34,6 +45,5 @@ export const LOCKING_PLAN: ILockingPlan[] = [
   },
 ];
 ```
-
 
 Many UI elements forked from `https://terminal.jup.ag`
