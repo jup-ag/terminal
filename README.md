@@ -2,13 +2,14 @@
 
 A demo app experience for Locked DCA.
 
-## Demo 
-<img src="public/demo/demo-1.png" width="240" />
-<img src="public/demo/demo-2.png" width="240" />
-<img src="public/demo/demo-3.png" width="240" />
-<img src="public/demo/demo-4.png" width="240" />
-<img src="public/demo/demo-5.png" width="240" />
-<img src="public/demo/demo-6.png" width="240" />
+## Demo
+
+<img src="public/demo/demo-1.png" width="400" />
+<img src="public/demo/demo-2.png" width="400" />
+<img src="public/demo/demo-3.png" width="400" />
+<img src="public/demo/demo-4.png" width="400" />
+<img src="public/demo/demo-5.png" width="400" />
+<img src="public/demo/demo-6.png" width="400" />
 
 ## Getting Started
 
