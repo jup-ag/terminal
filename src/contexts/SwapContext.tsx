@@ -1,6 +1,6 @@
 import { AnchorProvider, IdlAccounts, Program } from '@coral-xyz/anchor';
 import { DCA, Network } from '@jup-ag/dca-sdk';
-import { IConfirmationTxDescription, OnTransaction, SwapMode, SwapResult } from '@jup-ag/react-hook';
+import { SwapMode } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
@@ -15,7 +15,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { BONK_MINT, WRAPPED_SOL_MINT } from 'src/constants';
+import { BONK_MINT } from 'src/constants';
 import { DcaIntegration, IDL } from 'src/dca/idl';
 import { FormProps, IInit } from 'src/types';
 import { useTokenContext } from './TokenContextProvider';

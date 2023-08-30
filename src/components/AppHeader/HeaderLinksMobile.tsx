@@ -35,7 +35,7 @@ const HeaderLinksMobile: React.FC = () => {
     <div className="px-5 py-4 text-base text-white space-y-2">
       <HeaderLink href="/" label={'Demo'} icon={<SwapIcon width="20" height="20" />} />
       <HeaderLink
-        href="https://github.com/jup-ag/terminal"
+        href="https://github.com/TeamRaccoons/locked-dca"
         external
         label={'Repo'}
         icon={<RepoLogo width="20" height="20" />}
