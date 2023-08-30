@@ -9,6 +9,7 @@ import { WalletModal } from 'src/components/WalletComponents/components/WalletMo
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import OngoingDCA from '../OngoingDCA/OngoingDCA';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -100,13 +101,15 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   return (
     <>
       {/* Body */}
-      <form onSubmit={onSubmitToConfirmation}>
+      <form className="flex flex-col h-full" onSubmit={onSubmitToConfirmation}>
         <Form
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
           setSelectPairSelector={setSelectPairSelector}
           setIsWalletModalOpen={setIsWalletModalOpen}
         />
+
+        <OngoingDCA />
       </form>
 
       {selectPairSelector !== null ? (

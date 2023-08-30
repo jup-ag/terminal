@@ -21,7 +21,7 @@ import JupButton from './JupButton';
 import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import useJupiterSwapPriceFetcher from 'src/hooks/useJupiterSwapPriceFetcher';
 import Decimal from 'decimal.js';
-import { LOCKING_PLAN, useSwapContext } from 'src/contexts/SwapContext';
+import { ILockingPlan, LOCKING_PLAN, useSwapContext } from 'src/contexts/SwapContext';
 import { setupDCA } from 'src/dca';
 
 
@@ -121,7 +121,7 @@ const Form: React.FC<{
 
   const lastRefreshTimestampSwapPrice = useRef<number>(0);
   const { fetchPrice } = useJupiterSwapPriceFetcher();
-  const [selectedPlan, setSelectedPlan] = useState<ILockingPlan['name']>('30 days');
+  const [selectedPlan, setSelectedPlan] = useState<ILockingPlan['name']>('5 minutes');
   const [swapMarketPrice, setSwapMarketPrice] = useState<Decimal | undefined>(undefined);
   const refreshSwapMarketPrice = useCallback(async () => {
     if (!fromTokenInfo || !toTokenInfo) return;
@@ -148,7 +148,7 @@ const Form: React.FC<{
   }, [fromTokenInfo]);
 
   return (
-    <div className="h-full flex flex-col items-center justify-center pb-4">
+    <div className="h-full flex flex-col items-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
           <div className={classNames('border-b border-transparent bg-[#212128] rounded-xl transition-all')}>

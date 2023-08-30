@@ -1,4 +1,4 @@
-import { AnchorProvider, Program } from '@coral-xyz/anchor';
+import { AnchorProvider, IdlAccounts, Program } from '@coral-xyz/anchor';
 import { DCA, Network } from '@jup-ag/dca-sdk';
 import { IConfirmationTxDescription, OnTransaction, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
@@ -36,6 +36,17 @@ export interface IForm {
   selectedPlan: ILockingPlan['name'];
 }
 
+type EscrowParsedState = 'active' | 'finished';
+export type ParsedEscrow = {
+  publicKey: PublicKey;
+  account: IdlAccounts<DcaIntegration>['escrow'];
+  parsed: {
+    state: EscrowParsedState;
+    account:
+      | Awaited<ReturnType<DCA['getCurrentByUser']>>[0]['account']
+      | Awaited<ReturnType<DCA['getClosedByUser']>>[0]['account'];
+  } | null;
+};
 export interface ISwapContext {
   form: IForm;
   setForm: Dispatch<SetStateAction<IForm>>;
@@ -54,6 +65,7 @@ export interface ISwapContext {
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
   onSubmit: () => Promise<any>;
+  onClose: (dca: PublicKey, escrow: PublicKey, inputMint: PublicKey, outputMint: PublicKey) => Promise<any>;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
@@ -69,6 +81,7 @@ export interface ISwapContext {
     program: Program<DcaIntegration> | null;
     dcaClient: DCA | null;
     provider: AnchorProvider | null;
+    escrows?: ParsedEscrow[];
   };
   refresh: () => void;
   reset: (props?: { resetValues: boolean }) => void;
@@ -77,10 +90,10 @@ export interface ISwapContext {
 export const initialSwapContext: ISwapContext = {
   form: {
     fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: WRAPPED_SOL_MINT.toString(),
+    toMint: BONK_MINT.toString(),
     fromValue: '',
     toValue: '',
-    selectedPlan: '30 days',
+    selectedPlan: '5 minutes',
   },
   setForm() {},
   errors: {},
@@ -88,6 +101,7 @@ export const initialSwapContext: ISwapContext = {
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
   onSubmit: async () => null,
+  onClose: async (dca: PublicKey, escrow: PublicKey, inputMint: PublicKey, outputMint: PublicKey) => null,
   displayMode: 'modal',
   formProps: {
     swapMode: SwapMode.ExactIn,
@@ -107,47 +121,43 @@ export const initialSwapContext: ISwapContext = {
     program: null,
     dcaClient: null,
     provider: null,
+    escrows: [],
   },
   refresh() {},
   reset() {},
 };
 
 export type ILockingPlan = {
-  name: '30 days' | '60 days' | '90 days';
-  numberOfTrade: number;
-  minAmountInUSD: number;
-  maxAmountInUSD: number;
+  name: '5 minutes' | '60 days' | '90 days';
+  // minAmountInUSD: number;
+  // maxAmountInUSD: number;
   incetivesPct: number;
+  cycleSecondsApart: number;
+  numberOfTrade: number;
 };
-
-export const LOCKING_PLAN: ILockingPlan[] = [
-  {
-    name: `30 days`,
-    numberOfTrade: 5, // TODO: Change this to 30
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 5,
-  },
-  {
-    name: `60 days`,
-    numberOfTrade: 60,
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 20,
-  },
-  {
-    name: `90 days`,
-    numberOfTrade: 90,
-    minAmountInUSD: 10,
-    maxAmountInUSD: 1000,
-    incetivesPct: 30,
-  },
-];
 
 export const SECONDS_IN_MINUTE = 60; // 1 minute
 export const SECONDS_IN_DAY = 86400; // 1 day
-// TODO: Change this to day
-export const DEFAULT_FREQUENCY = SECONDS_IN_MINUTE;
+export const LOCKING_PLAN: ILockingPlan[] = [
+  {
+    name: `5 minutes`,
+    incetivesPct: 0,
+    cycleSecondsApart: SECONDS_IN_MINUTE, // executed per minute
+    numberOfTrade: 5,
+  },
+  {
+    name: `60 days`,
+    incetivesPct: 20,
+    cycleSecondsApart: SECONDS_IN_DAY,
+    numberOfTrade: 60, // executed daily
+  },
+  {
+    name: `90 days`,
+    incetivesPct: 30,
+    cycleSecondsApart: SECONDS_IN_DAY,
+    numberOfTrade: 90, // executed daily
+  },
+];
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
 
@@ -182,10 +192,10 @@ export const SwapContextProvider: FC<{
 
   const [form, setForm] = useState<IForm>({
     fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: WRAPPED_SOL_MINT.toString(),
+    toMint: BONK_MINT.toString(),
     fromValue: '',
     toValue: '',
-    selectedPlan: '30 days',
+    selectedPlan: '5 minutes',
   });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
 
@@ -206,8 +216,67 @@ export const SwapContextProvider: FC<{
     status: 'loading' | 'fail' | 'success';
   }>();
 
+  const { refetch: refetchUserAccount } = useQuery(
+    ['refresh-account'],
+    () => {
+      if (!walletPublicKey) return null;
+
+      refreshAccount();
+      return null;
+    },
+    {
+      refetchInterval: 10_000,
+    },
+  );
+
+  const { data: escrows, refetch: refetchEscrows } = useQuery(
+    ['existing-locked-dca', walletPublicKey],
+    async () => {
+      if (!walletPublicKey) return [];
+
+      const escrows = await program.account.escrow.all([
+        {
+          memcmp: {
+            offset: 8 + 8,
+            bytes: walletPublicKey.toBase58(),
+          },
+        },
+      ]);
+
+      const parsedEscrows = await Promise.all(
+        escrows.map(async (item) => {
+          return {
+            ...item,
+            parsed: await (async () => {
+              try {
+                const [stillActive, finished] = await Promise.allSettled([
+                  dcaClient.getCurrentByUser(item.publicKey),
+                  dcaClient.getClosedByUser(item.publicKey),
+                ]);
+
+                if (stillActive.status === 'fulfilled' && stillActive.value.length > 0) {
+                  return { state: 'active' as EscrowParsedState, account: stillActive.value[0].account };
+                }
+
+                if (finished.status === 'fulfilled' && finished.value.length > 0) {
+                  return { state: 'finished' as EscrowParsedState, account: finished.value[0].account };
+                }
+              } catch (error) {}
+              return null;
+            })(),
+          };
+        }),
+      );
+      return parsedEscrows;
+    },
+    {
+      refetchInterval: 10_000,
+    },
+  );
+
   const refreshAll = () => {
-    refreshAccount();
+    refetchUserAccount();
+    refetchEscrows();
   };
 
   const reset = useCallback(({ resetValues } = { resetValues: true }) => {
@@ -222,18 +291,6 @@ export const SwapContextProvider: FC<{
       refreshAll();
     }, 0);
   }, []);
-
-  useQuery(
-    ['refresh-account'],
-    () => {
-      if (!walletPublicKey) return;
-
-      return refreshAccount();
-    },
-    {
-      refetchInterval: 10_000,
-    },
-  );
 
   const { signTransaction } = useWallet();
   const { connection } = useConnection();
@@ -266,7 +323,7 @@ export const SwapContextProvider: FC<{
         outputMint: new PublicKey(form.toMint),
         inAmount: new BN(inAmount.toString()),
         inAmountPerCycle: new BN(inAmount.div(new Decimal(frequency)).floor().toString()),
-        cycleSecondsApart: new BN(DEFAULT_FREQUENCY),
+        cycleSecondsApart: new BN(plan.cycleSecondsApart),
       });
 
       tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
@@ -292,6 +349,64 @@ export const SwapContextProvider: FC<{
     }
   }, [form, walletPublicKey]);
 
+  const onClose = useCallback(
+    async (dca: PublicKey, escrow: PublicKey, inputMint: PublicKey, outputMint: PublicKey) => {
+      if (!walletPublicKey || !signTransaction) return;
+
+      try {
+        let tx = await program.methods
+          .close()
+          .accounts({
+            inputMint,
+            outputMint,
+            user: new PublicKey(walletPublicKey),
+            userTokenAccount: await Token.getAssociatedTokenAddress(
+              ASSOCIATED_PROGRAM_ID,
+              TOKEN_PROGRAM_ID,
+              outputMint,
+              new PublicKey(walletPublicKey),
+              false,
+            ),
+            escrow,
+            dca,
+            escrowInAta: await Token.getAssociatedTokenAddress(
+              ASSOCIATED_PROGRAM_ID,
+              TOKEN_PROGRAM_ID,
+              inputMint,
+              escrow,
+              true,
+            ),
+            escrowOutAta: await Token.getAssociatedTokenAddress(
+              ASSOCIATED_PROGRAM_ID,
+              TOKEN_PROGRAM_ID,
+              outputMint,
+              escrow,
+              true,
+            ),
+          })
+          .transaction();
+
+        tx.recentBlockhash = (await connection.getLatestBlockhash('confirmed')).blockhash;
+        tx.feePayer = walletPublicKey;
+        tx = await signTransaction(tx);
+        const rawTransaction = tx.serialize();
+        const txid = await connection.sendRawTransaction(rawTransaction, {
+          skipPreflight: true,
+        });
+
+        const result = await connection.confirmTransaction(txid, 'confirmed');
+        if (result.value.err) throw result.value.err;
+
+        return result;
+      } catch (error) {
+        throw error;
+      } finally {
+        refreshAll();
+      }
+    },
+    [walletPublicKey, signTransaction],
+  );
+
   return (
     <SwapContext.Provider
       value={{
@@ -302,6 +417,7 @@ export const SwapContextProvider: FC<{
         fromTokenInfo,
         toTokenInfo,
         onSubmit,
+        onClose,
         reset,
         refresh: refreshAll,
 
@@ -316,6 +432,7 @@ export const SwapContextProvider: FC<{
           program,
           dcaClient,
           provider,
+          escrows,
         },
       }}
     >

@@ -190,7 +190,7 @@ const SwappingScreen = () => {
         <div className="mt-auto px-5 pb-4 flex space-x-2">
           <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
             <SexyChameleonText>
-              <span className="text-sm">Swap More</span>
+              <span className="text-sm">Go Back</span>
             </SexyChameleonText>
           </JupButton>
 
