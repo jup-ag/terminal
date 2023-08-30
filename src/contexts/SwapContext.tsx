@@ -26,6 +26,7 @@ import { setupDCA } from 'src/dca';
 import { BN } from 'bn.js';
 import { TOKEN_PROGRAM_ID, Token } from '@solana/spl-token';
 import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token';
+import { useQuery } from '@tanstack/react-query';
 
 export interface IForm {
   fromMint: string;
@@ -53,23 +54,23 @@ export interface ISwapContext {
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
   onSubmit: () => Promise<any>;
-  lastSwapResult: SwapResult | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
   swapping: {
     totalTxs: number;
-    txStatus: Array<{
+    txStatus?: {
       txid: string;
-      txDescription: IConfirmationTxDescription;
+      txDescription: string;
       status: 'loading' | 'fail' | 'success';
-    }>;
+    };
   };
   dca: {
     program: Program<DcaIntegration> | null;
     dcaClient: DCA | null;
     provider: AnchorProvider | null;
   };
+  refresh: () => void;
   reset: (props?: { resetValues: boolean }) => void;
 }
 
@@ -87,7 +88,6 @@ export const initialSwapContext: ISwapContext = {
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
   onSubmit: async () => null,
-  lastSwapResult: null,
   displayMode: 'modal',
   formProps: {
     swapMode: SwapMode.ExactIn,
@@ -101,13 +101,14 @@ export const initialSwapContext: ISwapContext = {
   scriptDomain: '',
   swapping: {
     totalTxs: 0,
-    txStatus: [],
+    txStatus: undefined,
   },
   dca: {
     program: null,
     dcaClient: null,
     provider: null,
   },
+  refresh() {},
   reset() {},
 };
 
@@ -199,34 +200,11 @@ export const SwapContextProvider: FC<{
   }, [form.toMint, tokenMap]);
 
   const [totalTxs, setTotalTxs] = useState(0);
-  const [txStatus, setTxStatus] = useState<
-    Array<{
-      txid: string;
-      txDescription: IConfirmationTxDescription;
-      status: 'loading' | 'fail' | 'success';
-    }>
-  >([]);
-
-  const onTransaction: OnTransaction = async (txid, totalTxs, txDescription, awaiter) => {
-    setTotalTxs(totalTxs);
-
-    const tx = txStatus.find((tx) => tx.txid === txid);
-    if (!tx) {
-      setTxStatus((prev) => [...prev, { txid, txDescription, status: 'loading' }]);
-    }
-
-    const success = !((await awaiter) instanceof Error);
-
-    setTxStatus((prev) => {
-      const tx = prev.find((tx) => tx.txid === txid);
-      if (tx) {
-        tx.status = success ? 'success' : 'fail';
-      }
-      return [...prev];
-    });
-  };
-
-  const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
+  const [txStatus, setTxStatus] = useState<{
+    txid: string;
+    txDescription: string;
+    status: 'loading' | 'fail' | 'success';
+  }>();
 
   const refreshAll = () => {
     refreshAccount();
@@ -239,12 +217,23 @@ export const SwapContextProvider: FC<{
       }
 
       setErrors(initialSwapContext.errors);
-      setLastSwapResult(initialSwapContext.lastSwapResult);
       setTxStatus(initialSwapContext.swapping.txStatus);
       setTotalTxs(initialSwapContext.swapping.totalTxs);
-      refreshAccount();
+      refreshAll();
     }, 0);
   }, []);
+
+  useQuery(
+    ['refresh-account'],
+    () => {
+      if (!walletPublicKey) return;
+
+      return refreshAccount();
+    },
+    {
+      refetchInterval: 10_000,
+    },
+  );
 
   const { signTransaction } = useWallet();
   const { connection } = useConnection();
@@ -287,9 +276,19 @@ export const SwapContextProvider: FC<{
       const txid = await connection.sendRawTransaction(rawTransaction, {
         skipPreflight: true,
       });
-      console.log(txid);
+
+      setTotalTxs(1);
+      setTxStatus({ txid, txDescription: 'Locking your tokens...', status: 'loading' });
+
+      const result = await connection.confirmTransaction(txid, 'confirmed');
+      if (result.value.err) throw result.value.err;
+
+      setTxStatus({ txid, txDescription: 'Locking your tokens...', status: 'success' });
     } catch (error) {
       console.error(error);
+      setTxStatus({ txid: '', txDescription: (error as any)?.message, status: 'fail' });
+    } finally {
+      refreshAll();
     }
   }, [form, walletPublicKey]);
 
@@ -303,8 +302,8 @@ export const SwapContextProvider: FC<{
         fromTokenInfo,
         toTokenInfo,
         onSubmit,
-        lastSwapResult,
         reset,
+        refresh: refreshAll,
 
         displayMode,
         formProps,

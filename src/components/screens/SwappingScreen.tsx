@@ -7,7 +7,6 @@ import JupButton from '../JupButton';
 import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
-import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import TokenIcon from '../TokenIcon';
 
@@ -37,12 +36,12 @@ const ErrorIcon = () => {
 const SwappingScreen = () => {
   const {
     displayMode,
-    lastSwapResult,
     reset,
     scriptDomain,
     swapping: { totalTxs, txStatus },
     fromTokenInfo,
     toTokenInfo,
+    form,
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
@@ -63,20 +62,10 @@ const SwappingScreen = () => {
   useEffect(() => {
     if (screen !== 'Swapping') return;
 
-    if (lastSwapResult && 'error' in lastSwapResult) {
-      setErrorMessage(lastSwapResult.error?.message || '');
-
-      if (window.Jupiter.onSwapError) {
-        window.Jupiter.onSwapError({ error: lastSwapResult.error });
-      }
-      return;
-    } else if (lastSwapResult && 'txid' in lastSwapResult) {
-      if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult.txid, swapResult: lastSwapResult });
-      }
-      return;
+    if (txStatus?.status === 'fail') {
+      setErrorMessage(txStatus.txDescription);
     }
-  }, [lastSwapResult]);
+  }, [txStatus]);
 
   const onClose = () => {
     if (!displayMode || displayMode === 'modal') {
@@ -88,13 +77,12 @@ const SwappingScreen = () => {
   };
 
   const swapState: 'success' | 'error' | 'loading' = useMemo(() => {
-    const hasErrors = txStatus.find((item) => item.status === 'fail');
+    const hasErrors = txStatus?.status === 'fail';
     if (hasErrors || errorMessage) {
       return 'error';
     }
 
-    const allSuccess = txStatus.every((item) => item.status !== 'loading');
-    if (txStatus.length > 0 && allSuccess) {
+    if (txStatus?.status === 'success') {
       return 'success';
     }
 
@@ -141,29 +129,26 @@ const SwappingScreen = () => {
         )}
 
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
-          {txStatus &&
-            txStatus.map((item) => (
-              <div key={item.txid} className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
-                <Spinner spinnerColor={'white'} />
+          {txStatus ? (
+            <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
+              <Spinner spinnerColor={'white'} />
 
-                <div className="ml-4 text-white text-sm">
-                  {item.txDescription === 'SETUP' ? <span>Setup</span> : null}
-                  {item.txDescription === 'SWAP' ? <span>Swap</span> : null}
-                  {item.txDescription === 'CLEANUP' ? <span>Cleanup</span> : null}
-                </div>
+              <div className="ml-4 text-white text-sm">
+                <span>Locking</span>
               </div>
-            ))}
+            </div>
+          ) : null}
         </div>
       </>
     );
   };
 
   const SuccessContent = () => {
-    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo) {
+    if (!fromTokenInfo || !toTokenInfo) {
       return null;
     }
 
-    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null;
+    const explorerLink = txStatus?.txid ? getExplorer(txStatus?.txid) : null;
 
     return (
       <>
@@ -176,16 +161,16 @@ const SwappingScreen = () => {
         </div>
 
         <div className="flex flex-col justify-center items-center">
-          <p className="mt-5 text-white text-xl font-semibold">Swap successful</p>
+          <p className="mt-5 text-white text-xl font-semibold">Locked successfully</p>
 
           <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
               <p className="text-xs font-semibold text-white/75">
-                Swapped {fromLamports((lastSwapResult as any).inputAmount, fromTokenInfo.decimals)}{' '}
-                {fromTokenInfo.symbol} to
+                Locked {form.fromValue} {' '}
+                {fromTokenInfo.symbol} for {form.selectedPlan}
               </p>
               <p className="text-2xl font-semibold text-white/75">
-                {fromLamports((lastSwapResult as any).outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
+                {toTokenInfo.symbol} plan
               </p>
             </div>
           </div>
@@ -226,8 +211,8 @@ const SwappingScreen = () => {
           <div className="flex flex-col items-center justify-center text-center mt-12">
             <ErrorIcon />
 
-            <p className="text-white mt-2">Swap Failed</p>
-            <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
+            <p className="text-white mt-2">Failed to lock</p>
+            <p className="text-white/50 text-xs mt-2">We were unable to complete the locking, please try again.</p>
             {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
 
             <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
