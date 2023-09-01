@@ -105,7 +105,9 @@ export default function App({ Component, pageProps }: AppProps) {
         </div>
 
         <div className="flex flex-col w-full h-full items-center justify-center text-white">
-          <span>Locked DCA</span>
+          <span>[Title] - [Example of Integrating Jupiter DCA through a composable program]</span>
+          
+          <span>[Subtitle] - Locking a DCA through a period of time for extra incentives</span>
 
           <IntegratedTerminal
             rpcUrl={rpcUrl}
