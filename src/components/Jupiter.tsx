@@ -39,11 +39,7 @@ const Content = () => {
 const queryClient = new QueryClient();
 
 const JupiterApp = (props: IInit) => {
-  const {
-    displayMode,
-    platformFeeAndAccounts,
-    formProps,
-  } = props;
+  const { displayMode, platformFeeAndAccounts, formProps } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -52,10 +48,10 @@ const JupiterApp = (props: IInit) => {
   // Auto detech if wallet supports it, and enable it if it does
   useEffect(() => {
     if (wallet?.adapter?.supportedTransactionVersions?.has(0)) {
-      setAsLegacyTransaction(false)
+      setAsLegacyTransaction(false);
       return;
     }
-    setAsLegacyTransaction(true)
+    setAsLegacyTransaction(true);
   }, [wallet?.adapter]);
 
   return (
