@@ -14,7 +14,7 @@ With several templates to get you started, and auto generated code snippets.
   - app bundle (~1.1Mb) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 - Several major built-in wallets, or passthrough wallets from your dApp
-- Flexbile display modes, `Modal`, `Integrated`, or `Widget`.
+- Flexible display modes, `Modal`, `Integrated`, or `Widget`.
 - Flexible form customisation, e.g. Full swap experience, Payment flow.
 - Fee supports
 - Support ExactIn, and ExactOut swap mode
@@ -53,7 +53,9 @@ document.addEventListener('readystatechange', e => {
 
 ---
 
+
 ## Built-in wallets, or passthrough wallets from your dApp
+**If your dApp already have a `<WalletProvider />`, it is a requirement to use `passthroughWallet` to ensure proper Wallet Standard support.**
 
 _*Mode 1: Wallet passthrough*_
 
@@ -309,3 +311,10 @@ declare global {
 // ...
 // ...
 ```
+
+### Upcoming feature / Experimentation
+- [ ] V6 API Support
+- [ ] Limit Order
+- [ ] DCA
+- [ ] Experiment separate bundle for passthroughWallet
+- [ ] Migrate to Unified Wallet Kit https://github.com/TeamRaccoons/wallet-kit

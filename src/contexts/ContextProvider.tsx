@@ -43,11 +43,13 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
     console.error({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
   }, []);
 
+  const ShouldWrapWalletProvider = passThroughWallet ? React.Fragment : WalletProvider;
+
   return (
     <ConnectionProvider endpoint={selectedEndpoint}>
-      <WalletProvider wallets={wallets} onError={onError} autoConnect={autoConnect}>
+      <ShouldWrapWalletProvider wallets={wallets} onError={onError} autoConnect={autoConnect}>
         {children}
-      </WalletProvider>
+      </ShouldWrapWalletProvider>
     </ConnectionProvider>
   );
 };
