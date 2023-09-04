@@ -59,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const [wallet, setWallet] = useState<Wallet | null>(null);
 
   useEffect(() => {
-    if (!watchAllFields.useWalletPassthrough) {
+    if (!watchAllFields.simulateWalletPassthrough) {
       setWallet(null);
       return;
     }
@@ -72,7 +72,7 @@ export default function App({ Component, pageProps }: AppProps) {
     fakeWallet.adapter.connect().then(() => {
       setWallet(fakeWallet);
     });
-  }, [watchAllFields.useWalletPassthrough]);
+  }, [watchAllFields.simulateWalletPassthrough]);
 
   return (
     <>

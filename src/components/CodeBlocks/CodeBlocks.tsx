@@ -54,9 +54,9 @@ const { wallet } = useWallet();
 
   const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
 
-  let snippet = formConfigurator.useWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
+  let snippet = formConfigurator.simulateWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
 
-  if (formConfigurator.useWalletPassthrough) {
+  if (formConfigurator.simulateWalletPassthrough) {
     snippet = addInlinesToCode(snippet, `\t"passThroughWallet": wallet,`);
   }
 

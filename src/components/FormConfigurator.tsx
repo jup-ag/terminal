@@ -86,7 +86,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 ];
 
 const FormConfigurator = ({
-  useWalletPassthrough,
+  simulateWalletPassthrough,
   strictTokenList,
   defaultExplorer,
   formProps,
@@ -309,8 +309,8 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={useWalletPassthrough}
-          onClick={() => setValue('useWalletPassthrough', !useWalletPassthrough)}
+          active={simulateWalletPassthrough}
+          onClick={() => setValue('simulateWalletPassthrough', !simulateWalletPassthrough)}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
