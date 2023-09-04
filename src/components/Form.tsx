@@ -202,7 +202,7 @@ const Form: React.FC<{
                         onValueChange={({ value }) => onChangeFromValue(value)}
                         placeholder={'0.00'}
                         className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 text-lg',
+                          'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
                           { 'cursor-not-allowed': inputAmountDisabled },
                         )}
                         decimalSeparator={detectedSeparator}
@@ -281,7 +281,7 @@ const Form: React.FC<{
                         onValueChange={({ value }) => onChangeToValue(value)}
                         placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
                         className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold dark:placeholder:text-white/25 placeholder:text-sm placeholder:font-normal text-lg',
+                          'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg',
                         )}
                         decimalSeparator={detectedSeparator}
                         isAllowed={withValueLimit}
