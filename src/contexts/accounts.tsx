@@ -113,8 +113,8 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
 
     setAccounts({
-      ...(nativeAccount ? { [WRAPPED_SOL_MINT.toString()]: nativeAccount } : {}),
       ...accounts,
+      ...(nativeAccount ? { [WRAPPED_SOL_MINT.toString()]: nativeAccount } : {}),
     });
     setLoading(false);
   };
