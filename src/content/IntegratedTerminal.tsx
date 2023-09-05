@@ -1,24 +1,30 @@
-import { Wallet } from '@solana/wallet-adapter-react';
 import React, { useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useDebouncedEffect } from 'src/misc/utils';
+import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
   rpcUrl: string;
   formProps: FormProps;
-  fakeWallet: Wallet | null;
+  simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const { rpcUrl, formProps, fakeWallet, strictTokenList, defaultExplorer } = props;
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const passthroughWalletContextState = useWallet();
+  const { setShowModal } = useUnifiedWalletContext();
+
   const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
       endpoint: rpcUrl,
       formProps,
-      passThroughWallet: fakeWallet,
+      enableWalletPassthrough: true,
+      passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
+      onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
     });
@@ -43,9 +49,13 @@ const IntegratedTerminal = (props: {
         launchTerminal();
       }
     },
-    [isLoaded, formProps, fakeWallet],
+    [isLoaded, formProps],
     200,
   );
+
+  useEffect(() => {
+    window.Jupiter.usePassThroughWallet && window.Jupiter.usePassThroughWallet(passthroughWalletContextState);
+  }, [passthroughWalletContextState.connected]);
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">

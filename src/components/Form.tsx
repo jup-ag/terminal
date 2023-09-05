@@ -32,7 +32,7 @@ const Form: React.FC<{
   setSelectPairSelector: React.Dispatch<React.SetStateAction<'fromMint' | 'toMint' | null>>;
   setIsWalletModalOpen(toggle: boolean): void;
 }> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
-  const { connect, wallet } = useWalletPassThrough();
+  const { connect, publicKey, wallet } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const {
     form,
@@ -58,7 +58,7 @@ const Form: React.FC<{
     }
   };
 
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+  const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
   const onChangeFromValue = (value: string) => {
     if (value === '') {

@@ -1,9 +1,11 @@
 import { CSSProperties } from 'react';
 import { Root } from 'react-dom/client';
-
+import { createStore } from 'jotai';
 import { Wallet } from '@solana/wallet-adapter-react';
 import { PublicKey, TransactionError } from '@solana/web3.js';
 import { SwapMode, SwapResult } from '@jup-ag/react-hook';
+import { WalletContextState } from '@jup-ag/wallet-adapter';
+import EventEmitter from 'events';
 
 declare global {
   interface Window {
@@ -36,7 +38,7 @@ export interface IInit {
   formProps?: FormProps;
   strictTokenList?: boolean;
   defaultExplorer?: DEFAULT_EXPLORER;
-  
+
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';
   integratedTargetId?: string;
@@ -46,25 +48,34 @@ export interface IInit {
   };
   containerStyles?: CSSProperties;
   containerClassName?: string;
-  
-  // Passthrough & Callbacks
-  passThroughWallet?: Wallet | null;
+
+  // Passthrough
+  enableWalletPassthrough?: boolean;
+  passthroughWalletContextState?: WalletContextState;
+  onRequestConnectWallet?: () => void | Promise<void>; // When enableWalletPassthrough is true, and the user clicks on the connect wallet button, this callback will be called.
+
+  // Callbacks
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
   onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
-  
+
   // Internal resolves
   scriptDomain?: string;
 }
 
 export interface JupiterTerminal {
-  _instance: React.ReactNode;
+  _instance: JSX.Element | null;
   init: (props: IInit) => void;
   resume: () => void;
   close: () => void;
   root: Root | null;
 
-  // Passthrough & Callbacks
-  passThroughWallet: IInit['passThroughWallet'];
+  // Passthrough
+  enableWalletPassthrough: boolean;
+  onRequestConnectWallet: IInit['onRequestConnectWallet'];
+  store: ReturnType<typeof createStore>;
+  usePassThroughWallet: (passthroughWalletContextState: WalletContextState) => void;
+
+  // Callbacks
   onSwapError: IInit['onSwapError'];
   onSuccess: IInit['onSuccess'];
 }

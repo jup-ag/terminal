@@ -21,6 +21,7 @@ const CodeBlocks = ({
   formConfigurator: IFormConfigurator;
   displayMode: IInit['displayMode'];
 }) => {
+  // TODO: Update snippet
   const USE_WALLET_SNIPPET = `import { useWallet } from '@solana/wallet-adapter-react';
 const { wallet } = useWallet();
 `;
@@ -56,6 +57,7 @@ const { wallet } = useWallet();
 
   let snippet = formConfigurator.simulateWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
 
+  // TODO: Update snippet
   if (formConfigurator.simulateWalletPassthrough) {
     snippet = addInlinesToCode(snippet, `\t"passThroughWallet": wallet,`);
   }

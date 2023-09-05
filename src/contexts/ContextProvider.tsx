@@ -21,13 +21,13 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
   const network = networkConfiguration as WalletAdapterNetwork;
   const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network]);
 
-  const passThroughWallet = (() => {
+  const enableWalletPassthrough = (() => {
     if (typeof window === 'undefined') return undefined;
-    return window.Jupiter.passThroughWallet;
+    return window.Jupiter.enableWalletPassthrough;
   })();
 
   const wallets = useMemo(() => {
-    if (passThroughWallet) {
+    if (enableWalletPassthrough) {
       return [];
     }
 
@@ -43,11 +43,11 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
     console.error({ type: 'error', message: error.message ? `${error.name}: ${error.message}` : error.name });
   }, []);
 
-  const ShouldWrapWalletProvider = passThroughWallet ? React.Fragment : WalletProvider;
+  const ShouldWrapWalletProvider = enableWalletPassthrough ? React.Fragment : ({ children }: { children: ReactNode }) => <WalletProvider wallets={wallets} onError={onError} autoConnect={autoConnect}>{children}</WalletProvider>;
 
   return (
     <ConnectionProvider endpoint={selectedEndpoint}>
-      <ShouldWrapWalletProvider wallets={wallets} onError={onError} autoConnect={autoConnect}>
+      <ShouldWrapWalletProvider>
         {children}
       </ShouldWrapWalletProvider>
     </ConnectionProvider>

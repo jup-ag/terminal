@@ -33,6 +33,7 @@
     "classnames": "2.3.2",
     "decimal.js": "10.4.3",
     "jazzicon": "^1.5.0",
+    "jotai": "^2.4.1",
     "jsbi": "4.3.0",
     "lodash.debounce": "^4.0.8",
     "next": "13.4.19",
@@ -48,6 +49,7 @@
     "react-window": "1.8.8"
   },
   "devDependencies": {
+    "@jup-ag/wallet-adapter": "0.0.13",
     "@svgr/webpack": "^6.5.1",
     "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",

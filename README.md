@@ -61,6 +61,7 @@ _*Mode 1: Wallet passthrough*_
 
 If your user have connected their wallet via your dApp, you may passthrough the wallet instance via the `init({ passThroughWallet: wallet })`.
 
+// TODO: Update this props
 ```jsx
 const App = () => {
   const { wallet } = useWallet();
