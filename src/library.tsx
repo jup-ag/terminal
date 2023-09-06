@@ -247,7 +247,8 @@ async function init(props: IInit) {
   // Remove previous instance
   if (instanceExist) {
     window.Jupiter._instance = null;
-    instanceExist?.remove();
+    instanceExist.remove();
+    window.Jupiter.root?.unmount();
   }
 
   targetDiv.id = containerId;
