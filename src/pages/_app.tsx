@@ -21,7 +21,8 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { IInit } from 'src/types';
 
-const isDeveloping = process.env.NODE_ENV === 'development' && typeof window !== 'undefined';
+const isDevNodeENV = process.env.NODE_ENV === 'development'
+const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
 // In NextJS preview env settings
 const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
 if ((isDeveloping || isPreview) && typeof window !== 'undefined') {
@@ -112,7 +113,9 @@ export default function App({ Component, pageProps }: AppProps) {
                     HTML. Check out the visual demo for the various integration modes below.
                   </p>
                 </div>
-                <UnifiedWalletButton />
+
+                {/* For Dev only, to test walletPassthrough */}
+                {isDevNodeENV ? <UnifiedWalletButton /> : null}
               </div>
 
               <div className="flex justify-center">
