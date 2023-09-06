@@ -15,7 +15,7 @@ const IntegratedTerminal = (props: {
 
   const passthroughWalletContextState = useWallet();
   const { setShowModal } = useUnifiedWalletContext();
-
+  
   const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
@@ -43,19 +43,19 @@ const IntegratedTerminal = (props: {
     }
   }, []);
 
-  useDebouncedEffect(
-    () => {
-      if (isLoaded && Boolean(window.Jupiter.init)) {
-        launchTerminal();
-      }
-    },
-    [isLoaded, formProps],
-    200,
-  );
+  useEffect(() => {
+    if (isLoaded && Boolean(window.Jupiter.init)) {
+      launchTerminal();
+    }
+  }, [isLoaded, simulateWalletPassthrough, props]);
 
   useEffect(() => {
-    window.Jupiter.usePassThroughWallet && window.Jupiter.usePassThroughWallet(passthroughWalletContextState);
-  }, [passthroughWalletContextState.connected]);
+    window.Jupiter.syncProps &&
+      window.Jupiter.syncProps({
+        enableWalletPassthrough: simulateWalletPassthrough,
+        passthroughWalletContextState,
+      });
+  }, [passthroughWalletContextState.connected, props]);
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">

@@ -10,7 +10,7 @@ import React, {
   useContext,
   useMemo,
 } from 'react';
-import { appSettingAtom } from 'src/library';
+import { appProps } from 'src/library';
 
 interface IWalletPassThrough {
   publicKey: PublicKey | null;
@@ -62,14 +62,16 @@ const FromWalletAdapter: FC<PropsWithChildren> = ({ children }) => {
 };
 
 const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [atom] = useAtom(appSettingAtom);
+  const [atom] = useAtom(appProps);
+  const wallet = atom?.passthroughWalletContextState?.wallet
+
   const walletPassthrough: IWalletPassThrough = useMemo(() => {
     return {
       ...initialPassThrough,
-      publicKey: atom?.wallet?.adapter.publicKey || null,
-      wallet: atom?.wallet?.adapter
+      publicKey: wallet?.adapter.publicKey || null,
+      wallet: wallet?.adapter
         ? {
-            adapter: atom?.wallet?.adapter,
+            adapter: wallet?.adapter,
             readyState: WalletReadyState.Loadable,
           }
         : null,
@@ -77,8 +79,8 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
       connected: true,
       disconnect: async () => {
         try {
-          if (atom?.wallet?.adapter?.disconnect) {
-            return atom?.wallet?.adapter?.disconnect();
+          if (wallet?.adapter?.disconnect) {
+            return wallet?.adapter?.disconnect();
           }
         } catch (error) {
           console.log(error);

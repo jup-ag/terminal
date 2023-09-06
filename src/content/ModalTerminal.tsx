@@ -28,7 +28,7 @@ const ModalTerminal = (props: {
   };
   
   useEffect(() => {
-    window.Jupiter.usePassThroughWallet && window.Jupiter.usePassThroughWallet(passthroughWalletContextState)
+    window.Jupiter.syncProps && window.Jupiter.syncProps({ passthroughWalletContextState });
   }, [passthroughWalletContextState.connected])
 
   return (

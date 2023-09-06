@@ -221,7 +221,7 @@ export const SwapContextProvider: FC<{
 
   const { slippage } = useSlippageConfig();
 
-  const amount = JSBI.BigInt(nativeAmount);
+  const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
     quoteResponseMeta,
     allTokenMints,

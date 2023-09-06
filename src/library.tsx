@@ -8,7 +8,6 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import { WalletContextState } from '@jup-ag/wallet-adapter';
 
 const containerId = 'jupiter-terminal';
 const packageJson = require('../package.json');
@@ -229,7 +228,7 @@ const RenderWidgetShell = (props: IInit) => {
 };
 
 const store = createStore();
-const appSettingAtom = atom<WalletContextState | undefined>(undefined);
+const appProps = atom<IInit | undefined>(undefined);
 
 async function init(props: IInit) {
   const {
@@ -243,6 +242,8 @@ async function init(props: IInit) {
   } = props;
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);
+  window.Jupiter.store = store;
+  store.set(appProps, props);
 
   // Remove previous instance
   if (instanceExist) {
@@ -270,9 +271,6 @@ async function init(props: IInit) {
   if (enableWalletPassthrough) {
     window.Jupiter.enableWalletPassthrough = true;
     window.Jupiter.onRequestConnectWallet = onRequestConnectWallet;
-
-    window.Jupiter.store = store;
-    store.set(appSettingAtom, passthroughWalletContextState);
   } else {
     window.Jupiter.enableWalletPassthrough = false;
   }
@@ -326,10 +324,17 @@ const close = () => {
   }
 };
 
-const usePassThroughWallet = (passthroughWalletContextState: WalletContextState) => {
-  if (window.Jupiter.store) {
-    window.Jupiter.store.set(appSettingAtom, passthroughWalletContextState);
-  }
-}
+const syncProps = (props: {
+  enableWalletPassthrough?: IInit['enableWalletPassthrough'];
+  passthroughWalletContextState?: IInit['passthroughWalletContextState'];
+}) => {
+  const currentProps = store.get(appProps);
+  const newProps = {
+    ...currentProps,
+    enableWalletPassthrough: props.enableWalletPassthrough || currentProps?.enableWalletPassthrough,
+    passthroughWalletContextState: props.passthroughWalletContextState || currentProps?.passthroughWalletContextState,
+  } as IInit;
+  store.set(appProps, newProps);
+};
 
-export { init, resume, close, appSettingAtom, usePassThroughWallet };
+export { init, resume, close, appProps, syncProps };
