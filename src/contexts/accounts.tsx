@@ -1,11 +1,11 @@
 import BN from 'bn.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports } from 'src/misc/utils';
+import { useConnection } from '@jup-ag/wallet-adapter';
 
 const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 

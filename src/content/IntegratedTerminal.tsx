@@ -22,7 +22,7 @@ const IntegratedTerminal = (props: {
       integratedTargetId: 'integrated-terminal',
       endpoint: rpcUrl,
       formProps,
-      enableWalletPassthrough: true,
+      enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,

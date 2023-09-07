@@ -1,5 +1,5 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnection } from '@jup-ag/wallet-adapter';
 import React, { useMemo, useState, useEffect } from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 

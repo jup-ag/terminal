@@ -29,7 +29,7 @@ const WidgetTerminal = (props: {
         size,
       },
       formProps,
-      enableWalletPassthrough: true,
+      enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       endpoint: rpcUrl,
@@ -58,8 +58,12 @@ const WidgetTerminal = (props: {
   }, [isLoaded, simulateWalletPassthrough, formProps, position, size]);
 
   useEffect(() => {
-    window.Jupiter.syncProps && window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState.connected]);
+    window.Jupiter.syncProps &&
+      window.Jupiter.syncProps({
+        enableWalletPassthrough: simulateWalletPassthrough,
+        passthroughWalletContextState,
+      });
+  }, [passthroughWalletContextState.connected, props]);
 
   return (
     <div className="flex flex-col items-center">

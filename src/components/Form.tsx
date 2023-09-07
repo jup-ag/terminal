@@ -25,14 +25,14 @@ import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
 import { detectedSeparator } from 'src/misc/utils';
 import CoinBalanceUSD from './CoinBalanceUSD';
+import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 
 const Form: React.FC<{
   onSubmit: () => void;
   isDisabled: boolean;
   setSelectPairSelector: React.Dispatch<React.SetStateAction<'fromMint' | 'toMint' | null>>;
-  setIsWalletModalOpen(toggle: boolean): void;
-}> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
-  const { connect, publicKey, wallet } = useWalletPassThrough();
+}> = ({ onSubmit, isDisabled, setSelectPairSelector }) => {
+  const { publicKey } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const {
     form,
@@ -50,13 +50,6 @@ const Form: React.FC<{
       refresh();
     }
   }, [hasExpired]);
-
-  const onConnectWallet = () => {
-    if (wallet) connect();
-    else {
-      setIsWalletModalOpen(true);
-    }
-  };
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
@@ -120,7 +113,7 @@ const Form: React.FC<{
   };
 
   const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
-  const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
+  const { inputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
       if (swapMode === SwapMode.ExactOut) {
@@ -327,9 +320,13 @@ const Form: React.FC<{
 
       <div className="w-full px-2">
         {!walletPublicKey ? (
-          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onConnectWallet}>
-            Connect Wallet
-          </JupButton>
+          <UnifiedWalletButton
+            overrideContent={
+              <JupButton size="lg" className="w-full mt-4" type="button">
+                Connect Wallet
+              </JupButton>
+            }
+          />
         ) : (
           <JupButton
             size="lg"

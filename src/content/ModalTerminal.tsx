@@ -19,7 +19,7 @@ const ModalTerminal = (props: {
     window.Jupiter.init({
       endpoint: rpcUrl,
       formProps,
-      enableWalletPassthrough: true,
+      enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
@@ -28,8 +28,12 @@ const ModalTerminal = (props: {
   };
   
   useEffect(() => {
-    window.Jupiter.syncProps && window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState.connected])
+    window.Jupiter.syncProps &&
+      window.Jupiter.syncProps({
+        enableWalletPassthrough: simulateWalletPassthrough,
+        passthroughWalletContextState,
+      });
+  }, [passthroughWalletContextState.connected, props]);
 
   return (
     <div

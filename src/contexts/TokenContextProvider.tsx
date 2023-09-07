@@ -1,8 +1,6 @@
-import { Cluster } from '@solana/web3.js';
 import React, { ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { ENV as ChainID, TokenInfo, TokenListContainer } from '@solana/spl-token-registry';
-import { TOKEN_LIST_URL } from '@jup-ag/react-hook';
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnection } from '@jup-ag/wallet-adapter';
 import { IInit } from 'src/types';
 
 export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';

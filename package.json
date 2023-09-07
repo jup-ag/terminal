@@ -23,7 +23,6 @@
     "@solana/wallet-adapter-base": "0.9.23",
     "@solana/wallet-adapter-glow": "0.1.18",
     "@solana/wallet-adapter-phantom": "0.9.24",
-    "@solana/wallet-adapter-react": "0.15.34",
     "@solana/wallet-adapter-solflare": "0.6.26",
     "@solana/wallet-adapter-wallets": "0.19.20",
     "@solana/web3.js": "1.78.4",
@@ -46,10 +45,10 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-use": "^17.4.0",
     "react-virtualized-auto-sizer": "1.0.7",
-    "react-window": "1.8.8"
+    "react-window": "1.8.8",
+    "@jup-ag/wallet-adapter": "0.0.14"
   },
   "devDependencies": {
-    "@jup-ag/wallet-adapter": "0.0.13",
     "@svgr/webpack": "^6.5.1",
     "@types/bn.js": "^5.1.1",
     "@types/bs58": "^4.0.1",

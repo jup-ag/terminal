@@ -1,7 +1,7 @@
 import { CSSProperties } from 'react';
 import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
-import { Wallet } from '@solana/wallet-adapter-react';
+import { Wallet } from '@jup-ag/wallet-adapter';
 import { PublicKey, TransactionError } from '@solana/web3.js';
 import { SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';

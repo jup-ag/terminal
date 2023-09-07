@@ -127,12 +127,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
         </div>
       ) : null}
 
-      {isWalletModalOpen ? (
-        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
-          <WalletModal setIsWalletModalOpen={setIsWalletModalOpen} />
-        </div>
-      ) : null}
-
       {showUnknownToken ? (
         <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
           <UnknownTokenModal

@@ -5,6 +5,7 @@ import { useOutsideClick } from 'src/misc/utils';
 import { CurrentUserBadge } from '../CurrentUserBadge';
 
 import { WalletModalButton } from './components/WalletModalButton';
+import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 
 export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
@@ -25,7 +26,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   useOutsideClick(ref, closePopup);
 
   if ((!connected && !connecting) || !base58) {
-    return <WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />;
+    return <UnifiedWalletButton overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
   }
 
   return (

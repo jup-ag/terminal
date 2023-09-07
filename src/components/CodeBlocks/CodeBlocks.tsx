@@ -22,7 +22,7 @@ const CodeBlocks = ({
   displayMode: IInit['displayMode'];
 }) => {
   // TODO: Update snippet
-  const USE_WALLET_SNIPPET = `import { useWallet } from '@solana/wallet-adapter-react';
+  const USE_WALLET_SNIPPET = `import { useWallet } from '@solana/wallet-adapter-react' // Or @jup-ag/wallet-adapter;
 const { wallet } = useWallet();
 `;
 

@@ -1,5 +1,5 @@
 import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base';
-import { useWallet, Wallet } from '@solana/wallet-adapter-react';
+import { useWallet, Wallet } from '@jup-ag/wallet-adapter';
 import { PublicKey } from '@solana/web3.js';
 import { useAtom } from 'jotai';
 import React, {
@@ -89,6 +89,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
     };
   }, [atom]);
 
+  console.log(window.Jupiter.enableWalletPassthrough)
   if (!window.Jupiter.enableWalletPassthrough) {
     return <FromWalletAdapter>{children}</FromWalletAdapter>;
   }
