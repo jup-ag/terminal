@@ -51,7 +51,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const { slippage, setSlippage } = useSlippageConfig();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
 
-  const SLIPPAGE_PRESET = useMemo(() => ['0.1', String(DEFAULT_SLIPPAGE), '1.0'], [DEFAULT_SLIPPAGE]);
+  const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], [DEFAULT_SLIPPAGE]);
 
   const slippageInitialPreset = useMemo(() => {
     return SLIPPAGE_PRESET.find((preset) => Number(preset) === slippage);
@@ -231,7 +231,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                               setInputPriorityFocused(false);
                             }}
                           >
-                            <div>
+                            <div className='whitespace-nowrap'>
                               <p className="text-sm text-white">{name}</p>
                               <span className="mt-1 text-xs">{item} SOL</span>
                             </div>

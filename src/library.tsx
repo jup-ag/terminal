@@ -218,7 +218,7 @@ const RenderWidgetShell = (props: IInit) => {
         className={`absolute overflow-hidden ${
           classes.contentClassName
         } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${
-          !isOpen ? 'h-0 opacity-0' : 'opacity-100'
+          !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >
         <RenderLoadableJupiter {...props} />

@@ -21,7 +21,7 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { IInit } from 'src/types';
 
-const isDevNodeENV = process.env.NODE_ENV === 'development'
+const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
 // In NextJS preview env settings
 const isPreview = Boolean(process.env.NEXT_PUBLIC_IS_NEXT_PREVIEW);
@@ -60,7 +60,6 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <UnifiedWalletProvider
-      passThroughWallet={null}
       wallets={wallets}
       config={{
         env: 'mainnet-beta',
@@ -98,7 +97,7 @@ export default function App({ Component, pageProps }: AppProps) {
           }}
         />
 
-        <div className="bg-jupiter-dark-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
+        <div className="bg-jupiter-v3-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
           <div>
             <AppHeader />
 
@@ -108,21 +107,25 @@ export default function App({ Component, pageProps }: AppProps) {
                   <SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
                     Jupiter Terminal
                   </SexyChameleonText>
-                  <p className="text-[#9D9DA6] w-[80%] md:max-w-[60%] text-md mt-4 heading-[24px]">
+                  <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
                     An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your
                     HTML. Check out the visual demo for the various integration modes below.
                   </p>
                 </div>
-
-                {/* For Dev only, to test walletPassthrough */}
-                {isDevNodeENV ? <UnifiedWalletButton /> : null}
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4">
+                <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
                   {/* Desktop configurator */}
                   <div className="hidden md:flex">
                     <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+
+                    {/* For Dev only, to test walletPassthrough */}
+                    {isDevNodeENV ? (
+                      <div className="absolute right-6 top-8">
+                        <UnifiedWalletButton />
+                      </div>
+                    ) : null}
                   </div>
 
                   <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
@@ -232,7 +235,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
           <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
 
-          <div className="w-full bg-jupiter-bg mt-12">
+          <div className="w-full mt-12">
             <Footer />
           </div>
         </div>

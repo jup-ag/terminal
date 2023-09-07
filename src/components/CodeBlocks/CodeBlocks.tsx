@@ -107,7 +107,7 @@ const CodeBlocks = ({
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">
-      <div className="relative w-full max-w-[90%] overflow-hidden px-4 md:px-0">
+      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
         <div className='absolute flex space-x-2 top-0 right-4 md:right-2 '>
