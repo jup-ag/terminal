@@ -84,7 +84,7 @@ const V2FeatureButton = () => {
           <div
             ref={containerRef}
             className={classNames(
-              'bg-v3-bg absolute w-full lg:w-[75%] rounded-xl flex shadow-lg  hideScrollbar',
+              'bg-v3-bg absolute w-full lg:w-[75%] rounded-xl flex shadow-lg max-w-[800px] hideScrollbar',
               'transform duration-500',
               slideIn ? '!top-[40px] lg:!top-[12.5%]' : '!top-[200%]',
             )}
