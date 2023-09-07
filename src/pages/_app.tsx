@@ -127,9 +127,9 @@ export default function App({ Component, pageProps }: AppProps) {
                   <div className="hidden md:flex">
                     <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
 
-                    {/* For Dev only, to test walletPassthrough */}
-                    {isDevNodeENV ? (
-                      <div className="absolute right-6 top-8">
+                    {watchAllFields.simulateWalletPassthrough ? (
+                      <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
+                        <div className='text-xs mb-1'>Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
                       </div>
                     ) : null}

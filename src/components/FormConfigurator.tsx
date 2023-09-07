@@ -156,7 +156,7 @@ const FormConfigurator = ({
   };
 
   return (
-    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[300px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
+    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
       <div className="w-full">
         <div className="relative inline-block text-left text-white w-full">
           <p className="text-white text-sm font-semibold">Template</p>
@@ -306,6 +306,7 @@ const FormConfigurator = ({
         <div>
           <p className="text-sm text-white/75">Simulate wallet passthrough</p>
           <p className="text-xs text-white/30">Simulate Terminal with a fake wallet passthrough</p>
+          <p className="text-xs text-white/30">(Testing available on Desktop only)</p>
         </div>
         <Toggle
           className="min-w-[40px]"
