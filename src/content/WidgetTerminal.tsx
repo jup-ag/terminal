@@ -52,10 +52,12 @@ const WidgetTerminal = (props: {
   }, []);
 
   useEffect(() => {
-    if (isLoaded && Boolean(window.Jupiter.init)) {
-      launchTerminal();
-    }
-  }, [isLoaded, simulateWalletPassthrough, formProps, position, size]);
+    setTimeout(() => {
+      if (isLoaded && Boolean(window.Jupiter.init)) {
+        launchTerminal();
+      }
+    }, 200)
+  }, [isLoaded, props, position, size]);
 
   useEffect(() => {
     window.Jupiter.syncProps &&

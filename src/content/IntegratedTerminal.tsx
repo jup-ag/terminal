@@ -15,7 +15,7 @@ const IntegratedTerminal = (props: {
 
   const passthroughWalletContextState = useWallet();
   const { setShowModal } = useUnifiedWalletContext();
-  
+
   const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
@@ -44,9 +44,11 @@ const IntegratedTerminal = (props: {
   }, []);
 
   useEffect(() => {
-    if (isLoaded && Boolean(window.Jupiter.init)) {
-      launchTerminal();
-    }
+    setTimeout(() => {
+      if (isLoaded && Boolean(window.Jupiter.init)) {
+        launchTerminal();
+      }
+    }, 200)
   }, [isLoaded, simulateWalletPassthrough, props]);
 
   useEffect(() => {

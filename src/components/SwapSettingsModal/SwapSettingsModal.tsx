@@ -186,7 +186,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             closeModal();
           }
         })}
-        className={classNames('relative w-full overflow-y-auto webkit-scrollbar')}
+        className={classNames('relative w-full overflow-y-auto webkit-scrollbar overflow-x-hidden')}
       >
         <div>
           <div className={classNames('mt-2 px-5')}>

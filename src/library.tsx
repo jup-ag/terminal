@@ -261,7 +261,6 @@ async function init(props: IInit) {
     if (!target) {
       throw new Error(`Jupiter Terminal: document.getElementById cannot find ${integratedTargetId}`);
     }
-
     target?.appendChild(targetDiv);
   } else {
     document.body.appendChild(targetDiv);
