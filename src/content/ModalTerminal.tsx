@@ -11,7 +11,7 @@ const ModalTerminal = (props: {
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
   const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
-  
+
   const passthroughWalletContextState = useWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
@@ -26,13 +26,11 @@ const ModalTerminal = (props: {
       defaultExplorer,
     });
   };
-  
+
+  // To make sure passthrough wallet are synced
   useEffect(() => {
-    window.Jupiter.syncProps &&
-      window.Jupiter.syncProps({
-        enableWalletPassthrough: simulateWalletPassthrough,
-        passthroughWalletContextState,
-      });
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
   }, [passthroughWalletContextState.connected, props]);
 
   return (

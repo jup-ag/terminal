@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
-import { useDebouncedEffect } from 'src/misc/utils';
 import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
@@ -48,15 +47,13 @@ const IntegratedTerminal = (props: {
       if (isLoaded && Boolean(window.Jupiter.init)) {
         launchTerminal();
       }
-    }, 200)
+    }, 200);
   }, [isLoaded, simulateWalletPassthrough, props]);
 
+  // To make sure passthrough wallet are synced
   useEffect(() => {
-    window.Jupiter.syncProps &&
-      window.Jupiter.syncProps({
-        enableWalletPassthrough: simulateWalletPassthrough,
-        passthroughWalletContextState,
-      });
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
   }, [passthroughWalletContextState.connected, props]);
 
   return (

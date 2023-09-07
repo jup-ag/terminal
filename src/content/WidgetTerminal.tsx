@@ -3,7 +3,6 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
-import { useDebouncedEffect } from 'src/misc/utils';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
 const WidgetTerminal = (props: {
@@ -56,15 +55,13 @@ const WidgetTerminal = (props: {
       if (isLoaded && Boolean(window.Jupiter.init)) {
         launchTerminal();
       }
-    }, 200)
+    }, 200);
   }, [isLoaded, props, position, size]);
 
+  // To make sure passthrough wallet are synced
   useEffect(() => {
-    window.Jupiter.syncProps &&
-      window.Jupiter.syncProps({
-        enableWalletPassthrough: simulateWalletPassthrough,
-        passthroughWalletContextState,
-      });
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
   }, [passthroughWalletContextState.connected, props]);
 
   return (

@@ -74,7 +74,6 @@ export interface JupiterTerminal {
   onRequestConnectWallet: IInit['onRequestConnectWallet'];
   store: ReturnType<typeof createStore>;
   syncProps: (props: {
-    enableWalletPassthrough?: IInit['enableWalletPassthrough'];
     passthroughWalletContextState?: IInit['passthroughWalletContextState'];
   }) => void;
 

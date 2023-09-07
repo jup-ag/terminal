@@ -7,12 +7,13 @@ import { FormProps, IInit } from 'src/types';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { jsonToBase64 } from 'src/misc/utils';
 
-function addInlinesToCode(code: string, insertLines: string) {
-  let lines = code.split('\n');
-  lines = [...lines.slice(0, lines.length - 1), insertLines, ...lines.slice(lines.length - 1, lines.length)];
-
-  return lines.join('\n');
-}
+// Formatters
+import prettier from 'prettier/standalone';
+import prettierPluginBabel from 'prettier/plugins/babel';
+import prettierPluginEstree from 'prettier/plugins/estree';
+import prettierPluginTypescript from 'prettier/plugins/typescript';
+import Link from 'next/link';
+import ExternalIcon from 'src/icons/ExternalIcon';
 
 const CodeBlocks = ({
   formConfigurator,
@@ -21,11 +22,6 @@ const CodeBlocks = ({
   formConfigurator: IFormConfigurator;
   displayMode: IInit['displayMode'];
 }) => {
-  // TODO: Update snippet
-  const USE_WALLET_SNIPPET = `import { useWallet } from '@solana/wallet-adapter-react' // Or @jup-ag/wallet-adapter;
-const { wallet } = useWallet();
-`;
-
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
     if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
@@ -49,18 +45,35 @@ const { wallet } = useWallet();
       ? { defaultExplorer: formConfigurator.defaultExplorer }
       : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
+    ...formConfigurator.simulateWalletPassthrough ? {enableWalletPassthrough: true} : undefined,
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
 
+  const USE_WALLET_SNIPPET = `
+  import { useWallet } from '@solana/wallet-adapter-react' // Or @jup-ag/wallet-adapter;
+  const passthroughWalletContextState = useWallet();
+
+  // To make sure passthrough wallet are synced
+  useEffect(() => {
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
+  }, [passthroughWalletContextState.connected, props]);
+`;
   const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
+  const unformattedSnippet = [
+    formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '',
+    INIT_SNIPPET,
+  ].join('\n')
 
-  let snippet = formConfigurator.simulateWalletPassthrough ? `${USE_WALLET_SNIPPET}${INIT_SNIPPET}` : INIT_SNIPPET;
-
-  // TODO: Update snippet
-  if (formConfigurator.simulateWalletPassthrough) {
-    snippet = addInlinesToCode(snippet, `\t"passThroughWallet": wallet,`);
-  }
+  const [snippet, setSnippet] = useState(``);
+  useEffect(() => {
+    prettier
+      .format(unformattedSnippet, { parser: 'typescript', plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript] })
+      .then((res) => {
+        setSnippet(res);
+      });
+  }, [unformattedSnippet])
 
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
@@ -94,10 +107,10 @@ const { wallet } = useWallet();
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">
-      <div className="relative w-full max-w-3xl overflow-hidden px-4 md:px-0">
+      <div className="relative w-full max-w-[90%] overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
-        <div className='absolute flex space-x-2 top-0 right-4 md:top-10 md:right-2 '>
+        <div className='absolute flex space-x-2 top-0 right-4 md:right-2 '>
           <button
             className={classNames(
               'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
@@ -123,6 +136,11 @@ const { wallet } = useWallet();
         <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
           {snippet}
         </SyntaxHighlighter>
+        
+      <Link target='_blank' rel={'noopener noreferrer'} href={'https://github.com/jup-ag/terminal/tree/main/src/content'} className='mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline'>
+        <p>Open Example directory</p>
+        <ExternalIcon />
+      </Link>
       </div>
     </div>
   );

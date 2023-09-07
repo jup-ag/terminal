@@ -330,7 +330,6 @@ const syncProps = (props: {
   const currentProps = store.get(appProps);
   const newProps = {
     ...currentProps,
-    enableWalletPassthrough: props.enableWalletPassthrough || currentProps?.enableWalletPassthrough,
     passthroughWalletContextState: props.passthroughWalletContextState || currentProps?.passthroughWalletContextState,
   } as IInit;
   store.set(appProps, newProps);
