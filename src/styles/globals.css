@@ -26,6 +26,18 @@
   -webkit-mask-composite: source-out;
 }
 
+.hideScrollbar {
+  -ms-overflow-style: none;
+}
+
+.hideScrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hideScrollbar::-moz-scrollbar {
+  display: none;
+}
+
 /* Custom scroll bar */
 .webkit-scrollbar::-webkit-scrollbar {
   width: 8px;

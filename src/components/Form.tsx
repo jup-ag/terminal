@@ -19,13 +19,13 @@ import WalletIcon from 'src/icons/WalletIcon';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import PriceInfo from './PriceInfo/index';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
-import SexyChameleonText from './SexyChameleonText/SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
 import { detectedSeparator } from 'src/misc/utils';
 import CoinBalanceUSD from './CoinBalanceUSD';
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
+import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -340,7 +340,7 @@ const Form: React.FC<{
             ) : error ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : (
-              <SexyChameleonText>Swap</SexyChameleonText>
+              <V2SexyChameleonText>Swap</V2SexyChameleonText>
             )}
           </JupButton>
         )}

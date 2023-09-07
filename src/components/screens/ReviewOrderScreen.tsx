@@ -5,7 +5,7 @@ import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import useTimeDiff from '../useTimeDiff/useTimeDiff';
 import PriceInfo from '../PriceInfo/index';
 import JupButton from '../JupButton';
-import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
+import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 
 const ConfirmationScreen = () => {
   const {
@@ -60,7 +60,7 @@ const ConfirmationScreen = () => {
         </JupButton>
       ) : (
         <JupButton size="lg" className="w-full mt-4 disabled:opacity-50" type="button" onClick={onSubmit}>
-          <SexyChameleonText>Confirm</SexyChameleonText>
+          <V2SexyChameleonText>Confirm</V2SexyChameleonText>
         </JupButton>
       )}
     </div>

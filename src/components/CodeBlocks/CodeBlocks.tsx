@@ -1,19 +1,19 @@
+import classNames from 'classnames';
 import { useEffect, useState } from 'react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
-import classNames from 'classnames';
 
-import { FormProps, IInit } from 'src/types';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { jsonToBase64 } from 'src/misc/utils';
+import { FormProps, IInit } from 'src/types';
 
+import Link from 'next/link';
+import ExternalIcon from 'src/icons/ExternalIcon';
 // Formatters
-import prettier from 'prettier/standalone';
 import prettierPluginBabel from 'prettier/plugins/babel';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import prettierPluginTypescript from 'prettier/plugins/typescript';
-import Link from 'next/link';
-import ExternalIcon from 'src/icons/ExternalIcon';
+import prettier from 'prettier/standalone';
 
 const CodeBlocks = ({
   formConfigurator,
@@ -27,7 +27,7 @@ const CodeBlocks = ({
     if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
     if (displayMode === 'widget') return { displayMode: 'widget' };
   })();
-  
+
   // Filter out the key that's not default
   const filteredFormProps = Object.keys(formConfigurator.formProps).reduce<Partial<FormProps>>((acc, key) => {
     const itemKey = key as keyof FormProps;
@@ -35,7 +35,7 @@ const CodeBlocks = ({
       acc[itemKey] = formConfigurator.formProps[itemKey] as any;
     }
     return acc;
-  }, {})
+  }, {});
 
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
@@ -45,7 +45,7 @@ const CodeBlocks = ({
       ? { defaultExplorer: formConfigurator.defaultExplorer }
       : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
-    ...formConfigurator.simulateWalletPassthrough ? {enableWalletPassthrough: true} : undefined,
+    ...(formConfigurator.simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
@@ -61,19 +61,21 @@ const CodeBlocks = ({
   }, [passthroughWalletContextState.connected, props]);
 `;
   const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
-  const unformattedSnippet = [
-    formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '',
-    INIT_SNIPPET,
-  ].join('\n')
+  const unformattedSnippet = [formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
+    '\n',
+  );
 
   const [snippet, setSnippet] = useState(``);
   useEffect(() => {
     prettier
-      .format(unformattedSnippet, { parser: 'typescript', plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript] })
+      .format(unformattedSnippet, {
+        parser: 'typescript',
+        plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
+      })
       .then((res) => {
         setSnippet(res);
       });
-  }, [unformattedSnippet])
+  }, [unformattedSnippet]);
 
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
@@ -88,7 +90,6 @@ const CodeBlocks = ({
     setIsCopied(true);
   };
 
-
   const [isCopiedShareLink, setIsCopiedShareLink] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -99,18 +100,16 @@ const CodeBlocks = ({
     if (typeof window === 'undefined') return;
 
     const stringifiedQuery = JSON.stringify(jsonToBase64(valuesToFormat));
-    navigator.clipboard.writeText(
-      `${window.location.origin}?import=${stringifiedQuery.replaceAll('"', '')}`
-    );
+    navigator.clipboard.writeText(`${window.location.origin}?import=${stringifiedQuery.replaceAll('"', '')}`);
     setIsCopiedShareLink(true);
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
-        <div className='absolute flex space-x-2 top-0 right-4 md:right-2 '>
+        <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
           <button
             className={classNames(
               'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
@@ -132,15 +131,19 @@ const CodeBlocks = ({
           </button>
         </div>
 
-
         <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
           {snippet}
         </SyntaxHighlighter>
-        
-      <Link target='_blank' rel={'noopener noreferrer'} href={'https://github.com/jup-ag/terminal/tree/main/src/content'} className='mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline'>
-        <p>Open Example directory</p>
-        <ExternalIcon />
-      </Link>
+
+        <Link
+          target="_blank"
+          rel={'noopener noreferrer'}
+          href={'https://github.com/jup-ag/terminal/tree/main/src/content'}
+          className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
+        >
+          <p>Open Example directory</p>
+          <ExternalIcon />
+        </Link>
       </div>
     </div>
   );

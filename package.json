@@ -15,6 +15,7 @@
   "dependencies": {
     "@jup-ag/math": "4.0.0-beta.21",
     "@jup-ag/react-hook": "6.0.0-beta.2",
+    "@jup-ag/wallet-adapter": "0.0.14",
     "@project-serum/anchor": "^0.26.0",
     "@rive-app/react-canvas": "^4.1.6",
     "@solana/spl-token": "0.1.8",
@@ -45,8 +46,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-use": "^17.4.0",
     "react-virtualized-auto-sizer": "1.0.7",
-    "react-window": "1.8.8",
-    "@jup-ag/wallet-adapter": "0.0.14"
+    "react-window": "1.8.8"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.5.1",
@@ -72,6 +72,8 @@
     "postcss": "^8.4.28",
     "postcss-loader": "^7.3.3",
     "postcss-preset-env": "^7.8.3",
+    "prettier": "^3.0.2",
+    "react-twitter-embed": "^4.0.4",
     "sass": "^1.66.1",
     "sass-loader": "^13.3.2",
     "style-loader": "^3.3.3",
@@ -82,8 +84,7 @@
     "typescript": "5.2.2",
     "webpack": "^5.88.2",
     "webpack-bundle-analyzer": "^4.9.0",
-    "webpack-cli": "^4.10.0",
-    "prettier": "^3.0.2"
+    "webpack-cli": "^4.10.0"
   },
   "pnpm": {
     "overrides": {

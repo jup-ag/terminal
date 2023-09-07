@@ -4,12 +4,12 @@ import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import JupButton from '../JupButton';
-import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
 import PriceInfo from '../PriceInfo/index';
 import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
+import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 
 const ErrorIcon = () => {
   return (
@@ -197,9 +197,9 @@ const SwappingScreen = () => {
 
         <div className="mt-auto px-5 pb-4 flex space-x-2">
           <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
-            <SexyChameleonText>
+            <V2SexyChameleonText>
               <span className="text-sm">Swap More</span>
-            </SexyChameleonText>
+            </V2SexyChameleonText>
           </JupButton>
 
           {displayMode !== 'integrated' ? (
@@ -224,7 +224,7 @@ const SwappingScreen = () => {
             {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
 
             <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
-              <SexyChameleonText>Retry</SexyChameleonText>
+              <V2SexyChameleonText>Retry</V2SexyChameleonText>
             </JupButton>
           </div>
         </div>

@@ -101,7 +101,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} scriptDomain={scriptDomain} />;
+  return <RenderJupiter {...props} />;
 };
 
 const EmptyJSX = () => <></>;
@@ -243,7 +243,7 @@ async function init(props: IInit) {
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);
   window.Jupiter.store = store;
-  store.set(appProps, props);
+  store.set(appProps, { ...props, scriptDomain });
 
   // Remove previous instance
   if (instanceExist) {

@@ -22,8 +22,8 @@ const AppHeader: React.FC<{}> = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between w-full px-4 py-4 md:px-8">
-        <div className="flex items-center flex-1">
+      <div className="flex items-center justify-between w-full bg-black/[.35]">
+        <div className="flex items-center flex-1 p-4">
           <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-white">
             {openMobileMenu ? <CloseIcon /> : <MenuIcon />}
           </button>
