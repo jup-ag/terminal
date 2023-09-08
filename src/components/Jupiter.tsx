@@ -16,13 +16,18 @@ import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
+import useTPSMonitor from './RPCBenchmark/useTPSMonitor';
+import CloseIcon from 'src/icons/CloseIcon';
 
 const Content = () => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
+  const { message } = useTPSMonitor();
+  const [isMessageClosed, setIsMessageClosed] = useState(false);
+
   return (
-    <>
+    <div className="relative h-full">
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
@@ -32,7 +37,18 @@ const Content = () => {
 
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
-    </>
+
+      {!isMessageClosed && message ? (
+        <div className="absolute bottom-1 px-3 py-2 w-full">
+          <div className=" bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+            <div className="pr-2">{message}</div>
+            <div className="cursor-pointer" onClick={() => setIsMessageClosed(true)}>
+              <CloseIcon width={12} height={12} />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 };
 

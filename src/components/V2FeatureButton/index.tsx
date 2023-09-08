@@ -70,7 +70,7 @@ const V2FeatureButton = () => {
     };
   }, [open, tweetContainerRef, containerDimensions.width]);
 
-  useOutsideClick(containerRef, onExit)
+  useOutsideClick(containerRef, onExit);
 
   return (
     <div className="">
@@ -152,7 +152,37 @@ const V2FeatureButton = () => {
                 Meteora.
               </Desc>
 
-              <JupButton className="my-20 w-[200px]" size='lg' onClick={onExit}>
+              <div className="border-b border-white/10 w-full mt-4" />
+
+              <Title>RPC Monitor</Title>
+              <Desc>
+                Built in RPC Monitor allows your user to know if their RPC is not responding or the Solana network is
+                degraded.
+              </Desc>
+
+              <div className="my-2 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+                <span className="flex text-xs justify-center items-center text-left">
+                  <div className="ml-1 text-rock">
+                    <span>
+                      <span>Your RPC is not responding to any requests.</span>
+                    </span>
+                  </div>
+                </span>
+              </div>
+
+              <div className="my-2 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+                <span className="flex text-xs justify-center items-center text-left">
+                  <div className="ml-1 text-rock">
+                    <span>
+                      <span>
+                        Solana network is experiencing degraded performance. Transactions may fail to send or confirm.
+                      </span>
+                    </span>
+                  </div>
+                </span>
+              </div>
+
+              <JupButton className="my-20 w-[200px]" size="lg" onClick={onExit}>
                 <V2SexyChameleonText>Close</V2SexyChameleonText>
               </JupButton>
             </div>
