@@ -46,7 +46,7 @@ const AppHeader: React.FC<{}> = () => {
           style={{
             height: 'calc(100vh - 70px)',
           }}
-          className="z-50 md:hidden fixed top-[70px] left-0 w-full bg-[rgba(62,62,69,0.85)] backdrop-blur-[20px]"
+          className="z-[60] md:hidden fixed top-[70px] left-0 w-full bg-[rgba(62,62,69,0.85)] backdrop-blur-[20px]"
           onClick={handleToggleMenu}
         >
           <HeaderLinksMobile />
