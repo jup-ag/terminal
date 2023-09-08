@@ -86,7 +86,7 @@ const V2FeatureButton = () => {
             className={classNames(
               'bg-v3-bg absolute w-full lg:w-[75%] rounded-xl flex shadow-lg max-w-[800px] hideScrollbar',
               'transform duration-500',
-              slideIn ? '!top-[40px] lg:!top-[12.5%]' : '!top-[200%]',
+              slideIn ? '!top-[40px] lg:!top-[12.5%]' : '!top-[300%] !lg:top-[200%]',
             )}
           >
             <div className="fixed top-4 right-4 text-white fill-current cursor-pointer" onClick={onExit}>
@@ -160,26 +160,28 @@ const V2FeatureButton = () => {
                 degraded.
               </Desc>
 
-              <div className="my-2 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                <span className="flex text-xs justify-center items-center text-left">
-                  <div className="ml-1 text-rock">
-                    <span>
-                      <span>Your RPC is not responding to any requests.</span>
-                    </span>
-                  </div>
-                </span>
-              </div>
-
-              <div className="my-2 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                <span className="flex text-xs justify-center items-center text-left">
-                  <div className="ml-1 text-rock">
-                    <span>
+              <div className="mt-2 border p-2 border-white/10 rounded-xl">
+                <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+                  <span className="flex text-xs justify-center items-center text-left">
+                    <div className="ml-1 text-rock">
                       <span>
-                        Solana network is experiencing degraded performance. Transactions may fail to send or confirm.
+                        <span>Your RPC is not responding to any requests.</span>
                       </span>
-                    </span>
-                  </div>
-                </span>
+                    </div>
+                  </span>
+                </div>
+
+                <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+                  <span className="flex text-xs justify-center items-center text-left">
+                    <div className="ml-1 text-rock">
+                      <span>
+                        <span>
+                          Solana network is experiencing degraded performance. Transactions may fail to send or confirm.
+                        </span>
+                      </span>
+                    </div>
+                  </span>
+                </div>
               </div>
 
               <JupButton className="my-20 w-[200px]" size="lg" onClick={onExit}>
