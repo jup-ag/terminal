@@ -16,13 +16,15 @@ import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
+import CloseIcon from 'src/icons/CloseIcon';
 
 const Content = () => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
+  const [isMessageClosed, setIsMessageClosed] = useState(false);
 
   return (
-    <>
+    <div className="relative h-full">
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
@@ -32,7 +34,18 @@ const Content = () => {
 
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
-    </>
+
+      {!isMessageClosed ? (
+        <div className="absolute bottom-1 px-3 py-2 w-full text-xs">
+          <div className=" bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
+            <div className="pr-2">{`Jupiter Terminal v1 will be sunset soon, please migrate to V2 to prevent any disruption.`}</div>
+            <div className="cursor-pointer" onClick={() => setIsMessageClosed(true)}>
+              <CloseIcon width={12} height={12} />
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 };
 
