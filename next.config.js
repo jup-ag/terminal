@@ -1,4 +1,3 @@
-const libs = ['@solana/wallet-adapter-base'];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -12,7 +11,7 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
-  transpilePackages: libs,
+  transpilePackages: [],
 };
 
 module.exports = nextConfig;

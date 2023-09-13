@@ -1,7 +1,6 @@
 import { ZERO } from '@jup-ag/math';
 import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
@@ -24,6 +23,7 @@ import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
+import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
 
 export interface IForm {
   fromMint: string;
