@@ -132,22 +132,22 @@ export default function App({ Component, pageProps }: AppProps) {
               <V2FeatureButton />
             </div>
 
-            <ShouldWrapWalletProvider>
-              <div className="flex justify-center">
-                <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
-                  {/* Desktop configurator */}
-                  <div className="hidden md:flex">
-                    <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+            <div className="flex justify-center">
+              <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
+                {/* Desktop configurator */}
+                <div className="hidden md:flex">
+                  <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                </div>
 
+                <ShouldWrapWalletProvider>
+                  <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                     {watchAllFields.simulateWalletPassthrough ? (
                       <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
                         <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
                       </div>
                     ) : null}
-                  </div>
 
-                  <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                     <div className="mt-4 flex justify-center ">
                       <button
                         onClick={() => {
@@ -243,9 +243,9 @@ export default function App({ Component, pageProps }: AppProps) {
                       ) : null}
                     </div>
                   </div>
-                </div>
+                </ShouldWrapWalletProvider>
               </div>
-            </ShouldWrapWalletProvider>
+            </div>
             {/* Mobile configurator */}
             <div className="flex md:hidden">
               <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
