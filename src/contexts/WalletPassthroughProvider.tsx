@@ -1,5 +1,4 @@
-import { WalletName, WalletReadyState } from '@solana/wallet-adapter-base';
-import { useWallet, Wallet } from '@jup-ag/wallet-adapter';
+import { useWallet, Wallet, WalletName } from '@jup-ag/wallet-adapter';
 import { PublicKey } from '@solana/web3.js';
 import { useAtom } from 'jotai';
 import React, {
@@ -68,15 +67,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
   const walletPassthrough: IWalletPassThrough = useMemo(() => {
     return {
       ...initialPassThrough,
-      publicKey: wallet?.adapter.publicKey || null,
-      wallet: wallet?.adapter
-        ? {
-            adapter: wallet?.adapter,
-            readyState: WalletReadyState.Loadable,
-          }
-        : null,
-      connecting: false,
-      connected: true,
+      ...atom?.passthroughWalletContextState,
       disconnect: async () => {
         try {
           if (wallet?.adapter?.disconnect) {

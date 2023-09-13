@@ -54,7 +54,7 @@ const IntegratedTerminal = (props: {
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
     window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState.connected, props]);
+  }, [passthroughWalletContextState, props]);
 
   return (
     <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">

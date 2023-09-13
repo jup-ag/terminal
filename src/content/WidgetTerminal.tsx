@@ -62,7 +62,7 @@ const WidgetTerminal = (props: {
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
     window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState.connected, props]);
+  }, [passthroughWalletContextState, props]);
 
   return (
     <div className="flex flex-col items-center">

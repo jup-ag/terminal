@@ -1,16 +1,12 @@
-import { ConnectionProvider, UnifiedWalletProvider, WalletName } from '@jup-ag/wallet-adapter';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { ConnectionProvider, UnifiedWalletProvider, WalletAdapterNetwork, WalletName } from '@jup-ag/wallet-adapter';
 import React, { PropsWithChildren } from 'react';
 
 import { clusterApiUrl } from '@solana/web3.js';
-import { FC, ReactNode, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { IInit } from 'src/types';
-import { AutoConnectProvider } from './AutoConnectProvider';
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
 import { PreferredExplorerProvider } from './preferredExplorer';
-
-// Built in wallets
-import { SolflareWalletAdapter } from '@solana/wallet-adapter-solflare';
+import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
 
 export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: string; icon: string }[] = [
   {
@@ -40,7 +36,7 @@ export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: st
   },
 ];
 
-const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({ endpoint, children }) => {
+const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, children }) => {
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
   const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network]);
@@ -55,7 +51,7 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
       return [];
     }
 
-    // we'll be hardcoding the other WalletStandards for now.
+    // Keeping Solflare to support Metamask Snaps
     return [new SolflareWalletAdapter()];
   }, [network]);
 
@@ -66,7 +62,7 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
           wallets={wallets}
           config={{
             env: 'mainnet-beta',
-            autoConnect: true,
+            autoConnect: typeof autoConnect !== 'undefined' ? autoConnect : true,
             metadata: {
               name: 'Jupiter Terminal',
               url: 'https://terminal.jup.ag',
@@ -95,15 +91,15 @@ const WalletContextProvider: FC<{ endpoint?: string; children: ReactNode }> = ({
   );
 };
 
-export const ContextProvider: React.FC<PropsWithChildren<IInit>> = ({ endpoint, defaultExplorer, children }) => {
+export const ContextProvider: React.FC<PropsWithChildren<IInit>> = (props) => {
   return (
     <>
       <NetworkConfigurationProvider>
-        <AutoConnectProvider>
-          <WalletContextProvider endpoint={endpoint}>
-            <PreferredExplorerProvider defaultExplorer={defaultExplorer}>{children}</PreferredExplorerProvider>
-          </WalletContextProvider>
-        </AutoConnectProvider>
+        <WalletContextProvider {...props}>
+          <PreferredExplorerProvider defaultExplorer={props.defaultExplorer}>
+            {props.children}
+          </PreferredExplorerProvider>
+        </WalletContextProvider>
       </NetworkConfigurationProvider>
     </>
   );

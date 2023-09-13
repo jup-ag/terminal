@@ -38,6 +38,7 @@ export interface IInit {
   formProps?: FormProps;
   strictTokenList?: boolean;
   defaultExplorer?: DEFAULT_EXPLORER;
+  autoConnect?: boolean;
 
   // Display & Styling
   displayMode?: 'modal' | 'integrated' | 'widget';

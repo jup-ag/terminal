@@ -112,6 +112,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
           setSelectPairSelector={setSelectPairSelector}
+          setIsWalletModalOpen={setIsWalletModalOpen}
         />
       </form>
 

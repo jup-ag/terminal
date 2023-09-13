@@ -1,7 +1,7 @@
 import { UnifiedWalletButton, UnifiedWalletProvider } from '@jup-ag/wallet-adapter';
 import { DefaultSeo } from 'next-seo';
 import type { AppProps } from 'next/app';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import 'tailwindcss/tailwind.css';
 import '../styles/globals.css';
@@ -9,7 +9,7 @@ import '../styles/globals.css';
 import AppHeader from 'src/components/AppHeader/AppHeader';
 import Footer from 'src/components/Footer/Footer';
 
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
 import classNames from 'classnames';
 import { useForm } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
@@ -57,70 +57,82 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const watchAllFields = watch();
 
-  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter()], []);
+  // Solflare wallet adapter comes with Metamask Snaps supports
+  const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter(), new SolflareWalletAdapter()], []);
+
+  const ShouldWrapWalletProvider = useMemo(() => {
+    return watchAllFields.simulateWalletPassthrough
+      ? ({ children }: { children: ReactNode }) => (
+          <UnifiedWalletProvider
+            wallets={wallets}
+            config={{
+              env: 'mainnet-beta',
+              autoConnect: true,
+              metadata: {
+                name: 'Jupiter Terminal',
+                description: '',
+                url: 'https://terminal.jup.ag',
+                iconUrls: [''],
+              },
+            }}
+          >
+            {children}
+          </UnifiedWalletProvider>
+        )
+      : React.Fragment;
+  }, [watchAllFields.simulateWalletPassthrough]);
 
   return (
-    <UnifiedWalletProvider
-      wallets={wallets}
-      config={{
-        env: 'mainnet-beta',
-        autoConnect: true,
-        metadata: {
-          name: 'Jupiter Terminal',
-          description: '',
-          url: 'https://terminal.jup.ag',
-          iconUrls: [''],
-        },
-      }}
-    >
-      <>
-        <DefaultSeo
-          title={'Jupiter Terminal'}
-          openGraph={{
-            type: 'website',
-            locale: 'en',
-            title: 'Jupiter Terminal',
-            description:
-              'Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
-            url: 'https://terminal.jup.ag/',
-            site_name: 'Jupiter Terminal',
-            images: [
-              {
-                url: `https://og.jup.ag/api/jupiter`,
-                alt: 'Jupiter Aggregator',
-              },
-            ],
-          }}
-          twitter={{
-            cardType: 'summary_large_image',
-            site: 'jup.ag',
-            handle: '@JupiterExchange',
-          }}
-        />
+    <>
+      <DefaultSeo
+        title={'Jupiter Terminal'}
+        openGraph={{
+          type: 'website',
+          locale: 'en',
+          title: 'Jupiter Terminal',
+          description: 'Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
+          url: 'https://terminal.jup.ag/',
+          site_name: 'Jupiter Terminal',
+          images: [
+            {
+              url: `https://og.jup.ag/api/jupiter`,
+              alt: 'Jupiter Aggregator',
+            },
+          ],
+        }}
+        twitter={{
+          cardType: 'summary_large_image',
+          site: 'jup.ag',
+          handle: '@JupiterExchange',
+        }}
+      />
 
-        <div className="bg-v3-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
-          <div>
-            <AppHeader />
+      <div className="bg-v3-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
+        <div>
+          <AppHeader />
 
-            <div className="">
-              <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
-                <div className="flex flex-col justify-center items-center text-center">
-                  <div className="flex space-x-2">
-                    <V2SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
-                      Jupiter Terminal
-                    </V2SexyChameleonText>
+          <div className="">
+            <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
+              <div className="flex flex-col justify-center items-center text-center">
+                <div className="flex space-x-2">
+                  <V2SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
+                    Jupiter Terminal
+                  </V2SexyChameleonText>
 
-                    <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">v2</div>
+                  <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
+                    v2
                   </div>
-                  <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
-                    An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your
-                    HTML. Check out the visual demo for the various integration modes below.
-                  </p>
                 </div>
-
-                <V2FeatureButton />
+                <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
+                  An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your
+                  HTML. Check out the visual demo for the various integration modes below.
+                </p>
               </div>
 
+              <V2FeatureButton />
+            </div>
+
+            <ShouldWrapWalletProvider>
               <div className="flex justify-center">
                 <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
                   {/* Desktop configurator */}
@@ -129,7 +141,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
                     {watchAllFields.simulateWalletPassthrough ? (
                       <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
-                        <div className='text-xs mb-1'>Simulate dApp Wallet</div>
+                        <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
                       </div>
                     ) : null}
@@ -233,20 +245,20 @@ export default function App({ Component, pageProps }: AppProps) {
                   </div>
                 </div>
               </div>
-              {/* Mobile configurator */}
-              <div className="flex md:hidden">
-                <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
-              </div>
+            </ShouldWrapWalletProvider>
+            {/* Mobile configurator */}
+            <div className="flex md:hidden">
+              <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
             </div>
           </div>
-
-          <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
-
-          <div className="w-full mt-12">
-            <Footer />
-          </div>
         </div>
-      </>
-    </UnifiedWalletProvider>
+
+        <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
+
+        <div className="w-full mt-12">
+          <Footer />
+        </div>
+      </div>
+    </>
   );
 }

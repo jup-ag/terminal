@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
 import { useAccounts } from '../contexts/accounts';
@@ -31,7 +31,8 @@ const Form: React.FC<{
   onSubmit: () => void;
   isDisabled: boolean;
   setSelectPairSelector: React.Dispatch<React.SetStateAction<'fromMint' | 'toMint' | null>>;
-}> = ({ onSubmit, isDisabled, setSelectPairSelector }) => {
+  setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
   const { publicKey } = useWalletPassThrough();
   const { accounts } = useAccounts();
   const {
@@ -150,6 +151,14 @@ const Form: React.FC<{
     ({ floatValue }: NumberFormatValues) => !floatValue || floatValue <= MAX_INPUT_LIMIT,
     [],
   );
+
+  const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
+    if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
+      window.Jupiter.onRequestConnectWallet();
+    } else {
+      setIsWalletModalOpen(true);
+    }
+  }, []);
 
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
@@ -322,7 +331,7 @@ const Form: React.FC<{
         {!walletPublicKey ? (
           <UnifiedWalletButton
             overrideContent={
-              <JupButton size="lg" className="w-full mt-4" type="button">
+              <JupButton size="lg" className="w-full mt-4" type="button" onClick={handleClick}>
                 Connect Wallet
               </JupButton>
             }
