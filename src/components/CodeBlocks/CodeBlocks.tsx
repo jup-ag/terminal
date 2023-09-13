@@ -1,6 +1,5 @@
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
-import SyntaxHighlighter from 'react-syntax-highlighter';
+import { useEffect, useMemo, useState } from 'react';
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
@@ -14,6 +13,9 @@ import prettierPluginBabel from 'prettier/plugins/babel';
 import prettierPluginEstree from 'prettier/plugins/estree';
 import prettierPluginTypescript from 'prettier/plugins/typescript';
 import prettier from 'prettier/standalone';
+import dynamic from 'next/dynamic';
+
+const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
 const CodeBlocks = ({
   formConfigurator,
@@ -60,7 +62,26 @@ const CodeBlocks = ({
     window.Jupiter.syncProps({ passthroughWalletContextState });
   }, [passthroughWalletContextState.connected, props]);
 `;
-  const INIT_SNIPPET = `window.Jupiter.init(${formPropsSnippet});`;
+
+  const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
+
+  const headTag = `<!-- Attach the loading script in your <head /> -->
+<script src='${origin}/main-v2.js' />
+`;
+
+  const bodyTag = useMemo(() => {
+    if (displayMode === 'integrated') {
+      return `<!-- Prepare a div in your <body> for Terminal to render -->
+<div id="integrated-terminal"></div>
+`;
+    }
+
+    return '';
+  }, [displayMode]);
+
+  const INIT_SNIPPET = `
+  window.Jupiter.init(${formPropsSnippet});
+  `;
   const unformattedSnippet = [formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
     '\n',
   );
@@ -76,6 +97,8 @@ const CodeBlocks = ({
         setSnippet(res);
       });
   }, [unformattedSnippet]);
+
+  const documentSnippet = useMemo(() => [headTag, bodyTag].filter(Boolean).join('\n'), [headTag, bodyTag]);
 
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
@@ -106,6 +129,20 @@ const CodeBlocks = ({
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">
+      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
+        <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
+        <p className="text-white self-start pb-2 text-xs text-white/50">
+          Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other
+          frameworks.
+        </p>
+
+        <SyntaxHighlighter language="html" showLineNumbers style={vs2015}>
+          {documentSnippet}
+        </SyntaxHighlighter>
+      </div>
+
+      <div className="my-4" />
+
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
