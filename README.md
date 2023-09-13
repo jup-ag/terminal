@@ -10,16 +10,25 @@ With several templates to get you started, and auto generated code snippets.
 
 ## Core features
 
-- `main-v1.js` bundle ~70Kb gzipped
-  - app bundle (~1.1Mb) are loaded on-demand when `init()` is called
+// TODO: update size
+- `main-v2.js` bundle (~73.6Kb gzipped)
+  - app bundle (~952Kb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
+
+// TODO: WalletStandard, and UnifiedWallet
 - Several major built-in wallets, or passthrough wallets from your dApp
 - Flexible display modes, `Modal`, `Integrated`, or `Widget`.
 - Flexible form customisation, e.g. Full swap experience, Payment flow.
+// TODO: to referral doc
 - Fee supports
 - Support ExactIn, and ExactOut swap mode
 - Auto wallet detection for Versioned Tx.
 - Price API integration, high precisions and meme tokens
+// TODO: 
+- v6 API supports
+- ExactOut
+- syncProps()
+- UnifiedWalletAdapter https://github.com/TeamRaccoons/wallet-kit
 
 ---
 
@@ -27,10 +36,10 @@ With several templates to get you started, and auto generated code snippets.
 
 ### Integrating the widget
 
-In your document, link and embed `main-v1.js`.
+In your document, link and embed `main-v2.js`.
 
 ```tsx
-<script src="https://terminal.jup.ag/main-v1.js" data-preload />
+<script src="https://terminal.jup.ag/main-v2.js" data-preload />
 ```
 
 ### Preloading Terminal
@@ -38,7 +47,7 @@ In your document, link and embed `main-v1.js`.
 Assign the attribute `data-preload` to the script tag, the full application will be preloaded on your browser's `(document.readyState === "complete")` event.
 
 ```tsx
-<script src="https://terminal.jup.ag/main-v1.js" data-preload />
+<script src="https://terminal.jup.ag/main-v2.js" data-preload />
 ```
 
 Then,
@@ -94,6 +103,7 @@ By default, Jupiter renders as a modal and take up the whole screen.
 window.Jupiter.init({ displayMode: 'modal' });
 ```
 
+// TODO: Integrated guide should include <div /> and targets
 ### _*Integrated*_
 
 Integrated mode renders Jupiter Terminal as a part of your dApp.
@@ -122,33 +132,7 @@ window.Jupiter.init({
 
 ---
 
-### Mode (Deprecated in v1)
-
-Integrators on `mode` props needs to migrate to `formProps`, which offers more flexibility in customising interactions, and more capabilities.
-
-Example on how to migrate from `mode` to `formProps`:
-
-- `default`: Default mode, user can swap between any token pair. No action required.
-
-- `outputOnly`: Output only mode, user can only swap to destination pair.
-
-  ```ts
-  // Can be mapped to:
-  window.Jupiter.init({
-    endpoint: 'https://api.mainnet-beta.solana.com',
-    formProps: {
-      fixedInputMint: undefined,
-      swapModeExactOut: undefined,
-      fixedAmount: undefined,
-      initialOutputMint: 'So11111111111111111111111111111111111111112',
-      fixedOutputMint: true,
-    },
-  });
-  ```
-
----
-
-### formProps (Available on v1)
+### formProps
 
 Configure Terminal's behaviour and allowed actions for your user
 
@@ -193,6 +177,7 @@ window.Jupiter.close();
 
 ---
 
+// TODO: Update to referral doc
 ### Fee supports
 
 Similar to Jupiter, Jupiter Terminal supports fee for integrators.
@@ -314,8 +299,6 @@ declare global {
 ```
 
 ### Upcoming feature / Experimentation
-- [ ] V6 API Support
 - [ ] Limit Order
 - [ ] DCA
 - [ ] Experiment separate bundle for passthroughWallet
-- [ ] Migrate to Unified Wallet Kit https://github.com/TeamRaccoons/wallet-kit

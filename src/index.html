@@ -1,11 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>Jupiter Terminal</title>
+    <script src="https://jupiter-terminal-git-v2-wowcats.vercel.app/main-v2.js" data-preload></script>
   </head>
 
   <body>
-    <script src="./src/index.js"></script>
+    <script>
+      document.addEventListener('readystatechange', (e) => {
+        if (document.readyState === 'complete') {
+          window.Jupiter.init({
+            endpoint: 'https://api.mainnet-beta.solana.com',
+          });
+        }
+      });
+    </script>
+
+    Page intended to test gzipped size for Terminal.
+    <pre>
+      npx serve ./src/
+    </pre>
   </body>
 </html>
