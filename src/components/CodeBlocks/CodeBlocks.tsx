@@ -132,8 +132,7 @@ const CodeBlocks = ({
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
         <p className="text-white self-start pb-2 text-xs text-white/50">
-          Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other
-          frameworks.
+          Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
         </p>
 
         <SyntaxHighlighter language="html" showLineNumbers style={vs2015}>
@@ -172,15 +171,26 @@ const CodeBlocks = ({
           {snippet}
         </SyntaxHighlighter>
 
-        <Link
-          target="_blank"
-          rel={'noopener noreferrer'}
-          href={'https://github.com/jup-ag/terminal/tree/main/src/content'}
-          className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
-        >
-          <p>Open Example directory</p>
-          <ExternalIcon />
-        </Link>
+        <div className="flex w-full justify-between">
+          <Link
+            target="_blank"
+            rel={'noopener noreferrer'}
+            href={'https://github.com/jup-ag/terminal/tree/main/src/content'}
+            className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
+          >
+            <p>Open Example directory</p>
+            <ExternalIcon />
+          </Link>
+          <Link
+            target="_blank"
+            rel={'noopener noreferrer'}
+            href={'https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts'}
+            className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
+          >
+            <p>Show fully typed API</p>
+            <ExternalIcon />
+          </Link>
+        </div>
       </div>
     </div>
   );

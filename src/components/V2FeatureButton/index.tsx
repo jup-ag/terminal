@@ -6,6 +6,10 @@ import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import SnippetSyncProps from './snippet/SnippetSyncProps';
 import JupButton from '../JupButton';
 import { useOutsideClick } from 'src/misc/utils';
+import Link from 'next/link';
+import ExternalIcon from 'src/icons/ExternalIcon';
+import JupiterLogo from 'src/icons/JupiterLogo';
+import MeteoraLogo from 'src/icons/MeteoraLogo';
 
 const Title: React.FC<PropsWithChildren> = ({ children }) => (
   <div className="mt-6 text-white text-md text-center font-semibold">{children}</div>
@@ -148,8 +152,29 @@ const V2FeatureButton = () => {
               <Title>Unified, with Unified Wallet Kit</Title>
               <Desc>
                 Unified Wallet Kit is an open-sourced, Swiss Army Knife wallet adapter, striving for the best wallet
-                integration experience for developers, and best wallet experience for your users. Used by Jupiter and
-                Meteora.
+                integration experience for developers, and best wallet experience for your users.
+                <br />
+                <br />
+                <div className="flex flex-col items-center justify-center">
+                  <div className='flex items-center space-x-2'>
+                    <span>Used by</span>
+                    <Link href='https://jup.ag' >
+                      <JupiterLogo />
+                    </Link>
+                    <Link href='https://app.meteora.ag'>
+                      <MeteoraLogo />
+                    </Link>
+                  </div>
+
+                  <Link
+                    className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
+                    href={'https://github.com/TeamRaccoons/wallet-kit'}
+                    rel="noreferrer noopener"
+                  >
+                    <span>Open on Github</span>
+                    <ExternalIcon />
+                  </Link>
+                </div>
               </Desc>
 
               <div className="border-b border-white/10 w-full mt-4" />
