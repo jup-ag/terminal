@@ -122,28 +122,30 @@ Or, [check out our fully typed API reference](https://github.com/jup-ag/terminal
 
 ---
 
+<br/>
+<br/>
+<br/>
+
 ## Additional API Reference
 
-### Resuming / Closing activity
+### Typescript Support
 
-- Everytime `init()` is called, it will create a new activity.
-
-- If you want to resume the previous activity, you can use `resume()`.
-
-- `close()` function only hide the widget.
+Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.d.ts` file in your project, and copy the contents in [src/types/index.d.ts](https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts)
 
 ```tsx
-if (window.Jupiter._instance) {
-  window.Jupiter.resume();
+declare global {
+  interface Window {
+    Jupiter: JupiterTerminal;
+  }
 }
-
-window.Jupiter.close();
+// ...
+// ...
+// ...
 ```
 
 ---
 
 // TODO: Update to referral doc
-
 ### Fee supports
 
 Similar to Jupiter, Jupiter Terminal supports fee for integrators.
@@ -172,14 +174,34 @@ window.Jupiter.init({
 });
 ```
 
+---
+
+### Resuming / Closing activity
+
+- Everytime `init()` is called, it will create a new activity.
+
+- If you want to resume the previous activity, you can use `resume()`.
+
+- `close()` function only hide the widget.
+
+```tsx
+if (window.Jupiter._instance) {
+  window.Jupiter.resume();
+}
+
+window.Jupiter.close();
+```
+
+
 ### Strict Token List
 
 - `strictTokenList?: boolean;`
 - Default: `true`
 
-The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".
+The Jupiter Token List API is an open, collaborative, and dynamic token list to make trading on Solana more transparent and safer for users and developers.
+It is true by default to ensure that only validated tokens are shown.
 
-Learn more at: https://docs.jup.ag/api/token-list-api
+Learn more at: https://station.jup.ag/docs/token-list/token-list-api
 
 ---
 
@@ -251,21 +273,6 @@ window.Jupiter.init({
 ```
 
 ---
-
-### Typescript Support
-
-Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.d.ts` file in your project, and copy the contents in `src/types/index.d.ts`.
-
-```tsx
-declare global {
-  interface Window {
-    Jupiter: JupiterTerminal;
-  }
-}
-// ...
-// ...
-// ...
-```
 
 ### Upcoming feature / Experimentation
 
