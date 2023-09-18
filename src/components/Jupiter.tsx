@@ -60,9 +60,14 @@ const JupiterApp = (props: IInit) => {
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
 
-  const [asLegacyTransaction, setAsLegacyTransaction] = useState(true);
+  const [asLegacyTransaction, setAsLegacyTransaction] = useState(false);
   // Auto detech if wallet supports it, and enable it if it does
   useEffect(() => {
+    // So our user can preview the quote before connecting
+    if (!wallet?.adapter) {
+      return;
+    }
+
     if (wallet?.adapter?.supportedTransactionVersions?.has(0)) {
       setAsLegacyTransaction(false);
       return;
