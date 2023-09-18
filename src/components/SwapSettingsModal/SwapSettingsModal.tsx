@@ -195,7 +195,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <span>Transaction Priority</span>
               <Tooltip
                 variant="dark"
-                className='!left-24 !top-16 w-[50%]'
+                className='!left-0 !top-16 w-[50%]'
                 content={
                   <span className="flex rounded-lg text-xs text-white/75">
                     The priority fee is paid to the Solana network. This additional fee helps boost how a transaction
@@ -419,7 +419,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <div className='flex items-center space-x-2'>
                 <p className='text-sm font-semibold'>Versioned Tx.</p>
 
-                <a href='https://docs.jup.ag/integrating-jupiter-1/additional-guides/composing-with-versioned-transactions#what-are-versioned-transactions' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                <a href='https://docs.jup.ag/docs/additional-topics/composing-with-versioned-transaction#what-are-versioned-transactions' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
                   <ExternalIcon />
                 </a>
               </div>
@@ -441,7 +441,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <div className='flex items-center space-x-2'>
                 <p className='text-sm font-semibold'>Strict Token list</p>
 
-                <a href='https://docs.jup.ag/api/token-list-api' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                <a href='https://docs.jup.ag/docs/token-list/token-list-api' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
                   <ExternalIcon />
                 </a>
               </div>
