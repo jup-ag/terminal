@@ -13,10 +13,17 @@ import Decimal from 'decimal.js';
 import JupButton from '../JupButton';
 import { detectedSeparator, formatNumber } from 'src/misc/utils';
 import { DEFAULT_SLIPPAGE, useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
-import { PRIORITY_HIGH, PRIORITY_MAXIMUM_SUGGESTED, PRIORITY_NONE, PRIORITY_TURBO, useSwapContext } from 'src/contexts/SwapContext';
+import {
+  PRIORITY_HIGH,
+  PRIORITY_MAXIMUM_SUGGESTED,
+  PRIORITY_NONE,
+  PRIORITY_TURBO,
+  useSwapContext,
+} from 'src/contexts/SwapContext';
 import Toggle from '../Toggle';
 import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
 import ExternalIcon from 'src/icons/ExternalIcon';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
@@ -30,7 +37,7 @@ export type Forms = {
   onlyDirectRoutes: boolean;
   useWSol: boolean;
   asLegacyTransaction: boolean;
-  preferredTokenListMode: PreferredTokenListMode
+  preferredTokenListMode: PreferredTokenListMode;
 };
 
 const MINIMUM_SLIPPAGE = 0;
@@ -47,9 +54,12 @@ export const PRIORITY_TEXT = {
 const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO];
 
 const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
-  const { jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL } } = useSwapContext();
+  const {
+    jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
+  } = useSwapContext();
   const { slippage, setSlippage } = useSlippageConfig();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
+  const { wallet } = useWalletPassThrough();
 
   const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], [DEFAULT_SLIPPAGE]);
 
@@ -66,19 +76,19 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       ...(slippage
         ? slippageInitialPreset
           ? {
-            slippagePreset: String(slippageInitialPreset),
-          }
+              slippagePreset: String(slippageInitialPreset),
+            }
           : {
-            slippageInput: String(slippage),
-          }
+              slippageInput: String(slippage),
+            }
         : {}),
       ...(typeof priorityFeeInSOL !== 'undefined' && typeof priorityInitialPreset !== 'undefined'
         ? {
-          priorityInSOLPreset: priorityInitialPreset,
-        }
+            priorityInSOLPreset: priorityInitialPreset,
+          }
         : {
-          priorityInSOLInput: priorityFeeInSOL,
-        }),
+            priorityInSOLInput: priorityFeeInSOL,
+          }),
       asLegacyTransaction,
       preferredTokenListMode,
     },
@@ -162,10 +172,14 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       setPriorityFeeInSOL(priority);
     }
 
-    setAsLegacyTransaction(asLegacyTransactionInput)
-    setPreferredTokenListMode(preferredTokenListModeInput)
+    setAsLegacyTransaction(asLegacyTransactionInput);
+    setPreferredTokenListMode(preferredTokenListModeInput);
     closeModal();
   };
+
+  const detectedVerTxSupport = useMemo(() => {
+    return wallet?.adapter?.supportedTransactionVersions?.has(0);
+  }, [wallet]);
 
   return (
     <div className={classNames('w-full rounded-xl flex flex-col bg-jupiter-bg text-white shadow-xl max-h-[90%]')}>
@@ -195,11 +209,11 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <span>Transaction Priority</span>
               <Tooltip
                 variant="dark"
-                className='!left-0 !top-16 w-[50%]'
+                className="!left-0 !top-16 w-[50%]"
                 content={
                   <span className="flex rounded-lg text-xs text-white/75">
-                    The priority fee is paid to the Solana network. This additional fee helps boost how a transaction
-                    is prioritized against others, resulting in faster transaction execution times.
+                    The priority fee is paid to the Solana network. This additional fee helps boost how a transaction is
+                    prioritized against others, resulting in faster transaction execution times.
                   </span>
                 }
               >
@@ -213,7 +227,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <Controller
                 name="priorityInSOLInput"
                 control={form.control}
-                render={({ }) => {
+                render={({}) => {
                   return (
                     <>
                       {PRIORITY_PRESET.map((item, idx) => {
@@ -231,7 +245,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                               setInputPriorityFocused(false);
                             }}
                           >
-                            <div className='whitespace-nowrap'>
+                            <div className="whitespace-nowrap">
                               <p className="text-sm text-white">{name}</p>
                               <span className="mt-1 text-xs">{item} SOL</span>
                             </div>
@@ -244,12 +258,13 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               />
             </div>
 
-            <div className='mt-1'>
+            <div className="mt-1">
               <span className="text-white/75 font-500 text-xs">or set manually:</span>
 
               <div
-                className={`relative mt-1 ${inputPriorityFocused ? 'v2-border-gradient v2-border-gradient-center' : ''
-                  }`}
+                className={`relative mt-1 ${
+                  inputPriorityFocused ? 'v2-border-gradient v2-border-gradient-center' : ''
+                }`}
               >
                 <Controller
                   name={'priorityInSOLInput'}
@@ -356,8 +371,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                   inputRef.current?.focus();
                   setInputFocused(true);
                 }}
-                className={`flex items-center justify-between cursor-text w-[120px] h-full text-white/50 bg-[#1B1B1E] pl-2 text-sm relative border-l border-black-10 border-white/5 ${inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''
-                  }`}
+                className={`flex items-center justify-between cursor-text w-[120px] h-full text-white/50 bg-[#1B1B1E] pl-2 text-sm relative border-l border-black-10 border-white/5 ${
+                  inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''
+                }`}
               >
                 <span className="text-xs">
                   <span>Custom</span>
@@ -415,11 +431,16 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
             <Separator />
 
-            <div className='flex items-center justify-between mt-2'>
-              <div className='flex items-center space-x-2'>
-                <p className='text-sm font-semibold'>Versioned Tx.</p>
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-semibold">Versioned Tx.</p>
 
-                <a href='https://docs.jup.ag/docs/additional-topics/composing-with-versioned-transaction#what-are-versioned-transactions' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                <a
+                  href="https://docs.jup.ag/docs/additional-topics/composing-with-versioned-transaction#what-are-versioned-transactions"
+                  rel="noreferrer"
+                  target={'_blank'}
+                  className="cursor-pointer"
+                >
                   <ExternalIcon />
                 </a>
               </div>
@@ -429,28 +450,41 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 onClick={() => form.setValue('asLegacyTransaction', !asLegacyTransactionInput)}
               />
             </div>
-            <p className='mt-2 text-xs text-white/50'>
-              Versioned Tx is a significant upgrade that allows for more advanced routings and better prices! Make
-              sure your connected wallet is compatible before toggling on Ver. Tx. Current compatible wallets:
-              Phantom, Solflare, Glow and Backpack.
+            <p className="mt-2 text-xs text-white/50">
+              Versioned Tx is a significant upgrade that allows for more advanced routings and better prices!
             </p>
+            
+            {wallet?.adapter ? (
+              <p className="mt-2 text-xs text-white/50">
+                {detectedVerTxSupport
+                  ? `Your wallet supports Versioned Tx. and it has been turned on by default.`
+                  : `Your wallet does not support Versioned Tx.`}
+              </p>
+            ) : null}
 
             <Separator />
 
-            <div className='flex items-center justify-between mt-2'>
-              <div className='flex items-center space-x-2'>
-                <p className='text-sm font-semibold'>Strict Token list</p>
+            <div className="flex items-center justify-between mt-2">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-semibold">Strict Token list</p>
 
-                <a href='https://docs.jup.ag/docs/token-list/token-list-api' rel="noreferrer" target={'_blank'} className='cursor-pointer'>
+                <a
+                  href="https://docs.jup.ag/docs/token-list/token-list-api"
+                  rel="noreferrer"
+                  target={'_blank'}
+                  className="cursor-pointer"
+                >
                   <ExternalIcon />
                 </a>
               </div>
               <Toggle
                 active={preferredTokenListModeInput === 'strict'}
-                onClick={() => form.setValue('preferredTokenListMode', preferredTokenListModeInput === 'strict' ? 'all' : 'strict')}
+                onClick={() =>
+                  form.setValue('preferredTokenListMode', preferredTokenListModeInput === 'strict' ? 'all' : 'strict')
+                }
               />
             </div>
-            <p className='mt-2 text-xs text-white/50'>
+            <p className="mt-2 text-xs text-white/50">
               {`The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".`}
             </p>
           </div>
