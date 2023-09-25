@@ -1,5 +1,5 @@
 import { ConnectionProvider, UnifiedWalletProvider, WalletAdapterNetwork, WalletName } from '@jup-ag/wallet-adapter';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useState } from 'react';
 
 import { clusterApiUrl } from '@solana/web3.js';
 import { ReactNode, useMemo } from 'react';
@@ -7,6 +7,7 @@ import { IInit } from 'src/types';
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
 import { PreferredExplorerProvider } from './preferredExplorer';
 import { SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { IWalletNotification } from '@jup-ag/wallet-adapter/dist/types/contexts/WalletConnectionProvider';
 
 export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: string; icon: string }[] = [
   {
@@ -36,6 +37,7 @@ export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: st
   },
 ];
 
+const noop = () => {};
 const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, children }) => {
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
@@ -55,39 +57,85 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
     return [new SolflareWalletAdapter()];
   }, [network]);
 
-  const ShouldWrapWalletProvider = enableWalletPassthrough
-    ? React.Fragment
-    : ({ children }: { children: ReactNode }) => (
-        <UnifiedWalletProvider
-          wallets={wallets}
-          config={{
-            env: 'mainnet-beta',
-            autoConnect: typeof autoConnect !== 'undefined' ? autoConnect : true,
-            metadata: {
-              name: 'Jupiter Terminal',
-              url: 'https://terminal.jup.ag',
-              description:
-                'An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML. Check out the visual demo for the various integration modes below.          ',
-              iconUrls: [],
-            },
-            hardcodedWallets: HARDCODED_WALLET_STANDARDS,
-            walletPrecedence: [
-              'Phantom' as WalletName,
-              'Backpack' as WalletName,
-              'OKX Wallet' as WalletName,
-              'Glow' as WalletName,
-            ],
-            notificationCallback: undefined,
-          }}
-        >
-          {children}
-        </UnifiedWalletProvider>
-      );
+  const [showWalletStatus, setShowWalletStatus] = useState<{
+    show: boolean;
+    message: ReactNode;
+  }>({
+    show: false,
+    message: '',
+  });
+
+  const ShouldWrapWalletProvider = useMemo(() => {
+    return enableWalletPassthrough
+      ? React.Fragment
+      : ({ children }: { children: ReactNode }) => (
+          <UnifiedWalletProvider
+            wallets={wallets}
+            config={{
+              env: 'mainnet-beta',
+              autoConnect: typeof autoConnect !== 'undefined' ? autoConnect : true,
+              metadata: {
+                name: 'Jupiter Terminal',
+                url: 'https://terminal.jup.ag',
+                description:
+                  'An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML. Check out the visual demo for the various integration modes below.          ',
+                iconUrls: [],
+              },
+              hardcodedWallets: HARDCODED_WALLET_STANDARDS,
+              walletPrecedence: [
+                'Phantom' as WalletName,
+                'Backpack' as WalletName,
+                'OKX Wallet' as WalletName,
+                'Glow' as WalletName,
+              ],
+              notificationCallback: {
+                onConnect: noop,
+                onConnecting: noop,
+                onDisconnect: noop,
+                onNotInstalled: ({ walletName, metadata }: IWalletNotification) => {
+                  setShowWalletStatus({
+                    show: true,
+                    message: (
+                      <p className="space-y-1">
+                        {walletName} is not installed.
+                        <p className="space-x-1">
+                          <a className="underline font-semibold" target="_blank" rel="noopener noreferrer" href={metadata.url}>
+                            Visit {walletName} website
+                          </a>
+                          <span>to install it.</span>
+                        </p>
+                      </p>
+                    ),
+                  });
+          
+                  setTimeout(() => {
+                    setShowWalletStatus({
+                      show: false,
+                      message: '',
+                    });
+                  }, 5_000);
+                },
+              },
+            }}
+          >
+            {children}
+          </UnifiedWalletProvider>
+        );
+  }, [enableWalletPassthrough]);
 
   return (
-    <ConnectionProvider endpoint={selectedEndpoint}>
-      <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
-    </ConnectionProvider>
+    <>
+      <ConnectionProvider endpoint={selectedEndpoint}>
+        <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
+      </ConnectionProvider>
+      {showWalletStatus.show && showWalletStatus.message ? (
+        <div className="absolute bottom-2 w-full px-2">
+          <div className="w-full h-full bg-white/10 rounded-lg p-2 text-warning text-xs">
+            {showWalletStatus.message}
+          </div>
+        </div>
+      ) : null}
+    </>
   );
 };
 
