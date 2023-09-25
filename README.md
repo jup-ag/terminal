@@ -152,7 +152,7 @@ Similar to Jupiter, Jupiter Terminal supports fee for integrators.
 
 There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
 
-Refer to [Adding your own fees](https://docs.jup.ag/integrating-jupiter/additional-guides/adding-your-own-fees) docs for more details.
+Refer to [Adding your own fees](https://docs.jup.ag/docs/v6-beta/adding-fees) docs for more details.
 
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
