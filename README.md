@@ -9,6 +9,10 @@ With several templates to get you started, and auto generated code snippets.
 <img src="public/demo/terminal-hero.gif" />
 
 ---
+## Breaking change v1 to v2
+- Fee token account updated to use Jupiter referral token account. Check out [Fee supports section](#fee-supports)
+
+---
 
 ## Core features
 
@@ -145,7 +149,6 @@ declare global {
 
 ---
 
-// TODO: Update to referral doc
 ### Fee supports
 
 Similar to Jupiter, Jupiter Terminal supports fee for integrators.
