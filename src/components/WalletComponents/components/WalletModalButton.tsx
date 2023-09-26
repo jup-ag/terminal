@@ -5,7 +5,11 @@ export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void
   const { connecting } = useWalletPassThrough();
 
   const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    setIsWalletModalOpen(true);
+    if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
+      window.Jupiter.onRequestConnectWallet();
+    } else { 
+      setIsWalletModalOpen(true);
+    }
   }, []);
 
   return (

@@ -1,35 +1,37 @@
-import React from 'react';
-
-import { Wallet } from '@solana/wallet-adapter-react';
-
+import React, { useEffect } from 'react';
+import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
-
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 
 const ModalTerminal = (props: {
   rpcUrl: string;
   formProps: FormProps;
-  fakeWallet: Wallet | null;
+  simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const {
-    rpcUrl,
-    formProps,
-    fakeWallet,
-    strictTokenList,
-    defaultExplorer
-  } = props;
-  
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+
+  const passthroughWalletContextState = useWallet();
+  const { setShowModal } = useUnifiedWalletContext();
+
   const launchTerminal = () => {
     window.Jupiter.init({
       endpoint: rpcUrl,
       formProps,
-      passThroughWallet: fakeWallet,
+      enableWalletPassthrough: simulateWalletPassthrough,
+      passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
+      onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
-      defaultExplorer
+      defaultExplorer,
     });
   };
+
+  // To make sure passthrough wallet are synced
+  useEffect(() => {
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
+  }, [passthroughWalletContextState, props]);
 
   return (
     <div

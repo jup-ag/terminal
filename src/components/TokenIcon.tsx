@@ -11,6 +11,7 @@ const TokenIcon: React.FC<{ tokenInfo?: TokenInfo | null; width?: number; height
   return (
     <div className="text-xs flex items-center justify-center rounded-full overflow-hidden" style={{ width, height}}>
       {tokenInfo && !error ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img onError={() => setError(true)} src={tokenInfo?.logoURI} alt={tokenInfo?.symbol} width={width} height={height} />
       ) : (
         <div className="items-center justify-center rounded-full overflow-hidden bg-black/20" style={{ width, height}} />

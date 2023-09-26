@@ -1,18 +1,17 @@
-const libs = ['@solana/wallet-adapter-base'];
-const withTM = require('next-transpile-modules')(libs);
 
 /** @type {import('next').NextConfig} */
-const nextConfig = withTM({
+const nextConfig = {
   webpack: (config, { isServer }) => {
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack'],
-    })
-    if (!isServer) config.resolve.fallback.fs = false
-    return config
+    });
+    if (!isServer) config.resolve.fallback.fs = false;
+    return config;
   },
   reactStrictMode: true,
   swcMinify: true,
-});
+  transpilePackages: [],
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

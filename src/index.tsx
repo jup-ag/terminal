@@ -5,9 +5,13 @@ import { ContextProvider } from './contexts/ContextProvider';
 import { ScreenProvider } from './contexts/ScreenProvider';
 import { TokenContextProvider } from './contexts/TokenContextProvider';
 import WalletPassthroughProvider from './contexts/WalletPassthroughProvider';
-import { IInit } from './types';
+import { Provider, useAtom } from 'jotai';
+import { appProps } from './library';
 
-const RenderJupiter = (props: IInit) => {
+const App = () => {
+  const [props] = useAtom(appProps);
+  if (!props) return null;
+
   return (
     <ContextProvider {...props}>
       <WalletPassthroughProvider>
@@ -18,6 +22,14 @@ const RenderJupiter = (props: IInit) => {
         </TokenContextProvider>
       </WalletPassthroughProvider>
     </ContextProvider>
+  );
+};
+
+const RenderJupiter = () => {
+  return (
+    <Provider store={typeof window !== 'undefined' ? window.Jupiter.store : undefined}>
+      <App />
+    </Provider>
   );
 };
 

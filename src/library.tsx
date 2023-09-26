@@ -1,11 +1,13 @@
 import { createRoot } from 'react-dom/client';
+import { atom, createStore } from 'jotai';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import classNames from 'classnames';
+
 import { IInit } from './types';
 
 import 'tailwindcss/tailwind.css';
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import classNames from 'classnames';
 
 const containerId = 'jupiter-terminal';
 const packageJson = require('../package.json');
@@ -29,9 +31,8 @@ async function loadRemote(id: string, href: string, type: 'text/javascript' | 's
     if (existing) {
       res({});
     } else {
-      let el: HTMLScriptElement | HTMLLinkElement = type === 'text/javascript'
-        ? document.createElement('script')
-        : document.createElement('link');
+      let el: HTMLScriptElement | HTMLLinkElement =
+        type === 'text/javascript' ? document.createElement('script') : document.createElement('link');
 
       el.id = id;
       el.onload = res;
@@ -62,7 +63,7 @@ async function loadJupiter() {
       loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
     ]);
     // The sequence matters! the last imported Jupiter.css takes precendent
-    loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet')
+    loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet');
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`);
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
@@ -100,7 +101,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} scriptDomain={scriptDomain} />;
+  return <RenderJupiter {...props} />;
 };
 
 const EmptyJSX = () => <></>;
@@ -121,8 +122,9 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${containerClassName || ''
-        }`;
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-jupiter-bg rounded-lg webkit-scrollbar ${
+        containerClassName || ''
+      }`;
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar';
     }
@@ -198,23 +200,26 @@ const RenderWidgetShell = (props: IInit) => {
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        {isOpen
-          ? (
-            <div className={classNames('text-white fill-current pt-1',
-              {
-                'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
-              })}>
-              <ChevronDownIcon width={classes.widgetLogoSize * 0.4} height={classes.widgetLogoSize * 0.4} />
-            </div>
-          )
-          : <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />}
+        {isOpen ? (
+          <div
+            className={classNames('text-white fill-current pt-1', {
+              'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
+            })}
+          >
+            <ChevronDownIcon width={classes.widgetLogoSize * 0.4} height={classes.widgetLogoSize * 0.4} />
+          </div>
+        ) : (
+          <JupiterLogo width={classes.widgetLogoSize} height={classes.widgetLogoSize} />
+        )}
       </div>
 
       <div
         id="integrated-terminal"
-        className={`absolute overflow-hidden ${classes.contentClassName
-          } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${!isOpen ? 'h-0 opacity-0' : 'opacity-100'
-          }`}
+        className={`absolute overflow-hidden ${
+          classes.contentClassName
+        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-jupiter-bg transition-opacity duration-300 shadow-2xl ${
+          !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
+        }`}
       >
         <RenderLoadableJupiter {...props} />
       </div>
@@ -222,15 +227,29 @@ const RenderWidgetShell = (props: IInit) => {
   );
 };
 
+const store = createStore();
+const appProps = atom<IInit | undefined>(undefined);
+
 async function init(props: IInit) {
-  const { passThroughWallet, onSwapError, onSuccess, integratedTargetId, ...restProps } = props;
+  const {
+    enableWalletPassthrough,
+    passthroughWalletContextState,
+    onRequestConnectWallet,
+    onSwapError,
+    onSuccess,
+    integratedTargetId,
+    ...restProps
+  } = props;
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);
+  window.Jupiter.store = store;
+  store.set(appProps, { ...props, scriptDomain });
 
   // Remove previous instance
   if (instanceExist) {
     window.Jupiter._instance = null;
-    instanceExist?.remove();
+    instanceExist.remove();
+    window.Jupiter.root?.unmount();
   }
 
   targetDiv.id = containerId;
@@ -242,10 +261,17 @@ async function init(props: IInit) {
     if (!target) {
       throw new Error(`Jupiter Terminal: document.getElementById cannot find ${integratedTargetId}`);
     }
-
     target?.appendChild(targetDiv);
   } else {
     document.body.appendChild(targetDiv);
+  }
+
+  // Passthrough
+  if (enableWalletPassthrough) {
+    window.Jupiter.enableWalletPassthrough = true;
+    window.Jupiter.onRequestConnectWallet = onRequestConnectWallet;
+  } else {
+    window.Jupiter.enableWalletPassthrough = false;
   }
 
   let element;
@@ -254,13 +280,13 @@ async function init(props: IInit) {
   } else {
     element = <RenderShell {...props} />;
   }
+
   const root = createRoot(targetDiv);
   root.render(element);
   window.Jupiter.root = root;
   window.Jupiter._instance = element;
 
-  // Passthrough & Callbacks
-  window.Jupiter.passThroughWallet = passThroughWallet;
+  // Callbacks
   window.Jupiter.onSwapError = onSwapError;
   window.Jupiter.onSuccess = onSuccess;
 }
@@ -273,11 +299,10 @@ if (typeof window !== 'undefined') {
 
     if (loadComplete && shouldPreload) {
       setTimeout(() => {
-        loadJupiter()
-          .catch((error) => {
-            console.error(`Error pre-loading Jupiter Terminal: ${error}`);
-            throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
-          })
+        loadJupiter().catch((error) => {
+          console.error(`Error pre-loading Jupiter Terminal: ${error}`);
+          throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
+        });
       }, 2000);
     }
   };
@@ -298,4 +323,16 @@ const close = () => {
   }
 };
 
-export { init, resume, close };
+const syncProps = (props: {
+  enableWalletPassthrough?: IInit['enableWalletPassthrough'];
+  passthroughWalletContextState?: IInit['passthroughWalletContextState'];
+}) => {
+  const currentProps = store.get(appProps);
+  const newProps = {
+    ...currentProps,
+    passthroughWalletContextState: props.passthroughWalletContextState || currentProps?.passthroughWalletContextState,
+  } as IInit;
+  store.set(appProps, newProps);
+};
+
+export { init, resume, close, appProps, syncProps };

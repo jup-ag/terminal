@@ -5,6 +5,7 @@ import { useOutsideClick } from 'src/misc/utils';
 import { CurrentUserBadge } from '../CurrentUserBadge';
 
 import { WalletModalButton } from './components/WalletModalButton';
+import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 
 export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
@@ -14,7 +15,6 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
 
   const base58 = useMemo(() => publicKey?.toBase58(), [publicKey]);
 
-  const passThroughWallet = window.Jupiter.passThroughWallet;
   const onClickDisconnect = () => {
     setActive(false);
     disconnect();
@@ -26,7 +26,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   useOutsideClick(ref, closePopup);
 
   if ((!connected && !connecting) || !base58) {
-    return <WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />;
+    return <UnifiedWalletButton overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
   }
 
   return (
@@ -35,7 +35,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
         <CurrentUserBadge />
       </div>
 
-      {screen === 'Initial' && Boolean(passThroughWallet) === false ? (
+      {screen === 'Initial' ? (
         <ul
           aria-label="dropdown-list"
           className={

@@ -1,16 +1,24 @@
-import { Wallet } from '@solana/wallet-adapter-react';
+import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
-import { useDebouncedEffect } from 'src/misc/utils';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWallet: Wallet | null, strictTokenList: boolean, defaultExplorer: DEFAULT_EXPLORER }) => {
-  const { rpcUrl, fakeWallet, formProps, strictTokenList, defaultExplorer } = props;
+const WidgetTerminal = (props: {
+  rpcUrl: string;
+  formProps: FormProps;
+  simulateWalletPassthrough: boolean;
+  strictTokenList: boolean;
+  defaultExplorer: DEFAULT_EXPLORER;
+}) => {
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
+
+  const passthroughWalletContextState = useWallet();
+  const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = () => {
     window.Jupiter.init({
@@ -20,16 +28,18 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
         size,
       },
       formProps,
-      passThroughWallet: fakeWallet,
+      enableWalletPassthrough: simulateWalletPassthrough,
+      passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
+      onRequestConnectWallet: () => setShowModal(true),
       endpoint: rpcUrl,
       strictTokenList,
-      defaultExplorer
+      defaultExplorer,
     });
   };
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
-    if (!isLoaded || !window.Jupiter.init) {
+    if (!isLoaded || !window.Jupiter.init || !intervalId) {
       intervalId = setInterval(() => {
         setIsLoaded(Boolean(window.Jupiter.init));
       }, 500);
@@ -40,11 +50,19 @@ const WidgetTerminal = (props: { rpcUrl: string, formProps: FormProps, fakeWalle
     }
   }, []);
 
-  useDebouncedEffect(() => {
-    if (isLoaded && Boolean(window.Jupiter.init)) {
-      launchTerminal();
-    }
-  }, [isLoaded, props, position, size], 1000)
+  useEffect(() => {
+    setTimeout(() => {
+      if (isLoaded && Boolean(window.Jupiter.init)) {
+        launchTerminal();
+      }
+    }, 200);
+  }, [isLoaded, props, position, size]);
+
+  // To make sure passthrough wallet are synced
+  useEffect(() => {
+    if (!window.Jupiter.syncProps) return;
+    window.Jupiter.syncProps({ passthroughWalletContextState });
+  }, [passthroughWalletContextState, props]);
 
   return (
     <div className="flex flex-col items-center">

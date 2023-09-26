@@ -1,4 +1,4 @@
-import { useLocalStorage } from '@solana/wallet-adapter-react';
+import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { createContext, FC, ReactNode, useContext } from 'react';
 
 export interface NetworkConfigurationState {

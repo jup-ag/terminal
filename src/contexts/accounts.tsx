@@ -1,13 +1,16 @@
 import BN from 'bn.js';
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { useConnection } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import React, { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports } from 'src/misc/utils';
+import { useConnection } from '@jup-ag/wallet-adapter';
+
+const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
 export interface IAccountsBalance {
+  pubkey: PublicKey;
   balance: number;
   balanceLamports: BN;
   hasBalance: boolean;
@@ -68,6 +71,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     const response = await connection.getAccountInfo(publicKey);
     if (response) {
       return {
+        pubkey: publicKey,
         balance: fromLamports(response?.lamports || 0, 9),
         balanceLamports: new BN(response?.lamports || 0),
         hasBalance: response?.lamports ? response?.lamports > 0 : false,
@@ -79,16 +83,17 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const fetchAllTokens = async () => {
     if (!publicKey || !connected) return {};
 
-    const response = await connection.getParsedTokenAccountsByOwner(
-      publicKey,
-      { programId: TOKEN_PROGRAM_ID },
-      'confirmed',
+    const [tokenAccounts, token2022Accounts] = await Promise.all(
+      [TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID].map((tokenProgramId) =>
+        connection.getParsedTokenAccountsByOwner(publicKey, { programId: tokenProgramId }, 'confirmed'),
+      ),
     );
 
-    const reducedResult = response.value.reduce((acc, item: ParsedTokenData) => {
+    const reducedResult = [...tokenAccounts.value, ...token2022Accounts.value].reduce((acc, item: ParsedTokenData) => {
       acc[item.account.data.parsed.info.mint] = {
         balance: item.account.data.parsed.info.tokenAmount.uiAmount,
         balanceLamports: new BN(0),
+        pubkey: item.pubkey,
         hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
         decimals: item.account.data.parsed.info.tokenAmount.decimals,
       };

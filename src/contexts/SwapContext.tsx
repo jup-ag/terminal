@@ -1,14 +1,6 @@
 import { ZERO } from '@jup-ag/math';
-import {
-  IConfirmationTxDescription,
-  OnTransaction,
-  RouteInfo,
-  SwapMode,
-  SwapResult,
-  useJupiter,
-} from '@jup-ag/react-hook';
+import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import { SignerWalletAdapter } from '@solana/wallet-adapter-base';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
@@ -31,6 +23,7 @@ import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
+import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
 
 export interface IForm {
   fromMint: string;
@@ -56,20 +49,20 @@ export interface ISwapContext {
   >;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
-  selectedSwapRoute: RouteInfo | null;
-  setSelectedSwapRoute: Dispatch<SetStateAction<RouteInfo | null>>;
+  quoteReponseMeta: QuoteResponseMeta | null;
+  setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
   onSubmit: () => Promise<SwapResult | null>;
   lastSwapResult: SwapResult | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
   swapping: {
-    totalTxs: number;
-    txStatus: Array<{
-      txid: string;
-      txDescription: IConfirmationTxDescription;
-      status: 'loading' | 'fail' | 'success';
-    }>;
+    txStatus:
+      | {
+          txid: string;
+          status: 'loading' | 'fail' | 'success';
+        }
+      | undefined;
   };
   reset: (props?: { resetValues: boolean }) => void;
   jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & {
@@ -88,13 +81,13 @@ export const initialSwapContext: ISwapContext = {
     fromValue: '',
     toValue: '',
   },
-  setForm() { },
+  setForm() {},
   errors: {},
-  setErrors() { },
+  setErrors() {},
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
-  selectedSwapRoute: null,
-  setSelectedSwapRoute() { },
+  quoteReponseMeta: null,
+  setQuoteResponseMeta() {},
   onSubmit: async () => null,
   lastSwapResult: null,
   displayMode: 'modal',
@@ -109,30 +102,34 @@ export const initialSwapContext: ISwapContext = {
   },
   scriptDomain: '',
   swapping: {
-    totalTxs: 0,
-    txStatus: [],
+    txStatus: undefined,
   },
-  reset() { },
+  reset() {},
   jupiter: {
-    routes: [],
+    programIdsExcluded: new Set(),
+    programIdToLabelMap: new Map(),
+    setProgramIdsExcluded() {},
+    quoteResponseMeta: undefined,
     allTokenMints: [],
     routeMap: new Map(),
     exchange: undefined,
     loading: false,
-    refresh() { },
+    refresh() {},
     lastRefreshTimestamp: 0,
     error: undefined,
     asLegacyTransaction: false,
-    setAsLegacyTransaction() { },
+    setAsLegacyTransaction() {},
     priorityFeeInSOL: 0,
-    setPriorityFeeInSOL() { },
+    setPriorityFeeInSOL() {},
   },
 };
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
 
-export function useSwapContext(): ISwapContext {
-  return useContext(SwapContext);
+export function useSwapContext() {
+  const context = useContext(SwapContext);
+
+  return context;
 }
 
 export const PRIORITY_NONE = 0; // No additional fee
@@ -162,7 +159,10 @@ export const SwapContextProvider: FC<{
   const { refresh: refreshAccount } = useAccounts();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const formProps: FormProps = useMemo(() => ({ ...initialSwapContext.formProps, ...originalFormProps }), [originalFormProps])
+  const formProps: FormProps = useMemo(
+    () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
+    [originalFormProps],
+  );
 
   const [form, setForm] = useState<IForm>({
     fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
@@ -171,7 +171,10 @@ export const SwapContextProvider: FC<{
     toValue: '',
   });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
-  const jupiterSwapMode = useMemo(() => formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn, [formProps?.swapMode]);
+  const jupiterSwapMode = useMemo(
+    () => (formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn),
+    [formProps?.swapMode],
+  );
 
   const fromTokenInfo = useMemo(() => {
     const tokenInfo = form.fromMint ? tokenMap.get(form.fromMint) : null;
@@ -218,9 +221,9 @@ export const SwapContextProvider: FC<{
 
   const { slippage } = useSlippageConfig();
 
-  const amount = JSBI.BigInt(nativeAmount)
+  const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
-    routes: swapRoutes,
+    quoteResponseMeta,
     allTokenMints,
     routeMap,
     exchange,
@@ -228,10 +231,13 @@ export const SwapContextProvider: FC<{
     refresh,
     lastRefreshTimestamp,
     error,
+    programIdsExcluded,
+    programIdToLabelMap,
+    setProgramIdsExcluded,
   } = useJupiter({
     amount,
-    inputMint: useMemo(() => form.fromMint ? new PublicKey(form.fromMint) : PublicKey.default, [form.fromMint]),
-    outputMint: useMemo(() => form.toMint ? new PublicKey(form.toMint) : PublicKey.default, [form.toMint]),
+    inputMint: useMemo(() => (form.fromMint ? new PublicKey(form.fromMint) : PublicKey.default), [form.fromMint]),
+    outputMint: useMemo(() => (form.toMint ? new PublicKey(form.toMint) : PublicKey.default), [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
     asLegacyTransaction,
@@ -239,74 +245,69 @@ export const SwapContextProvider: FC<{
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
-  const [selectedSwapRoute, setSelectedSwapRoute] = useState<RouteInfo | null>(null);
+  const [quoteReponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
-    if (!swapRoutes || swapRoutes.length === 0) {
-      setSelectedSwapRoute(null);
+    if (!quoteResponseMeta) {
+      setQuoteResponseMeta(null);
       return;
     }
     // the UI sorts the best route depending on ExactIn or ExactOut
-    setSelectedSwapRoute(swapRoutes[0])
-  }, [jupiterSwapMode, swapRoutes]);
+    setQuoteResponseMeta(quoteResponseMeta);
+  }, [jupiterSwapMode, quoteResponseMeta]);
 
   useEffect(() => {
     setForm((prev) => {
       const newValue = { ...prev };
 
+      let { inAmount, outAmount } = quoteReponseMeta?.quoteResponse || {};
       if (jupiterSwapMode === SwapMode.ExactIn) {
-        newValue.toValue = selectedSwapRoute?.outAmount
-          ? String(fromLamports(selectedSwapRoute?.outAmount, toTokenInfo?.decimals || 0))
-          : '';
+        newValue.toValue = outAmount ? String(fromLamports(outAmount, toTokenInfo?.decimals || 0)) : '';
       } else {
-        newValue.fromValue = selectedSwapRoute?.inAmount
-          ? String(fromLamports(selectedSwapRoute?.inAmount, fromTokenInfo?.decimals || 0))
-          : '';
+        newValue.fromValue = inAmount ? String(fromLamports(inAmount, fromTokenInfo?.decimals || 0)) : '';
       }
       return newValue;
     });
-  }, [selectedSwapRoute, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
+  }, [quoteReponseMeta, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
 
-  const [totalTxs, setTotalTxs] = useState(0);
   const [txStatus, setTxStatus] = useState<
-    Array<{
-      txid: string;
-      txDescription: IConfirmationTxDescription;
-      status: 'loading' | 'fail' | 'success';
-    }>
-  >([]);
+    | {
+        txid: string;
+        status: 'loading' | 'fail' | 'success';
+      }
+    | undefined
+  >(undefined);
 
-  const onTransaction: OnTransaction = async (txid, totalTxs, txDescription, awaiter) => {
-    setTotalTxs(totalTxs);
-
-    const tx = txStatus.find((tx) => tx.txid === txid);
+  const onTransaction: OnTransaction = async (txid, awaiter) => {
+    const tx = txStatus?.txid === txid ? txStatus : undefined;
     if (!tx) {
-      setTxStatus((prev) => [...prev, { txid, txDescription, status: 'loading' }]);
+      setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
     }
 
     const success = !((await awaiter) instanceof Error);
 
     setTxStatus((prev) => {
-      const tx = prev.find((tx) => tx.txid === txid);
+      const tx = prev?.txid === txid ? prev : undefined;
       if (tx) {
         tx.status = success ? 'success' : 'fail';
       }
-      return [...prev];
+      return prev ? { ...prev } : undefined;
     });
   };
 
   const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
   const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !selectedSwapRoute) {
+    if (!walletPublicKey || !wallet?.adapter || !quoteReponseMeta) {
       return null;
     }
 
     try {
       const swapResult = await exchange({
         wallet: wallet?.adapter as SignerWalletAdapter,
-        routeInfo: selectedSwapRoute,
+        routeInfo: quoteReponseMeta,
         onTransaction,
         computeUnitPriceMicroLamports,
       });
+      console.log({ swapResult });
 
       setLastSwapResult(swapResult);
       return swapResult;
@@ -314,28 +315,30 @@ export const SwapContextProvider: FC<{
       console.log('Swap error', error);
       return null;
     }
-  }, [walletPublicKey, selectedSwapRoute]);
+  }, [walletPublicKey, quoteReponseMeta]);
 
   const refreshAll = () => {
     refresh();
     refreshAccount();
   };
 
-  const reset = useCallback(({ resetValues } = { resetValues: true }) => {
-    setTimeout(() => {
-      if (resetValues) {
-        setForm({ ...initialSwapContext.form, ...formProps });
-        setupInitialAmount();
-      }
+  const reset = useCallback(
+    ({ resetValues } = { resetValues: true }) => {
+      setTimeout(() => {
+        if (resetValues) {
+          setForm({ ...initialSwapContext.form, ...formProps });
+          setupInitialAmount();
+        }
 
-      setSelectedSwapRoute(null);
-      setErrors(initialSwapContext.errors);
-      setLastSwapResult(initialSwapContext.lastSwapResult);
-      setTxStatus(initialSwapContext.swapping.txStatus);
-      setTotalTxs(initialSwapContext.swapping.totalTxs);
-      refreshAccount();
-    }, 0)
-  }, [setupInitialAmount]);
+        setQuoteResponseMeta(null);
+        setErrors(initialSwapContext.errors);
+        setLastSwapResult(initialSwapContext.lastSwapResult);
+        setTxStatus(initialSwapContext.swapping.txStatus);
+        refreshAccount();
+      }, 0);
+    },
+    [setupInitialAmount],
+  );
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
   const computeUnitPriceMicroLamports = useMemo(() => {
@@ -357,8 +360,8 @@ export const SwapContextProvider: FC<{
         setErrors,
         fromTokenInfo,
         toTokenInfo,
-        selectedSwapRoute,
-        setSelectedSwapRoute,
+        quoteReponseMeta,
+        setQuoteResponseMeta,
         onSubmit,
         lastSwapResult,
         reset,
@@ -367,11 +370,13 @@ export const SwapContextProvider: FC<{
         formProps,
         scriptDomain,
         swapping: {
-          totalTxs,
           txStatus,
         },
         jupiter: {
-          routes: JSBI.GT(amount, ZERO) ? swapRoutes : undefined,
+          quoteResponseMeta: JSBI.GT(amount, ZERO) ? quoteResponseMeta : undefined,
+          programIdsExcluded,
+          programIdToLabelMap,
+          setProgramIdsExcluded,
           allTokenMints,
           routeMap,
           exchange,

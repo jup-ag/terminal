@@ -6,186 +6,145 @@ Visit our Demo / Playground over at https://terminal.jup.ag
 
 With several templates to get you started, and auto generated code snippets.
 
+<img src="public/demo/terminal-hero.gif" />
+
+---
+## Breaking change v1 to v2
+- Fee token account updated to use Jupiter referral token account. Check out [Fee supports section](#fee-supports)
+
 ---
 
 ## Core features
 
-- `main-v1.js` bundle ~70Kb gzipped
-  - app bundle (~1.1Mb) are loaded on-demand when `init()` is called
+- `main-v2.js` bundle (~73.6Kb gzipped)
+
+  - app bundle (~952Kb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
-- Several major built-in wallets, or passthrough wallets from your dApp
-- Flexbile display modes, `Modal`, `Integrated`, or `Widget`.
-- Flexible form customisation, e.g. Full swap experience, Payment flow.
-- Fee supports
-- Support ExactIn, and ExactOut swap mode
-- Auto wallet detection for Versioned Tx.
-- Price API integration, high precisions and meme tokens
+
+- Agnostic
+
+  - Work with any dApp, `Integrated` or as a standalone `Widget`, or `Modal`
+  - Any framework, React, Plain HTML, and other frameworks.
+  - Responsive on any screen size
+
+- Form customisation
+
+  - From Full swap experience, Payment Flow, to Ape-ing tokens
+  - Fixed input/output amount, or mint
+  - ExactIn, and ExactOut (e.g. Payment) swap mode
+
+- Built-in Wallets
+
+  - Wallet Standard
+  - Passthrough Wallet from your dApp
+  - Powered by [Unified Wallet Kit](https://github.com/TeamRaccoons/wallet-kit)
+
+- Lite, but powerful
+
+  - Jupiter v6 API with Metis **(New✨)**
+  - State sharing with syncProps() **(New✨)**
+  - Price API integration, with high decimal/precision support to trade meme tokens
+  - ExactOut (e.g Payment)
+
+- Fees Support
+  - Customisable fees
+  - Track fees with Jupiter Referral Dashboard
 
 ---
 
 ## Getting started
 
-### Integrating the widget
+- [Demo + Auto Code Gen](https://terminal.jup.ag)
+- [TLDR Example](https://github.com/jup-ag/terminal/tree/main/src/content)
 
-In your document, link and embed `main-v1.js`.
+- Step by step 👇
+
+### 1. Setup HTML
+
+Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
+
+```html
+<!-- Attach the loading script in your <head /> -->
+<script src="https://terminal.jup.ag/main-v2.js" />
+
+<!-- Optionally, preload for better experience, or integrated mode -->
+<script src="https://terminal.jup.ag/main-v2.js" data-preload />
+```
+
+### 2. Initialize Jupiter Terminal
+
+#### Scenario 1: Terminal as part of your dApp (Passthrough Wallet)
+
+Your dApp already has a `<WalletProvider />`.
 
 ```tsx
-<script src="https://terminal.jup.ag/main-v1.js" data-preload />
+window.Jupiter.init({ enableWalletPassthrough: true });
 ```
 
-### Preloading Terminal
-
-Assign the attribute `data-preload` to the script tag, the full application will be preloaded on your browser's `(document.readyState === "complete")` event.
+Then, syncronise wallet state between your dApp and Jupiter Terminal with `syncProps()`
 
 ```tsx
-<script src="https://terminal.jup.ag/main-v1.js" data-preload />
+import { useWallet } from '@solana/wallet-adapter-react'; // Or @jup-ag/wallet-adapter;
+
+const passthroughWalletContextState = useWallet();
+useEffect(() => {
+  if (!window.Jupiter.syncProps) return;
+  window.Jupiter.syncProps({ passthroughWalletContextState });
+}, [passthroughWalletContextState.connected, props]);
 ```
 
-Then,
+#### Scenario 2: Standalone Terminal
+
+Your dApp does not have a `<WalletProvider />`, or is a plain HTML/JS website.
 
 ```tsx
-document.addEventListener('readystatechange', e => {
-  if (document.readyState === "complete") {
-    window.Jupiter.init({ endpoint: 'https://api.mainnet-beta.solana.com' });
-  }
-});
+window.Jupiter.init({});
 ```
 
----
-
-## Built-in wallets, or passthrough wallets from your dApp
-
-_*Mode 1: Wallet passthrough*_
-
-If your user have connected their wallet via your dApp, you may passthrough the wallet instance via the `init({ passThroughWallet: wallet })`.
-
-```jsx
-const App = () => {
-  const { wallet } = useWallet();
-
-  const initJupiter = () => {
-    if (wallet) {
-      window.Jupiter.init({
-        endpoint,
-        passThroughWallet: wallet,
-      });
-    }
-  };
-};
-```
-
-_*Mode 2: Built-in wallet*_
-
-If your user is not connected, Jupiter Terminal have several built-in wallets that user can connect and perform swap directly.
-
----
-
-### Modal, Integrated, or Widget mode.
-
-### _*Modal*_
-
-By default, Jupiter renders as a modal and take up the whole screen.
-<img src="public/demo/modal-demo.png" />
-
-```tsx
-window.Jupiter.init({ displayMode: 'modal' });
-```
-
-### _*Integrated*_
-
-Integrated mode renders Jupiter Terminal as a part of your dApp.
-<img src="public/demo/integrated-demo.png" />
-
-```tsx
-window.Jupiter.init({ displayMode: 'integrated' });
-```
-
-### _*Widget*_
-
-<img src="public/demo/widget-demo.png" />
-Widget mode renders Jupiter Terminal as a widget that can be placed at different position.
-
-````tsx
-
+### 3. Setup other props
 ```tsx
 window.Jupiter.init({
-  displayMode: 'widget',
-  widgetStyle: {
-        position: 'bottom-right', // 'bottom-left', 'top-left', 'top-right'
-        size: 'default', // 'sm'
-      },
+  /** Required 
+   * Solana RPC endpoint
+   * We do not recommend using the public RPC endpoint for production dApp, you will get severely rate-limited
+  */
+  endpoint: 'https://api.mainnet-beta.solana.com',
+  // ...other props
 });
-````
+```
+
+### 4. Finishing touches
+Terminal are light, but full of features, such as customising form behaviour, fees, styling and much more.
+
+[Go to our Demo](https://terminal.jup.ag) to explore all these features, with automagically generated integration code.
+
+Or, [check out our fully typed API reference](https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts) for more details.
+
+<img src="public/demo/terminal-codegen.gif" />
+
+
 
 ---
 
-### Mode (Deprecated in v1)
+<br/>
+<br/>
+<br/>
 
-Integrators on `mode` props needs to migrate to `formProps`, which offers more flexibility in customising interactions, and more capabilities.
+## Additional API Reference
 
-Example on how to migrate from `mode` to `formProps`:
+### Typescript Support
 
-- `default`: Default mode, user can swap between any token pair. No action required.
-
-- `outputOnly`: Output only mode, user can only swap to destination pair.
-
-  ```ts
-  // Can be mapped to:
-  window.Jupiter.init({
-    endpoint: 'https://api.mainnet-beta.solana.com',
-    formProps: {
-      fixedInputMint: undefined,
-      swapModeExactOut: undefined,
-      fixedAmount: undefined,
-      initialOutputMint: 'So11111111111111111111111111111111111111112',
-      fixedOutputMint: true,
-    },
-  });
-  ```
-
----
-
-### formProps (Available on v1)
-
-Configure Terminal's behaviour and allowed actions for your user
-
-- swapMode?: `SwapMode.ExactIn | SwapMode.ExactOut`
-  - Default to `ExactIn`, where user input the amount of token they want to swap.
-  - On `ExactOut`, user input the desired amount of token they want to receive.
-- initialAmount?: `string`
-  - The initial amount
-- fixedAmount?: `boolean`
-  - The initial amount is fixed, user cannot change the amount.
-  - Depending on swapMode, fixedAmount will be applied to input or output amount.
-- initialInputMint?: `string`
-  - The default input mint
-  - can be used with `fixedInputMint`
-- fixedInputMint?: `boolean`
-  - must be used with `initialInputMint`
-  - user cannot change the input mint
-- initialOutputMint?: `string`
-  - The default output mint
-  - can be used with `fixedOutputMint`
-- fixedOutputMint?: `boolean`
-  - must be used with `initialInputMint`
-  - user cannot change the input mint
-
----
-
-### Resuming / Closing activity
-
-- Everytime `init()` is called, it will create a new activity.
-
-- If you want to resume the previous activity, you can use `resume()`.
-
-- `close()` function only hide the widget.
+Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.d.ts` file in your project, and copy the contents in [src/types/index.d.ts](https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts)
 
 ```tsx
-if (window.Jupiter._instance) {
-  window.Jupiter.resume();
+declare global {
+  interface Window {
+    Jupiter: JupiterTerminal;
+  }
 }
-
-window.Jupiter.close();
+// ...
+// ...
+// ...
 ```
 
 ---
@@ -196,7 +155,7 @@ Similar to Jupiter, Jupiter Terminal supports fee for integrators.
 
 There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
 
-Refer to [Adding your own fees](https://docs.jup.ag/integrating-jupiter/additional-guides/adding-your-own-fees) docs for more details.
+Refer to [Adding your own fees](https://docs.jup.ag/docs/v6-beta/adding-fees) docs for more details.
 
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
@@ -218,17 +177,39 @@ window.Jupiter.init({
 });
 ```
 
+---
+
+### Resuming / Closing activity
+
+- Everytime `init()` is called, it will create a new activity.
+
+- If you want to resume the previous activity, you can use `resume()`.
+
+- `close()` function only hide the widget.
+
+```tsx
+if (window.Jupiter._instance) {
+  window.Jupiter.resume();
+}
+
+window.Jupiter.close();
+```
+
+
 ### Strict Token List
+
 - `strictTokenList?: boolean;`
 - Default: `true`
 
-The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".
+The Jupiter Token List API is an open, collaborative, and dynamic token list to make trading on Solana more transparent and safer for users and developers.
+It is true by default to ensure that only validated tokens are shown.
 
-Learn more at: https://docs.jup.ag/api/token-list-api
+Learn more at: https://station.jup.ag/docs/token-list/token-list-api
 
 ---
 
 ### Default Explorer
+
 - `defaultExplorer?: 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';`
 - Default: `Solana Explorer`
 
@@ -296,16 +277,8 @@ window.Jupiter.init({
 
 ---
 
-### Typescript Support
-Since Jupiter Terminal is not published on npm, and are only importable via CDN, to get proper typing, you can create a typing decalarion `jupiter-terminal.d.ts` file in your project, and copy the contents in `src/types/index.d.ts`.
+### Upcoming feature / Experimentation
 
-```tsx
-declare global {
-  interface Window {
-    Jupiter: JupiterTerminal;
-  }
-}
-// ...
-// ...
-// ...
-```
+- [ ] Limit Order
+- [ ] DCA
+- [ ] Experiment separate bundle for passthroughWallet

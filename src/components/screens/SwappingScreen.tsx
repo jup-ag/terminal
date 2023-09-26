@@ -4,12 +4,12 @@ import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import JupButton from '../JupButton';
-import SexyChameleonText from '../SexyChameleonText/SexyChameleonText';
 import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
 import PriceInfo from '../PriceInfo/index';
 import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
+import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 
 const ErrorIcon = () => {
   return (
@@ -40,11 +40,11 @@ const SwappingScreen = () => {
     lastSwapResult,
     reset,
     scriptDomain,
-    swapping: { totalTxs, txStatus },
-    selectedSwapRoute,
+    swapping: { txStatus },
+    quoteReponseMeta,
     fromTokenInfo,
     toTokenInfo,
-    jupiter: { routes, refresh },
+    jupiter: { refresh },
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
@@ -92,13 +92,13 @@ const SwappingScreen = () => {
   };
 
   const swapState: 'success' | 'error' | 'loading' = useMemo(() => {
-    const hasErrors = txStatus.find((item) => item.status === 'fail');
+    const hasErrors = txStatus?.status === 'fail';
     if (hasErrors || errorMessage) {
       return 'error';
     }
 
-    const allSuccess = txStatus.every((item) => item.status !== 'loading');
-    if (txStatus.length > 0 && allSuccess) {
+    const allSuccess = txStatus?.status === 'success';
+    if (allSuccess) {
       return 'success';
     }
 
@@ -123,41 +123,31 @@ const SwappingScreen = () => {
           </div>
         </div>
 
-        {totalTxs === 0 ? (
+        {txStatus === undefined ? (
           <span className="text-white text-center mt-8 text-sm px-4">Awaiting approval from your wallet...</span>
         ) : null}
-        {totalTxs > 1 ? (
-          <span className="text-white text-center mt-8 text-sm px-4">
-            Because of transaction size limits, we need to split up the transactions
-          </span>
-        ) : (
-          ''
-        )}
 
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
-          {txStatus &&
-            txStatus.map((item) => (
-              <div key={item.txid} className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
-                <Spinner spinnerColor={'white'} />
+          {swapState === 'loading' && (
+            <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
+              <Spinner spinnerColor={'white'} />
 
-                <div className="ml-4 text-white text-sm">
-                  {item.txDescription === 'SETUP' ? <span>Setup</span> : null}
-                  {item.txDescription === 'SWAP' ? <span>Swap</span> : null}
-                  {item.txDescription === 'CLEANUP' ? <span>Cleanup</span> : null}
-                </div>
+              <div className="ml-4 text-white text-sm">
+                <span>Swapping</span>
               </div>
-            ))}
+            </div>
+          )}
         </div>
       </>
     );
   };
 
   const SuccessContent = () => {
-    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo || !routes || !selectedSwapRoute) {
+    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo || !quoteReponseMeta) {
       return null;
     }
 
-    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null
+    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null;
 
     return (
       <>
@@ -184,8 +174,7 @@ const SwappingScreen = () => {
             </div>
 
             <PriceInfo
-              routes={routes}
-              selectedSwapRoute={selectedSwapRoute}
+              quoteResponse={quoteReponseMeta.quoteResponse}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
               loading={false}
@@ -208,9 +197,9 @@ const SwappingScreen = () => {
 
         <div className="mt-auto px-5 pb-4 flex space-x-2">
           <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
-            <SexyChameleonText>
+            <V2SexyChameleonText>
               <span className="text-sm">Swap More</span>
-            </SexyChameleonText>
+            </V2SexyChameleonText>
           </JupButton>
 
           {displayMode !== 'integrated' ? (
@@ -235,7 +224,7 @@ const SwappingScreen = () => {
             {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
 
             <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
-              <SexyChameleonText>Retry</SexyChameleonText>
+              <V2SexyChameleonText>Retry</V2SexyChameleonText>
             </JupButton>
           </div>
         </div>
