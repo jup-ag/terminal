@@ -116,6 +116,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
                   }, 5_000);
                 },
               },
+              theme: 'jupiter'
             }}
           >
             {children}

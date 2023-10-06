@@ -74,6 +74,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 url: 'https://terminal.jup.ag',
                 iconUrls: [''],
               },
+              theme: 'jupiter'
             }}
           >
             {children}
@@ -162,7 +163,7 @@ export default function App({ Component, pageProps }: AppProps) {
                         <div className="flex items-center text-md text-white">Modal</div>
 
                         {tab === 'modal' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}
@@ -180,7 +181,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       >
                         <div className="flex items-center text-md text-white">Integrated</div>
                         {tab === 'integrated' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}
@@ -198,7 +199,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       >
                         <div className="flex items-center text-md text-white">Widget</div>
                         {tab === 'widget' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-[rgba(252,192,10,1)] to-[rgba(78,186,233,1)]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}
