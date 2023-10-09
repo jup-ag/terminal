@@ -74,7 +74,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 url: 'https://terminal.jup.ag',
                 iconUrls: [''],
               },
-              theme: 'jupiter'
+              theme: 'jupiter',
             }}
           >
             {children}
@@ -160,7 +160,9 @@ export default function App({ Component, pageProps }: AppProps) {
                           tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">Modal</div>
+                        <div className="flex items-center text-md text-white">
+                          {tab === 'modal' ? <V2SexyChameleonText>Modal</V2SexyChameleonText> : 'Modal'}
+                        </div>
 
                         {tab === 'modal' ? (
                           <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
@@ -179,7 +181,9 @@ export default function App({ Component, pageProps }: AppProps) {
                           tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">Integrated</div>
+                        <div className="flex items-center text-md text-white">
+                          {tab === 'integrated' ? <V2SexyChameleonText>Integrated</V2SexyChameleonText> : 'Integrated'}
+                        </div>
                         {tab === 'integrated' ? (
                           <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
                         ) : (
@@ -197,7 +201,10 @@ export default function App({ Component, pageProps }: AppProps) {
                           tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">Widget</div>
+                        <div className="flex items-center text-md text-white">
+                          {tab === 'widget' ? <V2SexyChameleonText>Widget</V2SexyChameleonText> : 'Widget'}
+                        </div>
+
                         {tab === 'widget' ? (
                           <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
                         ) : (
