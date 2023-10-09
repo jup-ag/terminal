@@ -41,7 +41,6 @@ const SwappingScreen = () => {
     reset,
     scriptDomain,
     swapping: { txStatus },
-    quoteReponseMeta,
     fromTokenInfo,
     toTokenInfo,
     jupiter: { refresh },
@@ -67,16 +66,16 @@ const SwappingScreen = () => {
   useEffect(() => {
     if (screen !== 'Swapping') return;
 
-    if (lastSwapResult && 'error' in lastSwapResult) {
-      setErrorMessage(lastSwapResult.error?.message || '');
+    if (lastSwapResult?.swapResult && 'error' in lastSwapResult?.swapResult) {
+      setErrorMessage(lastSwapResult?.swapResult?.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
-        window.Jupiter.onSwapError({ error: lastSwapResult.error });
+        window.Jupiter.onSwapError({ error: lastSwapResult?.swapResult?.error });
       }
       return;
-    } else if (lastSwapResult && 'txid' in lastSwapResult) {
+    } else if (lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult) {
       if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult.txid, swapResult: lastSwapResult });
+        window.Jupiter.onSuccess({ txid: lastSwapResult?.swapResult?.txid, swapResult: lastSwapResult?.swapResult });
       }
       return;
     }
@@ -140,11 +139,24 @@ const SwappingScreen = () => {
   };
 
   const SuccessContent = () => {
-    if (!lastSwapResult || !fromTokenInfo || !toTokenInfo || !quoteReponseMeta) {
+    const { inputAmount, outputAmount, explorerLink } = useMemo(() => {
+      return {
+        inputAmount: lastSwapResult?.swapResult && 'inputAmount' in lastSwapResult?.swapResult
+          ? lastSwapResult?.swapResult.inputAmount
+          : 0,
+        outputAmount: lastSwapResult?.swapResult && 'outputAmount' in lastSwapResult?.swapResult
+          ? lastSwapResult?.swapResult.outputAmount
+          : 0,
+        explorerLink:
+          lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult
+            ? getExplorer(lastSwapResult?.swapResult.txid)
+            : '',
+      };
+    }, [lastSwapResult?.swapResult]);
+
+    if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteResponseMeta) {
       return null;
     }
-
-    const explorerLink = (lastSwapResult as any).txid ? getExplorer((lastSwapResult as any).txid) : null;
 
     return (
       <>
@@ -162,16 +174,16 @@ const SwappingScreen = () => {
           <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
               <p className="text-xs font-semibold text-white/75">
-                Swapped {fromLamports((lastSwapResult as any).inputAmount, fromTokenInfo.decimals)}{' '}
+                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)}{' '}
                 {fromTokenInfo.symbol} to
               </p>
               <p className="text-2xl font-semibold text-white/75">
-                {fromLamports((lastSwapResult as any).outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
+                {fromLamports(outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
               </p>
             </div>
 
             <PriceInfo
-              quoteResponse={quoteReponseMeta.quoteResponse}
+              quoteResponse={lastSwapResult?.quoteResponseMeta.quoteResponse}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
               loading={false}

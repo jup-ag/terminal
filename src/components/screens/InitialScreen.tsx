@@ -23,7 +23,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     form,
     setForm,
     setErrors,
-    quoteReponseMeta,
+    quoteResponseMeta,
     formProps: { initialOutputMint, fixedOutputMint },
     jupiter: { loading },
   } = useSwapContext();
@@ -37,7 +37,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
   const [isDisabled, setIsDisabled] = useState(false);
   useEffect(() => {
-    if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !quoteReponseMeta || loading) {
+    if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !quoteResponseMeta || loading) {
       setErrors({});
       setIsDisabled(true);
       return;

@@ -49,10 +49,10 @@ export interface ISwapContext {
   >;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
-  quoteReponseMeta: QuoteResponseMeta | null;
+  quoteResponseMeta: QuoteResponseMeta | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
   onSubmit: () => Promise<SwapResult | null>;
-  lastSwapResult: SwapResult | null;
+  lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null } | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
@@ -65,12 +65,13 @@ export interface ISwapContext {
       | undefined;
   };
   reset: (props?: { resetValues: boolean }) => void;
-  jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange'> & {
+  jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange' | 'quoteResponseMeta'> & {
     exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
     priorityFeeInSOL: number;
     setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
+    quoteResponseMeta: QuoteResponseMeta | undefined | null;
   };
 }
 
@@ -86,7 +87,7 @@ export const initialSwapContext: ISwapContext = {
   setErrors() {},
   fromTokenInfo: undefined,
   toTokenInfo: undefined,
-  quoteReponseMeta: null,
+  quoteResponseMeta: null,
   setQuoteResponseMeta() {},
   onSubmit: async () => null,
   lastSwapResult: null,
@@ -109,7 +110,7 @@ export const initialSwapContext: ISwapContext = {
     programIdsExcluded: new Set(),
     programIdToLabelMap: new Map(),
     setProgramIdsExcluded() {},
-    quoteResponseMeta: undefined,
+    quoteResponseMeta: null,
     allTokenMints: [],
     routeMap: new Map(),
     exchange: undefined,
@@ -223,7 +224,7 @@ export const SwapContextProvider: FC<{
 
   const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
-    quoteResponseMeta,
+    quoteResponseMeta: ogQuoteResponseMeta,
     allTokenMints,
     routeMap,
     exchange,
@@ -245,26 +246,26 @@ export const SwapContextProvider: FC<{
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
 
-  const [quoteReponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
+  const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
-    if (!quoteResponseMeta) {
+    if (!ogQuoteResponseMeta) {
       setQuoteResponseMeta(null);
       return;
     }
     // the UI sorts the best route depending on ExactIn or ExactOut
-    setQuoteResponseMeta(quoteResponseMeta);
-  }, [jupiterSwapMode, quoteResponseMeta]);
+    setQuoteResponseMeta(ogQuoteResponseMeta);
+  }, [jupiterSwapMode, ogQuoteResponseMeta]);
 
   useEffect(() => {
-    if (!form.fromValue && !quoteReponseMeta) {
-      setForm(prev => ({ ...prev, fromValue: '', toValue: '' }));
+    if (!form.fromValue && !quoteResponseMeta) {
+      setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       return;
     }
 
     setForm((prev) => {
       const newValue = { ...prev };
 
-      let { inAmount, outAmount } = quoteReponseMeta?.quoteResponse || {};
+      let { inAmount, outAmount } = quoteResponseMeta?.quoteResponse || {};
       if (jupiterSwapMode === SwapMode.ExactIn) {
         newValue.toValue = outAmount ? String(fromLamports(outAmount, toTokenInfo?.decimals || 0)) : '';
       } else {
@@ -272,7 +273,7 @@ export const SwapContextProvider: FC<{
       }
       return newValue;
     });
-  }, [quoteReponseMeta, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
+  }, [quoteResponseMeta, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
 
   const [txStatus, setTxStatus] = useState<
     | {
@@ -299,31 +300,32 @@ export const SwapContextProvider: FC<{
     });
   };
 
-  const [lastSwapResult, setLastSwapResult] = useState<SwapResult | null>(null);
+  const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
   const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !quoteReponseMeta) {
+    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
       return null;
     }
 
     try {
       const swapResult = await exchange({
         wallet: wallet?.adapter as SignerWalletAdapter,
-        routeInfo: quoteReponseMeta,
+        routeInfo: quoteResponseMeta,
         onTransaction,
         computeUnitPriceMicroLamports,
       });
       console.log({ swapResult });
 
-      setLastSwapResult(swapResult);
+      setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
+      setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       return swapResult;
     } catch (error) {
       console.log('Swap error', error);
       return null;
     }
-  }, [walletPublicKey, quoteReponseMeta]);
+  }, [walletPublicKey, quoteResponseMeta]);
 
   const refreshAll = () => {
-      refresh();
+    refresh();
     refreshAccount();
   };
 
@@ -367,7 +369,7 @@ export const SwapContextProvider: FC<{
         setErrors,
         fromTokenInfo,
         toTokenInfo,
-        quoteReponseMeta,
+        quoteResponseMeta,
         setQuoteResponseMeta,
         onSubmit,
         lastSwapResult,

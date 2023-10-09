@@ -41,7 +41,7 @@ const Form: React.FC<{
     errors,
     fromTokenInfo,
     toTokenInfo,
-    quoteReponseMeta,
+    quoteResponseMeta,
     formProps: { swapMode, fixedAmount, fixedInputMint, fixedOutputMint },
     jupiter: { quoteResponseMeta: route, loading, error, refresh },
   } = useSwapContext();
@@ -126,8 +126,8 @@ const Form: React.FC<{
     return result;
   }, [fixedAmount, swapMode]);
 
-  const marketRoutes = quoteReponseMeta
-    ? quoteReponseMeta.quoteResponse.routePlan.map(({ swapInfo }) => swapInfo.label).join(', ')
+  const marketRoutes = quoteResponseMeta
+    ? quoteResponseMeta.quoteResponse.routePlan.map(({ swapInfo }) => swapInfo.label).join(', ')
     : '';
 
   const onClickSelectFromMint = useCallback(() => {
@@ -275,7 +275,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       <NumericFormat
                         disabled={!swapMode || swapMode === 'ExactIn'}
-                        value={!quoteReponseMeta || typeof form.toValue === 'undefined' ? '' : form.toValue}
+                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                         decimalScale={toTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}
@@ -355,9 +355,9 @@ const Form: React.FC<{
           </JupButton>
         )}
 
-        {route && quoteReponseMeta && fromTokenInfo && toTokenInfo ? (
+        {route && quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            quoteResponse={quoteReponseMeta.quoteResponse}
+            quoteResponse={quoteResponseMeta.quoteResponse}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}
