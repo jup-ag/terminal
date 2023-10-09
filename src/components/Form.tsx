@@ -275,7 +275,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       <NumericFormat
                         disabled={!swapMode || swapMode === 'ExactIn'}
-                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                        value={!quoteReponseMeta || typeof form.toValue === 'undefined' ? '' : form.toValue}
                         decimalScale={toTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}

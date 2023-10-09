@@ -256,6 +256,11 @@ export const SwapContextProvider: FC<{
   }, [jupiterSwapMode, quoteResponseMeta]);
 
   useEffect(() => {
+    if (!form.fromValue && !quoteReponseMeta) {
+      setForm(prev => ({ ...prev, fromValue: '', toValue: '' }));
+      return;
+    }
+
     setForm((prev) => {
       const newValue = { ...prev };
 
@@ -318,16 +323,18 @@ export const SwapContextProvider: FC<{
   }, [walletPublicKey, quoteReponseMeta]);
 
   const refreshAll = () => {
-    refresh();
+      refresh();
     refreshAccount();
   };
 
   const reset = useCallback(
-    ({ resetValues } = { resetValues: true }) => {
+    ({ resetValues } = { resetValues: false }) => {
       setTimeout(() => {
         if (resetValues) {
           setForm({ ...initialSwapContext.form, ...formProps });
           setupInitialAmount();
+        } else {
+          setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
         }
 
         setQuoteResponseMeta(null);
