@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import Rive, { Alignment, Fit, Layout } from '@rive-app/react-canvas';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
@@ -10,6 +9,7 @@ import PriceInfo from '../PriceInfo/index';
 import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
+import JupiterLogo from 'src/icons/JupiterLogo';
 
 const ErrorIcon = () => {
   return (
@@ -115,11 +115,8 @@ const SwappingScreen = () => {
         </div>
 
         <div className="flex w-full justify-center items-center mt-9">
-          <div className="h-16 w-16">
-            <Rive
-              src={`${scriptDomain}/swap-animation.riv`}
-              layout={new Layout({ fit: Fit.Contain, alignment: Alignment.TopCenter })}
-            />
+          <div className="h-16 w-16 animate-hue duration-100">
+            <JupiterLogo width={64} height={64} />
           </div>
         </div>
 
