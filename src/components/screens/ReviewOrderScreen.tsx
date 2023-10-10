@@ -12,7 +12,7 @@ const ConfirmationScreen = () => {
     fromTokenInfo,
     toTokenInfo,
     onSubmit: onSubmitJupiter,
-    quoteReponseMeta,
+    quoteResponseMeta,
     jupiter: { loading, refresh },
   } = useSwapContext();
 
@@ -42,9 +42,9 @@ const ConfirmationScreen = () => {
       </div>
 
       <div>
-        {quoteReponseMeta && fromTokenInfo && toTokenInfo ? (
+        {quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            quoteResponse={quoteReponseMeta.quoteResponse}
+            quoteResponse={quoteResponseMeta.quoteResponse}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}

@@ -26,7 +26,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   useOutsideClick(ref, closePopup);
 
   if ((!connected && !connecting) || !base58) {
-    return <UnifiedWalletButton overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
+    return <UnifiedWalletButton buttonClassName='!bg-transparent' overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
   }
 
   return (
