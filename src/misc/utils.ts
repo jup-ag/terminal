@@ -2,6 +2,8 @@ import Decimal from 'decimal.js';
 import BN from 'bn.js';
 import JSBI from 'jsbi';
 import { RefObject, useEffect, useRef } from 'react';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { PublicKey } from '@solana/web3.js';
 
 const userLocale =
   typeof window !== 'undefined'
@@ -155,4 +157,12 @@ export function base64ToJson(base64String: string) {
     console.log(error);
     return null;
   }
+}
+
+export function getAssociatedTokenAddressSync(mint: PublicKey, owner: PublicKey, tokenProgramId = TOKEN_PROGRAM_ID) {
+  const [ata] = PublicKey.findProgramAddressSync(
+    [owner.toBuffer(), tokenProgramId.toBuffer(), mint.toBuffer()],
+    ASSOCIATED_TOKEN_PROGRAM_ID,
+  );
+  return ata;
 }
