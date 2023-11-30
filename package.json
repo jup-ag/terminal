@@ -1,6 +1,6 @@
 {
   "name": "@jup-ag/terminal",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -20,7 +20,7 @@
     "@solana/spl-token": "0.1.8",
     "@solana/spl-token-registry": "~0.2.4574",
     "@solana/wallet-adapter-wallets": "0.19.22",
-    "@solana/web3.js": "1.78.4",
+    "@solana/web3.js": "1.87.6",
     "@tanstack/react-query": "^4.33.0",
     "bn.js": "5.2.1",
     "bs58": "5.0.0",
@@ -82,7 +82,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@solana/web3.js": "1.78.4",
+      "@solana/web3.js": "1.87.6",
       "@solana/buffer-layout": "4.0.0"
     }
   }
