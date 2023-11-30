@@ -179,6 +179,20 @@ window.Jupiter.init({
 
 ---
 
+### Instructions instead of Transaction
+Request Terminal to return instructions instead of transaction, so you can manipulate the instructions.
+
+```tsx
+window.Jupiter.init({
+  // ...
+  onRequestIxCallback: () => {
+    
+  }
+});
+```
+
+---
+
 ### Resuming / Closing activity
 
 - Everytime `init()` is called, it will create a new activity.

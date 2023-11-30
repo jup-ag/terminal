@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
+import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 
@@ -12,7 +12,7 @@ const ModalTerminal = (props: {
 }) => {
   const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
 
-  const passthroughWalletContextState = useWallet();
+  const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = () => {

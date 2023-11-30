@@ -49,6 +49,20 @@ const SwappingScreen = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
 
+  const currentTime = useMemo(() => Date.now(), []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      // If over 30s, timeout
+      if (Date.now() - currentTime > 30e3) {
+        setErrorMessage('Transaction timed-out, please try again.');
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
+
   const onSwapMore = () => {
     reset();
     setErrorMessage('');
@@ -141,12 +155,14 @@ const SwappingScreen = () => {
   const SuccessContent = () => {
     const { inputAmount, outputAmount, explorerLink } = useMemo(() => {
       return {
-        inputAmount: lastSwapResult?.swapResult && 'inputAmount' in lastSwapResult?.swapResult
-          ? lastSwapResult?.swapResult.inputAmount
-          : 0,
-        outputAmount: lastSwapResult?.swapResult && 'outputAmount' in lastSwapResult?.swapResult
-          ? lastSwapResult?.swapResult.outputAmount
-          : 0,
+        inputAmount:
+          lastSwapResult?.swapResult && 'inputAmount' in lastSwapResult?.swapResult
+            ? lastSwapResult?.swapResult.inputAmount
+            : 0,
+        outputAmount:
+          lastSwapResult?.swapResult && 'outputAmount' in lastSwapResult?.swapResult
+            ? lastSwapResult?.swapResult.outputAmount
+            : 0,
         explorerLink:
           lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult
             ? getExplorer(lastSwapResult?.swapResult.txid)
@@ -174,8 +190,7 @@ const SwappingScreen = () => {
           <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
               <p className="text-xs font-semibold text-white/75">
-                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)}{' '}
-                {fromTokenInfo.symbol} to
+                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
               </p>
               <p className="text-2xl font-semibold text-white/75">
                 {fromLamports(outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
