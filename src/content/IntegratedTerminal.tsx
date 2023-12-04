@@ -140,6 +140,7 @@ const IntegratedTerminal = (props: {
       defaultExplorer,
 
       onRequestIxCallback,
+      maxAccounts: 45,
     });
   };
 

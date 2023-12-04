@@ -149,6 +149,7 @@ export const SwapContextProvider: FC<{
   asLegacyTransaction: boolean;
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
   formProps?: FormProps;
+  maxAccounts?: number;
   children: ReactNode;
 }> = (props) => {
   const {
@@ -157,6 +158,7 @@ export const SwapContextProvider: FC<{
     asLegacyTransaction,
     setAsLegacyTransaction,
     formProps: originalFormProps,
+    maxAccounts,
     children,
   } = props;
 
@@ -248,7 +250,7 @@ export const SwapContextProvider: FC<{
     outputMint: useMemo(() => (form.toMint ? new PublicKey(form.toMint) : PublicKey.default), [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
-    asLegacyTransaction,
+    maxAccounts,
   });
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
@@ -357,15 +359,7 @@ export const SwapContextProvider: FC<{
     const outputMint = quoteResponseMeta?.quoteResponse.outputMint;
 
     // A direct reference from https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction
-    const instructions: {
-      tokenLedgerInstruction: TransactionInstruction; // If you are using `useTokenLedger = true`.
-      computeBudgetInstructions: ComputeBudgetInstruction;
-      setupInstructions: TransactionInstruction;
-      swapInstruction: TransactionInstruction;
-      cleanupInstruction: TransactionInstruction;
-      addressLookupTableAddresses: AddressLookupTableAccount;
-      error: string;
-    } = await (
+    const instructions: IOnRequestIxCallback['instructions'] = await (
       await fetch('https://quote-api.jup.ag/v6/swap-instructions', {
         method: 'POST',
         headers: {
