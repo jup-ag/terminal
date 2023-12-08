@@ -346,12 +346,15 @@ export const SwapContextProvider: FC<{
         }
       } catch (error) {
         console.log('Swap error', error);
+        setTxStatus({ txid: '', status: 'fail' });
+        setLastSwapResult({ swapResult, quoteResponseMeta });
+        setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       }
     },
     [quoteResponseMeta],
   );
 
-  const onRequestIx = useCallback(async () => {
+  const onRequestIx = useCallback(async (): Promise<IOnRequestIxCallback> => {
     if (!walletPublicKey || !wallet?.adapter) throw new Error('Missing wallet');
     if (!quoteResponseMeta) throw new Error('Missing quote');
 
@@ -391,10 +394,9 @@ export const SwapContextProvider: FC<{
 
     return {
       meta: {
-        inputMint: new PublicKey(inputMint),
-        outputMint: new PublicKey(outputMint),
         sourceAddress,
         destinationAddress,
+        quoteResponseMeta,
       },
       instructions,
       onSubmitWithIx,

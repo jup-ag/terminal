@@ -3,7 +3,7 @@ import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
 import { PublicKey, TransactionError } from '@solana/web3.js';
-import { SwapMode, SwapResult } from '@jup-ag/react-hook';
+import { QuoteResponseMeta, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
 
@@ -56,10 +56,9 @@ export interface TransactionInstruction {
 
 export interface IOnRequestIxCallback {
   meta: {
-    inputMint: PublicKey;
-    outputMint: PublicKey;
     sourceAddress: PublicKey;
     destinationAddress: PublicKey;
+    quoteResponseMeta: QuoteResponseMeta;
   };
   instructions: {
     tokenLedgerInstruction: TransactionInstruction;
