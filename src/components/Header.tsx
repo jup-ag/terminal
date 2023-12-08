@@ -14,6 +14,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
   const { slippage } = useSlippageConfig();
   const {
     form,
+    formProps: { darkMode },
     jupiter: { refresh },
   } = useSwapContext();
   const [showSlippapgeSetting, setShowSlippageSetting] = useState(false);
@@ -23,17 +24,19 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
   }, [form]);
 
   return (
-    <div className="mt-2 h-7 pl-3 pr-2">
-      <div className="w-full flex items-center justify-between ">
+    <div className="pl-3 pr-2 mt-2 h-7">
+      <div className="flex items-center justify-between w-full ">
         <a href={jupiterDirectLink} target={'_blank'} rel="noreferrer noopener" className="flex items-center space-x-2">
           <JupiterLogo width={24} height={24} />
-          <span className="font-bold text-sm text-white">Jupiter</span>
+          <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-black'}`}>Jupiter</span>
         </a>
 
-        <div className="flex space-x-1 items-center">
+        <div className="flex items-center space-x-1">
           <button
             type="button"
-            className="p-2 h-7 w-7 flex items-center justify-center border rounded-full border-white/10 bg-black/10 text-white/30 fill-current"
+            className={`flex items-center justify-center p-2 border rounded-full fill-current h-7 w-7 border-white/10 bg-black/10 ${
+              darkMode ? 'text-white/30' : 'text-black/30'
+            }`}
             onClick={refresh}
           >
             <RefreshSVG />
@@ -41,7 +44,9 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
 
           <button
             type="button"
-            className="p-2 h-7 space-x-1 flex items-center justify-center border rounded-2xl border-white/10 bg-black/10 text-white/30 fill-current"
+            className={`flex items-center justify-center p-2 space-x-1 border fill-current h-7 rounded-2xl border-white/10 bg-black/10 ${
+              darkMode ? 'text-white/30' : 'text-black/30'
+            }`}
             onClick={() => setShowSlippageSetting(true)}
           >
             <SettingsSVG />
@@ -55,7 +60,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
       </div>
 
       {showSlippapgeSetting ? (
-        <div className="absolute z-10 top-0 left-0 w-full h-full overflow-hidden bg-black/50 flex items-center px-4">
+        <div className="absolute top-0 left-0 z-10 flex items-center w-full h-full px-4 overflow-hidden bg-black/50">
           <SwapSettingsModal closeModal={() => setShowSlippageSetting(false)} />
         </div>
       ) : null}

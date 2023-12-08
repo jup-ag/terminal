@@ -4,10 +4,12 @@ import Tooltip from 'src/components/Tooltip';
 import { formatNumber, fromLamports } from 'src/misc/utils';
 
 const Deposits = ({
+  darkMode = false,
   hasSerumDeposit,
   hasAtaDeposit,
   feeInformation,
 }: {
+  darkMode?: boolean;
   hasSerumDeposit: boolean;
   hasAtaDeposit: boolean;
   feeInformation: TransactionFeeInfo | undefined;
@@ -15,13 +17,13 @@ const Deposits = ({
   if (hasSerumDeposit || hasAtaDeposit) {
     return (
       <div className="flex items-start justify-between text-xs">
-        <div className="flex w-[50%] text-white/30">
+        <div className={`flex w-[50%] ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
           <span>Deposit</span>
           <Tooltip
             variant="dark"
             className="-mt-24"
             content={
-              <div className="max-w-xs p-2 rounded-lg text-white-75">
+              <div className={`max-w-xs p-2 rounded-lg ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
                 <ul className="pl-2">
                   {hasSerumDeposit && (
                     <li>
@@ -53,7 +55,7 @@ const Deposits = ({
             <span className="ml-1 cursor-pointer">[?]</span>
           </Tooltip>
         </div>
-        <div className="w-[50%] text-white/30 text-xs text-right">
+        <div className={`w-[50%] text-xs text-right ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
           {(() => {
             const content = [
               hasAtaDeposit && (

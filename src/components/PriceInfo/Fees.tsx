@@ -6,11 +6,12 @@ import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { QuoteResponse, SwapMode } from '@jup-ag/react-hook';
 
 interface IFees {
+  darkMode?: boolean;
   routePlan: QuoteResponse['routePlan'] | undefined;
   swapMode: SwapMode | undefined;
 }
 
-const Fees = ({ routePlan, swapMode }: IFees) => {
+const Fees = ({ darkMode = false, routePlan, swapMode }: IFees) => {
   const { tokenMap } = useTokenContext();
 
   if (!routePlan || (routePlan && routePlan.length === 0)) {
@@ -36,15 +37,15 @@ const Fees = ({ routePlan, swapMode }: IFees) => {
           )
           .toDP(4);
         return (
-          <div key={idx} className="flex items-center space-x-4 justify-between text-xs">
-            <div className="text-white/30">
+          <div key={idx} className="flex items-center justify-between space-x-4 text-xs">
+            <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>
               <span>
                 <span>
                   Fees paid to <span translate="no">{item.swapInfo.label}</span> LP
                 </span>
               </span>
             </div>
-            <div className="text-white/30 text-right">
+            <div className={`text-right ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
               {feeAmount} {tokenMint?.symbol} ({formatNumber.format(new Decimal(feePct).mul(100).toNumber())}
               %)
             </div>

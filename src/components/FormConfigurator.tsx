@@ -35,7 +35,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         initialAmount: '1000000000',
         fixedAmount: true,
         fixedOutputMint: true,
-      }
+      },
     },
   },
   {
@@ -48,7 +48,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         swapMode: SwapMode.ExactIn,
         initialOutputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
         fixedOutputMint: true,
-      }
+      },
     },
   },
   {
@@ -61,7 +61,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
         swapMode: SwapMode.ExactOut,
-      }
+      },
     },
   },
   {
@@ -80,7 +80,8 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         fixedInputMint: false,
         initialOutputMint: 'AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR',
         fixedOutputMint: true,
-      }
+        darkMode: false,
+      },
     },
   },
 ];
@@ -107,31 +108,31 @@ const FormConfigurator = ({
   const [isImported, setIsImported] = useState(false);
 
   useEffect(() => {
-    const templateString = query?.import
+    const templateString = query?.import;
     if (templateString) {
       const data = base64ToJson(templateString as string);
 
       if (!data) {
-        replace({ query: undefined })
+        replace({ query: undefined });
         return;
       }
 
       reset({
         ...formState.defaultValues,
         ...data,
-      })
+      });
       setIsImported(true);
       return;
     }
 
-    const templateName = query?.template
-    if (currentTemplate.current === templateName) return
+    const templateName = query?.template;
+    if (currentTemplate.current === templateName) return;
 
-    const foundIndex = templateOptions.findIndex(item => item.name === templateName);
+    const foundIndex = templateOptions.findIndex((item) => item.name === templateName);
     if (foundIndex >= 0) {
-      onSelect(foundIndex)
+      onSelect(foundIndex);
     }
-  }, [query])
+  }, [query]);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
@@ -143,13 +144,18 @@ const FormConfigurator = ({
     const templateName = templateOptions[index].name;
     currentTemplate.current = templateName;
 
-    replace({
-      query: templateName === 'Default' ? undefined : {
-        template: templateName
-      }
-    },
+    replace(
+      {
+        query:
+          templateName === 'Default'
+            ? undefined
+            : {
+                template: templateName,
+              },
+      },
       undefined,
-      { shallow: true })
+      { shallow: true },
+    );
 
     setActive(index);
     setIsOpen(false);
@@ -158,14 +164,14 @@ const FormConfigurator = ({
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
       <div className="w-full">
-        <div className="relative inline-block text-left text-white w-full">
-          <p className="text-white text-sm font-semibold">Template</p>
+        <div className="relative inline-block w-full text-left text-white">
+          <p className="text-sm font-semibold text-white">Template</p>
 
           <div className="mt-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
-              className="w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+              className="flex items-center justify-between w-full px-4 py-2 space-x-2 text-sm font-medium text-left border rounded-md shadow-sm bg-white/10 border-white/10"
               id="menu-button"
               aria-expanded="true"
               aria-haspopup="true"
@@ -175,9 +181,9 @@ const FormConfigurator = ({
 
                 <Tooltip
                   variant="dark"
-                  content={<div className="text-white text-xs">{templateOptions[active].description}</div>}
+                  content={<div className="text-xs text-white">{templateOptions[active].description}</div>}
                 >
-                  <div className="flex items-center text-white-35 fill-current">
+                  <div className="flex items-center fill-current text-white-35">
                     <InfoIconSVG width={12} height={12} />
                   </div>
                 </Tooltip>
@@ -194,7 +200,7 @@ const FormConfigurator = ({
 
             {isOpen ? (
               <div
-                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-zinc-700 w-full border border-white/20"
+                className="absolute left-0 z-10 w-full mt-1 ml-1 origin-top-right border rounded-md shadow-xl bg-zinc-700 border-white/20"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
@@ -218,7 +224,21 @@ const FormConfigurator = ({
           </div>
         </div>
       </div>
-      <p className="text-white mt-8 text-sm font-semibold">Things you can configure</p>
+      <p className="mt-8 text-sm font-semibold text-white">Things you can configure</p>
+
+      {/* Dark mode */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Dark mode</p>
+          <p className="text-xs text-white/30">Enable dark mode</p>
+        </div>
+        <Toggle
+          className="min-w-[40px]"
+          active={!!formProps.darkMode}
+          onClick={() => setValue('formProps.darkMode', !formProps.darkMode, { shouldDirty: true })}
+        />
+      </div>
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Fixed input */}
       <div className="flex justify-between mt-5">
@@ -232,7 +252,7 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedInputMint', !formProps.fixedInputMint, { shouldDirty: true })}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Fixed output */}
       <div className="flex justify-between mt-5">
@@ -246,7 +266,7 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedOutputMint', !formProps.fixedOutputMint, { shouldDirty: true })}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Exact out */}
       <div className="flex justify-between mt-5">
@@ -258,13 +278,17 @@ const FormConfigurator = ({
           className="min-w-[40px]"
           active={formProps.swapMode === SwapMode.ExactOut}
           onClick={() =>
-            setValue('formProps.swapMode', formProps.swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, {
-              shouldDirty: true,
-            })
+            setValue(
+              'formProps.swapMode',
+              formProps.swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn,
+              {
+                shouldDirty: true,
+              },
+            )
           }
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Fixed amount */}
       <div className="flex justify-between mt-5">
@@ -278,7 +302,7 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Initial Amount */}
       <div className="flex justify-between mt-5">
@@ -288,7 +312,7 @@ const FormConfigurator = ({
         </div>
       </div>
       <input
-        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        className="flex items-center justify-between w-full px-4 py-2 mt-2 space-x-2 text-sm font-medium text-left text-white border rounded-md shadow-sm bg-white/10 border-white/10"
         value={formProps.initialAmount}
         inputMode="numeric"
         onChange={(e) => {
@@ -299,7 +323,7 @@ const FormConfigurator = ({
           }
         }}
       />
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Wallet passthrough */}
       <div className="flex justify-between mt-5">
@@ -314,7 +338,7 @@ const FormConfigurator = ({
           onClick={() => setValue('simulateWalletPassthrough', !simulateWalletPassthrough)}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Strict Token List  */}
       <div className="flex justify-between mt-5">
@@ -328,23 +352,23 @@ const FormConfigurator = ({
           onClick={() => setValue('strictTokenList', !strictTokenList)}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
+      <div className="w-full py-3 border-b border-white/10" />
 
       {/* Preferred Explorer  */}
-      <div className="relative inline-block text-left text-white w-full mt-5">
-        <p className="text-white text-sm font-semibold">Preferred Explorer</p>
+      <div className="relative inline-block w-full mt-5 text-left text-white">
+        <p className="text-sm font-semibold text-white">Preferred Explorer</p>
 
         <div className="mt-4">
           <button
             onClick={() => setIsExplorerDropdownOpen(!isExplorerDropdownOpen)}
             type="button"
-            className="w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            className="flex items-center justify-between w-full px-4 py-2 space-x-2 text-sm font-medium text-left border rounded-md shadow-sm bg-white/10 border-white/10"
             id="menu-button"
             aria-expanded="true"
             aria-haspopup="true"
           >
-            <div className='flex items-center justify-center space-x-2.5'>
-              <p>{Object.values(AVAILABLE_EXPLORER).find(item => item.name === defaultExplorer)?.name}</p>
+            <div className="flex items-center justify-center space-x-2.5">
+              <p>{Object.values(AVAILABLE_EXPLORER).find((item) => item.name === defaultExplorer)?.name}</p>
             </div>
 
             <ChevronDownIcon />
@@ -352,7 +376,7 @@ const FormConfigurator = ({
 
           {isExplorerDropdownOpen ? (
             <div
-              className="absolute left-0 bottom-6 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-zinc-700 w-full border border-white/20"
+              className="absolute left-0 z-10 w-full mt-1 ml-1 origin-top-right border rounded-md shadow-xl bottom-6 bg-zinc-700 border-white/20"
               role="menu"
               aria-orientation="vertical"
               aria-labelledby="menu-button"
@@ -361,7 +385,7 @@ const FormConfigurator = ({
                 <button
                   key={index}
                   onClick={() => {
-                    setValue('defaultExplorer', item.name)
+                    setValue('defaultExplorer', item.name);
                     setIsExplorerDropdownOpen(false);
                   }}
                   type="button"

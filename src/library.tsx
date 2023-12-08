@@ -149,7 +149,7 @@ const RenderShell = (props: IInit) => {
       </div>
 
       {!displayMode || displayMode === 'modal' ? (
-        <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0" />
+        <div onClick={onClose} className="absolute top-0 left-0 w-screen h-screen" />
       ) : null}
     </div>
   );
