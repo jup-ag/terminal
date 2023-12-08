@@ -207,11 +207,15 @@ export const SwapContextProvider: FC<{
     };
 
     if (jupiterSwapMode === SwapMode.ExactOut) {
-      setForm((prev) => {
-        return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
-      });
+      setTimeout(() => {
+        setForm((prev) => {
+          return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
+        });
+      }, 0);
     } else {
-      setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+      setTimeout(() => {
+        setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+      }, 0);
     }
   }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
