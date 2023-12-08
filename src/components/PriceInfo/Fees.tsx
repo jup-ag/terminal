@@ -38,14 +38,14 @@ const Fees = ({ darkMode = false, routePlan, swapMode }: IFees) => {
           .toDP(4);
         return (
           <div key={idx} className="flex items-center justify-between space-x-4 text-xs">
-            <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+            <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
               <span>
                 <span>
                   Fees paid to <span translate="no">{item.swapInfo.label}</span> LP
                 </span>
               </span>
             </div>
-            <div className={`text-right ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+            <div className={`text-right ${darkMode ? 'text-white/30' : 'text-black'}`}>
               {feeAmount} {tokenMint?.symbol} ({formatNumber.format(new Decimal(feePct).mul(100).toNumber())}
               %)
             </div>

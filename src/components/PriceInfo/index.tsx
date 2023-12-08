@@ -87,9 +87,9 @@ const Index = ({
   return (
     <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
-        <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>{<span>Rate</span>}</div>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
-          <span className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+          <span className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
             <ExchangeRate
               darkMode={darkMode}
               loading={loading}
@@ -100,11 +100,11 @@ const Index = ({
             />
           </span>
         ) : (
-          <span className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>{'-'}</span>
+          <span className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{'-'}</span>
         )}
       </div>
 
-      <div className={`flex items-center justify-between text-xs ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+      <div className={`flex items-center justify-between text-xs ${darkMode ? 'text-white/30' : 'text-black'}`}>
         <div>
           <span>Price Impact</span>
         </div>
@@ -112,10 +112,10 @@ const Index = ({
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
           {quoteResponse?.swapMode === SwapMode.ExactIn ? <span>Minimum Received</span> : <span>Maximum Consumed</span>}
         </div>
-        <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>{otherAmountThresholdText}</div>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{otherAmountThresholdText}</div>
       </div>
 
       {showFullDetails ? (
@@ -135,8 +135,8 @@ const Index = ({
 
           {priorityFeeInSOL > 0 ? (
             <div className="flex items-center justify-between text-xs">
-              <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>Priority Fee</div>
-              <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+              <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>Priority Fee</div>
+              <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
                 {new Decimal(priorityFeeInSOL).toString()}
               </div>
             </div>

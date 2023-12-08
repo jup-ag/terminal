@@ -19,13 +19,13 @@ const TransactionFee = ({
 
   return (
     <div className="flex items-center justify-between text-xs">
-      <div className={`flex w-[50%] ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+      <div className={`flex w-[50%] ${darkMode ? 'text-white/30' : 'text-black'}`}>
         <span>Transaction Fee</span>
         <Tooltip content={<span>This is for Solana transaction fee</span>}>
           <span className="ml-1 cursor-pointer">[?]</span>
         </Tooltip>
       </div>
-      <div className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>{feeText} SOL</div>
+      <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{feeText} SOL</div>
     </div>
   );
 };

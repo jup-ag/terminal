@@ -316,15 +316,15 @@ const Form: React.FC<{
             <div className="flex items-center mt-2 space-x-1 text-xs">
               <div
                 className={`flex items-center px-2 py-1 space-x-1 bg-black/20 rounded-xl ${
-                  darkMode ? 'text-white/50' : 'text-black/50'
+                  darkMode ? 'text-white/50' : 'text-black'
                 }`}
               >
-                <RoutesSVG width={7} height={9} />
+                <RoutesSVG darkMode={darkMode} width={7} height={9} />
               </div>
-              <span className={`${darkMode ? 'text-white/30' : 'text-black/30'}`}>using</span>
+              <span className={`${darkMode ? 'text-white/30' : 'text-black'}`}>using</span>
               <span
                 className={`${
-                  darkMode ? 'text-white/50' : 'text-black/50'
+                  darkMode ? 'text-white/50' : 'text-black'
                 } overflow-hidden whitespace-nowrap text-ellipsis max-w-[70%]`}
               >
                 {marketRoutes}

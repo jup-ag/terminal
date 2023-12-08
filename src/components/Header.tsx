@@ -35,7 +35,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           <button
             type="button"
             className={`flex items-center justify-center p-2 border rounded-full fill-current h-7 w-7 border-white/10 bg-black/10 ${
-              darkMode ? 'text-white/30' : 'text-black/30'
+              darkMode ? 'text-white/30' : 'text-black'
             }`}
             onClick={refresh}
           >
@@ -45,7 +45,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           <button
             type="button"
             className={`flex items-center justify-center p-2 space-x-1 border fill-current h-7 rounded-2xl border-white/10 bg-black/10 ${
-              darkMode ? 'text-white/30' : 'text-black/30'
+              darkMode ? 'text-white/30' : 'text-black'
             }`}
             onClick={() => setShowSlippageSetting(true)}
           >
