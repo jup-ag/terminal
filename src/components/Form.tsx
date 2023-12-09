@@ -165,14 +165,16 @@ const Form: React.FC<{
       <div className="flex flex-col w-full px-2 mt-2 rounded-xl">
         <div className="flex-col">
           <div className={classNames('border-b border-transparent transition-all', fixedOutputFomMintClass)}>
-            <div className={`rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-500'}`}>
+            <div className={`rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-400'}`}>
               <div className={classNames('px-x border-transparent rounded-xl ')}>
                 <div>
                   <div className={classNames('py-5 px-4 flex flex-col dark:text-white')}>
                     <div className="flex items-center justify-between">
                       <button
                         type="button"
-                        className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
+                        className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 text-white ${
+                          darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
+                        }`}
                         disabled={fixedInputMint}
                         onClick={onClickSelectFromMint}
                       >
@@ -210,20 +212,20 @@ const Form: React.FC<{
                     </div>
 
                     {fromTokenInfo?.address ? (
-                      <div className="flex items-center justify-between">
+                      <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-white'}`}>
                         <div
-                          className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current', {
+                          className={classNames('flex mt-3 space-x-1 text-xs items-center fill-current', {
                             'cursor-pointer': swapMode !== 'ExactOut',
                           })}
                           onClick={onClickMax}
                         >
-                          <WalletIcon width={10} height={10} />
+                          <WalletIcon darkMode={darkMode} width={10} height={10} />
                           <CoinBalance mintAddress={fromTokenInfo.address} />
                           <span>{fromTokenInfo.symbol}</span>
                         </div>
 
                         {form.fromValue ? (
-                          <span className="text-xs text-white/30">
+                          <span className="text-xs">
                             <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={form.fromValue} />
                           </span>
                         ) : null}
@@ -245,14 +247,16 @@ const Form: React.FC<{
             )}
           </div>
 
-          <div className={`border-b border-transparent rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-500'}`}>
+          <div className={`border-b border-transparent rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-400'}`}>
             <div className="border-transparent px-x rounded-xl">
               <div>
                 <div className="flex flex-col px-4 py-5 dark:text-white">
                   <div className="flex items-center justify-between">
                     <button
                       type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
+                      className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 disabled:hover:bg-[#36373E] text-white ${
+                        darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
+                      }`}
                       disabled={fixedOutputMint}
                       onClick={onClickSelectToMint}
                     >
@@ -290,15 +294,15 @@ const Form: React.FC<{
                   </div>
 
                   {toTokenInfo?.address ? (
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center mt-3 space-x-1 text-xs fill-current text-white/30">
-                        <WalletIcon width={10} height={10} />
+                    <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-white'}`}>
+                      <div className="flex items-center mt-3 space-x-1 text-xs fill-current">
+                        <WalletIcon darkMode={darkMode} width={10} height={10} />
                         <CoinBalance mintAddress={toTokenInfo.address} />
                         <span>{toTokenInfo.symbol}</span>
                       </div>
 
                       {form.toValue ? (
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs">
                           <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
                         </span>
                       ) : null}

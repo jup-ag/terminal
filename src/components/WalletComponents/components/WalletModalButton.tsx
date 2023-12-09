@@ -19,7 +19,7 @@ export const WalletModalButton: FC<{ darkMode: boolean; setIsWalletModalOpen(tog
     <button
       type="button"
       className={`py-2 px-3 h-7 flex items-center rounded-2xl text-xs ${
-        darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-gray-600'
+        darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-gray-500'
       }`}
       onClick={handleClick}
     >
