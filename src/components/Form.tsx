@@ -173,7 +173,7 @@ const Form: React.FC<{
                       <button
                         type="button"
                         className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 text-white ${
-                          darkMode ? 'bg-[#36373E]' : 'bg-[#1e96fc]'
+                          darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
                         }`}
                         disabled={fixedInputMint}
                         onClick={onClickSelectFromMint}
@@ -255,7 +255,7 @@ const Form: React.FC<{
                     <button
                       type="button"
                       className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 disabled:hover:bg-[#36373E] text-white ${
-                        darkMode ? 'bg-[#36373E]' : 'bg-[#1e96fc]'
+                        darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
                       }`}
                       disabled={fixedOutputMint}
                       onClick={onClickSelectToMint}
