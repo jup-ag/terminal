@@ -55,7 +55,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
             </span>
           </button>
 
-          <WalletButton setIsWalletModalOpen={setIsWalletModalOpen} />
+          <WalletButton darkMode={darkMode || false} setIsWalletModalOpen={setIsWalletModalOpen} />
         </div>
       </div>
 

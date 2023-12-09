@@ -12,11 +12,23 @@ interface IJupButton {
   type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
   bgClass?: string;
   rounded?: string;
+  darkMode?: boolean;
 }
 
 const JupButton = React.forwardRef(
   (
-    { onClick, disabled, children, highlighted, className = '', size = 'md', type, bgClass, rounded }: IJupButton,
+    {
+      onClick,
+      disabled,
+      children,
+      highlighted,
+      className = '',
+      size = 'md',
+      type,
+      bgClass,
+      rounded,
+      darkMode = false,
+    }: IJupButton,
     ref: React.ForwardedRef<any>,
   ) => {
     const contentClass = (() => {
@@ -30,7 +42,7 @@ const JupButton = React.forwardRef(
         return 'p-5 text-md font-semibold';
       }
     })();
-    const background = bgClass || 'text-white bg-[#191B1F] dark:bg-black/50';
+    const background = bgClass || darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-gray-600';
     return (
       <button
         type={type}

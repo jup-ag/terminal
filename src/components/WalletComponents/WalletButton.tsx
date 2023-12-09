@@ -7,7 +7,10 @@ import { CurrentUserBadge } from '../CurrentUserBadge';
 import { WalletModalButton } from './components/WalletModalButton';
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 
-export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
+export const WalletButton: FC<{ darkMode: boolean; setIsWalletModalOpen(toggle: boolean): void }> = ({
+  darkMode = false,
+  setIsWalletModalOpen,
+}) => {
   const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
@@ -26,12 +29,20 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   useOutsideClick(ref, closePopup);
 
   if ((!connected && !connecting) || !base58) {
-    return <UnifiedWalletButton buttonClassName='!bg-transparent' overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
+    return (
+      <UnifiedWalletButton
+        buttonClassName="!bg-transparent"
+        overrideContent={<WalletModalButton darkMode={darkMode} setIsWalletModalOpen={setIsWalletModalOpen} />}
+      />
+    );
   }
 
   return (
-    <div className="cursor-pointer relative">
-      <div onClick={() => setActive(!active)}>
+    <div className="relative cursor-pointer">
+      <div
+        className={`${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-gray-600'}`}
+        onClick={() => setActive(!active)}
+      >
         <CurrentUserBadge />
       </div>
 
