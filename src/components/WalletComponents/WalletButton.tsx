@@ -40,7 +40,7 @@ export const WalletButton: FC<{ darkMode: boolean; setIsWalletModalOpen(toggle: 
   return (
     <div className="relative cursor-pointer">
       <div
-        className={`${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-gray-500'}`}
+        className={`${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-[#1e96fc]'}`}
         onClick={() => setActive(!active)}
       >
         <CurrentUserBadge />
