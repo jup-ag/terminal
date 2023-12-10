@@ -85,7 +85,11 @@ const Index = ({
   } = useSwapContext();
 
   return (
-    <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
+    <div
+      className={`mt-4 space-y-4 border rounded-xl p-3 ${
+        darkMode ? 'border-white/5' : 'border-[#0000001a]'
+      } ${classNames(containerClassName)}`}
+    >
       <div className="flex items-center justify-between text-xs">
         <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
