@@ -15,21 +15,21 @@ import TransactionFee from './TransactionFee';
 import { useAccounts } from 'src/contexts/accounts';
 
 const Index = ({
-  darkMode = false,
   quoteResponse,
   fromTokenInfo,
   toTokenInfo,
   loading,
   showFullDetails = false,
   containerClassName,
+  darkMode = false,
 }: {
-  darkMode?: boolean;
   quoteResponse: QuoteResponse;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
   loading: boolean;
   showFullDetails?: boolean;
   containerClassName?: string;
+  darkMode?: boolean;
 }) => {
   const rateParams = {
     inAmount: quoteResponse?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate

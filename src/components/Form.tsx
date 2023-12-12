@@ -368,11 +368,11 @@ const Form: React.FC<{
 
         {route && quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            darkMode={darkMode}
             quoteResponse={quoteResponseMeta.quoteResponse}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}
+            darkMode={darkMode}
           />
         ) : null}
       </div>

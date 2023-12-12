@@ -40,7 +40,7 @@ export const WalletButton: FC<{ darkMode: boolean; setIsWalletModalOpen(toggle: 
   return (
     <div className="relative cursor-pointer">
       <div
-        className={`${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-[#1e96fc]'}`}
+        className={`rounded-2xl ${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-[#1e96fc]'}`}
         onClick={() => setActive(!active)}
       >
         <CurrentUserBadge />
@@ -49,11 +49,9 @@ export const WalletButton: FC<{ darkMode: boolean; setIsWalletModalOpen(toggle: 
       {screen === 'Initial' ? (
         <ul
           aria-label="dropdown-list"
-          className={
-            active
-              ? 'absolute block top-10 right-0 text-sm bg-black rounded-lg p-2 text-white dark:bg-white dark:text-black'
-              : 'hidden'
-          }
+          className={`
+            ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'}
+            ${active ? 'absolute block top-10 right-0 text-sm rounded-lg p-2' : 'hidden'}`}
           ref={ref}
           role="menu"
         >

@@ -1,4 +1,5 @@
 import React, { HTMLAttributes, useMemo } from 'react';
+import { useSwapContext } from 'src/contexts/SwapContext';
 
 interface ISwapSettingButton {
   idx: number;
@@ -19,7 +20,10 @@ const SwapSettingButton = ({
   roundBorder,
   children,
 }: ISwapSettingButton) => {
-  const classes = `relative flex-1 py-4 px-1 text-white/50 bg-[#1B1B1E]`;
+  const {
+    formProps: { darkMode },
+  } = useSwapContext();
+  const classes = `relative flex-1 py-4 px-1 ${darkMode ? 'text-white/50 bg-[#1B1B1E]' : 'bg-gray-400 text-black/50'}`;
   const roundBorderClass = (() => {
     if (roundBorder === 'left') return 'v2-border-gradient-left';
     if (roundBorder === 'right') return 'v2-border-gradient-right';

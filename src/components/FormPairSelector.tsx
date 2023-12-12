@@ -28,10 +28,12 @@ const FormPairSelector = ({
   onSubmit,
   tokenInfos,
   onClose,
+  darkMode = false,
 }: {
   onSubmit: (value: TokenInfo) => void;
   onClose: () => void;
   tokenInfos: TokenInfo[];
+  darkMode?: boolean;
 }) => {
   const { accounts } = useAccounts();
   const { tokenPriceMap } = useUSDValueProvider();
@@ -85,14 +87,16 @@ const FormPairSelector = ({
       </div>
 
       <div
-        className="flex px-5 mt-4 w-[98%] rounded-xl bg-[#212128]"
+        className={`flex px-5 mt-4 w-[98%] rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-500'}`}
         style={{ height: SEARCH_BOX_HEIGHT, maxHeight: SEARCH_BOX_HEIGHT }}
       >
         <SearchIcon />
 
         <input
           autoComplete="off"
-          className="w-full rounded-xl ml-4 truncate bg-[#212128] text-white/50 placeholder:text-white/20"
+          className={`w-full rounded-xl ml-4 truncate text-white/50 placeholder:text-white/20 ${
+            darkMode ? 'bg-[#212128]' : 'bg-gray-500'
+          }`}
           placeholder={`Search`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

@@ -60,7 +60,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
       </div>
 
       {showSlippapgeSetting ? (
-        <div className="absolute top-0 left-0 z-10 flex items-center w-full h-full px-4 overflow-hidden bg-black/50">
+        <div className="absolute top-0 left-0 z-10 flex items-center w-full h-full px-4 overflow-hidden">
           <SwapSettingsModal closeModal={() => setShowSlippageSetting(false)} />
         </div>
       ) : null}

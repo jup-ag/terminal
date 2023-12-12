@@ -4,7 +4,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
-import { SwapContextProvider } from 'src/contexts/SwapContext';
+import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { IInit } from 'src/types';
@@ -26,8 +26,12 @@ const Content = () => {
   const { message } = useTPSMonitor();
   const [isMessageClosed, setIsMessageClosed] = useState(false);
 
+  const {
+    formProps: { darkMode },
+  } = useSwapContext();
+
   return (
-    <div className="relative h-full">
+    <div className={`relative h-full ${darkMode ? '' : 'bg-white'}`}>
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
@@ -39,7 +43,7 @@ const Content = () => {
       {screen === 'Swapping' ? <SwappingScreen /> : null}
 
       {!isMessageClosed && message ? (
-        <div className="absolute bottom-1 px-3 py-2 w-full">
+        <div className="absolute w-full px-3 py-2 bottom-1">
           <div className=" bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
             <div className="pr-2">{message}</div>
             <div className="cursor-pointer" onClick={() => setIsMessageClosed(true)}>

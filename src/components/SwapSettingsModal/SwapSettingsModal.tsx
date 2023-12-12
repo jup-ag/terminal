@@ -25,7 +25,9 @@ import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenConte
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
-const Separator = () => <div className="my-4 border-b border-white/10" />;
+const Separator = ({ darkMode = false }: { darkMode?: boolean }) => (
+  <div className={`my-4 border-b ${darkMode ? 'border-white/10' : 'border-black/10'}`} />
+);
 
 export type Forms = {
   slippagePreset?: string;
@@ -55,6 +57,7 @@ const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO]
 
 const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
+    formProps: { darkMode },
     jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
   } = useSwapContext();
   const { slippage, setSlippage } = useSlippageConfig();
@@ -182,12 +185,19 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   }, [wallet]);
 
   return (
-    <div className={classNames('w-full rounded-xl flex flex-col bg-jupiter-bg text-white shadow-xl max-h-[90%]')}>
-      <div className="flex justify-between items-center p-4 border-b border-white/10">
+    <div
+      className={`w-full rounded-xl flex flex-col shadow-xl max-h-[90%] ${
+        darkMode ? 'bg-jupiter-bg text-white' : 'bg-white text-black shadow-lg'
+      }`}
+    >
+      <div className="flex items-center justify-between p-4 border-b border-white/10">
         <div className="text-sm font-semibold">
           <span>Swap Settings</span>
         </div>
-        <div className="text-white fill-current cursor-pointer" onClick={() => closeModal()}>
+        <div
+          className={`cursor-pointer fill-current ${darkMode ? 'text-white' : 'text-black'}`}
+          onClick={() => closeModal()}
+        >
           <CloseIcon width={14} height={14} />
         </div>
       </div>
@@ -205,13 +215,13 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
         <div>
           <div className={classNames('mt-2 px-5')}>
             {/**************************** PRIORTY *****************************/}
-            <div className="flex items-center text-sm text-white/75 font-[500]">
+            <div className={`flex items-center text-sm font-[500] ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
               <span>Transaction Priority</span>
               <Tooltip
                 variant="dark"
                 className="!left-0 !top-16 w-[50%]"
                 content={
-                  <span className="flex rounded-lg text-xs text-white/75">
+                  <span className={`flex text-xs rounded-lg ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
                     The priority fee is paid to the Solana network. This additional fee helps boost how a transaction is
                     prioritized against others, resulting in faster transaction execution times.
                   </span>
@@ -223,7 +233,11 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               </Tooltip>
             </div>
 
-            <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden">
+            <div
+              className={`flex items-center mt-2.5 rounded-xl ring-1 overflow-hidden ${
+                darkMode ? 'ring-white/5' : 'ring-black/5'
+              }`}
+            >
               <Controller
                 name="priorityInSOLInput"
                 control={form.control}
@@ -246,7 +260,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                             }}
                           >
                             <div className="whitespace-nowrap">
-                              <p className="text-sm text-white">{name}</p>
+                              <p className={`text-sm ${darkMode ? 'text-white' : 'text-black'}`}>{name}</p>
                               <span className="mt-1 text-xs">{item} SOL</span>
                             </div>
                           </SwapSettingButton>
@@ -259,7 +273,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             </div>
 
             <div className="mt-1">
-              <span className="text-white/75 font-500 text-xs">or set manually:</span>
+              <span className={`text-xs font-500 ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
+                or set manually:
+              </span>
 
               <div
                 className={`relative mt-1 ${
@@ -293,24 +309,31 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         }}
                         maxLength={12}
                         placeholder={'0.0000'}
-                        className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
+                        className={`text-left h-full w-full py-4 px-5 text-sm rounded-xl ring-1 pointer-events-all relative ${
+                          darkMode
+                            ? 'bg-[#1B1B1E] placeholder:text-white/25 ring-white/5 text-white/50'
+                            : 'bg-gray-200 placeholder:text-black/25 ring-black/5 text-black/50'
+                        }`}
                         decimalSeparator={detectedSeparator}
                       />
                     );
                   }}
                 />
-                <span className="absolute right-4 top-4 text-sm text-white/50">SOL</span>
+                <span className={`absolute text-sm right-4 top-4 ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
+                  SOL
+                </span>
               </div>
 
               <div className="">
                 {typeof priorityInSOLPreset === 'undefined' && priorityInSOLInput !== 0 ? (
-                  <span className="text-xs text-white/50">
+                  <span className={`text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
                     <span>This will cost an additional {new Decimal(priorityInSOLInput || 0).toString()} SOL.</span>
                   </span>
                 ) : null}
 
                 {inputPriorityFocused && !isWithinPriorityLimits && (
                   <InformationMessage
+                    darkMode={darkMode}
                     iconSize={14}
                     className="!text-jupiter-primary !px-0"
                     message={`Please set a priority fee within ${formatNumber.format(PRIORITY_MAXIMUM_SUGGESTED)} SOL`}
@@ -319,6 +342,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
                 {typeof priorityInSOLPreset === 'undefined' && prioritySuggestionText && (
                   <InformationMessage
+                    darkMode={darkMode}
                     iconSize={14}
                     className="!text-jupiter-primary !px-0 mb-2"
                     message={prioritySuggestionText}
@@ -327,7 +351,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               </div>
             </div>
 
-            <Separator />
+            <Separator darkMode={darkMode} />
             {/**************************** SLIPPAGE *****************************/}
             <div className="flex items-center text-sm text-white/75 font-[500]">
               <span>Slippage Settings</span>
@@ -402,7 +426,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                       }}
                       allowLeadingZeros={false}
                       suffix="%"
-                      className="h-full w-full bg-transparent py-4 pr-4 text-sm rounded-lg placeholder:text-white/25 text-white/50 text-right pointer-events-all"
+                      className="w-full h-full py-4 pr-4 text-sm text-right bg-transparent rounded-lg placeholder:text-white/25 text-white/50 pointer-events-all"
                       decimalSeparator={detectedSeparator}
                       placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                     />
@@ -414,6 +438,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             <div>
               {inputFocused && !isWithinSlippageLimits && (
                 <InformationMessage
+                  darkMode={darkMode}
                   iconSize={14}
                   className="!text-jupiter-primary !px-0"
                   message={`Please set a slippage value that is within ${MINIMUM_SLIPPAGE}% to ${MAXIMUM_SLIPPAGE}%`}
@@ -422,6 +447,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
               {slippageSuggestionText && (
                 <InformationMessage
+                  darkMode={darkMode}
                   iconSize={14}
                   className="!text-jupiter-primary !px-0"
                   message={slippageSuggestionText}
@@ -429,7 +455,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               )}
             </div>
 
-            <Separator />
+            <Separator darkMode={darkMode} />
 
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center space-x-2">
@@ -450,19 +476,19 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 onClick={() => form.setValue('asLegacyTransaction', !asLegacyTransactionInput)}
               />
             </div>
-            <p className="mt-2 text-xs text-white/50">
+            <p className={`mt-2 text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
               Versioned Tx is a significant upgrade that allows for more advanced routings and better prices!
             </p>
-            
+
             {wallet?.adapter ? (
-              <p className="mt-2 text-xs text-white/50">
+              <p className={`mt-2 text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
                 {detectedVerTxSupport
                   ? `Your wallet supports Versioned Tx. and it has been turned on by default.`
                   : `Your wallet does not support Versioned Tx.`}
               </p>
             ) : null}
 
-            <Separator />
+            <Separator darkMode={darkMode} />
 
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center space-x-2">
@@ -484,13 +510,20 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 }
               />
             </div>
-            <p className="mt-2 text-xs text-white/50">
+            <p className={`mt-2 text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
               {`The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".`}
             </p>
           </div>
 
           <div className="px-5 pb-5">
-            <JupButton type="button" onClick={onClickSave} className={'w-full mt-4'} disabled={isDisabled} size={'lg'}>
+            <JupButton
+              darkMode={darkMode}
+              type="button"
+              onClick={onClickSave}
+              className={'w-full mt-4'}
+              disabled={isDisabled}
+              size={'lg'}
+            >
               <span>Save Settings</span>
             </JupButton>
           </div>
