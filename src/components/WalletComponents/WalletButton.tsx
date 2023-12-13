@@ -7,7 +7,10 @@ import { CurrentUserBadge } from '../CurrentUserBadge';
 import { WalletModalButton } from './components/WalletModalButton';
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 
-export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
+export const WalletButton: FC<{ darkMode: boolean; setIsWalletModalOpen(toggle: boolean): void }> = ({
+  darkMode = false,
+  setIsWalletModalOpen,
+}) => {
   const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
@@ -26,23 +29,29 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   useOutsideClick(ref, closePopup);
 
   if ((!connected && !connecting) || !base58) {
-    return <UnifiedWalletButton buttonClassName='!bg-transparent' overrideContent={<WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />} />;
+    return (
+      <UnifiedWalletButton
+        buttonClassName="!bg-transparent"
+        overrideContent={<WalletModalButton darkMode={darkMode} setIsWalletModalOpen={setIsWalletModalOpen} />}
+      />
+    );
   }
 
   return (
-    <div className="cursor-pointer relative">
-      <div onClick={() => setActive(!active)}>
+    <div className="relative cursor-pointer">
+      <div
+        className={`rounded-2xl ${darkMode ? 'text-white bg-[#191B1F]' : 'text-white bg-[#1e96fc]'}`}
+        onClick={() => setActive(!active)}
+      >
         <CurrentUserBadge />
       </div>
 
       {screen === 'Initial' ? (
         <ul
           aria-label="dropdown-list"
-          className={
-            active
-              ? 'absolute block top-10 right-0 text-sm bg-black rounded-lg p-2 text-white dark:bg-white dark:text-black'
-              : 'hidden'
-          }
+          className={`
+            ${darkMode ? 'bg-black text-white' : 'bg-gray-200 text-black'}
+            ${active ? 'absolute block top-10 right-0 text-sm rounded-lg p-2' : 'hidden'}`}
           ref={ref}
           role="menu"
         >

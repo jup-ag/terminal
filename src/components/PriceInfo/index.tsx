@@ -21,6 +21,7 @@ const Index = ({
   loading,
   showFullDetails = false,
   containerClassName,
+  darkMode = false,
 }: {
   quoteResponse: QuoteResponse;
   fromTokenInfo: TokenInfo;
@@ -28,6 +29,7 @@ const Index = ({
   loading: boolean;
   showFullDetails?: boolean;
   containerClassName?: string;
+  darkMode?: boolean;
 }) => {
   const rateParams = {
     inAmount: quoteResponse?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
@@ -83,23 +85,30 @@ const Index = ({
   } = useSwapContext();
 
   return (
-    <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
+    <div
+      className={`mt-4 space-y-4 border rounded-xl p-3 ${
+        darkMode ? 'border-white/5' : 'border-[#0000001a]'
+      } ${classNames(containerClassName)}`}
+    >
       <div className="flex items-center justify-between text-xs">
-        <div className="text-white/30">{<span>Rate</span>}</div>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
-          <ExchangeRate
-            loading={loading}
-            rateParams={rateParams}
-            fromTokenInfo={fromTokenInfo}
-            toTokenInfo={toTokenInfo}
-            reversible={true}
-          />
+          <span className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
+            <ExchangeRate
+              darkMode={darkMode}
+              loading={loading}
+              rateParams={rateParams}
+              fromTokenInfo={fromTokenInfo}
+              toTokenInfo={toTokenInfo}
+              reversible={true}
+            />
+          </span>
         ) : (
-          <span className="text-white/30">{'-'}</span>
+          <span className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{'-'}</span>
         )}
       </div>
 
-      <div className="flex items-center justify-between text-xs text-white/30">
+      <div className={`flex items-center justify-between text-xs ${darkMode ? 'text-white/30' : 'text-black'}`}>
         <div>
           <span>Price Impact</span>
         </div>
@@ -107,22 +116,33 @@ const Index = ({
       </div>
 
       <div className="flex items-center justify-between text-xs">
-        <div className="text-white/30">
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
           {quoteResponse?.swapMode === SwapMode.ExactIn ? <span>Minimum Received</span> : <span>Maximum Consumed</span>}
         </div>
-        <div className="text-white/30">{otherAmountThresholdText}</div>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{otherAmountThresholdText}</div>
       </div>
 
       {showFullDetails ? (
         <>
-          <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
-          <TransactionFee feeInformation={feeInformation} />
-          <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+          <Fees
+            darkMode={darkMode}
+            routePlan={quoteResponse?.routePlan}
+            swapMode={quoteResponse.swapMode as SwapMode}
+          />
+          <TransactionFee darkMode={darkMode} feeInformation={feeInformation} />
+          <Deposits
+            darkMode={darkMode}
+            hasSerumDeposit={hasSerumDeposit}
+            hasAtaDeposit={hasAtaDeposit}
+            feeInformation={feeInformation}
+          />
 
           {priorityFeeInSOL > 0 ? (
             <div className="flex items-center justify-between text-xs">
-              <div className="text-white/30">Priority Fee</div>
-              <div className="text-white/30">{new Decimal(priorityFeeInSOL).toString()}</div>
+              <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>Priority Fee</div>
+              <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
+                {new Decimal(priorityFeeInSOL).toString()}
+              </div>
             </div>
           ) : null}
         </>

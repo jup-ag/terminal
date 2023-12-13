@@ -12,11 +12,11 @@ import JupiterLogo from 'src/icons/JupiterLogo';
 import MeteoraLogo from 'src/icons/MeteoraLogo';
 
 const Title: React.FC<PropsWithChildren> = ({ children }) => (
-  <div className="mt-6 text-white text-md text-center font-semibold">{children}</div>
+  <div className="mt-6 font-semibold text-center text-white text-md">{children}</div>
 );
 
 const Desc: React.FC<PropsWithChildren> = ({ children }) => (
-  <div className="text-white/70 text-sm text-center">{children}</div>
+  <div className="text-sm text-center text-white/70">{children}</div>
 );
 
 const V2FeatureButton = () => {
@@ -80,7 +80,7 @@ const V2FeatureButton = () => {
     <div className="">
       <p
         onClick={onEnter}
-        className="mt-2 text-white text-sm font-semibold cursor-pointer border border-white/50 hover:bg-white/10 px-2 py-1 rounded-xl"
+        className="px-2 py-1 mt-2 text-sm font-semibold text-white border cursor-pointer border-white/50 hover:bg-white/10 rounded-xl"
       >{`What's new in V2 ✨`}</p>
 
       {open && (
@@ -93,11 +93,11 @@ const V2FeatureButton = () => {
               slideIn ? '!top-[40px] lg:!top-[12.5%]' : '!top-[300%] !lg:top-[200%]',
             )}
           >
-            <div className="fixed top-4 right-4 text-white fill-current cursor-pointer" onClick={onExit}>
+            <div className="fixed text-white cursor-pointer fill-current top-4 right-4" onClick={onExit}>
               <CloseIcon />
             </div>
 
-            <div className="w-full flex flex-col items-center py-4 px-4 lg:py-8 lg:px-16">
+            <div className="flex flex-col items-center w-full px-4 py-4 lg:py-8 lg:px-16">
               <div className="flex space-x-2">
                 <V2SexyChameleonText className="text-3xl lg:text-4xl md:text-[52px] font-semibold">
                   Jupiter Terminal
@@ -125,7 +125,7 @@ const V2FeatureButton = () => {
                 </div>
               ) : null}
 
-              <div className="border-b border-white/10 w-full mt-4" />
+              <div className="w-full mt-4 border-b border-white/10" />
 
               <Title>Cross app state sharing with Jupiter Terminal</Title>
               <Desc>
@@ -134,7 +134,7 @@ const V2FeatureButton = () => {
                 API, bringing even closer integration with Terminal.
               </Desc>
 
-              <div className="mt-4 flex flex-col items-center w-full">
+              <div className="flex flex-col items-center w-full mt-4">
                 <Desc>
                   {`Starting with Wallet Passthrough, `}
                   <span className="mx-1 text-v3-primary">syncProps()</span>
@@ -142,12 +142,12 @@ const V2FeatureButton = () => {
                 always in sync, and Terminal can also callback to your dApp to request for wallet connection.`}
                 </Desc>
 
-                <div className="mt-2 w-full">
+                <div className="w-full mt-2">
                   <SnippetSyncProps />
                 </div>
               </div>
 
-              <div className="border-b border-white/10 w-full mt-4" />
+              <div className="w-full mt-4 border-b border-white/10" />
 
               <Title>Unified, with Unified Wallet Kit</Title>
               <Desc>
@@ -156,18 +156,18 @@ const V2FeatureButton = () => {
                 <br />
                 <br />
                 <div className="flex flex-col items-center justify-center">
-                  <div className='flex items-center space-x-2'>
+                  <div className="flex items-center space-x-2">
                     <span>Used by</span>
-                    <Link href='https://jup.ag' >
+                    <Link href="https://jup.ag">
                       <JupiterLogo />
                     </Link>
-                    <Link href='https://app.meteora.ag'>
+                    <Link href="https://app.meteora.ag">
                       <MeteoraLogo />
                     </Link>
                   </div>
 
                   <Link
-                    className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
+                    className="flex items-center px-4 py-2 mt-4 space-x-2 bg-black rounded-xl"
                     href={'https://github.com/TeamRaccoons/wallet-kit'}
                     rel="noreferrer noopener"
                   >
@@ -177,7 +177,7 @@ const V2FeatureButton = () => {
                 </div>
               </Desc>
 
-              <div className="border-b border-white/10 w-full mt-4" />
+              <div className="w-full mt-4 border-b border-white/10" />
 
               <Title>RPC Monitor</Title>
               <Desc>
@@ -185,9 +185,9 @@ const V2FeatureButton = () => {
                 degraded.
               </Desc>
 
-              <div className="mt-2 border p-2 border-white/10 rounded-xl">
+              <div className="p-2 mt-2 border border-white/10 rounded-xl">
                 <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                  <span className="flex text-xs justify-center items-center text-left">
+                  <span className="flex items-center justify-center text-xs text-left">
                     <div className="ml-1 text-rock">
                       <span>
                         <span>Your RPC is not responding to any requests.</span>
@@ -197,7 +197,7 @@ const V2FeatureButton = () => {
                 </div>
 
                 <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                  <span className="flex text-xs justify-center items-center text-left">
+                  <span className="flex items-center justify-center text-xs text-left">
                     <div className="ml-1 text-rock">
                       <span>
                         <span>

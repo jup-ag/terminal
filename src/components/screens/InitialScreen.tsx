@@ -24,7 +24,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     setForm,
     setErrors,
     quoteResponseMeta,
-    formProps: { initialOutputMint, fixedOutputMint },
+    formProps: { initialOutputMint, fixedOutputMint, darkMode },
     jupiter: { loading },
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -117,17 +117,26 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       </form>
 
       {selectPairSelector !== null ? (
-        <div className="absolute top-0 left-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
+        <div
+          className={`absolute top-0 left-0 w-full h-full overflow-hidden rounded-lg ${
+            darkMode ? 'bg-jupiter-bg' : 'bg-gray-400'
+          }`}
+        >
           <FormPairSelector
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
+            darkMode={darkMode}
           />
         </div>
       ) : null}
 
       {showUnknownToken ? (
-        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
+        <div
+          className={`absolute flex items-center justify-center w-full h-full overflow-hidden rounded-lg ${
+            darkMode ? 'bg-black/50' : 'bg-white/50'
+          }`}
+        >
           <UnknownTokenModal
             tokensInfo={[showUnknownToken]}
             onClickAccept={() => {

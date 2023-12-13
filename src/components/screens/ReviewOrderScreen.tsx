@@ -13,6 +13,7 @@ const ConfirmationScreen = () => {
     toTokenInfo,
     onSubmit: onSubmitJupiter,
     quoteResponseMeta,
+    formProps: { darkMode },
     jupiter: { loading, refresh },
   } = useSwapContext();
 
@@ -30,15 +31,18 @@ const ConfirmationScreen = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2">
-      <div className="flex w-full justify-between">
-        <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onGoBack}>
+    <div className="flex flex-col w-full h-full px-2 py-4">
+      <div className="flex justify-between w-full">
+        <div
+          className={`w-6 h-6 cursor-pointer fill-current ${darkMode ? 'text-white' : 'text-black'}`}
+          onClick={onGoBack}
+        >
           <LeftArrowIcon width={24} height={24} />
         </div>
 
-        <div className="text-white">Review Order</div>
+        <div className={`${darkMode ? 'text-white' : 'text-black'}`}>Review Order</div>
 
-        <div className=" w-6 h-6" />
+        <div className="w-6 h-6 " />
       </div>
 
       <div>
@@ -49,17 +53,30 @@ const ConfirmationScreen = () => {
             toTokenInfo={toTokenInfo}
             loading={loading}
             showFullDetails
-            containerClassName="bg-[#25252D] border-none"
+            containerClassName={`border-none ${darkMode ? 'bg-[#25252D]' : 'bg-gray-300'}`}
+            darkMode={darkMode}
           />
         ) : null}
       </div>
 
       {hasExpired ? (
-        <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 !p-0" type="button" onClick={onGoBack}>
+        <JupButton
+          darkMode={darkMode}
+          size="lg"
+          className="w-full mt-4 disabled:opacity-50 !p-0"
+          type="button"
+          onClick={onGoBack}
+        >
           <span className="text-sm">Refresh</span>
         </JupButton>
       ) : (
-        <JupButton size="lg" className="w-full mt-4 disabled:opacity-50" type="button" onClick={onSubmit}>
+        <JupButton
+          darkMode={darkMode}
+          size="lg"
+          className="w-full mt-4 disabled:opacity-50"
+          type="button"
+          onClick={onSubmit}
+        >
           <V2SexyChameleonText>Confirm</V2SexyChameleonText>
         </JupButton>
       )}

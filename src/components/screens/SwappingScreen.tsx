@@ -41,6 +41,7 @@ const SwappingScreen = () => {
     reset,
     scriptDomain,
     swapping: { txStatus },
+    formProps: { darkMode },
     fromTokenInfo,
     toTokenInfo,
     jupiter: { refresh },
@@ -109,26 +110,32 @@ const SwappingScreen = () => {
   const Content = () => {
     return (
       <>
-        <div className="flex w-full justify-center">
-          <div className="text-white">{swapState === 'loading' ? 'Performing Swap' : ''}</div>
+        <div className="flex justify-center w-full">
+          <div className={`${darkMode ? 'text-white' : 'text-black'}`}>
+            {swapState === 'loading' ? 'Performing Swap' : ''}
+          </div>
         </div>
 
-        <div className="flex w-full justify-center items-center mt-9">
-          <div className="h-16 w-16 animate-hue duration-100">
+        <div className="flex items-center justify-center w-full mt-9">
+          <div className="w-16 h-16 duration-100 animate-hue">
             <JupiterLogo width={64} height={64} />
           </div>
         </div>
 
         {txStatus === undefined ? (
-          <span className="text-white text-center mt-8 text-sm px-4">Awaiting approval from your wallet...</span>
+          <span className={`px-4 mt-8 text-sm text-center ${darkMode ? 'text-white' : 'text-black'}`}>
+            Awaiting approval from your wallet...
+          </span>
         ) : null}
 
-        <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
+        <div className="flex flex-col items-center justify-center w-full px-5 mt-7">
           {swapState === 'loading' && (
-            <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
+            <div
+              className={`flex items-center w-full rounded-xl p-4 mb-2 ${darkMode ? 'bg-[#25252D]' : 'bg-gray-300'}`}
+            >
               <Spinner spinnerColor={'white'} />
 
-              <div className="ml-4 text-white text-sm">
+              <div className={`ml-4 text-sm ${darkMode ? 'text-white' : 'text-black'}`}>
                 <span>Swapping</span>
               </div>
             </div>
@@ -141,12 +148,14 @@ const SwappingScreen = () => {
   const SuccessContent = () => {
     const { inputAmount, outputAmount, explorerLink } = useMemo(() => {
       return {
-        inputAmount: lastSwapResult?.swapResult && 'inputAmount' in lastSwapResult?.swapResult
-          ? lastSwapResult?.swapResult.inputAmount
-          : 0,
-        outputAmount: lastSwapResult?.swapResult && 'outputAmount' in lastSwapResult?.swapResult
-          ? lastSwapResult?.swapResult.outputAmount
-          : 0,
+        inputAmount:
+          lastSwapResult?.swapResult && 'inputAmount' in lastSwapResult?.swapResult
+            ? lastSwapResult?.swapResult.inputAmount
+            : 0,
+        outputAmount:
+          lastSwapResult?.swapResult && 'outputAmount' in lastSwapResult?.swapResult
+            ? lastSwapResult?.swapResult.outputAmount
+            : 0,
         explorerLink:
           lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult
             ? getExplorer(lastSwapResult?.swapResult.txid)
@@ -168,16 +177,19 @@ const SwappingScreen = () => {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center">
-          <p className="mt-5 text-white text-xl font-semibold">Swap successful</p>
+        <div className="flex flex-col items-center justify-center">
+          <p className={`mt-5 text-xl font-semibold ${darkMode ? 'text-white' : 'text-black'}`}>Swap successful</p>
 
-          <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
-            <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
-              <p className="text-xs font-semibold text-white/75">
-                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)}{' '}
-                {fromTokenInfo.symbol} to
+          <div
+            className={`mt-4 rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px] ${
+              darkMode ? 'bg-[#25252D]' : 'bg-gray-300'
+            }`}
+          >
+            <div className="flex flex-col items-center justify-center px-4 mt-2 text-center">
+              <p className={`text-xs font-semibold ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
+                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
               </p>
-              <p className="text-2xl font-semibold text-white/75">
+              <p className={`text-2xl font-semibold ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
                 {fromLamports(outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
               </p>
             </div>
@@ -188,7 +200,8 @@ const SwappingScreen = () => {
               toTokenInfo={toTokenInfo}
               loading={false}
               showFullDetails
-              containerClassName="bg-[#25252D] border-none mt-0"
+              containerClassName={`border-none mt-0 ${darkMode ? 'bg-[#25252D]' : 'bg-gray-300'}`}
+              darkMode={darkMode}
             />
           </div>
         </div>
@@ -198,21 +211,23 @@ const SwappingScreen = () => {
             href={explorerLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="cursor-pointer text-white/50 mt-2 ml-2 text-xs hover:underline"
+            className={`mt-2 ml-2 text-xs cursor-pointer hover:underline ${
+              darkMode ? 'text-white/50' : 'text-black/50'
+            }`}
           >
             View on {explorer}
           </a>
         ) : null}
 
-        <div className="mt-auto px-5 pb-4 flex space-x-2">
-          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
+        <div className="flex px-5 pb-4 mt-auto space-x-2">
+          <JupButton darkMode={darkMode} size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
             <V2SexyChameleonText>
               <span className="text-sm">Swap More</span>
             </V2SexyChameleonText>
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton size="lg" className="w-full mt-4" type="button" onClick={onClose}>
+            <JupButton darkMode={darkMode} size="lg" className="w-full mt-4" type="button" onClick={onClose}>
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}
@@ -222,17 +237,29 @@ const SwappingScreen = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2">
+    <div className="flex flex-col w-full h-full px-2 py-4">
       {errorMessage || swapState === 'error' ? (
         <div className="flex justify-center">
-          <div className="flex flex-col items-center justify-center text-center mt-12">
+          <div className="flex flex-col items-center justify-center mt-12 text-center">
             <ErrorIcon />
 
-            <p className="text-white mt-2">Swap Failed</p>
-            <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
-            {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
+            <p className={`mt-2 ${darkMode ? 'text-white' : 'text-black'}`}>Swap Failed</p>
+            <p className={`mt-2 text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>
+              We were unable to complete the swap, please try again.
+            </p>
+            {errorMessage ? (
+              <p className={`mt-2 text-xs ${darkMode ? 'text-white/50' : 'text-black/50'}`}>{errorMessage}</p>
+            ) : (
+              ''
+            )}
 
-            <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
+            <JupButton
+              darkMode={darkMode}
+              size="lg"
+              className="w-full mt-6 disabled:opacity-50"
+              type="button"
+              onClick={onGoBack}
+            >
               <V2SexyChameleonText>Retry</V2SexyChameleonText>
             </JupButton>
           </div>
