@@ -20,7 +20,7 @@ const Deposits = ({
         <div className={`flex w-[50%] ${darkMode ? 'text-white/30' : 'text-black'}`}>
           <span>Deposit</span>
           <Tooltip
-            variant="dark"
+            variant={darkMode ? 'dark' : 'light'}
             className="-mt-24"
             content={
               <div className={`max-w-xs p-2 rounded-lg ${darkMode ? 'text-white/75' : 'text-black'}`}>

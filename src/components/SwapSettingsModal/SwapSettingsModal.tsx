@@ -218,7 +218,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             <div className={`flex items-center text-sm font-[500] ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
               <span>Transaction Priority</span>
               <Tooltip
-                variant="dark"
+                variant={darkMode ? 'dark' : 'light'}
                 className="!left-0 !top-16 w-[50%]"
                 content={
                   <span className={`flex text-xs rounded-lg ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
@@ -353,7 +353,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
             <Separator darkMode={darkMode} />
             {/**************************** SLIPPAGE *****************************/}
-            <div className="flex items-center text-sm text-white/75 font-[500]">
+            <div className={`flex items-center text-sm font-[500] ${darkMode ? 'text-white/75' : 'text-black/75'}`}>
               <span>Slippage Settings</span>
             </div>
 
@@ -395,9 +395,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                   inputRef.current?.focus();
                   setInputFocused(true);
                 }}
-                className={`flex items-center justify-between cursor-text w-[120px] h-full text-white/50 bg-[#1B1B1E] pl-2 text-sm relative border-l border-black-10 border-white/5 ${
-                  inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''
-                }`}
+                className={`flex items-center justify-between cursor-text w-[120px] h-full pl-2 text-sm relative border-l border-black-10 border-white/5 ${
+                  darkMode ? 'text-white/50 bg-[#1B1B1E]' : 'text-black/50 bg-gray-400'
+                } ${inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''}`}
               >
                 <span className="text-xs">
                   <span>Custom</span>
@@ -426,7 +426,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                       }}
                       allowLeadingZeros={false}
                       suffix="%"
-                      className="w-full h-full py-4 pr-4 text-sm text-right bg-transparent rounded-lg placeholder:text-white/25 text-white/50 pointer-events-all"
+                      className={`w-full h-full py-4 pr-4 text-sm text-right bg-transparent rounded-lg pointer-events-all ${
+                        darkMode ? 'placeholder:text-white/25 text-white/50' : 'placeholder:text-black/50 text-black/50'
+                      }`}
                       decimalSeparator={detectedSeparator}
                       placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                     />

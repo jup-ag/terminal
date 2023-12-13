@@ -21,7 +21,12 @@ const TransactionFee = ({
     <div className="flex items-center justify-between text-xs">
       <div className={`flex w-[50%] ${darkMode ? 'text-white/30' : 'text-black'}`}>
         <span>Transaction Fee</span>
-        <Tooltip content={<span>This is for Solana transaction fee</span>}>
+        <Tooltip
+          variant={darkMode ? 'dark' : 'light'}
+          content={
+            <span className={`${darkMode ? 'text-black' : 'text-white'}`}>This is for Solana transaction fee</span>
+          }
+        >
           <span className="ml-1 cursor-pointer">[?]</span>
         </Tooltip>
       </div>
