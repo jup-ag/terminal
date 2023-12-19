@@ -1,4 +1,4 @@
-import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
+import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
@@ -17,7 +17,7 @@ const WidgetTerminal = (props: {
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
 
-  const passthroughWalletContextState = useWallet();
+  const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = () => {

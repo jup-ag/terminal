@@ -50,6 +50,7 @@ With several templates to get you started, and auto generated code snippets.
   - Customisable fees
   - Track fees with Jupiter Referral Dashboard
 
+
 ---
 
 ## Getting started
@@ -179,6 +180,20 @@ window.Jupiter.init({
 
 ---
 
+### Instructions instead of Transaction
+Request Terminal to return instructions instead of transaction, so you can manipulate the instructions.
+
+```tsx
+window.Jupiter.init({
+  // ...
+  onRequestIxCallback: () => {
+    
+  }
+});
+```
+
+---
+
 ### Resuming / Closing activity
 
 - Everytime `init()` is called, it will create a new activity.
@@ -274,6 +289,24 @@ window.Jupiter.init({
   containerClassName: 'max-h-[90vh] lg:max-h-[600px]',
 });
 ```
+
+### onRequestIxCallback
+Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned. 
+
+Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/state transitioning.
+
+- [Station Guide](https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction)
+- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
+
+```tsx
+const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {}
+```
+
+### maxAccounts
+Limit the number of accounts to be used by the Swap Instructions.
+
+- [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
+- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
 
 ---
 

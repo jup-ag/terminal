@@ -142,16 +142,16 @@ export const hasNumericValue = (amount: string | number) => {
 export function jsonToBase64(object: Object) {
   try {
     const json = JSON.stringify(object);
-    return Buffer.from(json).toString("base64");
+    return Buffer.from(json).toString('base64');
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 }
 
 export function base64ToJson(base64String: string) {
   try {
-    const json = Buffer.from(base64String, "base64").toString();
+    const json = Buffer.from(base64String, 'base64').toString();
     return JSON.parse(json);
   } catch (error) {
     console.log(error);

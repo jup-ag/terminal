@@ -55,7 +55,7 @@ const Content = () => {
 const queryClient = new QueryClient();
 
 const JupiterApp = (props: IInit) => {
-  const { displayMode, platformFeeAndAccounts, formProps } = props;
+  const { displayMode, platformFeeAndAccounts, formProps, maxAccounts } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -93,6 +93,7 @@ const JupiterApp = (props: IInit) => {
               scriptDomain={props.scriptDomain}
               asLegacyTransaction={asLegacyTransaction}
               setAsLegacyTransaction={setAsLegacyTransaction}
+              maxAccounts={maxAccounts}
             >
               <USDValueProvider>
                 <Content />

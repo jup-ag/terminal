@@ -1,7 +1,7 @@
 import { ZERO } from '@jup-ag/math';
 import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import { PublicKey } from '@solana/web3.js';
+import { AddressLookupTableAccount, ComputeBudgetInstruction, PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -17,13 +17,14 @@ import {
   useState,
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, toLamports } from 'src/misc/utils';
-import { FormProps, IInit } from 'src/types';
+import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
+import { FormProps, IInit, IOnRequestIxCallback, TransactionInstruction } from 'src/types';
 import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
+import { useScreenState } from './ScreenProvider';
 
 export interface IForm {
   fromMint: string;
@@ -52,6 +53,7 @@ export interface ISwapContext {
   quoteResponseMeta: QuoteResponseMeta | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
   onSubmit: () => Promise<SwapResult | null>;
+  onRequestIx: () => Promise<IOnRequestIxCallback>;
   lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null } | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
@@ -90,6 +92,9 @@ export const initialSwapContext: ISwapContext = {
   quoteResponseMeta: null,
   setQuoteResponseMeta() {},
   onSubmit: async () => null,
+  onRequestIx: async () => {
+    throw new Error('Not initialized yet');
+  },
   lastSwapResult: null,
   displayMode: 'modal',
   formProps: {
@@ -144,6 +149,7 @@ export const SwapContextProvider: FC<{
   asLegacyTransaction: boolean;
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
   formProps?: FormProps;
+  maxAccounts?: number;
   children: ReactNode;
 }> = (props) => {
   const {
@@ -152,12 +158,15 @@ export const SwapContextProvider: FC<{
     asLegacyTransaction,
     setAsLegacyTransaction,
     formProps: originalFormProps,
+    maxAccounts,
     children,
   } = props;
 
+  const { setScreen } = useScreenState();
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
+
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
   const formProps: FormProps = useMemo(
@@ -245,7 +254,7 @@ export const SwapContextProvider: FC<{
     outputMint: useMemo(() => (form.toMint ? new PublicKey(form.toMint) : PublicKey.default), [form.toMint]),
     swapMode: jupiterSwapMode,
     slippageBps: Math.ceil(slippage * 100),
-    asLegacyTransaction,
+    maxAccounts,
   });
   // Refresh on slippage change
   useEffect(() => refresh(), [slippage]);
@@ -328,6 +337,76 @@ export const SwapContextProvider: FC<{
     }
   }, [walletPublicKey, quoteResponseMeta]);
 
+  const onSubmitWithIx = useCallback(
+    (swapResult: SwapResult) => {
+      try {
+        if ('error' in swapResult) throw swapResult.error;
+
+        if ('txid' in swapResult) {
+          console.log({ swapResult });
+          setTxStatus({ txid: swapResult.txid, status: 'success' });
+          setLastSwapResult({ swapResult, quoteResponseMeta });
+          setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
+        }
+      } catch (error) {
+        console.log('Swap error', error);
+        setTxStatus({ txid: '', status: 'fail' });
+        setLastSwapResult({ swapResult, quoteResponseMeta });
+        setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
+      }
+    },
+    [quoteResponseMeta],
+  );
+
+  const onRequestIx = useCallback(async (): Promise<IOnRequestIxCallback> => {
+    if (!walletPublicKey || !wallet?.adapter) throw new Error('Missing wallet');
+    if (!quoteResponseMeta) throw new Error('Missing quote');
+
+    const inputMint = quoteResponseMeta?.quoteResponse.inputMint;
+    const outputMint = quoteResponseMeta?.quoteResponse.outputMint;
+
+    // A direct reference from https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction
+    const instructions: IOnRequestIxCallback['instructions'] = await (
+      await fetch('https://quote-api.jup.ag/v6/swap-instructions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quoteResponse: quoteResponseMeta.original,
+          userPublicKey: walletPublicKey,
+          computeUnitPriceMicroLamports,
+        }),
+      })
+    ).json();
+
+    if (!instructions || instructions.error) {
+      setErrors({
+        'missing-instructions': {
+          title: 'Missing instructions',
+          message: 'Failed to get swap instructions',
+        },
+      });
+
+      console.log('Failed to get swap instructions: ', instructions);
+      throw new Error('Failed to get swap instructions');
+    }
+
+    const [sourceAddress, destinationAddress] = [inputMint, outputMint].map((mint, idx) =>
+      getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey(walletPublicKey)),
+    );
+
+    return {
+      meta: {
+        sourceAddress,
+        destinationAddress,
+        quoteResponseMeta,
+      },
+      instructions,
+      onSubmitWithIx,
+    };
+  }, [walletPublicKey, quoteResponseMeta]);
+
   const refreshAll = () => {
     refresh();
     refreshAccount();
@@ -376,6 +455,7 @@ export const SwapContextProvider: FC<{
         quoteResponseMeta,
         setQuoteResponseMeta,
         onSubmit,
+        onRequestIx,
         lastSwapResult,
         reset,
 
