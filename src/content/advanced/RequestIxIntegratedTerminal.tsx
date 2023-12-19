@@ -118,7 +118,7 @@ const IntegratedTerminal = (props: {
         lastValidBlockHeight,
       },
       owner: new Owner(new PublicKey(walletPublicKey)),
-      wrapUnwrapSOL: true,
+      wrapUnwrapSOL: Boolean(cleanupInstruction),
     });
 
     onSubmitWithIx(swapResult);
