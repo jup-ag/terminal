@@ -49,20 +49,6 @@ const SwappingScreen = () => {
 
   const [errorMessage, setErrorMessage] = useState('');
 
-  const currentTime = useMemo(() => Date.now(), []);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      // If over 30s, timeout
-      if (Date.now() - currentTime > 30e3) {
-        setErrorMessage('Transaction timed-out, please try again.');
-      }
-    }, 500);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
   const onSwapMore = () => {
     reset();
     setErrorMessage('');
@@ -118,6 +104,21 @@ const SwappingScreen = () => {
     return 'loading';
   }, [txStatus]);
 
+  const currentTime = useMemo(() => Date.now(), []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (swapState === 'success' || swapState === 'error') return;
+
+      // If over 30s, timeout
+      if (Date.now() - currentTime > 30e3) {
+        setErrorMessage('Transaction timed-out, please try again.');
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [swapState]);
   const { explorer, getExplorer } = usePreferredExplorer();
 
   const Content = () => {
