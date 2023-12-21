@@ -111,9 +111,9 @@ export interface IInit {
 
   /** Callbacks */
   /** When an error has occured during swap */
-  onSwapError?: ({ error }: { error?: TransactionError }) => void;
+  onSwapError?: ({ error, quoteResponseMeta }: { error?: TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) => void;
   /** When a swap has been successful */
-  onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
+  onSuccess?: ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) => void;
   /** Callback when there's changes to the form */
   onFormUpdate?: (form: IForm) => void;
   /** Callback when there's changes to the screen */
