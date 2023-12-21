@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
+import { IForm } from 'src/contexts/SwapContext';
+import { Screens } from 'src/contexts/ScreenProvider';
 
 const IntegratedTerminal = (props: {
   rpcUrl: string;
@@ -15,6 +17,16 @@ const IntegratedTerminal = (props: {
   const passthroughWalletContextState = useWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
+  const [formData, setFormData] = useState<IForm | null>(null);
+  const onFormUpdate = useCallback((form: IForm) => {
+    setFormData(form);
+  }, [])
+
+  const [screenData, setScreenData] = useState<Screens | null>(null);
+  const onScreenUpdate = useCallback((screen: Screens) => {
+    setScreenData(screen);
+  }, [])
+
   const launchTerminal = async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
@@ -26,8 +38,18 @@ const IntegratedTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
+      onFormUpdate,
+      onScreenUpdate,
     });
   };
+
+  useEffect(() => {
+    console.log('formData', formData)
+  }, [formData])
+  
+  useEffect(() => {
+    console.log('screenData', screenData)
+  }, [screenData])
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;

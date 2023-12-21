@@ -161,8 +161,7 @@ export const SwapContextProvider: FC<{
     maxAccounts,
     children,
   } = props;
-
-  const { setScreen } = useScreenState();
+  const { screen } = useScreenState();
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
@@ -442,6 +441,20 @@ export const SwapContextProvider: FC<{
       .round()
       .toNumber();
   }, [priorityFeeInSOL]);
+
+  // onFormUpdate callback
+  useEffect(() => {
+    if (typeof window.Jupiter.onFormUpdate === 'function') {
+      window.Jupiter.onFormUpdate(form);
+    }
+  }, [form])
+  
+  // onFormUpdate callback
+  useEffect(() => {
+    if (typeof window.Jupiter.onScreenUpdate === 'function') {
+      window.Jupiter.onScreenUpdate(screen);
+    }
+  }, [screen])
 
   return (
     <SwapContext.Provider

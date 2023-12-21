@@ -114,6 +114,10 @@ export interface IInit {
   onSwapError?: ({ error }: { error?: TransactionError }) => void;
   /** When a swap has been successful */
   onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
+  /** Callback when there's changes to the form */
+  onFormUpdate?: (form: IForm) => void;
+  /** Callback when there's changes to the screen */
+  onScreenUpdate?: (screen: IScreen) => void;
 
   /** Ask jupiter to quote with a maximum number of accounts, essential for composing with Jupiter Swap instruction */
   maxAccounts?: number;
@@ -142,6 +146,8 @@ export interface JupiterTerminal {
   /** Callbacks */
   onSwapError: IInit['onSwapError'];
   onSuccess: IInit['onSuccess'];
+  onFormUpdate: IInit['onFormUpdate'];
+  onScreenUpdate: IInit['onScreenUpdate'];
 
   /** Request Ix instead of direct swap */
   onRequestIxCallback: IInit['onRequestIxCallback'];
