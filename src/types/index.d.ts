@@ -6,6 +6,7 @@ import { PublicKey, TransactionError } from '@solana/web3.js';
 import { QuoteResponseMeta, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
+import { PlatformFeeAndAccounts } from '@jup-ag/common';
 
 declare global {
   interface Window {
@@ -18,11 +19,6 @@ declare global {
 export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
-
-export declare type PlatformFeeAndAccounts = {
-  feeBps: number;
-  feeAccounts: Map<string, PublicKey>;
-};
 
 export interface FormProps {
   /** Default to `ExactIn`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
