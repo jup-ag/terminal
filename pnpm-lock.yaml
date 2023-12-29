@@ -13,8 +13,8 @@ dependencies:
     specifier: 4.0.0-beta.21
     version: 4.0.0-beta.21
   '@jup-ag/react-hook':
-    specifier: 6.0.0-beta.3
-    version: 6.0.0-beta.3(@coral-xyz/anchor@0.28.0)(@project-serum/serum@0.13.65)(@solana/web3.js@1.87.6)(bn.js@5.2.1)(react@18.2.0)
+    specifier: 6.0.0-beta.6
+    version: 6.0.0-beta.6(@coral-xyz/anchor@0.28.1-beta.2)(@project-serum/serum@0.13.65)(@solana/web3.js@1.87.6)(bn.js@5.2.1)(react@18.2.0)
   '@jup-ag/wallet-adapter':
     specifier: 0.1.3
     version: 0.1.3(@emotion/react@11.11.1)(@emotion/styled@11.11.0)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0)(react-native@0.72.4)(react@18.2.0)(styled-components@6.0.7)
@@ -96,8 +96,8 @@ dependencies:
 
 devDependencies:
   '@jup-ag/common':
-    specifier: 6.0.0-beta.2
-    version: 6.0.0-beta.2(@solana/web3.js@1.87.6)(bn.js@5.2.1)
+    specifier: 6.0.0-beta.6
+    version: 6.0.0-beta.6(@solana/web3.js@1.87.6)(bn.js@5.2.1)
   '@svgr/webpack':
     specifier: ^6.5.1
     version: 6.5.1
@@ -1634,31 +1634,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@coral-xyz/anchor@0.28.0:
-    resolution: {integrity: sha512-kQ02Hv2ZqxtWP30WN1d4xxT4QqlOXYDxmEd3k/bbneqhV3X5QMO4LAtoUFs7otxyivOgoqam5Il5qx81FuI4vw==}
-    engines: {node: '>=11'}
-    dependencies:
-      '@coral-xyz/borsh': 0.28.0(@solana/web3.js@1.87.6)
-      '@solana/web3.js': 1.87.6
-      base64-js: 1.5.1
-      bn.js: 5.2.1
-      bs58: 4.0.1
-      buffer-layout: 1.2.2
-      camelcase: 6.3.0
-      cross-fetch: 3.1.8
-      crypto-hash: 1.3.0
-      eventemitter3: 4.0.7
-      js-sha256: 0.9.0
-      pako: 2.1.0
-      snake-case: 3.0.4
-      superstruct: 0.15.5
-      toml: 3.0.0
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
-
   /@coral-xyz/anchor@0.28.1-beta.2:
     resolution: {integrity: sha512-xreUcOFF8+IQKWOBUrDKJbIw2ftpRVybFlEPVrbSlOBCbreCWrQ5754Gt9cHIcuBDAzearCDiBqzsGQdNgPJiw==}
     engines: {node: '>=11'}
@@ -2195,18 +2170,26 @@ packages:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@jup-ag/api@6.0.6:
-    resolution: {integrity: sha512-wGp3FjT+WNdd5TzsWaKr2a2rQ2FgIyaV6sq8L76R8KVYxH7TfCY/BZwhcij6YhxHGjxrF8j7qI6ZPpmUTICpnA==}
+  /@jup-ag/api@6.0.9:
+    resolution: {integrity: sha512-Miudchq7xl8qJbOwZ9VJzx0qjOjvRSkbJfA6yh9HLgvEPHqCNQIVh3AwsQjCjLWoqXrLjoBiEaA7NTx9jzTh3Q==}
+    dependencies:
+      '@project-serum/anchor': 0.26.0
+      '@solana/web3.js': 1.87.6
+      bs58: 5.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
     dev: false
 
-  /@jup-ag/common@6.0.0-beta.2(@solana/web3.js@1.87.6)(bn.js@5.2.1):
-    resolution: {integrity: sha512-KHXKs+6aE+Y4rtzisIeZcC2j4iRVJeS0mX8H3wIBQ2D/FQtVrZp1mI6A/kA3ifPad1jmjWTLPLTwLAcf1Y/Fjw==}
+  /@jup-ag/common@6.0.0-beta.6(@solana/web3.js@1.87.6)(bn.js@5.2.1):
+    resolution: {integrity: sha512-h/FtgjY6qHUGRZT2lciwRt/i1Gqs4IuU/dr1sjrMK7Ii6Dn1ennXLiGN7Sms8ARJFm2kSNdpaP/x5Wg2m1xX8w==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': 1.87.6
     dependencies:
       '@coral-xyz/anchor': 0.28.1-beta.2
-      '@mercurial-finance/optimist': 0.3.0(@coral-xyz/anchor@0.28.1-beta.2)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1)
+      '@mercurial-finance/optimist': 0.3.1(@coral-xyz/anchor@0.28.1-beta.2)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1)
       '@solana/spl-token': 0.1.8
       '@solana/web3.js': 1.87.6
       bs58: 4.0.1
@@ -2226,8 +2209,8 @@ packages:
       jsbi: 4.3.0
     dev: false
 
-  /@jup-ag/react-hook@6.0.0-beta.3(@coral-xyz/anchor@0.28.0)(@project-serum/serum@0.13.65)(@solana/web3.js@1.87.6)(bn.js@5.2.1)(react@18.2.0):
-    resolution: {integrity: sha512-Eb8i+7WoZUIILWFJNjDvmVjChv7AhdvCHJo5FLTc/3Oyv2NGNgadScpuw6jI+GlR0aimN7Nxb6AN702gjc9GAQ==}
+  /@jup-ag/react-hook@6.0.0-beta.6(@coral-xyz/anchor@0.28.1-beta.2)(@project-serum/serum@0.13.65)(@solana/web3.js@1.87.6)(bn.js@5.2.1)(react@18.2.0):
+    resolution: {integrity: sha512-gxW9/kskbMnJrh02gcGX5rMVfxzLz5fEOtAP+7AWV8M9jniIn6GjqLD/nq+L26Rg9dm/b+PKKnjyFChOcqvKgQ==}
     engines: {node: '>=10'}
     peerDependencies:
       '@project-serum/serum': '>=0.13.60'
@@ -2235,9 +2218,9 @@ packages:
       bn.js: '>=5.2.0'
       react: '>=16'
     dependencies:
-      '@jup-ag/api': 6.0.6
-      '@jup-ag/common': 6.0.0-beta.2(@solana/web3.js@1.87.6)(bn.js@5.2.1)
-      '@mercurial-finance/optimist': 0.3.0(@coral-xyz/anchor@0.28.0)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1)
+      '@jup-ag/api': 6.0.9
+      '@jup-ag/common': 6.0.0-beta.6(@solana/web3.js@1.87.6)(bn.js@5.2.1)
+      '@mercurial-finance/optimist': 0.3.1(@coral-xyz/anchor@0.28.1-beta.2)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1)
       '@project-serum/serum': 0.13.65
       '@solana/spl-token': 0.1.8
       '@solana/web3.js': 1.87.6
@@ -2359,33 +2342,11 @@ packages:
     resolution: {integrity: sha512-z+ILK8Q3y+nfUl43ctCPuR4Y2bIxk/ooCQFwZxhtci1EhAtMDzMAx2W25qx8G1PPL9UUOdnUax19+F0OjXoj4w==}
     dev: false
 
-  /@mercurial-finance/optimist@0.3.0(@coral-xyz/anchor@0.28.0)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1):
-    resolution: {integrity: sha512-StFgenETULc8VM4V/8p11ESE0CA0e4H7suXppkFHhKfV0AdJ6T4m9Xc0puEqlkzWVQCZAGaOIesDPFCfwyMPiQ==}
+  /@mercurial-finance/optimist@0.3.1(@coral-xyz/anchor@0.28.1-beta.2)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1):
+    resolution: {integrity: sha512-F2g0O933JxQi2A/7CobEXxd6kgSUK2GOaKqa2NaEqzkUCF8LBA2QeusQIkeP5kfizqX9IxVcci2ANEyShIDHuA==}
     engines: {node: '>=10'}
     peerDependencies:
-      '@coral-xyz/anchor': '>=0.28.0'
-      '@solana/spl-token': <0.2.0
-      '@solana/web3.js': 1.87.6
-      bn.js: '>=5.2.0'
-    dependencies:
-      '@coral-xyz/anchor': 0.28.0
-      '@metaplex-foundation/mpl-token-metadata': 2.13.0
-      '@solana/spl-token': 0.1.8
-      '@solana/web3.js': 1.87.6
-      bn.js: 5.2.1
-      promise-retry: 2.0.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
-
-  /@mercurial-finance/optimist@0.3.0(@coral-xyz/anchor@0.28.1-beta.2)(@solana/spl-token@0.1.8)(@solana/web3.js@1.87.6)(bn.js@5.2.1):
-    resolution: {integrity: sha512-StFgenETULc8VM4V/8p11ESE0CA0e4H7suXppkFHhKfV0AdJ6T4m9Xc0puEqlkzWVQCZAGaOIesDPFCfwyMPiQ==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      '@coral-xyz/anchor': '>=0.28.0'
+      '@coral-xyz/anchor': '>=0.28.1-beta.2'
       '@solana/spl-token': <0.2.0
       '@solana/web3.js': 1.87.6
       bn.js: '>=5.2.0'

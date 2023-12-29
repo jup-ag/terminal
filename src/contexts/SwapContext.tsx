@@ -1,7 +1,7 @@
 import { ZERO } from '@jup-ag/math';
 import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import { AddressLookupTableAccount, ComputeBudgetInstruction, PublicKey } from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -18,7 +18,7 @@ import {
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
-import { FormProps, IInit, IOnRequestIxCallback, TransactionInstruction } from 'src/types';
+import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -116,8 +116,6 @@ export const initialSwapContext: ISwapContext = {
     programIdToLabelMap: new Map(),
     setProgramIdsExcluded() {},
     quoteResponseMeta: null,
-    allTokenMints: [],
-    routeMap: new Map(),
     exchange: undefined,
     loading: false,
     refresh() {},
@@ -237,8 +235,6 @@ export const SwapContextProvider: FC<{
   const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
-    allTokenMints,
-    routeMap,
     exchange,
     loading: loadingQuotes,
     refresh,
@@ -478,8 +474,6 @@ export const SwapContextProvider: FC<{
           programIdsExcluded,
           programIdToLabelMap,
           setProgramIdsExcluded,
-          allTokenMints,
-          routeMap,
           exchange,
           loading: loadingQuotes,
           refresh: refreshAll,

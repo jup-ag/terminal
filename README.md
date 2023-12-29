@@ -157,26 +157,37 @@ Similar to Jupiter, Jupiter Terminal supports fee for integrators.
 
 There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
 
-Refer to [Adding your own fees](https://docs.jup.ag/docs/v6-beta/adding-fees) docs for more details.
+Refer to [Adding your own fees](https://docs.jup.ag/docs/apis/adding-fees) docs for more details.
 
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
+#### By referral key `referralAccount` (easiest)
 ```tsx
-import { getPlatformFeeAccounts } from '@jup-ag/react-hook';
-
-// Jupiter Core provides a helper function that returns all your feeAccounts
-const platformFeeAndAccounts = {
-  feeBps: 50,
-  feeAccounts: await getPlatformFeeAccounts(
-    connection,
-    new PublicKey('BUX7s2ef2htTGb2KKoPHWkmzxPj4nTWMWRgs5CSbQxf9'), // The platform fee account owner
-  ), // map of mint to token account pubkey
+const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
+  referralAccount: new PublicKey('2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy'),
+  feeBps: 100,
 };
 
 window.Jupiter.init({
   // ...
-  platformFeeAndAccounts,
-});
+  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
+})
+```
+
+
+#### By defined fee accounts
+Alternatively, you can derive yourself the fee accounts via 
+[Set your fee token account](https://docs.jup.ag/docs/apis/adding-fees#3-set-your-fee-token-account) and declare them like so:
+```tsx
+const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
+  feeBps: 100,
+  feeAccounts,
+};
+
+window.Jupiter.init({
+  // ...
+  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
+})
 ```
 
 ---
