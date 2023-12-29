@@ -9,7 +9,9 @@ With several templates to get you started, and auto generated code snippets.
 <img src="public/demo/terminal-hero.gif" />
 
 ---
+
 ## Breaking change v1 to v2
+
 - Fee token account updated to use Jupiter referral token account. Check out [Fee supports section](#fee-supports)
 
 ---
@@ -49,7 +51,6 @@ With several templates to get you started, and auto generated code snippets.
 - Fees Support
   - Customisable fees
   - Track fees with Jupiter Referral Dashboard
-
 
 ---
 
@@ -103,18 +104,20 @@ window.Jupiter.init({});
 ```
 
 ### 3. Setup other props
+
 ```tsx
 window.Jupiter.init({
-  /** Required 
+  /** Required
    * Solana RPC endpoint
    * We do not recommend using the public RPC endpoint for production dApp, you will get severely rate-limited
-  */
+   */
   endpoint: 'https://api.mainnet-beta.solana.com',
   // ...other props
 });
 ```
 
 ### 4. Finishing touches
+
 Terminal are light, but full of features, such as customising form behaviour, fees, styling and much more.
 
 [Go to our Demo](https://terminal.jup.ag) to explore all these features, with automagically generated integration code.
@@ -122,8 +125,6 @@ Terminal are light, but full of features, such as customising form behaviour, fe
 Or, [check out our fully typed API reference](https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts) for more details.
 
 <img src="public/demo/terminal-codegen.gif" />
-
-
 
 ---
 
@@ -196,7 +197,6 @@ if (window.Jupiter._instance) {
 window.Jupiter.close();
 ```
 
-
 ### Strict Token List
 
 - `strictTokenList?: boolean;`
@@ -220,20 +220,24 @@ You can change the default explorer by passing in the explorer name to the `defa
 
 ---
 
-### onSuccess/onSwapError callback
+### Terminal callbacks
 
-`onSuccess()` reference can be provided, and will be called when swap is successful.
-
-While `onSwapError()` will be called when an error has occurred.
+Callbacks that may be useful for your dApp, from form updates, to swap success/error.
 
 ```tsx
 window.Jupiter.init({
-  onSuccess: ({ txid, swapResult }) => {
-    console.log({ txid, swapResult });
-  },
-  onSwapError: ({ error }) => {
-    console.log('onSwapError', error);
-  },
+  /** Callbacks */
+  /** When an error has occured during swap */
+  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  /** When a swap has been successful */
+  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  /** Callback when there's changes to the form */
+  onFormUpdate (form: IForm) {}
+  /** Callback when there's changes to the screen */
+  onScreenUpdate (screen: IScreen) {}
+  
+  /** Advanced usage */
+  /** onRequestIxCallback(), refer to dedicated section below */
 });
 ```
 
@@ -277,7 +281,8 @@ window.Jupiter.init({
 ```
 
 ### onRequestIxCallback
-Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned. 
+
+Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned.
 
 Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/state transitioning.
 
@@ -285,10 +290,11 @@ Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/s
 - [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
 
 ```tsx
-const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {}
+const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {};
 ```
 
 ### maxAccounts
+
 Limit the number of accounts to be used by the Swap Instructions.
 
 - [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)

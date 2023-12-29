@@ -161,8 +161,7 @@ export const SwapContextProvider: FC<{
     maxAccounts,
     children,
   } = props;
-
-  const { setScreen } = useScreenState();
+  const { screen } = useScreenState();
   const { tokenMap } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
@@ -329,7 +328,6 @@ export const SwapContextProvider: FC<{
       console.log({ swapResult });
 
       setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
-      setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       return swapResult;
     } catch (error) {
       console.log('Swap error', error);
@@ -346,13 +344,11 @@ export const SwapContextProvider: FC<{
           console.log({ swapResult });
           setTxStatus({ txid: swapResult.txid, status: 'success' });
           setLastSwapResult({ swapResult, quoteResponseMeta });
-          setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
         }
       } catch (error) {
         console.log('Swap error', error);
         setTxStatus({ txid: '', status: 'fail' });
         setLastSwapResult({ swapResult, quoteResponseMeta });
-        setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       }
     },
     [quoteResponseMeta],
@@ -414,22 +410,20 @@ export const SwapContextProvider: FC<{
 
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
-      setTimeout(() => {
-        if (resetValues) {
-          setForm({ ...initialSwapContext.form, ...formProps });
-          setupInitialAmount();
-        } else {
-          setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
-        }
+      if (resetValues) {
+        setForm({ ...initialSwapContext.form, ...formProps });
+        setupInitialAmount();
+      } else {
+        setForm((prev) => ({ ...prev, toValue: '' }));
+      }
 
-        setQuoteResponseMeta(null);
-        setErrors(initialSwapContext.errors);
-        setLastSwapResult(initialSwapContext.lastSwapResult);
-        setTxStatus(initialSwapContext.swapping.txStatus);
-        refreshAccount();
-      }, 0);
+      setQuoteResponseMeta(null);
+      setErrors(initialSwapContext.errors);
+      setLastSwapResult(initialSwapContext.lastSwapResult);
+      setTxStatus(initialSwapContext.swapping.txStatus);
+      refreshAccount();
     },
-    [setupInitialAmount],
+    [setupInitialAmount, form],
   );
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
@@ -442,6 +436,20 @@ export const SwapContextProvider: FC<{
       .round()
       .toNumber();
   }, [priorityFeeInSOL]);
+
+  // onFormUpdate callback
+  useEffect(() => {
+    if (typeof window.Jupiter.onFormUpdate === 'function') {
+      window.Jupiter.onFormUpdate(form);
+    }
+  }, [form]);
+
+  // onFormUpdate callback
+  useEffect(() => {
+    if (typeof window.Jupiter.onScreenUpdate === 'function') {
+      window.Jupiter.onScreenUpdate(screen);
+    }
+  }, [screen]);
 
   return (
     <SwapContext.Provider
