@@ -10,6 +10,8 @@ import Link from 'next/link';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import JupiterLogo from 'src/icons/JupiterLogo';
 import MeteoraLogo from 'src/icons/MeteoraLogo';
+import SnippetReferralAccount from './snippet/SnippetReferralAccount';
+import SnippetNewCallbacks from './snippet/SnippetNewCallbacks';
 
 const Title: React.FC<PropsWithChildren> = ({ children }) => (
   <div className="mt-6 text-white text-md text-center font-semibold">{children}</div>
@@ -19,6 +21,7 @@ const Desc: React.FC<PropsWithChildren> = ({ children }) => (
   <div className="text-white/70 text-sm text-center">{children}</div>
 );
 
+export const V2_FEATURE_BUTTON_ID = 'v2-feature-button';
 const V2FeatureButton = () => {
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
@@ -79,6 +82,7 @@ const V2FeatureButton = () => {
   return (
     <div className="">
       <p
+        id={V2_FEATURE_BUTTON_ID}
         onClick={onEnter}
         className="mt-2 text-white text-sm font-semibold cursor-pointer border border-white/50 hover:bg-white/10 px-2 py-1 rounded-xl"
       >{`What's new in V2 ✨`}</p>
@@ -127,6 +131,29 @@ const V2FeatureButton = () => {
 
               <div className="border-b border-white/10 w-full mt-4" />
 
+              <Title>Easier Referral Support</Title>
+              <Desc>
+                With the new
+                <span className="mx-1 text-v3-primary">referralAccount</span>
+                support, integrating fees support is now easier than ever.
+              </Desc>
+
+              <div className="mt-2 w-full">
+                <SnippetReferralAccount />
+              </div>
+
+              <Link
+                className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
+                href={'https://docs.jup.ag/docs/apis/adding-fees'}
+                rel="noreferrer noopener"
+                target="_blank"
+              >
+                <span>Learn more</span>
+                <ExternalIcon />
+              </Link>
+
+              <div className="border-b border-white/10 w-full mt-4" />
+
               <Title>Cross app state sharing with Jupiter Terminal</Title>
               <Desc>
                 With the new
@@ -156,12 +183,12 @@ const V2FeatureButton = () => {
                 <br />
                 <br />
                 <div className="flex flex-col items-center justify-center">
-                  <div className='flex items-center space-x-2'>
+                  <div className="flex items-center space-x-2">
                     <span>Used by</span>
-                    <Link href='https://jup.ag' >
+                    <Link href="https://jup.ag" target="_blank">
                       <JupiterLogo />
                     </Link>
-                    <Link href='https://app.meteora.ag'>
+                    <Link href="https://app.meteora.ag" target="_blank">
                       <MeteoraLogo />
                     </Link>
                   </div>
@@ -170,6 +197,7 @@ const V2FeatureButton = () => {
                     className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
                     href={'https://github.com/TeamRaccoons/wallet-kit'}
                     rel="noreferrer noopener"
+                    target="_blank"
                   >
                     <span>Open on Github</span>
                     <ExternalIcon />
@@ -207,6 +235,14 @@ const V2FeatureButton = () => {
                     </div>
                   </span>
                 </div>
+              </div>
+
+              <div className="border-b border-white/10 w-full mt-4" />
+
+              <Title>More callbacks</Title>
+              <Desc>With new callbacks that should make state sharing, notifications, and more, between your dApp and Terminal even easier.</Desc>
+              <div className="mt-2 w-full">
+                <SnippetNewCallbacks />
               </div>
 
               <JupButton className="my-20 w-[200px]" size="lg" onClick={onExit}>
