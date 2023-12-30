@@ -13,6 +13,7 @@ import Deposits from './Deposits';
 import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 import { useAccounts } from 'src/contexts/accounts';
+import PlatformFees, { PlatformFeesInfo } from './PlatformFees';
 
 const Index = ({
   quoteResponse,
@@ -118,6 +119,12 @@ const Index = ({
           <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+          {(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee ? (
+            <PlatformFees
+              platformFee={(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee}
+              tokenInfo={quoteResponse?.swapMode === SwapMode.ExactIn ? toTokenInfo : fromTokenInfo}
+            />
+          ) : null}
 
           {priorityFeeInSOL > 0 ? (
             <div className="flex items-center justify-between text-xs">
