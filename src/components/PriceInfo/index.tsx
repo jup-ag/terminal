@@ -23,7 +23,7 @@ const Index = ({
   showFullDetails = false,
   containerClassName,
 }: {
-  quoteResponse: QuoteResponse & PlatformFeesInfo;
+  quoteResponse: QuoteResponse;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
   loading: boolean;
@@ -119,9 +119,9 @@ const Index = ({
           <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
-          {quoteResponse.platformFee ? (
+          {(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee ? (
             <PlatformFees
-              platformFee={quoteResponse.platformFee}
+              platformFee={(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee}
               tokenInfo={quoteResponse?.swapMode === SwapMode.ExactIn ? toTokenInfo : fromTokenInfo}
             />
           ) : null}
