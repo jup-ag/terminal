@@ -20,6 +20,10 @@ export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
 
+/** Priority type */
+export type Priority = number | 'auto' | {
+  autoMultiplier: number;
+};
 export interface FormProps {
   /** Default to `ExactIn`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
   swapMode?: SwapMode;
