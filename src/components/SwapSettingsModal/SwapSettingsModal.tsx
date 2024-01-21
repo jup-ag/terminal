@@ -53,8 +53,7 @@ export const PRIORITY_TEXT = {
   [PRIORITY_TURBO]: `Turbo`,
 };
 
-const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO];
-const PRIORITY_PRESET_V2: Array<{ text: string; description: string; value: Priority; max?: number }> = [
+const PRIORITY_PRESET: Array<{ text: string; description: string; value: Priority; max?: number }> = [
   { text: 'Market', description: '85% percentile fees from last 20 blocks', value: 'auto', max: 0.001 },
   { text: 'High', description: '5x Market fee', value: { autoMultiplier: 5 }, max: 0.005 },
   { text: 'Turbo', description: '10x Market fee', value: { autoMultiplier: 10 }, max: 0.01 },
@@ -82,7 +81,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   }, [slippage, SLIPPAGE_PRESET]);
 
   const priorityInitialPreset = useMemo(() => {
-    return PRIORITY_PRESET_V2.find(
+    return PRIORITY_PRESET.find(
       (preset) => JSON.stringify(preset.value) === JSON.stringify(prioritizationFeeLamports),
     );
   }, [priorityFeeInSOL]);
@@ -250,7 +249,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 render={({ field: { onChange } }) => {
                   return (
                     <div className="flex flex-col w-full space-y-2">
-                      {PRIORITY_PRESET_V2.map(({ text, description, value, max }, idx) => {
+                      {PRIORITY_PRESET.map(({ text, description, value, max }, idx) => {
                         const name = text;
                         const isSelected = 
                           typeof priorityInSOLPreset === 'object' && typeof value === 'object'
