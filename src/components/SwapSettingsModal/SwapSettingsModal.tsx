@@ -24,6 +24,8 @@ import Toggle from '../Toggle';
 import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import CheckIcon from 'src/icons/CheckIcon';
+import { Priority } from 'src/types';
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
@@ -32,7 +34,7 @@ export type Forms = {
   slippageInput?: string;
   priorityPreset?: number;
   priorityInSOLInput?: number;
-  priorityInSOLPreset?: number;
+  priorityInSOLPreset?: Priority;
 
   onlyDirectRoutes: boolean;
   useWSol: boolean;
@@ -52,10 +54,22 @@ export const PRIORITY_TEXT = {
 };
 
 const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO];
+const PRIORITY_PRESET_V2: Array<{ text: string; description: string; value: Priority; max?: number }> = [
+  { text: 'Market', description: '85% percentile fees from last 20 blocks', value: 'auto', max: 0.001 },
+  { text: 'High', description: '5x Market fee', value: { autoMultiplier: 5 }, max: 0.005 },
+  { text: 'Turbo', description: '10x Market fee', value: { autoMultiplier: 10 }, max: 0.01 },
+];
 
 const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
-    jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
+    jupiter: {
+      asLegacyTransaction,
+      setAsLegacyTransaction,
+      priorityFeeInSOL,
+      setPriorityFeeInSOL,
+      prioritizationFeeLamports,
+      setPrioritizationFeeLamports,
+    },
   } = useSwapContext();
   const { slippage, setSlippage } = useSlippageConfig();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
@@ -68,9 +82,10 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   }, [slippage, SLIPPAGE_PRESET]);
 
   const priorityInitialPreset = useMemo(() => {
-    return PRIORITY_PRESET.find((preset) => Number(preset) === priorityFeeInSOL);
+    return PRIORITY_PRESET_V2.find(
+      (preset) => JSON.stringify(preset.value) === JSON.stringify(prioritizationFeeLamports),
+    );
   }, [priorityFeeInSOL]);
-
   const form = useForm<Forms>({
     defaultValues: {
       ...(slippage
@@ -84,7 +99,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
         : {}),
       ...(typeof priorityFeeInSOL !== 'undefined' && typeof priorityInitialPreset !== 'undefined'
         ? {
-            priorityInSOLPreset: priorityInitialPreset,
+            priorityInSOLPreset: priorityInitialPreset.value,
           }
         : {
             priorityInSOLInput: priorityFeeInSOL,
@@ -167,9 +182,15 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       setSlippage(slippage);
     }
 
-    const priority = Number(priorityInSOLInput ?? priorityInSOLPreset);
-    if (typeof priority === 'number') {
-      setPriorityFeeInSOL(priority);
+    let priorityInput = priorityInSOLInput || priorityInSOLPreset;
+
+    if (priorityInput === 'auto' || typeof priorityInput === 'object') {
+      setPrioritizationFeeLamports(priorityInput);
+    } else {
+      const priority = Number(priorityInput);
+      if (typeof priority === 'number') {
+        setPrioritizationFeeLamports(priority);
+      }
     }
 
     setAsLegacyTransaction(asLegacyTransactionInput);
@@ -222,37 +243,46 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 </div>
               </Tooltip>
             </div>
-
-            <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden">
+            <div className="flex flex-col w-full space-y-2">
               <Controller
-                name="priorityInSOLInput"
+                name="priorityInSOLPreset"
                 control={form.control}
-                render={({}) => {
+                render={({ field: { onChange } }) => {
                   return (
-                    <>
-                      {PRIORITY_PRESET.map((item, idx) => {
-                        const name = PRIORITY_TEXT[item as keyof typeof PRIORITY_TEXT];
+                    <div className="flex flex-col w-full space-y-2">
+                      {PRIORITY_PRESET_V2.map(({ text, description, value, max }, idx) => {
+                        const name = text;
+                        const isSelected = 
+                          typeof priorityInSOLPreset === 'object' && typeof value === 'object'
+                            ? priorityInSOLPreset.autoMultiplier === value.autoMultiplier
+                            : priorityInSOLPreset === value;
                         return (
-                          <SwapSettingButton
-                            key={idx}
-                            idx={idx}
-                            itemsCount={PRIORITY_PRESET.length}
-                            roundBorder={idx === 0 ? 'left' : idx === SLIPPAGE_PRESET.length - 1 ? 'right' : undefined}
-                            highlighted={!inputPriorityFocused && priorityInSOLPreset === item}
+                          <button
+                            type="button"
+                            className={`p-4 h-[76px] rounded-xl w-full flex flex-col relative bg-[#E8F9FF]/5 ${isSelected ? 'border-2 border-[#C7F284]' : 'border border-[#E8F9FF]/10'}`}
                             onClick={() => {
-                              form.setValue('priorityInSOLPreset', item);
                               form.setValue('priorityInSOLInput', undefined);
+                              onChange(value);
                               setInputPriorityFocused(false);
                             }}
+                            key={idx}
                           >
-                            <div className="whitespace-nowrap">
-                              <p className="text-sm text-white">{name}</p>
-                              <span className="mt-1 text-xs">{item} SOL</span>
-                            </div>
-                          </SwapSettingButton>
+                            <span className="text-[#E8F9FF] flex space-x-2 items-center">
+                              <span className="font-semibold">{name}</span>
+                              <span className="block text-[11px] px-2 bg-[#E8F9FF1A] border border-[#E8F9FF33] rounded-full h-[22px] py-[2px]">
+                                Max: {max} SOL
+                              </span>
+                            </span>
+                            <span className="text-xs text-[#E8F9FF]/50">{description}</span>
+                            <span
+                              className={`absolute top-4 right-4 w-4 h-4 rounded-full border flex justify-center items-center ${isSelected ? 'border-none bg-[#C7F284]' : 'border-[#E8F9FF]/30 bg-[#E8F9FF]/5'}`}
+                            >
+                              {isSelected && <CheckIcon />}
+                            </span>
+                          </button>
                         );
                       })}
-                    </>
+                    </div>
                   );
                 }}
               />
