@@ -241,7 +241,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 </div>
               </Tooltip>
             </div>
-            <div className="flex flex-col w-full space-y-2">
+            <div className="flex flex-col w-full space-y-2 mt-2">
               <Controller
                 name="priorityInSOLPreset"
                 control={form.control}
@@ -257,7 +257,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         return (
                           <button
                             type="button"
-                            className={`p-4 h-[76px] rounded-xl w-full flex flex-col relative bg-[#E8F9FF]/5 ${isSelected ? 'border-2 border-[#C7F284]' : 'border border-[#E8F9FF]/10'}`}
+                            className={`p-4 h-[76px] rounded-xl w-full flex flex-col relative bg-[#E8F9FF]/5 ${isSelected ? 'border-2 border-[#C7F284] ' : 'border-2 border-[#E8F9FF]/10 '}`}
                             onClick={() => {
                               form.setValue('priorityInSOLInput', undefined);
                               onChange(value);
