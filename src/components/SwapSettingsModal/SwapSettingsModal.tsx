@@ -26,6 +26,7 @@ import ExternalIcon from 'src/icons/ExternalIcon';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import CheckIcon from 'src/icons/CheckIcon';
 import { Priority } from 'src/types';
+import { SwapSettingHeader } from './SwapSettingHeader';
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
@@ -203,14 +204,30 @@ const SetSlippage: React.FC<{
 
   return (
     <div className={classNames('w-full rounded-xl flex flex-col bg-jupiter-bg text-white shadow-xl max-h-[90%]')}>
-      <div className="flex justify-between items-center p-4 border-b border-white/10">
-        <div className="text-sm font-semibold">
-          <span>Swap Settings</span>
-        </div>
-        <div className="text-white fill-current cursor-pointer" onClick={() => closeModal()}>
-          <CloseIcon width={14} height={14} />
-        </div>
-      </div>
+      {filterDisplay === 'priorityOnly' && (
+        <SwapSettingHeader
+          title="Transaction Priority"
+          onClose={closeModal}
+          tooltip={
+            <Tooltip
+              variant="dark"
+              className="!left-0 !top-16 w-[50%]"
+              content={
+                <span className="flex rounded-lg text-xs text-white/75">
+                  The priority fee is paid to the Solana network. This additional fee helps boost how a transaction is
+                  prioritized against others, resulting in faster transaction execution times.
+                </span>
+              }
+            >
+              <div className="flex ml-2.5 items-center text-white-35 fill-current">
+                <InfoIconSVG width={12} height={12} />
+              </div>
+            </Tooltip>
+          }
+        />
+      )}
+      {filterDisplay === 'slippageOnly' && <SwapSettingHeader title="Slippage Settings" onClose={closeModal} />}
+      {filterDisplay === 'generalOnly' && <SwapSettingHeader title="General Settings" onClose={closeModal} />}
 
       <form
         onSubmit={form.handleSubmit((value) => {
@@ -227,23 +244,6 @@ const SetSlippage: React.FC<{
             {/**************************** PRIORTY *****************************/}
             {filterDisplay === 'priorityOnly' && (
               <>
-                <div className="flex items-center text-sm text-white/75 font-[500]">
-                  <span>Transaction Priority</span>
-                  <Tooltip
-                    variant="dark"
-                    className="!left-0 !top-16 w-[50%]"
-                    content={
-                      <span className="flex rounded-lg text-xs text-white/75">
-                        The priority fee is paid to the Solana network. This additional fee helps boost how a
-                        transaction is prioritized against others, resulting in faster transaction execution times.
-                      </span>
-                    }
-                  >
-                    <div className="flex ml-2.5 items-center text-white-35 fill-current">
-                      <InfoIconSVG width={12} height={12} />
-                    </div>
-                  </Tooltip>
-                </div>
                 <div className="flex flex-col w-full space-y-2 mt-2">
                   <Controller
                     name="priorityInSOLPreset"
@@ -363,10 +363,6 @@ const SetSlippage: React.FC<{
             {/**************************** SLIPPAGE *****************************/}
             {filterDisplay === 'slippageOnly' && (
               <>
-                <div className="flex items-center text-sm text-white/75 font-[500]">
-                  <span>Slippage Settings</span>
-                </div>
-
                 <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden text-sm h-[52px]">
                   <Controller
                     name="slippagePreset"
