@@ -65,7 +65,6 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       asLegacyTransaction,
       setAsLegacyTransaction,
       priorityFeeInSOL,
-      setPriorityFeeInSOL,
       prioritizationFeeLamports,
       setPrioritizationFeeLamports,
     },

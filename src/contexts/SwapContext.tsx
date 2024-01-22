@@ -259,6 +259,7 @@ export const SwapContextProvider: FC<{
   useEffect(() => refresh(), [slippage]);
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
+  const [prioritizationFeeLamports, setPrioritizationFeeLamports] = useState<Priority>('auto');
   useEffect(() => {
     if (!ogQuoteResponseMeta) {
       setQuoteResponseMeta(null);
@@ -335,7 +336,7 @@ export const SwapContextProvider: FC<{
       console.log('Swap error', error);
       return null;
     }
-  }, [walletPublicKey, quoteResponseMeta]);
+  }, [walletPublicKey, quoteResponseMeta, prioritizationFeeLamports]);
 
   const onSubmitWithIx = useCallback(
     (swapResult: SwapResult) => {
@@ -429,7 +430,6 @@ export const SwapContextProvider: FC<{
   );
 
   const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
-  const [prioritizationFeeLamports, setPrioritizationFeeLamports] = useState<Priority>('auto');
   const computeUnitPriceMicroLamports = useMemo(() => {
     if (priorityFeeInSOL === undefined) return 0;
     return new Decimal(priorityFeeInSOL)
