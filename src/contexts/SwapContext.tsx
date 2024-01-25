@@ -18,7 +18,7 @@ import {
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
-import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
+import { FormProps, IInit, IOnRequestIxCallback, Priority } from 'src/types';
 import { useAccounts } from './accounts';
 import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -74,6 +74,8 @@ export interface ISwapContext {
     priorityFeeInSOL: number;
     setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
+    prioritizationFeeLamports: Priority;
+    setPrioritizationFeeLamports: Dispatch<SetStateAction<Priority>>;
   };
 }
 
@@ -125,6 +127,8 @@ export const initialSwapContext: ISwapContext = {
     setAsLegacyTransaction() {},
     priorityFeeInSOL: 0,
     setPriorityFeeInSOL() {},
+    prioritizationFeeLamports: 'auto',
+    setPrioritizationFeeLamports() {},
   },
 };
 
@@ -139,7 +143,7 @@ export function useSwapContext() {
 export const PRIORITY_NONE = 0; // No additional fee
 export const PRIORITY_HIGH = 0.000_005; // Additional fee of 1x base fee
 export const PRIORITY_TURBO = 0.000_5; // Additional fee of 100x base fee
-export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
+export const PRIORITY_MAXIMUM_SUGGESTED = 2;
 
 export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
@@ -255,6 +259,7 @@ export const SwapContextProvider: FC<{
   useEffect(() => refresh(), [slippage]);
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
+  const [prioritizationFeeLamports, setPrioritizationFeeLamports] = useState<Priority>('auto');
   useEffect(() => {
     if (!ogQuoteResponseMeta) {
       setQuoteResponseMeta(null);
@@ -320,6 +325,8 @@ export const SwapContextProvider: FC<{
         routeInfo: quoteResponseMeta,
         onTransaction,
         computeUnitPriceMicroLamports,
+        // TODO: Remove prioritizationFeeLamports type as number when react-hook typing fix
+        prioritizationFeeLamports: prioritizationFeeLamports as number,
       });
       console.log({ swapResult });
 
@@ -329,7 +336,7 @@ export const SwapContextProvider: FC<{
       console.log('Swap error', error);
       return null;
     }
-  }, [walletPublicKey, quoteResponseMeta]);
+  }, [walletPublicKey, quoteResponseMeta, prioritizationFeeLamports]);
 
   const onSubmitWithIx = useCallback(
     (swapResult: SwapResult) => {
@@ -483,6 +490,8 @@ export const SwapContextProvider: FC<{
           setAsLegacyTransaction,
           priorityFeeInSOL,
           setPriorityFeeInSOL,
+          prioritizationFeeLamports,
+          setPrioritizationFeeLamports,
         },
       }}
     >
