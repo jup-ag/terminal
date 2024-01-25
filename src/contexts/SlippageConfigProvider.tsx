@@ -1,6 +1,6 @@
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 
-export const DEFAULT_SLIPPAGE = 0.1;
+export const DEFAULT_SLIPPAGE = 0.3;
 
 export interface NetworkConfigurationState {
   slippage: number;
