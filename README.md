@@ -164,7 +164,7 @@ _Note: You will need to create the Token fee accounts to collect the platform fe
 #### By referral key `referralAccount` (easiest)
 ```tsx
 const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
-  referralAccount: new PublicKey('2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy'),
+  referralAccount: '2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy',
   feeBps: 100,
 };
 
