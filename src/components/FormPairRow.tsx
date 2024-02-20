@@ -14,7 +14,7 @@ const FormPairRow: React.FC<{
   style: CSSProperties;
   onSubmit(item: TokenInfo): void;
 }> = ({ item, style, onSubmit }) => {
-  const isUnknown = useMemo(() => item.tags?.length === 0, [item.tags])
+  const isUnknown = useMemo(() => item.tags?.length === 0 || item.tags?.includes('unknown'), [item.tags])
 
   const { accounts } = useAccounts();
   const { tokenPriceMap } = useUSDValueProvider();
