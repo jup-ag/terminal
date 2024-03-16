@@ -164,22 +164,6 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
       ),
     );
 
-    const response = await connection.getTokenAccountsByOwner(
-      publicKey,
-      {
-        programId: TOKEN_PROGRAM_ID,
-      },
-      'confirmed',
-    );
-
-    const result = response.value.reduce((acc, { pubkey, account }) => {
-      const tokenAccount = TokenAccountParser(pubkey, account, TOKEN_PROGRAM_ID);
-      if (tokenAccount) {
-        acc.push(tokenAccount);
-      }
-      return acc;
-    }, new Array<TokenAccount>());
-
     const reducedResult = [...tokenAccounts.value, ...token2022Accounts.value].reduce(
       (acc, item: ParsedTokenData) => {
         // Only allow standard TOKEN_PROGRAM_ID ATA
@@ -206,7 +190,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     isLoading,
     refetch,
   } = useQuery<Record<string, IAccountsBalance>>(
-    ['accounts', publicKey],
+    ['accounts', publicKey?.toString()],
     async () => {
       // Fetch all tokens balance
       const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
@@ -218,6 +202,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     {
       enabled: Boolean(publicKey?.toString() && connected),
       refetchInterval: 10_000,
+      refetchIntervalInBackground: false,
     },
   );
 
