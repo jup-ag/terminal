@@ -28,6 +28,7 @@ export interface IFormConfigurator {
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
+  useUserSlippage: boolean;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
@@ -42,5 +43,6 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
-  }
+  },
+  useUserSlippage: true,
 })

@@ -29,7 +29,7 @@ import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
+import { SignerWalletAdapter, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { useScreenState } from './ScreenProvider';
 
 export interface IForm {
@@ -82,6 +82,7 @@ export interface ISwapContext {
     setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
   };
+  setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
 
 export const initialSwapContext: ISwapContext = {
@@ -134,6 +135,7 @@ export const initialSwapContext: ISwapContext = {
     priorityFeeInSOL: 0,
     setPriorityFeeInSOL() {},
   },
+  setUserSlippage: () => {},
 };
 
 export const SwapContext = createContext<ISwapContext>(initialSwapContext);
@@ -180,15 +182,26 @@ export const SwapContextProvider: FC<{
     () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
     [originalFormProps],
   );
-  const [userSlippage, setUserSlippage] = useState<number>(formProps?.initialSlippage ?? DEFAULT_SLIPPAGE);
+  const [userSlippage, setUserSlippage] = useLocalStorage<number | undefined>('jupiter-terminal-slippage', undefined);
   const [form, setForm] = useState<IForm>(
     (() => {
+      const slippageBps = (() => {
+        if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
+          return Math.ceil(userSlippage * 100);;
+        }
+
+        if (formProps.initialSlippageBps) {
+          return formProps.initialSlippageBps;
+        }
+        return Math.ceil(DEFAULT_SLIPPAGE * 100);
+      })();
+
       return {
         fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
         toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
         fromValue: '',
         toValue: '',
-        slippageBps: Math.ceil(userSlippage * 100),
+        slippageBps,
       };
     })(),
   );
@@ -498,6 +511,7 @@ export const SwapContextProvider: FC<{
           priorityFeeInSOL,
           setPriorityFeeInSOL,
         },
+        setUserSlippage,
       }}
     >
       {children}

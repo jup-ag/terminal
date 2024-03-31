@@ -103,7 +103,7 @@ const JupiterApp = (props: IInit) => {
             asLegacyTransaction={asLegacyTransaction}
             setAsLegacyTransaction={setAsLegacyTransaction}
             maxAccounts={maxAccounts}
-            useUserSlippage={props.useUserSlippage}
+            useUserSlippage={props.useUserSlippage ?? true}
             slippagePresets={props.slippagePresets}
           >
             <USDValueProvider>

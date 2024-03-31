@@ -58,6 +58,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
     form: { slippageBps },
     setForm,
     jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
+    setUserSlippage
   } = useSwapContext();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
   const { wallet } = useWalletPassThrough();
@@ -179,6 +180,9 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
     setAsLegacyTransaction(asLegacyTransactionInput);
     setPreferredTokenListMode(preferredTokenListModeInput);
+    // To save user slippage into local storage
+    setUserSlippage(value);
+
     closeModal();
   };
 

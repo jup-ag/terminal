@@ -8,8 +8,9 @@ const IntegratedTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
+  useUserSlippage: boolean;
 }) => {
-  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer, useUserSlippage } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useWallet();
@@ -26,6 +27,7 @@ const IntegratedTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
+      useUserSlippage,
     });
   };
 
