@@ -85,7 +85,7 @@ export interface IInit {
   autoConnect?: boolean;
   /** Use user's slippage instead of initialSlippageBps, defaults to true */
   useUserSlippage?: boolean;
-  /** Presets of slippages, defaults to [0.1, 0.5, 1.0] */
+  /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
   slippagePresets?: number[];
 
   /** Display & Styling */
