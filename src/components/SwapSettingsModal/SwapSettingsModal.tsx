@@ -12,7 +12,6 @@ import Tooltip from '../Tooltip';
 import Decimal from 'decimal.js';
 import JupButton from '../JupButton';
 import { detectedSeparator, formatNumber } from 'src/misc/utils';
-import { DEFAULT_SLIPPAGE, useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
 import {
   PRIORITY_HIGH,
   PRIORITY_MAXIMUM_SUGGESTED,
@@ -24,6 +23,7 @@ import Toggle from '../Toggle';
 import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { DEFAULT_SLIPPAGE } from 'src/constants';
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
@@ -55,17 +55,19 @@ const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO]
 
 const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
+    form: { slippageBps },
+    setForm,
     jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
   } = useSwapContext();
-  const { slippage, setSlippage } = useSlippageConfig();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
   const { wallet } = useWalletPassThrough();
 
   const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], [DEFAULT_SLIPPAGE]);
 
   const slippageInitialPreset = useMemo(() => {
-    return SLIPPAGE_PRESET.find((preset) => Number(preset) === slippage);
-  }, [slippage, SLIPPAGE_PRESET]);
+    const value = slippageBps / 100;
+    return SLIPPAGE_PRESET.find((preset) => Number(preset) === value);
+  }, [slippageBps, SLIPPAGE_PRESET]);
 
   const priorityInitialPreset = useMemo(() => {
     return PRIORITY_PRESET.find((preset) => Number(preset) === priorityFeeInSOL);
@@ -73,13 +75,13 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
   const form = useForm<Forms>({
     defaultValues: {
-      ...(slippage
+      ...(slippageBps
         ? slippageInitialPreset
           ? {
               slippagePreset: String(slippageInitialPreset),
             }
           : {
-              slippageInput: String(slippage),
+              slippageInput: String(slippageBps / 100),
             }
         : {}),
       ...(typeof priorityFeeInSOL !== 'undefined' && typeof priorityInitialPreset !== 'undefined'
@@ -95,7 +97,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   });
 
   /* SLIPPAGE */
-  const [inputFocused, setInputFocused] = useState(!slippageInitialPreset);
+  const inputFocused = useRef(!slippageInitialPreset);
 
   const slippageInput = form.watch('slippageInput');
   const slippagePreset = form.watch('slippagePreset');
@@ -104,6 +106,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   }, [slippageInput]);
 
   const slippageSuggestionText = useMemo(() => {
+    if (inputFocused.current === false) return '';
     if (Number(slippageInput) <= MINIMUM_SUGGESTED_SLIPPAGE) {
       return <span>Your transaction may fail</span>;
     }
@@ -143,7 +146,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
   const isDisabled = (() => {
     const isSlippageDisabled = (() => {
-      if (inputFocused && !slippageInput) return true;
+      if (inputFocused.current && !slippageInput) return true;
       if (slippagePreset) return false;
       else return !isWithinSlippageLimits;
     })();
@@ -160,11 +163,13 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const asLegacyTransactionInput = form.watch('asLegacyTransaction');
   const preferredTokenListModeInput = form.watch('preferredTokenListMode');
   const onClickSave = () => {
-    if (isDisabled) return;
-
-    const slippage = Number(slippageInput ?? slippagePreset);
-    if (typeof slippage === 'number') {
-      setSlippage(slippage);
+    const value = slippageInput ? Number(slippageInput) : Number(slippagePreset);
+    
+    if (typeof value === 'number') {
+      setForm((prev) => ({
+        ...prev,
+        slippageBps: value * 100,
+      }));
     }
 
     const priority = Number(priorityInSOLInput ?? priorityInSOLPreset);
@@ -193,13 +198,6 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       </div>
 
       <form
-        onSubmit={form.handleSubmit((value) => {
-          const slippage = Number(value.slippageInput ?? value.slippagePreset);
-          if (typeof slippage === 'number') {
-            setSlippage(slippage);
-            closeModal();
-          }
-        })}
         className={classNames('relative w-full overflow-y-auto webkit-scrollbar overflow-x-hidden')}
       >
         <div>
@@ -350,11 +348,11 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                             itemsCount={SLIPPAGE_PRESET.length}
                             className="h-full"
                             roundBorder={idx === 0 ? 'left' : undefined}
-                            highlighted={!inputFocused && Number(value) === Number(item)}
+                            highlighted={!inputFocused.current && Number(value) === Number(item)}
                             onClick={() => {
+                              inputFocused.current = false;
+                              form.setValue('slippageInput', '');
                               onChange(item);
-                              setInputFocused(false);
-                              form.setValue('slippageInput', undefined);
                             }}
                           >
                             {displayText}
@@ -369,10 +367,10 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               <div
                 onClick={() => {
                   inputRef.current?.focus();
-                  setInputFocused(true);
+                  inputFocused.current = true;
                 }}
                 className={`flex items-center justify-between cursor-text w-[120px] h-full text-white/50 bg-[#1B1B1E] pl-2 text-sm relative border-l border-black-10 border-white/5 ${
-                  inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''
+                  inputFocused.current ? 'v2-border-gradient v2-border-gradient-right' : ''
                 }`}
               >
                 <span className="text-xs">
@@ -382,37 +380,39 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                 <Controller
                   name={'slippageInput'}
                   control={form.control}
-                  render={({ field: { onChange, value } }) => (
-                    <NumericFormat
-                      value={typeof value === 'undefined' ? '' : value}
-                      decimalScale={2}
-                      isAllowed={(value) => {
-                        // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
-                        return (value.floatValue || 0) <= 100 && (value.floatValue || 0) >= 0;
-                      }}
-                      getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
-                      allowNegative={false}
-                      onValueChange={({ floatValue }) => {
-                        onChange(floatValue);
-
-                        // Prevent both slippageInput and slippagePreset to reset each oter
-                        if (typeof floatValue !== 'undefined') {
-                          form.setValue('slippagePreset', undefined);
-                        }
-                      }}
-                      allowLeadingZeros={false}
-                      suffix="%"
-                      className="h-full w-full bg-transparent py-4 pr-4 text-sm rounded-lg placeholder:text-white/25 text-white/50 text-right pointer-events-all"
-                      decimalSeparator={detectedSeparator}
-                      placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
-                    />
-                  )}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <NumericFormat
+                        value={typeof value === 'undefined' ? '' : value}
+                        decimalScale={2}
+                        isAllowed={(value) => {
+                          // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
+                          return (value.floatValue || 0) <= 100 && (value.floatValue || 0) >= 0;
+                        }}
+                        getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
+                        allowNegative={false}
+                        onValueChange={({ value, floatValue }) => {
+                          onChange(value);
+  
+                          // Prevent both slippageInput and slippagePreset to reset each oter
+                          if (typeof floatValue !== 'undefined') {
+                            form.setValue('slippagePreset', undefined);
+                          }
+                        }}
+                        allowLeadingZeros={false}
+                        suffix="%"
+                        className="h-full w-full bg-transparent py-4 pr-4 text-sm rounded-lg placeholder:text-white/25 text-white/50 text-right pointer-events-all"
+                        decimalSeparator={detectedSeparator}
+                        placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
+                      />
+                    )
+                  }}
                 />
               </div>
             </div>
 
             <div>
-              {inputFocused && !isWithinSlippageLimits && (
+              {inputFocused.current && !isWithinSlippageLimits && (
                 <InformationMessage
                   iconSize={14}
                   className="!text-jupiter-primary !px-0"

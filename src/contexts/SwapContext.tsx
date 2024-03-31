@@ -1,5 +1,12 @@
 import { ZERO } from '@jup-ag/math';
-import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
+import {
+  OnTransaction,
+  QuoteResponseMeta,
+  SwapMode,
+  SwapResult,
+  UseJupiterProps,
+  useJupiter,
+} from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
@@ -16,11 +23,10 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { WRAPPED_SOL_MINT } from 'src/constants';
+import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
-import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
@@ -31,6 +37,7 @@ export interface IForm {
   toMint: string;
   fromValue: string;
   toValue: string;
+  slippageBps: number;
 }
 
 export interface ISwapContext {
@@ -83,6 +90,7 @@ export const initialSwapContext: ISwapContext = {
     toMint: WRAPPED_SOL_MINT.toString(),
     fromValue: '',
     toValue: '',
+    slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
   },
   setForm() {},
   errors: {},
@@ -148,6 +156,8 @@ export const SwapContextProvider: FC<{
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
   formProps?: FormProps;
   maxAccounts?: number;
+  useUserSlippage?: boolean;
+  slippagePresets?: number[];
   children: ReactNode;
 }> = (props) => {
   const {
@@ -170,13 +180,18 @@ export const SwapContextProvider: FC<{
     () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
     [originalFormProps],
   );
-
-  const [form, setForm] = useState<IForm>({
-    fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
-  });
+  const [userSlippage, setUserSlippage] = useState<number>(formProps?.initialSlippage ?? DEFAULT_SLIPPAGE);
+  const [form, setForm] = useState<IForm>(
+    (() => {
+      return {
+        fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
+        fromValue: '',
+        toValue: '',
+        slippageBps: Math.ceil(userSlippage * 100),
+      };
+    })(),
+  );
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
   const jupiterSwapMode = useMemo(
     () => (formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn),
@@ -220,19 +235,27 @@ export const SwapContextProvider: FC<{
     setupInitialAmount();
   }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
-  const nativeAmount = useMemo(() => {
-    if (jupiterSwapMode === SwapMode.ExactOut) {
-      if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
-      return toLamports(Number(form.toValue), Number(toTokenInfo.decimals));
-    } else {
-      if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
-      return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
-    }
-  }, [form.fromValue, form.fromMint, fromTokenInfo, form.toValue, form.toMint, toTokenInfo, jupiterSwapMode]);
+  const jupiterParams: UseJupiterProps = useMemo(() => {
+    const amount = (() => {
+      if (jupiterSwapMode === SwapMode.ExactOut) {
+        if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
+        return JSBI.BigInt(toLamports(Number(form.toValue), Number(toTokenInfo.decimals)));
+      } else {
+        if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
+        return JSBI.BigInt(toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals)));
+      }
+    })();
 
-  const { slippage } = useSlippageConfig();
+    return {
+      amount,
+      inputMint: form.fromMint ? new PublicKey(form.fromMint) : undefined,
+      outputMint: form.toMint ? new PublicKey(form.toMint) : undefined,
+      swapMode: jupiterSwapMode,
+      slippageBps: form.slippageBps,
+      maxAccounts,
+    };
+  }, [form, maxAccounts]);
 
-  const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
     exchange,
@@ -243,16 +266,7 @@ export const SwapContextProvider: FC<{
     programIdsExcluded,
     programIdToLabelMap,
     setProgramIdsExcluded,
-  } = useJupiter({
-    amount,
-    inputMint: useMemo(() => (form.fromMint ? new PublicKey(form.fromMint) : PublicKey.default), [form.fromMint]),
-    outputMint: useMemo(() => (form.toMint ? new PublicKey(form.toMint) : PublicKey.default), [form.toMint]),
-    swapMode: jupiterSwapMode,
-    slippageBps: Math.ceil(slippage * 100),
-    maxAccounts,
-  });
-  // Refresh on slippage change
-  useEffect(() => refresh(), [slippage]);
+  } = useJupiter(jupiterParams);
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
@@ -470,7 +484,7 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          quoteResponseMeta: JSBI.GT(amount, ZERO) ? quoteResponseMeta : undefined,
+          quoteResponseMeta: JSBI.GT(jupiterParams.amount, ZERO) ? quoteResponseMeta : undefined,
           programIdsExcluded,
           programIdToLabelMap,
           setProgramIdsExcluded,

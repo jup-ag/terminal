@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
-import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
 import { SwapContextProvider } from 'src/contexts/SwapContext';
 import { USDValueProvider } from 'src/contexts/USDValueProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
@@ -89,29 +88,29 @@ const JupiterApp = (props: IInit) => {
   return (
     <QueryClientProvider client={queryClient}>
       <AccountsProvider>
-        <SlippageConfigProvider>
-          <JupiterProvider
-            connection={connection}
-            routeCacheDuration={ROUTE_CACHE_DURATION}
-            wrapUnwrapSOL={true}
-            userPublicKey={walletPublicKey || undefined}
-            platformFeeAndAccounts={platformFeeAndAccounts}
+        <JupiterProvider
+          connection={connection}
+          routeCacheDuration={ROUTE_CACHE_DURATION}
+          wrapUnwrapSOL={true}
+          userPublicKey={walletPublicKey || undefined}
+          platformFeeAndAccounts={platformFeeAndAccounts}
+          asLegacyTransaction={asLegacyTransaction}
+        >
+          <SwapContextProvider
+            displayMode={displayMode}
+            formProps={formProps}
+            scriptDomain={props.scriptDomain}
             asLegacyTransaction={asLegacyTransaction}
+            setAsLegacyTransaction={setAsLegacyTransaction}
+            maxAccounts={maxAccounts}
+            useUserSlippage={props.useUserSlippage}
+            slippagePresets={props.slippagePresets}
           >
-            <SwapContextProvider
-              displayMode={displayMode}
-              formProps={formProps}
-              scriptDomain={props.scriptDomain}
-              asLegacyTransaction={asLegacyTransaction}
-              setAsLegacyTransaction={setAsLegacyTransaction}
-              maxAccounts={maxAccounts}
-            >
-              <USDValueProvider>
-                <Content />
-              </USDValueProvider>
-            </SwapContextProvider>
-          </JupiterProvider>
-        </SlippageConfigProvider>
+            <USDValueProvider>
+              <Content />
+            </USDValueProvider>
+          </SwapContextProvider>
+        </JupiterProvider>
       </AccountsProvider>
     </QueryClientProvider>
   );
