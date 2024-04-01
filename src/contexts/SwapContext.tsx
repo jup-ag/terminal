@@ -85,64 +85,11 @@ export interface ISwapContext {
   setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
 
-export const initialSwapContext: ISwapContext = {
-  form: {
-    fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
-    slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
-  },
-  setForm() {},
-  errors: {},
-  setErrors() {},
-  fromTokenInfo: undefined,
-  toTokenInfo: undefined,
-  quoteResponseMeta: null,
-  setQuoteResponseMeta() {},
-  onSubmit: async () => null,
-  onRequestIx: async () => {
-    throw new Error('Not initialized yet');
-  },
-  lastSwapResult: null,
-  displayMode: 'modal',
-  formProps: {
-    swapMode: SwapMode.ExactIn,
-    initialAmount: undefined,
-    fixedAmount: undefined,
-    initialInputMint: undefined,
-    fixedInputMint: undefined,
-    initialOutputMint: undefined,
-    fixedOutputMint: undefined,
-  },
-  scriptDomain: '',
-  swapping: {
-    txStatus: undefined,
-  },
-  reset() {},
-  jupiter: {
-    programIdsExcluded: new Set(),
-    programIdToLabelMap: new Map(),
-    setProgramIdsExcluded() {},
-    quoteResponseMeta: null,
-    exchange: undefined,
-    loading: false,
-    refresh() {},
-    lastRefreshTimestamp: 0,
-    error: undefined,
-    asLegacyTransaction: false,
-    setAsLegacyTransaction() {},
-    priorityFeeInSOL: 0,
-    setPriorityFeeInSOL() {},
-  },
-  setUserSlippage: () => {},
-};
-
-export const SwapContext = createContext<ISwapContext>(initialSwapContext);
+export const SwapContext = createContext<ISwapContext | null>(null);
 
 export function useSwapContext() {
   const context = useContext(SwapContext);
-
+  if (!context) throw new Error('Missing SwapContextProvider');
   return context;
 }
 
@@ -150,6 +97,14 @@ export const PRIORITY_NONE = 0; // No additional fee
 export const PRIORITY_HIGH = 0.000_005; // Additional fee of 1x base fee
 export const PRIORITY_TURBO = 0.000_5; // Additional fee of 100x base fee
 export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
+
+const INITIAL_FORM = {
+  fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  toMint: WRAPPED_SOL_MINT.toString(),
+  fromValue: '',
+  toValue: '',
+  slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
+};
 
 export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
@@ -177,11 +132,7 @@ export const SwapContextProvider: FC<{
   const { refresh: refreshAccount } = useAccounts();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
-
-  const formProps: FormProps = useMemo(
-    () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
-    [originalFormProps],
-  );
+  const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
   const [userSlippage, setUserSlippage] = useLocalStorage<number | undefined>('jupiter-terminal-slippage', undefined);
   const [form, setForm] = useState<IForm>(
     (() => {
@@ -190,8 +141,8 @@ export const SwapContextProvider: FC<{
           return Math.ceil(userSlippage * 100);
         }
 
-        if (formProps.initialSlippageBps) {
-          return formProps.initialSlippageBps;
+        if (formProps?.initialSlippageBps) {
+          return formProps?.initialSlippageBps;
         }
         return Math.ceil(DEFAULT_SLIPPAGE * 100);
       })();
@@ -434,16 +385,16 @@ export const SwapContextProvider: FC<{
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
       if (resetValues) {
-        setForm({ ...initialSwapContext.form, ...formProps });
+        setForm(INITIAL_FORM);
         setupInitialAmount();
       } else {
         setForm((prev) => ({ ...prev, toValue: '' }));
       }
 
       setQuoteResponseMeta(null);
-      setErrors(initialSwapContext.errors);
-      setLastSwapResult(initialSwapContext.lastSwapResult);
-      setTxStatus(initialSwapContext.swapping.txStatus);
+      setErrors({});
+      setLastSwapResult(null);
+      setTxStatus(undefined);
       refreshAccount();
     },
     [setupInitialAmount, form],
