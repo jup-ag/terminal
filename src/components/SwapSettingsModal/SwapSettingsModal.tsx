@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
 import classNames from 'classnames';
@@ -58,7 +58,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
     form: { slippageBps },
     setForm,
     jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
-    setUserSlippage
+    setUserSlippage,
   } = useSwapContext();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
   const { wallet } = useWalletPassThrough();
@@ -163,9 +163,17 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
   const asLegacyTransactionInput = form.watch('asLegacyTransaction');
   const preferredTokenListModeInput = form.watch('preferredTokenListMode');
-  const onClickSave = () => {
+  const onClickSave = useCallback((values: Forms) => {
+    const {
+      slippageInput,
+      slippagePreset,
+      priorityInSOLInput,
+      priorityInSOLPreset,
+      asLegacyTransaction,
+      preferredTokenListMode,
+    } = values;
     const value = slippageInput ? Number(slippageInput) : Number(slippagePreset);
-    
+
     if (typeof value === 'number') {
       setForm((prev) => ({
         ...prev,
@@ -178,13 +186,13 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       setPriorityFeeInSOL(priority);
     }
 
-    setAsLegacyTransaction(asLegacyTransactionInput);
-    setPreferredTokenListMode(preferredTokenListModeInput);
+    setAsLegacyTransaction(asLegacyTransaction);
+    setPreferredTokenListMode(preferredTokenListMode);
     // To save user slippage into local storage
     setUserSlippage(value);
 
     closeModal();
-  };
+  }, []);
 
   const detectedVerTxSupport = useMemo(() => {
     return wallet?.adapter?.supportedTransactionVersions?.has(0);
@@ -202,6 +210,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
       </div>
 
       <form
+        onSubmit={form.handleSubmit(onClickSave)}
         className={classNames('relative w-full overflow-y-auto webkit-scrollbar overflow-x-hidden')}
       >
         <div>
@@ -397,7 +406,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         allowNegative={false}
                         onValueChange={({ value, floatValue }) => {
                           onChange(value);
-  
+
                           // Prevent both slippageInput and slippagePreset to reset each oter
                           if (typeof floatValue !== 'undefined') {
                             form.setValue('slippagePreset', undefined);
@@ -409,7 +418,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         decimalSeparator={detectedSeparator}
                         placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                       />
-                    )
+                    );
                   }}
                 />
               </div>
@@ -457,7 +466,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
             <p className="mt-2 text-xs text-white/50">
               Versioned Tx is a significant upgrade that allows for more advanced routings and better prices!
             </p>
-            
+
             {wallet?.adapter ? (
               <p className="mt-2 text-xs text-white/50">
                 {detectedVerTxSupport
@@ -494,7 +503,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
           </div>
 
           <div className="px-5 pb-5">
-            <JupButton type="button" onClick={onClickSave} className={'w-full mt-4'} disabled={isDisabled} size={'lg'}>
+            <JupButton type="submit" className={'w-full mt-4'} disabled={isDisabled} size={'lg'}>
               <span>Save Settings</span>
             </JupButton>
           </div>
