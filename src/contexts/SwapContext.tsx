@@ -24,7 +24,7 @@ import {
   useState,
 } from 'react';
 import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
+import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
@@ -187,7 +187,7 @@ export const SwapContextProvider: FC<{
     (() => {
       const slippageBps = (() => {
         if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
-          return Math.ceil(userSlippage * 100);;
+          return Math.ceil(userSlippage * 100);
         }
 
         if (formProps.initialSlippageBps) {
@@ -252,10 +252,10 @@ export const SwapContextProvider: FC<{
     const amount = (() => {
       if (jupiterSwapMode === SwapMode.ExactOut) {
         if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
-        return JSBI.BigInt(toLamports(Number(form.toValue), Number(toTokenInfo.decimals)));
+        return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
       } else {
         if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
-        return JSBI.BigInt(toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals)));
+        return JSBI.BigInt(new Decimal(form.fromValue).mul(10 ** fromTokenInfo.decimals));
       }
     })();
 
