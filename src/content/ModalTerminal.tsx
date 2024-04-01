@@ -9,8 +9,9 @@ const ModalTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
+  useUserSlippage: boolean;
 }) => {
-  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer, useUserSlippage } = props;
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
@@ -24,6 +25,7 @@ const ModalTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
+      useUserSlippage,
     });
   };
 

@@ -1,5 +1,4 @@
 import React, { useMemo, useState } from 'react';
-import { useSlippageConfig } from 'src/contexts/SlippageConfigProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import RefreshSVG from 'src/icons/RefreshSVG';
 import SettingsSVG from 'src/icons/SettingsSVG';
@@ -11,7 +10,6 @@ import { WalletButton } from './WalletComponents';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { slippage } = useSlippageConfig();
   const {
     form,
     jupiter: { refresh },
@@ -21,6 +19,11 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
   const jupiterDirectLink = useMemo(() => {
     return `https://jup.ag/swap/${form.fromMint}-${form.toMint}?inAmount=${form.fromValue}`;
   }, [form]);
+
+  const slippageText = useMemo(() => {
+    const value = form.slippageBps / 100;
+    return isNaN(value) ? '0' : formatNumber.format(value);
+  }, [form.slippageBps]);
 
   return (
     <div className="mt-2 h-7 pl-3 pr-2">
@@ -46,7 +49,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           >
             <SettingsSVG />
             <span suppressHydrationWarning className="text-xs text-white-30">
-              {isNaN(slippage) ? '0' : formatNumber.format(slippage)}%
+              {slippageText}%
             </span>
           </button>
 

@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 
 export const JUPITER_DEFAULT_RPC = process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC || 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
+export const DEFAULT_SLIPPAGE = 0.3;
 
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112');
 export const SOL_MINT_TOKEN_INFO = {
@@ -27,6 +28,7 @@ export interface IFormConfigurator {
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
+  useUserSlippage: boolean;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
@@ -41,5 +43,6 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
-  }
+  },
+  useUserSlippage: true,
 })

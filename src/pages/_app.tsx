@@ -229,6 +229,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
+                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                       {tab === 'integrated' ? (
@@ -238,6 +239,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
+                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                       {tab === 'widget' ? (
@@ -247,6 +249,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
+                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                     </div>

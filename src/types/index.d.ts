@@ -35,6 +35,8 @@ export interface FormProps {
   initialOutputMint?: string;
   /** When true, user cannot change the output token (e.g. to buy your project's token) */
   fixedOutputMint?: boolean;
+  /** Initial slippage to swap */
+  initialSlippageBps?: number;
 }
 
 /** Built in support for these explorers */
@@ -81,6 +83,10 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
+  /** Use user's slippage instead of initialSlippageBps, defaults to true */
+  useUserSlippage?: boolean;
+  /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
+  slippagePresets?: number[];
 
   /** Display & Styling */
 

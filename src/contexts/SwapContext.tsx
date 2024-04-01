@@ -1,5 +1,12 @@
 import { ZERO } from '@jup-ag/math';
-import { OnTransaction, QuoteResponseMeta, SwapMode, SwapResult, useJupiter } from '@jup-ag/react-hook';
+import {
+  OnTransaction,
+  QuoteResponseMeta,
+  SwapMode,
+  SwapResult,
+  UseJupiterProps,
+  useJupiter,
+} from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
@@ -16,14 +23,13 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, getAssociatedTokenAddressSync, toLamports } from 'src/misc/utils';
+import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
+import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
-import { useSlippageConfig } from './SlippageConfigProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter } from '@jup-ag/wallet-adapter';
+import { SignerWalletAdapter, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { useScreenState } from './ScreenProvider';
 
 export interface IForm {
@@ -31,6 +37,7 @@ export interface IForm {
   toMint: string;
   fromValue: string;
   toValue: string;
+  slippageBps: number;
 }
 
 export interface ISwapContext {
@@ -75,64 +82,14 @@ export interface ISwapContext {
     setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
   };
+  setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
 
-export const initialSwapContext: ISwapContext = {
-  form: {
-    fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
-  },
-  setForm() {},
-  errors: {},
-  setErrors() {},
-  fromTokenInfo: undefined,
-  toTokenInfo: undefined,
-  quoteResponseMeta: null,
-  setQuoteResponseMeta() {},
-  onSubmit: async () => null,
-  onRequestIx: async () => {
-    throw new Error('Not initialized yet');
-  },
-  lastSwapResult: null,
-  displayMode: 'modal',
-  formProps: {
-    swapMode: SwapMode.ExactIn,
-    initialAmount: undefined,
-    fixedAmount: undefined,
-    initialInputMint: undefined,
-    fixedInputMint: undefined,
-    initialOutputMint: undefined,
-    fixedOutputMint: undefined,
-  },
-  scriptDomain: '',
-  swapping: {
-    txStatus: undefined,
-  },
-  reset() {},
-  jupiter: {
-    programIdsExcluded: new Set(),
-    programIdToLabelMap: new Map(),
-    setProgramIdsExcluded() {},
-    quoteResponseMeta: null,
-    exchange: undefined,
-    loading: false,
-    refresh() {},
-    lastRefreshTimestamp: 0,
-    error: undefined,
-    asLegacyTransaction: false,
-    setAsLegacyTransaction() {},
-    priorityFeeInSOL: 0,
-    setPriorityFeeInSOL() {},
-  },
-};
-
-export const SwapContext = createContext<ISwapContext>(initialSwapContext);
+export const SwapContext = createContext<ISwapContext | null>(null);
 
 export function useSwapContext() {
   const context = useContext(SwapContext);
-
+  if (!context) throw new Error('Missing SwapContextProvider');
   return context;
 }
 
@@ -141,6 +98,14 @@ export const PRIORITY_HIGH = 0.000_005; // Additional fee of 1x base fee
 export const PRIORITY_TURBO = 0.000_5; // Additional fee of 100x base fee
 export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
 
+const INITIAL_FORM = {
+  fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  toMint: WRAPPED_SOL_MINT.toString(),
+  fromValue: '',
+  toValue: '',
+  slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
+};
+
 export const SwapContextProvider: FC<{
   displayMode: IInit['displayMode'];
   scriptDomain?: string;
@@ -148,6 +113,8 @@ export const SwapContextProvider: FC<{
   setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
   formProps?: FormProps;
   maxAccounts?: number;
+  useUserSlippage?: boolean;
+  slippagePresets?: number[];
   children: ReactNode;
 }> = (props) => {
   const {
@@ -165,18 +132,30 @@ export const SwapContextProvider: FC<{
   const { refresh: refreshAccount } = useAccounts();
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+  const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
+  const [userSlippage, setUserSlippage] = useLocalStorage<number | undefined>('jupiter-terminal-slippage', undefined);
+  const [form, setForm] = useState<IForm>(
+    (() => {
+      const slippageBps = (() => {
+        if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
+          return Math.ceil(userSlippage * 100);
+        }
 
-  const formProps: FormProps = useMemo(
-    () => ({ ...initialSwapContext.formProps, ...originalFormProps }),
-    [originalFormProps],
+        if (formProps?.initialSlippageBps) {
+          return formProps?.initialSlippageBps;
+        }
+        return Math.ceil(DEFAULT_SLIPPAGE * 100);
+      })();
+
+      return {
+        fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+        toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
+        fromValue: '',
+        toValue: '',
+        slippageBps,
+      };
+    })(),
   );
-
-  const [form, setForm] = useState<IForm>({
-    fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-    toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
-    fromValue: '',
-    toValue: '',
-  });
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
   const jupiterSwapMode = useMemo(
     () => (formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn),
@@ -220,19 +199,27 @@ export const SwapContextProvider: FC<{
     setupInitialAmount();
   }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
 
-  const nativeAmount = useMemo(() => {
-    if (jupiterSwapMode === SwapMode.ExactOut) {
-      if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
-      return toLamports(Number(form.toValue), Number(toTokenInfo.decimals));
-    } else {
-      if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
-      return toLamports(Number(form.fromValue), Number(fromTokenInfo.decimals));
-    }
-  }, [form.fromValue, form.fromMint, fromTokenInfo, form.toValue, form.toMint, toTokenInfo, jupiterSwapMode]);
+  const jupiterParams: UseJupiterProps = useMemo(() => {
+    const amount = (() => {
+      if (jupiterSwapMode === SwapMode.ExactOut) {
+        if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
+        return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
+      } else {
+        if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
+        return JSBI.BigInt(new Decimal(form.fromValue).mul(10 ** fromTokenInfo.decimals));
+      }
+    })();
 
-  const { slippage } = useSlippageConfig();
+    return {
+      amount,
+      inputMint: form.fromMint ? new PublicKey(form.fromMint) : undefined,
+      outputMint: form.toMint ? new PublicKey(form.toMint) : undefined,
+      swapMode: jupiterSwapMode,
+      slippageBps: form.slippageBps,
+      maxAccounts,
+    };
+  }, [form, maxAccounts]);
 
-  const amount = useMemo(() => JSBI.BigInt(nativeAmount), [nativeAmount]);
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
     exchange,
@@ -243,16 +230,7 @@ export const SwapContextProvider: FC<{
     programIdsExcluded,
     programIdToLabelMap,
     setProgramIdsExcluded,
-  } = useJupiter({
-    amount,
-    inputMint: useMemo(() => (form.fromMint ? new PublicKey(form.fromMint) : PublicKey.default), [form.fromMint]),
-    outputMint: useMemo(() => (form.toMint ? new PublicKey(form.toMint) : PublicKey.default), [form.toMint]),
-    swapMode: jupiterSwapMode,
-    slippageBps: Math.ceil(slippage * 100),
-    maxAccounts,
-  });
-  // Refresh on slippage change
-  useEffect(() => refresh(), [slippage]);
+  } = useJupiter(jupiterParams);
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
@@ -407,16 +385,16 @@ export const SwapContextProvider: FC<{
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
       if (resetValues) {
-        setForm({ ...initialSwapContext.form, ...formProps });
+        setForm(INITIAL_FORM);
         setupInitialAmount();
       } else {
         setForm((prev) => ({ ...prev, toValue: '' }));
       }
 
       setQuoteResponseMeta(null);
-      setErrors(initialSwapContext.errors);
-      setLastSwapResult(initialSwapContext.lastSwapResult);
-      setTxStatus(initialSwapContext.swapping.txStatus);
+      setErrors({});
+      setLastSwapResult(null);
+      setTxStatus(undefined);
       refreshAccount();
     },
     [setupInitialAmount, form],
@@ -470,7 +448,7 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          quoteResponseMeta: JSBI.GT(amount, ZERO) ? quoteResponseMeta : undefined,
+          quoteResponseMeta: JSBI.GT(jupiterParams.amount, ZERO) ? quoteResponseMeta : undefined,
           programIdsExcluded,
           programIdToLabelMap,
           setProgramIdsExcluded,
@@ -484,6 +462,7 @@ export const SwapContextProvider: FC<{
           priorityFeeInSOL,
           setPriorityFeeInSOL,
         },
+        setUserSlippage,
       }}
     >
       {children}

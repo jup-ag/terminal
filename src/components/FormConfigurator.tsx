@@ -35,7 +35,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         initialAmount: '1000000000',
         fixedAmount: true,
         fixedOutputMint: true,
-      }
+      },
     },
   },
   {
@@ -48,7 +48,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         swapMode: SwapMode.ExactIn,
         initialOutputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
         fixedOutputMint: true,
-      }
+      },
     },
   },
   {
@@ -61,7 +61,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
         swapMode: SwapMode.ExactOut,
-      }
+      },
     },
   },
   {
@@ -80,13 +80,14 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
         fixedInputMint: false,
         initialOutputMint: 'AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR',
         fixedOutputMint: true,
-      }
+      },
     },
   },
 ];
 
 const FormConfigurator = ({
   simulateWalletPassthrough,
+  useUserSlippage,
   strictTokenList,
   defaultExplorer,
   formProps,
@@ -107,31 +108,31 @@ const FormConfigurator = ({
   const [isImported, setIsImported] = useState(false);
 
   useEffect(() => {
-    const templateString = query?.import
+    const templateString = query?.import;
     if (templateString) {
       const data = base64ToJson(templateString as string);
 
       if (!data) {
-        replace({ query: undefined })
+        replace({ query: undefined });
         return;
       }
 
       reset({
         ...formState.defaultValues,
         ...data,
-      })
+      });
       setIsImported(true);
       return;
     }
 
-    const templateName = query?.template
-    if (currentTemplate.current === templateName) return
+    const templateName = query?.template;
+    if (currentTemplate.current === templateName) return;
 
-    const foundIndex = templateOptions.findIndex(item => item.name === templateName);
+    const foundIndex = templateOptions.findIndex((item) => item.name === templateName);
     if (foundIndex >= 0) {
-      onSelect(foundIndex)
+      onSelect(foundIndex);
     }
-  }, [query])
+  }, [query]);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
@@ -143,13 +144,18 @@ const FormConfigurator = ({
     const templateName = templateOptions[index].name;
     currentTemplate.current = templateName;
 
-    replace({
-      query: templateName === 'Default' ? undefined : {
-        template: templateName
-      }
-    },
+    replace(
+      {
+        query:
+          templateName === 'Default'
+            ? undefined
+            : {
+                template: templateName,
+              },
+      },
       undefined,
-      { shallow: true })
+      { shallow: true },
+    );
 
     setActive(index);
     setIsOpen(false);
@@ -258,9 +264,13 @@ const FormConfigurator = ({
           className="min-w-[40px]"
           active={formProps.swapMode === SwapMode.ExactOut}
           onClick={() =>
-            setValue('formProps.swapMode', formProps.swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn, {
-              shouldDirty: true,
-            })
+            setValue(
+              'formProps.swapMode',
+              formProps.swapMode === SwapMode.ExactIn ? SwapMode.ExactOut : SwapMode.ExactIn,
+              {
+                shouldDirty: true,
+              },
+            )
           }
         />
       </div>
@@ -278,6 +288,43 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
+      <div className="w-full border-b border-white/10 py-3" />
+
+      {/* Use user slippage */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Use user slippage</p>
+          <p className="text-xs text-white/30">{`Prevent Initial slippage from overriding user's last saved slippage`}</p>
+        </div>
+        <Toggle
+          className="min-w-[40px]"
+          active={useUserSlippage}
+          onClick={() => setValue('useUserSlippage', !useUserSlippage)}
+        />
+      </div>
+      <div className="w-full border-b border-white/10 py-3" />
+
+      {/* Initial Slippage */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Initial slippage</p>
+          <p className="text-xs text-white/30">Slippage to be prefilled on first load</p>
+          {useUserSlippage && <p className="text-xs text-warning">Use user slippage is true</p>}
+        </div>
+      </div>
+      <input
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        value={formProps.initialSlippageBps}
+        inputMode="numeric"
+        maxLength={4}
+        onChange={(e) => {
+          const regex = /^[0-9\b]+$/;
+          const value = e.target.value;
+          if (value === '' || regex.test(value)) {
+            setValue('formProps.initialSlippageBps', Number(value));
+          }
+        }}
+      />
       <div className="w-full border-b border-white/10 py-3" />
 
       {/* Initial Amount */}
@@ -343,8 +390,8 @@ const FormConfigurator = ({
             aria-expanded="true"
             aria-haspopup="true"
           >
-            <div className='flex items-center justify-center space-x-2.5'>
-              <p>{Object.values(AVAILABLE_EXPLORER).find(item => item.name === defaultExplorer)?.name}</p>
+            <div className="flex items-center justify-center space-x-2.5">
+              <p>{Object.values(AVAILABLE_EXPLORER).find((item) => item.name === defaultExplorer)?.name}</p>
             </div>
 
             <ChevronDownIcon />
@@ -361,7 +408,7 @@ const FormConfigurator = ({
                 <button
                   key={index}
                   onClick={() => {
-                    setValue('defaultExplorer', item.name)
+                    setValue('defaultExplorer', item.name);
                     setIsExplorerDropdownOpen(false);
                   }}
                   type="button"

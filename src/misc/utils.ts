@@ -49,17 +49,6 @@ export function fromLamports(lamportsAmount?: JSBI | BN | number, decimals?: num
   return new Decimal(amount.toString()).div(precision).mul(rate).toNumber();
 }
 
-export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
-  let amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
-
-  if (Number.isNaN(amount)) {
-    amount = 0;
-  }
-  const precision = Math.pow(10, decimals);
-
-  return Math.floor(amount * precision);
-}
-
 // https://usehooks.com/useEventListener/
 export function useReactiveEventListener(
   eventName: string,
