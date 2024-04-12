@@ -97,7 +97,6 @@ const SwappingScreen = () => {
     setScreen('Initial');
   };
 
-  console.log('!', txStatus?.status)
   const swapState: 'success' | 'error' | 'loading' | 'timeout' = useMemo(() => {
     if (txStatus?.status === 'timeout') {
       return 'timeout';
