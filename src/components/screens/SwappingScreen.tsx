@@ -70,12 +70,19 @@ const SwappingScreen = () => {
       setErrorMessage(lastSwapResult?.swapResult?.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
-        window.Jupiter.onSwapError({ error: lastSwapResult?.swapResult?.error, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
+        window.Jupiter.onSwapError({
+          error: lastSwapResult?.swapResult?.error,
+          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+        });
       }
       return;
     } else if (lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult) {
       if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult?.swapResult?.txid, swapResult: lastSwapResult?.swapResult, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
+        window.Jupiter.onSuccess({
+          txid: lastSwapResult?.swapResult?.txid,
+          swapResult: lastSwapResult?.swapResult,
+          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+        });
       }
       return;
     }
@@ -90,7 +97,12 @@ const SwappingScreen = () => {
     setScreen('Initial');
   };
 
-  const swapState: 'success' | 'error' | 'loading' = useMemo(() => {
+  console.log('!', txStatus?.status)
+  const swapState: 'success' | 'error' | 'loading' | 'timeout' = useMemo(() => {
+    if (txStatus?.status === 'timeout') {
+      return 'timeout';
+    }
+
     const hasErrors = txStatus?.status === 'fail';
     if (hasErrors || errorMessage) {
       return 'error';
@@ -104,21 +116,6 @@ const SwappingScreen = () => {
     return 'loading';
   }, [txStatus]);
 
-  const currentTime = useMemo(() => Date.now(), []);
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (swapState === 'success' || swapState === 'error') return;
-
-      // If over 30s, timeout
-      if (Date.now() - currentTime > 30e3) {
-        setErrorMessage('Transaction timed-out, please try again.');
-      }
-    }, 500);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [swapState]);
   const { explorer, getExplorer } = usePreferredExplorer();
 
   const Content = () => {
@@ -255,6 +252,21 @@ const SwappingScreen = () => {
         </div>
       ) : null}
 
+      {!errorMessage && swapState === 'timeout' ? (
+        <div className="flex justify-center">
+          <div className="flex flex-col items-center justify-center text-center mt-12">
+            <ErrorIcon />
+
+            <p className="text-white mt-2">Transaction timed-out</p>
+            <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
+            {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
+
+            <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
+              <V2SexyChameleonText>Retry</V2SexyChameleonText>
+            </JupButton>
+          </div>
+        </div>
+      ) : null}
       {!errorMessage && swapState === 'loading' ? <Content /> : null}
       {!errorMessage && swapState === 'success' ? <SuccessContent /> : null}
     </div>

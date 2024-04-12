@@ -29,9 +29,8 @@ import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter, useLocalStorage } from '@jup-ag/wallet-adapter';
+import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { useScreenState } from './ScreenProvider';
-
 export interface IForm {
   fromMint: string;
   toMint: string;
@@ -69,7 +68,7 @@ export interface ISwapContext {
     txStatus:
       | {
           txid: string;
-          status: 'loading' | 'fail' | 'success';
+          status: 'loading' | 'fail' | 'success' | 'timeout';
         }
       | undefined;
   };
@@ -264,7 +263,7 @@ export const SwapContextProvider: FC<{
   const [txStatus, setTxStatus] = useState<
     | {
         txid: string;
-        status: 'loading' | 'fail' | 'success';
+        status: 'loading' | 'fail' | 'success' | 'timeout';
       }
     | undefined
   >(undefined);
@@ -293,14 +292,23 @@ export const SwapContextProvider: FC<{
     }
 
     try {
-      const swapResult = await exchange({
-        wallet: wallet?.adapter as SignerWalletAdapter,
-        routeInfo: quoteResponseMeta,
-        onTransaction,
-        computeUnitPriceMicroLamports,
-      });
-      console.log({ swapResult });
+      const swapResult: null | SwapResult = await Promise.any([
+        new Promise<null>((resolve) =>
+          setTimeout(() => {
+            setTxStatus({ txid: '', status: 'timeout' });
+            resolve(null);
+          }, 60_000),
+        ),
+        await exchange({
+          wallet: wallet?.adapter as SignerWalletAdapter,
+          routeInfo: quoteResponseMeta,
+          onTransaction,
+          computeUnitPriceMicroLamports,
+        }),
+      ]);
 
+      console.log({ swapResult });
+      if (!swapResult) throw new Error(`Transaction timed-out`);
       setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
       return swapResult;
     } catch (error) {
