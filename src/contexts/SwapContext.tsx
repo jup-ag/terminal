@@ -24,7 +24,7 @@ import {
   useState,
 } from 'react';
 import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
+import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
@@ -205,7 +205,7 @@ export const SwapContextProvider: FC<{
         if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
         return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
       } else {
-        if (!form.fromValue || !fromTokenInfo) return JSBI.BigInt(0);
+        if (!form.fromValue || !fromTokenInfo || !hasNumericValue(form.fromValue)) return JSBI.BigInt(0);
         return JSBI.BigInt(new Decimal(form.fromValue).mul(10 ** fromTokenInfo.decimals));
       }
     })();
