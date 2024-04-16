@@ -268,48 +268,66 @@ export const SwapContextProvider: FC<{
     | undefined
   >(undefined);
 
-  const onTransaction: OnTransaction = async (txid, awaiter) => {
-    const tx = txStatus?.txid === txid ? txStatus : undefined;
-    if (!tx) {
-      setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-    }
-
-    const success = !((await awaiter) instanceof Error);
-
-    setTxStatus((prev) => {
-      const tx = prev?.txid === txid ? prev : undefined;
-      if (tx) {
-        tx.status = success ? 'success' : 'fail';
-      }
-      return prev ? { ...prev } : undefined;
-    });
-  };
-
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
       return null;
     }
 
+    let intervalId: NodeJS.Timer | undefined;
     try {
-      const swapResult: null | SwapResult = await Promise.any([
-        new Promise<null>((resolve) =>
-          setTimeout(() => {
-            setTxStatus({ txid: '', status: 'timeout' });
-            resolve(null);
-          }, 60_000),
-        ),
-        await exchange({
+      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
+        const timeout = { current: 0 };
+
+        const result = await exchange({
           wallet: wallet?.adapter as SignerWalletAdapter,
           routeInfo: quoteResponseMeta,
-          onTransaction,
-          computeUnitPriceMicroLamports,
-        }),
-      ]);
+          onTransaction: async (txid, awaiter) => {
+            if (!intervalId) {
+              intervalId = setInterval(() => {
+                if (Date.now() > timeout.current) {
+                  setTxStatus({ txid: '', status: 'timeout' });
+                  rej(new Error('Transaction timed-out'));
+                }
+              }, 1_000);
+            }
 
-      console.log({ swapResult });
-      if (!swapResult) throw new Error(`Transaction timed-out`);
-      setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
+            if (timeout.current === 0) {
+              timeout.current = Date.now() + 60_000;
+            }
+
+            const tx = txStatus?.txid === txid ? txStatus : undefined;
+            if (!tx) {
+              setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+            }
+
+            const success = !((await awaiter) instanceof Error);
+
+            setTxStatus((prev) => {
+              const tx = prev?.txid === txid ? prev : undefined;
+              if (tx) {
+                tx.status = success ? 'success' : 'fail';
+              }
+              return prev ? { ...prev } : undefined;
+            });
+          },
+          computeUnitPriceMicroLamports,
+        });
+
+        setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
+        return result;
+      })
+        .catch((err) => {
+          console.log(err);
+          setTxStatus({ txid: '', status: 'fail' });
+          return null;
+        })
+        .finally(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        });
+
       return swapResult;
     } catch (error) {
       console.log('Swap error', error);
