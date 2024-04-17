@@ -1,4 +1,4 @@
-import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
+import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
 import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
@@ -11,13 +11,14 @@ const WidgetTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
+  useUserSlippage: boolean;
 }) => {
-  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer, useUserSlippage } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
 
-  const passthroughWalletContextState = useWallet();
+  const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = () => {
@@ -34,6 +35,7 @@ const WidgetTerminal = (props: {
       endpoint: rpcUrl,
       strictTokenList,
       defaultExplorer,
+      useUserSlippage,
     });
   };
 

@@ -88,6 +88,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 
 const FormConfigurator = ({
   simulateWalletPassthrough,
+  useUserSlippage,
   strictTokenList,
   defaultExplorer,
   formProps,
@@ -302,6 +303,43 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
+      <div className="w-full py-3 border-b border-white/10" />
+
+      {/* Use user slippage */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Use user slippage</p>
+          <p className="text-xs text-white/30">{`Prevent Initial slippage from overriding user's last saved slippage`}</p>
+        </div>
+        <Toggle
+          className="min-w-[40px]"
+          active={useUserSlippage}
+          onClick={() => setValue('useUserSlippage', !useUserSlippage)}
+        />
+      </div>
+      <div className="w-full py-3 border-b border-white/10" />
+
+      {/* Initial Slippage */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Initial slippage</p>
+          <p className="text-xs text-white/30">Slippage to be prefilled on first load</p>
+          {useUserSlippage && <p className="text-xs text-warning">Use user slippage is true</p>}
+        </div>
+      </div>
+      <input
+        className="flex items-center justify-between w-full px-4 py-2 mt-2 space-x-2 text-sm font-medium text-left text-white border rounded-md shadow-sm bg-white/10 border-white/10"
+        value={formProps.initialSlippageBps}
+        inputMode="numeric"
+        maxLength={4}
+        onChange={(e) => {
+          const regex = /^[0-9\b]+$/;
+          const value = e.target.value;
+          if (value === '' || regex.test(value)) {
+            setValue('formProps.initialSlippageBps', Number(value));
+          }
+        }}
+      />
       <div className="w-full py-3 border-b border-white/10" />
 
       {/* Initial Amount */}

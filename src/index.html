@@ -12,12 +12,19 @@
         if (document.readyState === 'complete') {
           window.Jupiter.init({
             endpoint: 'https://api.mainnet-beta.solana.com',
+            formProps: {
+              initialSlippageBps: 1234,
+            },
+            useUserSlippage: false,
           });
         }
       });
     </script>
 
-    Page intended to test gzipped size for Terminal.
+    <p>Page intended to test production behaviour for Terminal.</p>
+    <p>Open the console to see logs.</p>
+    <p>- Gzipped size</p>
+    <p>- FormConfigurator behaviour</p>
     <pre>
       npx serve ./src/
     </pre>

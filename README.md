@@ -9,7 +9,9 @@ With several templates to get you started, and auto generated code snippets.
 <img src="public/demo/terminal-hero.gif" />
 
 ---
+
 ## Breaking change v1 to v2
+
 - Fee token account updated to use Jupiter referral token account. Check out [Fee supports section](#fee-supports)
 
 ---
@@ -102,18 +104,20 @@ window.Jupiter.init({});
 ```
 
 ### 3. Setup other props
+
 ```tsx
 window.Jupiter.init({
-  /** Required 
+  /** Required
    * Solana RPC endpoint
    * We do not recommend using the public RPC endpoint for production dApp, you will get severely rate-limited
-  */
+   */
   endpoint: 'https://api.mainnet-beta.solana.com',
   // ...other props
 });
 ```
 
 ### 4. Finishing touches
+
 Terminal are light, but full of features, such as customising form behaviour, fees, styling and much more.
 
 [Go to our Demo](https://terminal.jup.ag) to explore all these features, with automagically generated integration code.
@@ -121,8 +125,6 @@ Terminal are light, but full of features, such as customising form behaviour, fe
 Or, [check out our fully typed API reference](https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts) for more details.
 
 <img src="public/demo/terminal-codegen.gif" />
-
-
 
 ---
 
@@ -155,26 +157,37 @@ Similar to Jupiter, Jupiter Terminal supports fee for integrators.
 
 There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
 
-Refer to [Adding your own fees](https://docs.jup.ag/docs/v6-beta/adding-fees) docs for more details.
+Refer to [Adding your own fees](https://docs.jup.ag/docs/apis/adding-fees) docs for more details.
 
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
+#### By referral key `referralAccount` (easiest)
 ```tsx
-import { getPlatformFeeAccounts } from '@jup-ag/react-hook';
-
-// Jupiter Core provides a helper function that returns all your feeAccounts
-const platformFeeAndAccounts = {
-  feeBps: 50,
-  feeAccounts: await getPlatformFeeAccounts(
-    connection,
-    new PublicKey('BUX7s2ef2htTGb2KKoPHWkmzxPj4nTWMWRgs5CSbQxf9'), // The platform fee account owner
-  ), // map of mint to token account pubkey
+const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
+  referralAccount: '2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy',
+  feeBps: 100,
 };
 
 window.Jupiter.init({
   // ...
-  platformFeeAndAccounts,
-});
+  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
+})
+```
+
+
+#### By defined fee accounts
+Alternatively, you can derive yourself the fee accounts via 
+[Set your fee token account](https://docs.jup.ag/docs/apis/adding-fees#3-set-your-fee-token-account) and declare them like so:
+```tsx
+const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
+  feeBps: 100,
+  feeAccounts,
+};
+
+window.Jupiter.init({
+  // ...
+  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
+})
 ```
 
 ---
@@ -194,7 +207,6 @@ if (window.Jupiter._instance) {
 
 window.Jupiter.close();
 ```
-
 
 ### Strict Token List
 
@@ -219,20 +231,24 @@ You can change the default explorer by passing in the explorer name to the `defa
 
 ---
 
-### onSuccess/onSwapError callback
+### Terminal callbacks
 
-`onSuccess()` reference can be provided, and will be called when swap is successful.
-
-While `onSwapError()` will be called when an error has occurred.
+Callbacks that may be useful for your dApp, from form updates, to swap success/error.
 
 ```tsx
 window.Jupiter.init({
-  onSuccess: ({ txid, swapResult }) => {
-    console.log({ txid, swapResult });
-  },
-  onSwapError: ({ error }) => {
-    console.log('onSwapError', error);
-  },
+  /** Callbacks */
+  /** When an error has occured during swap */
+  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  /** When a swap has been successful */
+  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  /** Callback when there's changes to the form */
+  onFormUpdate (form: IForm) {}
+  /** Callback when there's changes to the screen */
+  onScreenUpdate (screen: IScreen) {}
+  
+  /** Advanced usage */
+  /** onRequestIxCallback(), refer to dedicated section below */
 });
 ```
 
@@ -275,6 +291,26 @@ window.Jupiter.init({
 });
 ```
 
+### onRequestIxCallback
+
+Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned.
+
+Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/state transitioning.
+
+- [Station Guide](https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction)
+- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
+
+```tsx
+const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {};
+```
+
+### maxAccounts
+
+Limit the number of accounts to be used by the Swap Instructions.
+
+- [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
+- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
+
 ---
 
 ### Upcoming feature / Experimentation
@@ -282,3 +318,4 @@ window.Jupiter.init({
 - [ ] Limit Order
 - [ ] DCA
 - [ ] Experiment separate bundle for passthroughWallet
+- [ ] optimise getTABO

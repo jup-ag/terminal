@@ -237,6 +237,9 @@ async function init(props: IInit) {
     onRequestConnectWallet,
     onSwapError,
     onSuccess,
+    onFormUpdate,
+    onScreenUpdate,
+    onRequestIxCallback,
     integratedTargetId,
     ...restProps
   } = props;
@@ -289,6 +292,9 @@ async function init(props: IInit) {
   // Callbacks
   window.Jupiter.onSwapError = onSwapError;
   window.Jupiter.onSuccess = onSuccess;
+  window.Jupiter.onFormUpdate = onFormUpdate;
+  window.Jupiter.onScreenUpdate = onScreenUpdate;
+  window.Jupiter.onRequestIxCallback = onRequestIxCallback;
 }
 
 const attributes = (document.currentScript as HTMLScriptElement)?.attributes;

@@ -19,7 +19,7 @@ const FormPairRow: React.FC<{
     formProps: { darkMode },
   } = useSwapContext();
 
-  const isUnknown = useMemo(() => item.tags?.length === 0, [item.tags]);
+  const isUnknown = useMemo(() => item.tags?.length === 0 || item.tags?.includes('unknown'), [item.tags]);
 
   const { accounts } = useAccounts();
   const { tokenPriceMap } = useUSDValueProvider();

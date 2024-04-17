@@ -63,7 +63,7 @@ const FormPairSelector = ({
       });
 
     if (searchTerm) {
-      const filteredList = sortedList.filter((item) => item.symbol.toLowerCase().includes(searchTerm.toLowerCase()));
+      const filteredList = sortedList.filter((item) => item.symbol.toLowerCase().includes(searchTerm.toLowerCase()) || item.address.toLowerCase().includes(searchTerm.toLowerCase()));
       setSearchResult(filteredList);
     } else {
       setSearchResult(sortedList);

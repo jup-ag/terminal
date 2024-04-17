@@ -1,7 +1,7 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
 import { useConnection } from '@jup-ag/wallet-adapter';
-import React, { useMemo, useState, useEffect } from 'react';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
@@ -11,13 +11,14 @@ import { IInit } from 'src/types';
 import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
 import { USDValueProvider } from 'src/contexts/USDValueProvider';
 
+import { PublicKey } from '@solana/web3.js';
+import CloseIcon from 'src/icons/CloseIcon';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
+import useTPSMonitor from './RPCBenchmark/useTPSMonitor';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
-import useTPSMonitor from './RPCBenchmark/useTPSMonitor';
-import CloseIcon from 'src/icons/CloseIcon';
 
 const Content = () => {
   const { screen } = useScreenState();
@@ -59,7 +60,7 @@ const Content = () => {
 const queryClient = new QueryClient();
 
 const JupiterApp = (props: IInit) => {
-  const { displayMode, platformFeeAndAccounts, formProps } = props;
+  const { displayMode, platformFeeAndAccounts: ogPlatformFeeAndAccounts, formProps, maxAccounts } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -79,31 +80,42 @@ const JupiterApp = (props: IInit) => {
     setAsLegacyTransaction(true);
   }, [wallet?.adapter]);
 
+  const platformFeeAndAccounts = useMemo(() => {
+    if (!ogPlatformFeeAndAccounts?.referralAccount || !ogPlatformFeeAndAccounts?.feeBps) return undefined;
+
+    return {
+      referralAccount: new PublicKey(ogPlatformFeeAndAccounts.referralAccount),
+      feeBps: ogPlatformFeeAndAccounts?.feeBps,
+      feeAccounts: ogPlatformFeeAndAccounts?.feeAccounts || new Map(),
+    };
+  }, [ogPlatformFeeAndAccounts]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AccountsProvider>
-        <SlippageConfigProvider>
-          <JupiterProvider
-            connection={connection}
-            routeCacheDuration={ROUTE_CACHE_DURATION}
-            wrapUnwrapSOL={true}
-            userPublicKey={walletPublicKey || undefined}
-            platformFeeAndAccounts={platformFeeAndAccounts}
+        <JupiterProvider
+          connection={connection}
+          routeCacheDuration={ROUTE_CACHE_DURATION}
+          wrapUnwrapSOL={true}
+          userPublicKey={walletPublicKey || undefined}
+          platformFeeAndAccounts={platformFeeAndAccounts}
+          asLegacyTransaction={asLegacyTransaction}
+        >
+          <SwapContextProvider
+            displayMode={displayMode}
+            formProps={formProps}
+            scriptDomain={props.scriptDomain}
             asLegacyTransaction={asLegacyTransaction}
+            setAsLegacyTransaction={setAsLegacyTransaction}
+            maxAccounts={maxAccounts}
+            useUserSlippage={props.useUserSlippage ?? true}
+            slippagePresets={props.slippagePresets}
           >
-            <SwapContextProvider
-              displayMode={displayMode}
-              formProps={formProps}
-              scriptDomain={props.scriptDomain}
-              asLegacyTransaction={asLegacyTransaction}
-              setAsLegacyTransaction={setAsLegacyTransaction}
-            >
-              <USDValueProvider>
-                <Content />
-              </USDValueProvider>
-            </SwapContextProvider>
-          </JupiterProvider>
-        </SlippageConfigProvider>
+            <USDValueProvider>
+              <Content />
+            </USDValueProvider>
+          </SwapContextProvider>
+        </JupiterProvider>
       </AccountsProvider>
     </QueryClientProvider>
   );

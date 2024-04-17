@@ -3,9 +3,10 @@ import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
 import { PublicKey, TransactionError } from '@solana/web3.js';
-import { SwapMode, SwapResult } from '@jup-ag/react-hook';
+import { QuoteResponseMeta, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
+import { PlatformFeeAndAccounts } from '@jup-ag/common';
 
 declare global {
   interface Window {
@@ -18,11 +19,6 @@ declare global {
 export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
-
-export declare type PlatformFeeAndAccounts = {
-  feeBps: number;
-  feeAccounts: Map<string, PublicKey>;
-};
 
 export interface FormProps {
   /** Default to `ExactIn`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
@@ -41,10 +37,40 @@ export interface FormProps {
   fixedOutputMint?: boolean;
   /** Initial dark mode */
   darkMode?: boolean;
+  /** Initial slippage to swap */
+  initialSlippageBps?: number;
 }
 
 /** Built in support for these explorers */
 export type DEFAULT_EXPLORER = 'Solana Explorer' | 'Solscan' | 'Solana Beach' | 'SolanaFM';
+
+export interface TransactionInstruction {
+  accounts: {
+    pubkey: string;
+    isSigner: boolean;
+    isWritable: boolean;
+  }[];
+  data: string;
+  programId: string;
+}
+
+export interface IOnRequestIxCallback {
+  meta: {
+    sourceAddress: PublicKey;
+    destinationAddress: PublicKey;
+    quoteResponseMeta: QuoteResponseMeta;
+  };
+  instructions: {
+    tokenLedgerInstruction: TransactionInstruction;
+    computeBudgetInstructions: ComputeBudgetInstruction;
+    setupInstructions: TransactionInstruction[];
+    swapInstruction: TransactionInstruction;
+    cleanupInstruction: TransactionInstruction;
+    addressLookupTableAddresses: AddressLookupTableAccount;
+    error: string;
+  };
+  onSubmitWithIx: (swapResult: SwapResult) => void;
+}
 
 export interface IInit {
   /** Solana RPC endpoint */
@@ -59,6 +85,10 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
+  /** Use user's slippage instead of initialSlippageBps, defaults to true */
+  useUserSlippage?: boolean;
+  /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
+  slippagePresets?: number[];
 
   /** Display & Styling */
 
@@ -76,8 +106,6 @@ export interface IInit {
   /** In case additional styling is needed for Terminal container */
   containerClassName?: string;
 
-  /** Passthrough */
-
   /** When true, wallet connection are handled by your dApp, and use `syncProps()` to syncronise wallet state with Terminal */
   enableWalletPassthrough?: boolean;
   /** Optional, if wallet state is ready, you can pass it in here, or just use `syncProps()` */
@@ -87,9 +115,18 @@ export interface IInit {
 
   /** Callbacks */
   /** When an error has occured during swap */
-  onSwapError?: ({ error }: { error?: TransactionError }) => void;
+  onSwapError?: ({ error, quoteResponseMeta }: { error?: TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) => void;
   /** When a swap has been successful */
-  onSuccess?: ({ txid, swapResult }: { txid: string; swapResult: SwapResult }) => void;
+  onSuccess?: ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) => void;
+  /** Callback when there's changes to the form */
+  onFormUpdate?: (form: IForm) => void;
+  /** Callback when there's changes to the screen */
+  onScreenUpdate?: (screen: IScreen) => void;
+
+  /** Ask jupiter to quote with a maximum number of accounts, essential for composing with Jupiter Swap instruction */
+  maxAccounts?: number;
+  /** Request Ix instead of direct swap */
+  onRequestIxCallback?: (ixAndCb: IOnRequestIxCallback) => Promise<void>;
 
   /** Internal resolves */
 
@@ -108,12 +145,14 @@ export interface JupiterTerminal {
   enableWalletPassthrough: boolean;
   onRequestConnectWallet: IInit['onRequestConnectWallet'];
   store: ReturnType<typeof createStore>;
-  syncProps: (props: {
-    passthroughWalletContextState?: IInit['passthroughWalletContextState'];
-  }) => void;
+  syncProps: (props: { passthroughWalletContextState?: IInit['passthroughWalletContextState'] }) => void;
 
   /** Callbacks */
-
   onSwapError: IInit['onSwapError'];
   onSuccess: IInit['onSuccess'];
+  onFormUpdate: IInit['onFormUpdate'];
+  onScreenUpdate: IInit['onScreenUpdate'];
+
+  /** Request Ix instead of direct swap */
+  onRequestIxCallback: IInit['onRequestIxCallback'];
 }

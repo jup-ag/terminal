@@ -49,17 +49,6 @@ export function fromLamports(lamportsAmount?: JSBI | BN | number, decimals?: num
   return new Decimal(amount.toString()).div(precision).mul(rate).toNumber();
 }
 
-export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
-  let amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
-
-  if (Number.isNaN(amount)) {
-    amount = 0;
-  }
-  const precision = Math.pow(10, decimals);
-
-  return Math.floor(amount * precision);
-}
-
 // https://usehooks.com/useEventListener/
 export function useReactiveEventListener(
   eventName: string,
@@ -142,16 +131,16 @@ export const hasNumericValue = (amount: string | number) => {
 export function jsonToBase64(object: Object) {
   try {
     const json = JSON.stringify(object);
-    return Buffer.from(json).toString("base64");
+    return Buffer.from(json).toString('base64');
   } catch (error) {
     console.log(error);
-    return null
+    return null;
   }
 }
 
 export function base64ToJson(base64String: string) {
   try {
-    const json = Buffer.from(base64String, "base64").toString();
+    const json = Buffer.from(base64String, 'base64').toString();
     return JSON.parse(json);
   } catch (error) {
     console.log(error);

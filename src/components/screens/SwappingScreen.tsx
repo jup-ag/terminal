@@ -71,12 +71,12 @@ const SwappingScreen = () => {
       setErrorMessage(lastSwapResult?.swapResult?.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
-        window.Jupiter.onSwapError({ error: lastSwapResult?.swapResult?.error });
+        window.Jupiter.onSwapError({ error: lastSwapResult?.swapResult?.error, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
       }
       return;
     } else if (lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult) {
       if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult?.swapResult?.txid, swapResult: lastSwapResult?.swapResult });
+        window.Jupiter.onSuccess({ txid: lastSwapResult?.swapResult?.txid, swapResult: lastSwapResult?.swapResult, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
       }
       return;
     }
@@ -105,6 +105,21 @@ const SwappingScreen = () => {
     return 'loading';
   }, [txStatus]);
 
+  const currentTime = useMemo(() => Date.now(), []);
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (swapState === 'success' || swapState === 'error') return;
+
+      // If over 30s, timeout
+      if (Date.now() - currentTime > 30e3) {
+        setErrorMessage('Transaction timed-out, please try again.');
+      }
+    }, 500);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [swapState]);
   const { explorer, getExplorer } = usePreferredExplorer();
 
   const Content = () => {

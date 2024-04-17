@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
@@ -12,6 +12,7 @@ const ConfirmationScreen = () => {
     fromTokenInfo,
     toTokenInfo,
     onSubmit: onSubmitJupiter,
+    onRequestIx,
     quoteResponseMeta,
     formProps: { darkMode },
     jupiter: { loading, refresh },
@@ -25,10 +26,20 @@ const ConfirmationScreen = () => {
     refresh();
     setScreen('Initial');
   };
-  const onSubmit = () => {
+  const onSubmit = useCallback(async () => {
     setScreen('Swapping');
-    onSubmitJupiter();
-  };
+
+    if (window.Jupiter.onRequestIxCallback) {
+      const ixAndCb = await onRequestIx()
+      if (ixAndCb) {
+        window.Jupiter.onRequestIxCallback(ixAndCb)
+      } else {
+        setScreen('Error')
+      }
+    } else {
+      onSubmitJupiter();
+    }
+  }, []);
 
   return (
     <div className="flex flex-col w-full h-full px-2 py-4">

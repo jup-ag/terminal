@@ -1,20 +1,38 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import React, { useState } from 'react';
+import React from 'react';
+import WarningIcon from 'src/icons/WarningIcon';
 
 const TokenIcon: React.FC<{ tokenInfo?: TokenInfo | null; width?: number; height?: number }> = ({
   tokenInfo,
   width = 24,
   height = 24,
 }) => {
-  const [error, setError] = useState(false);
+  const [hasError, setHasError] = React.useState(false);
+
+  React.useEffect(() => {
+    setHasError(false);
+  }, [tokenInfo]);
 
   return (
-    <div className="text-xs flex items-center justify-center rounded-full overflow-hidden" style={{ width, height}}>
-      {tokenInfo && !error ? (
+    <div className="text-xs flex items-center justify-center" style={{ width, height }}>
+      {tokenInfo && tokenInfo?.logoURI && !hasError ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img onError={() => setError(true)} src={tokenInfo?.logoURI} alt={tokenInfo?.symbol} width={width} height={height} />
+        <img
+          onError={() => setHasError(true)}
+          src={tokenInfo?.logoURI}
+          alt={tokenInfo?.symbol}
+          width={width}
+          height={height}
+          className='rounded-full overflow-hidden'
+        />
       ) : (
-        <div className="items-center justify-center rounded-full overflow-hidden bg-black/20" style={{ width, height}} />
+        <div className="relative items-center justify-center rounded-full bg-black/20" style={{ width, height }}>
+          <WarningIcon
+            width={Math.max(width * 0.6, 16)}
+            height={Math.max(height * 0.6, 16)}
+            className="absolute -p-1 text-warning -bottom-[2px] -right-[5px]"
+          />
+        </div>
       )}
     </div>
   );
