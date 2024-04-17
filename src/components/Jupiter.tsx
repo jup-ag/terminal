@@ -8,7 +8,6 @@ import { SwapContextProvider, useSwapContext } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { IInit } from 'src/types';
-import { SlippageConfigProvider } from 'src/contexts/SlippageConfigProvider';
 import { USDValueProvider } from 'src/contexts/USDValueProvider';
 
 import { PublicKey } from '@solana/web3.js';
