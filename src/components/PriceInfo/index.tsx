@@ -186,9 +186,7 @@ const Index = ({
         <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>PnL</div>
         <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
           <span className={`flex items-center gap-1 ${pnl === 0 ? '' : pnl > 0 ? 'text-[#00a878]' : 'text-[#f05252]'}`}>
-            {dataPnl !== 0
-              ? `$${numeral(Math.abs(pnl)).format('0,0.00')} (${numeral(Number(pnlPercent) * 100).format('0,0.00')}%)`
-              : '$0'}
+            {`$${numeral(Math.abs(pnl)).format('0,0.00')} (${numeral(Number(pnlPercent) * 100).format('0,0.00')}%)`}
           </span>
         </div>
       </div>
