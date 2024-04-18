@@ -92,7 +92,7 @@ const Index = ({
   } = useSwapContext();
 
   const { publicKey } = useWalletPassThrough();
-  const [dataPnl, setDataPnl] = useState(0);
+  const [dataPnl, setDataPnl] = useState<any>(0);
 
   const { tokenPriceMap } = useUSDValueProvider();
 
