@@ -29,9 +29,8 @@ import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { useAccounts } from './accounts';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter, useLocalStorage } from '@jup-ag/wallet-adapter';
+import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { useScreenState } from './ScreenProvider';
-
 export interface IForm {
   fromMint: string;
   toMint: string;
@@ -69,7 +68,7 @@ export interface ISwapContext {
     txStatus:
       | {
           txid: string;
-          status: 'loading' | 'fail' | 'success';
+          status: 'loading' | 'fail' | 'success' | 'timeout';
         }
       | undefined;
   };
@@ -264,27 +263,10 @@ export const SwapContextProvider: FC<{
   const [txStatus, setTxStatus] = useState<
     | {
         txid: string;
-        status: 'loading' | 'fail' | 'success';
+        status: 'loading' | 'fail' | 'success' | 'timeout';
       }
     | undefined
   >(undefined);
-
-  const onTransaction: OnTransaction = async (txid, awaiter) => {
-    const tx = txStatus?.txid === txid ? txStatus : undefined;
-    if (!tx) {
-      setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-    }
-
-    const success = !((await awaiter) instanceof Error);
-
-    setTxStatus((prev) => {
-      const tx = prev?.txid === txid ? prev : undefined;
-      if (tx) {
-        tx.status = success ? 'success' : 'fail';
-      }
-      return prev ? { ...prev } : undefined;
-    });
-  };
 
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
   const onSubmit = useCallback(async () => {
@@ -292,16 +274,60 @@ export const SwapContextProvider: FC<{
       return null;
     }
 
+    let intervalId: NodeJS.Timer | undefined;
     try {
-      const swapResult = await exchange({
-        wallet: wallet?.adapter as SignerWalletAdapter,
-        routeInfo: quoteResponseMeta,
-        onTransaction,
-        computeUnitPriceMicroLamports,
-      });
-      console.log({ swapResult });
+      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
+        const timeout = { current: 0 };
 
-      setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
+        const result = await exchange({
+          wallet: wallet?.adapter as SignerWalletAdapter,
+          routeInfo: quoteResponseMeta,
+          onTransaction: async (txid, awaiter) => {
+            if (timeout.current === 0) {
+              timeout.current = Date.now() + 60_000;
+            }
+
+            if (!intervalId) {
+              intervalId = setInterval(() => {
+                if (Date.now() > timeout.current) {
+                  setTxStatus({ txid: '', status: 'timeout' });
+                  rej(new Error('Transaction timed-out'));
+                }
+              }, 1_000);
+            }
+
+            const tx = txStatus?.txid === txid ? txStatus : undefined;
+            if (!tx) {
+              setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+            }
+
+            const success = !((await awaiter) instanceof Error);
+
+            setTxStatus((prev) => {
+              const tx = prev?.txid === txid ? prev : undefined;
+              if (tx) {
+                tx.status = success ? 'success' : 'fail';
+              }
+              return prev ? { ...prev } : undefined;
+            });
+          },
+          computeUnitPriceMicroLamports,
+        });
+
+        setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
+        return result;
+      })
+        .catch((err) => {
+          console.log(err);
+          setTxStatus({ txid: '', status: 'fail' });
+          return null;
+        })
+        .finally(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        });
+
       return swapResult;
     } catch (error) {
       console.log('Swap error', error);
