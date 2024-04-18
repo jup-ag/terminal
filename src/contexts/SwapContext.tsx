@@ -283,6 +283,10 @@ export const SwapContextProvider: FC<{
           wallet: wallet?.adapter as SignerWalletAdapter,
           routeInfo: quoteResponseMeta,
           onTransaction: async (txid, awaiter) => {
+            if (timeout.current === 0) {
+              timeout.current = Date.now() + 60_000;
+            }
+
             if (!intervalId) {
               intervalId = setInterval(() => {
                 if (Date.now() > timeout.current) {
@@ -290,10 +294,6 @@ export const SwapContextProvider: FC<{
                   rej(new Error('Transaction timed-out'));
                 }
               }, 1_000);
-            }
-
-            if (timeout.current === 0) {
-              timeout.current = Date.now() + 60_000;
             }
 
             const tx = txStatus?.txid === txid ? txStatus : undefined;
