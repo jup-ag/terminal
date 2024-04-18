@@ -144,6 +144,14 @@ const Index = ({
     return dataPnl !== 0 ? (dataPnl?.cost !== 0 ? dataPnl?.newRealizedPnL / dataPnl?.cost : 0) : 0;
   }, [dataPnl]);
 
+  const gmPointBonus = useMemo(() => {
+    return Math.round(
+      Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) *
+        Number(form.fromValue) *
+        Number(gmPointCoefficient),
+    );
+  }, [fromTokenInfo, form.fromValue, gmPointCoefficient]);
+
   return (
     <div
       className={`mt-4 space-y-4 border rounded-xl p-3 ${
@@ -194,8 +202,7 @@ const Index = ({
       <div className="flex items-center justify-between text-xs">
         <div className="text-[#e3a008]">GM Points</div>
         <div className="flex items-center gap-2 text-[#e3a008]">
-          <div>🔶</div>{' '}
-          {Math.round(Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) * Number(gmPointCoefficient))}
+          <div>🔶</div> {gmPointBonus}
         </div>
       </div>
 
