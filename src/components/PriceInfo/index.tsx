@@ -58,6 +58,16 @@ const Index = ({
     return new Map(Object.entries(accounts).map((acc) => [acc[0], acc[1].pubkey.toString()]));
   }, [accounts]);
 
+  const otherAmountThresholdText = useMemo(() => {
+    if (quoteResponse?.otherAmountThreshold) {
+      const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
+
+      const amountText = formatNumber.format(amount.toNumber());
+      return `${amountText} ${toTokenInfo.symbol}`;
+    }
+    return '-';
+  }, [quoteResponse]);
+
   useEffect(() => {
     if (quoteResponse) {
       const fee = calculateFeeForSwap(
@@ -85,6 +95,10 @@ const Index = ({
   const [dataPnl, setDataPnl] = useState(0);
 
   const { tokenPriceMap } = useUSDValueProvider();
+
+  useEffect(() => {
+    handlePnlCalculate();
+  }, [form.fromValue]);
 
   const handlePnlCalculate = async () => {
     try {
@@ -121,17 +135,6 @@ const Index = ({
       console.error(e);
     }
   };
-
-  const otherAmountThresholdText = useMemo(() => {
-    if (quoteResponse?.otherAmountThreshold) {
-      handlePnlCalculate();
-      const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
-
-      const amountText = formatNumber.format(amount.toNumber());
-      return `${amountText} ${toTokenInfo.symbol}`;
-    }
-    return '-';
-  }, [quoteResponse]);
 
   const pnl = useMemo(() => {
     return dataPnl !== 0 ? Number(dataPnl?.newRealizedPnL) : 0;
