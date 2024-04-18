@@ -137,15 +137,11 @@ const Index = ({
   };
 
   const pnl = useMemo(() => {
-    return dataPnl !== 0 ? Number(dataPnl?.newRealizedPnL) : 0;
+    return dataPnl !== 0 ? dataPnl?.newRealizedPnL : 0;
   }, [dataPnl]);
 
   const pnlPercent = useMemo(() => {
-    return dataPnl !== 0
-      ? Number(dataPnl?.cost) !== 0
-        ? Number(dataPnl?.newRealizedPnL) / Number(dataPnl?.cost)
-        : 0
-      : 0;
+    return dataPnl !== 0 ? (dataPnl?.cost !== 0 ? dataPnl?.newRealizedPnL / dataPnl?.cost : 0) : 0;
   }, [dataPnl]);
 
   return (
