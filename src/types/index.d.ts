@@ -37,6 +37,8 @@ export interface FormProps {
   fixedOutputMint?: boolean;
   /** Initial dark mode */
   darkMode?: boolean;
+  /** Initial gm point coefficient */
+  gmPointCoefficient?: number;
   /** Initial slippage to swap */
   initialSlippageBps?: number;
 }
@@ -117,7 +119,7 @@ export interface IInit {
   /** When an error has occured during swap */
   onSwapError?: ({ error, quoteResponseMeta }: { error?: TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) => void;
   /** When a swap has been successful */
-  onSuccess?: ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) => void;
+  onSuccess?: ({ txid, swapResult, quoteResponseMeta, result }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null, result: any }) => void;
   /** Callback when there's changes to the form */
   onFormUpdate?: (form: IForm) => void;
   /** Callback when there's changes to the screen */

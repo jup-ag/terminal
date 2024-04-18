@@ -15,7 +15,7 @@ const SnippetNewCallbacks = () => {
     onSwapError ({ error, quoteResponseMeta }) {},
 
     /** When a swap has been successful */
-    onSuccess ({ txid, swapResult, quoteResponseMeta }) {},
+    onSuccess ({ txid, swapResult, quoteResponseMeta, result }) {},
 
     /** Callback when there's changes to the form */
     onFormUpdate (form: IForm) {},
@@ -40,7 +40,7 @@ const SnippetNewCallbacks = () => {
   }, [unformattedSnippet]);
 
   return (
-    <div className="flex w-full justify-center text-left">
+    <div className="flex justify-center w-full text-left">
       <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
         {snippet}
       </SyntaxHighlighter>

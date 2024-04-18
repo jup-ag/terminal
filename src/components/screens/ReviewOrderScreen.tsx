@@ -14,7 +14,7 @@ const ConfirmationScreen = () => {
     onSubmit: onSubmitJupiter,
     onRequestIx,
     quoteResponseMeta,
-    formProps: { darkMode },
+    formProps: { darkMode, gmPointCoefficient },
     jupiter: { loading, refresh },
   } = useSwapContext();
 
@@ -30,11 +30,11 @@ const ConfirmationScreen = () => {
     setScreen('Swapping');
 
     if (window.Jupiter.onRequestIxCallback) {
-      const ixAndCb = await onRequestIx()
+      const ixAndCb = await onRequestIx();
       if (ixAndCb) {
-        window.Jupiter.onRequestIxCallback(ixAndCb)
+        window.Jupiter.onRequestIxCallback(ixAndCb);
       } else {
-        setScreen('Error')
+        setScreen('Error');
       }
     } else {
       onSubmitJupiter();
@@ -66,6 +66,7 @@ const ConfirmationScreen = () => {
             showFullDetails
             containerClassName={`border-none ${darkMode ? 'bg-[#25252D]' : 'bg-gray-300'}`}
             darkMode={darkMode}
+            gmPointCoefficient={gmPointCoefficient}
           />
         ) : null}
       </div>

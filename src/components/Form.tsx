@@ -42,7 +42,7 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
-    formProps: { swapMode, fixedAmount, fixedInputMint, fixedOutputMint, darkMode },
+    formProps: { swapMode, fixedAmount, fixedInputMint, fixedOutputMint, darkMode, gmPointCoefficient },
     jupiter: { quoteResponseMeta: route, loading, error, refresh },
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
@@ -373,6 +373,7 @@ const Form: React.FC<{
             toTokenInfo={toTokenInfo}
             loading={loading}
             darkMode={darkMode}
+            gmPointCoefficient={gmPointCoefficient}
           />
         ) : null}
       </div>

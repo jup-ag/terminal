@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import JupButton from '../JupButton';
@@ -41,7 +42,7 @@ const SwappingScreen = () => {
     reset,
     scriptDomain,
     swapping: { txStatus },
-    formProps: { darkMode },
+    formProps: { darkMode, gmPointCoefficient },
     fromTokenInfo,
     toTokenInfo,
     jupiter: { refresh },
@@ -49,6 +50,8 @@ const SwappingScreen = () => {
   const { screen, setScreen } = useScreenState();
 
   const [errorMessage, setErrorMessage] = useState('');
+
+  const { tokenPriceMap } = useUSDValueProvider();
 
   const onSwapMore = () => {
     reset();
@@ -71,12 +74,28 @@ const SwappingScreen = () => {
       setErrorMessage(lastSwapResult?.swapResult?.error?.message || '');
 
       if (window.Jupiter.onSwapError) {
-        window.Jupiter.onSwapError({ error: lastSwapResult?.swapResult?.error, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
+        window.Jupiter.onSwapError({
+          error: lastSwapResult?.swapResult?.error,
+          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+        });
       }
       return;
     } else if (lastSwapResult?.swapResult && 'txid' in lastSwapResult?.swapResult) {
       if (window.Jupiter.onSuccess) {
-        window.Jupiter.onSuccess({ txid: lastSwapResult?.swapResult?.txid, swapResult: lastSwapResult?.swapResult, quoteResponseMeta: lastSwapResult?.quoteResponseMeta });
+        window.Jupiter.onSuccess({
+          txid: lastSwapResult?.swapResult?.txid,
+          swapResult: lastSwapResult?.swapResult,
+          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+          result: {
+            from_token_ca: fromTokenInfo?.address,
+            from_token_amount: lastSwapResult.swapResult.inputAmount / 10 ** (fromTokenInfo?.decimals || 0),
+            from_token_chain: fromTokenInfo?.chainId,
+            point: Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) * Number(gmPointCoefficient),
+            to_token_ca: toTokenInfo?.address,
+            to_token_amount: lastSwapResult.swapResult.outputAmount / 10 ** (toTokenInfo?.decimals || 0),
+            to_token_chain: toTokenInfo?.chainId,
+          },
+        });
       }
       return;
     }
@@ -217,6 +236,7 @@ const SwappingScreen = () => {
               showFullDetails
               containerClassName={`border-none mt-0 ${darkMode ? 'bg-[#25252D]' : 'bg-gray-300'}`}
               darkMode={darkMode}
+              gmPointCoefficient={gmPointCoefficient}
             />
           </div>
         </div>

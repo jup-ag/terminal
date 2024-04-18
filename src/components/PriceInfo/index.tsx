@@ -1,12 +1,15 @@
 import { ZERO } from '@jup-ag/math';
 import { QuoteResponse, SwapMode, TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
+import axios from 'axios';
+import numeral from 'numeral';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
 import Deposits from './Deposits';
@@ -23,6 +26,7 @@ const Index = ({
   showFullDetails = false,
   containerClassName,
   darkMode = false,
+  gmPointCoefficient = 0,
 }: {
   quoteResponse: QuoteResponse;
   fromTokenInfo: TokenInfo;
@@ -31,6 +35,7 @@ const Index = ({
   showFullDetails?: boolean;
   containerClassName?: string;
   darkMode?: boolean;
+  gmPointCoefficient?: number;
 }) => {
   const rateParams = {
     inAmount: quoteResponse?.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
@@ -46,16 +51,6 @@ const Index = ({
 
   const priceImpact = formatNumber.format(new Decimal(quoteResponse?.priceImpactPct || 0).mul(100).toDP(4).toNumber());
   const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format(0.1)}%` : `~ ${priceImpact}%`;
-
-  const otherAmountThresholdText = useMemo(() => {
-    if (quoteResponse?.otherAmountThreshold) {
-      const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
-
-      const amountText = formatNumber.format(amount.toNumber());
-      return `${amountText} ${toTokenInfo.symbol}`;
-    }
-    return '-';
-  }, [quoteResponse]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 
@@ -82,8 +77,73 @@ const Index = ({
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
   const {
+    form,
     jupiter: { priorityFeeInSOL },
   } = useSwapContext();
+
+  const { publicKey } = useWalletPassThrough();
+  const [dataPnl, setDataPnl] = useState(0);
+
+  const { tokenPriceMap } = useUSDValueProvider();
+
+  const handlePnlCalculate = async () => {
+    try {
+      const payload = {
+        owner: publicKey?.toBase58(),
+        from: {
+          address: fromTokenInfo?.address,
+          symbol: fromTokenInfo?.symbol,
+          quantity: Number(form.fromValue),
+          price: Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0),
+        },
+        to: {
+          address: toTokenInfo?.address,
+          symbol: toTokenInfo?.symbol,
+          quantity: Number(form.toValue),
+          price: Number(tokenPriceMap[toTokenInfo?.address || '']?.usd || 0),
+        },
+      };
+
+      if (!payload.from.price) {
+        setDataPnl(0);
+        return;
+      }
+
+      const res = await axios.post(`https://api.getnimbus.io/swap/pnl?chain=${fromTokenInfo?.chainId}`, payload);
+
+      if (res?.data?.data && res?.data?.data !== 0) {
+        setDataPnl(res?.data?.data);
+      } else {
+        setDataPnl(0);
+      }
+    } catch (e) {
+      setDataPnl(0);
+      console.error(e);
+    }
+  };
+
+  const otherAmountThresholdText = useMemo(() => {
+    if (quoteResponse?.otherAmountThreshold) {
+      handlePnlCalculate();
+      const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
+
+      const amountText = formatNumber.format(amount.toNumber());
+      return `${amountText} ${toTokenInfo.symbol}`;
+    }
+    return '-';
+  }, [quoteResponse]);
+
+  const pnl = useMemo(() => {
+    return dataPnl !== 0 ? Number(dataPnl?.newRealizedPnL) : 0;
+  }, [dataPnl]);
+
+  const pnlPercent = useMemo(() => {
+    return dataPnl !== 0
+      ? Number(dataPnl?.cost) !== 0
+        ? Number(dataPnl?.newRealizedPnL) / Number(dataPnl?.cost)
+        : 0
+      : 0;
+  }, [dataPnl]);
 
   return (
     <div
@@ -123,11 +183,39 @@ const Index = ({
         <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>{otherAmountThresholdText}</div>
       </div>
 
+      <div className="flex items-center justify-between text-xs">
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>PnL</div>
+        <div className={`${darkMode ? 'text-white/30' : 'text-black'}`}>
+          <span className={`flex items-center gap-1 ${pnl === 0 ? '' : pnl > 0 ? 'text-[#00a878]' : 'text-[#f05252]'}`}>
+            {dataPnl !== 0
+              ? `$${numeral(Math.abs(pnl)).format('0,0.00')} (${numeral(Number(pnlPercent) * 100).format('0,0.00')}%)`
+              : '$0'}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between text-xs">
+        <div className="text-[#e3a008]">GM Points</div>
+        <div className="flex items-center gap-2 text-[#e3a008]">
+          <div>🔶</div>{' '}
+          {Math.round(Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) * Number(gmPointCoefficient))}
+        </div>
+      </div>
+
       {showFullDetails ? (
         <>
-          <Fees darkMode={darkMode} routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
+          <Fees
+            darkMode={darkMode}
+            routePlan={quoteResponse?.routePlan}
+            swapMode={quoteResponse.swapMode as SwapMode}
+          />
           <TransactionFee darkMode={darkMode} feeInformation={feeInformation} />
-          <Deposits darkMode={darkMode} hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+          <Deposits
+            darkMode={darkMode}
+            hasSerumDeposit={hasSerumDeposit}
+            hasAtaDeposit={hasAtaDeposit}
+            feeInformation={feeInformation}
+          />
           {(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee ? (
             <PlatformFees
               platformFee={(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee}

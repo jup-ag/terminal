@@ -43,7 +43,8 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
-    darkMode: false
+    darkMode: false,
+    gmPointCoefficient: 0,
   },
   useUserSlippage: true,
 })

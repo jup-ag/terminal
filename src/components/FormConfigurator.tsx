@@ -363,6 +363,26 @@ const FormConfigurator = ({
       />
       <div className="w-full py-3 border-b border-white/10" />
 
+      {/* Initial GM Point Coefficient */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Initial GM Point Coefficient</p>
+          <p className="text-xs text-white/30">GM Point Coefficient to be prefilled on first load</p>
+        </div>
+      </div>
+      <input
+        className="flex items-center justify-between w-full px-4 py-2 mt-2 space-x-2 text-sm font-medium text-left text-white border rounded-md shadow-sm bg-white/10 border-white/10"
+        value={formProps.gmPointCoefficient}
+        inputMode="numeric"
+        onChange={(e) => {
+          const value = e.target.value;
+          if (Number(value) !== 0 && Number(value) > 0) {
+            setValue('formProps.gmPointCoefficient', Number(value), { shouldDirty: true });
+          }
+        }}
+      />
+      <div className="w-full py-3 border-b border-white/10" />
+
       {/* Wallet passthrough */}
       <div className="flex justify-between mt-5">
         <div>
