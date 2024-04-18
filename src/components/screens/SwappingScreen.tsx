@@ -37,6 +37,7 @@ const ErrorIcon = () => {
 
 const SwappingScreen = () => {
   const {
+    form,
     displayMode,
     lastSwapResult,
     reset,
@@ -90,7 +91,10 @@ const SwappingScreen = () => {
             from_token_ca: fromTokenInfo?.address,
             from_token_amount: lastSwapResult.swapResult.inputAmount / 10 ** (fromTokenInfo?.decimals || 0),
             from_token_chain: fromTokenInfo?.chainId,
-            point: Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) * Number(gmPointCoefficient),
+            point:
+              Number(tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0) *
+              Number(form.fromValue) *
+              Number(gmPointCoefficient),
             to_token_ca: toTokenInfo?.address,
             to_token_amount: lastSwapResult.swapResult.outputAmount / 10 ** (toTokenInfo?.decimals || 0),
             to_token_chain: toTokenInfo?.chainId,
