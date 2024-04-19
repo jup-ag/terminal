@@ -406,14 +406,10 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                   inputRef.current?.focus();
                   inputFocused.current = true;
                 }}
-                className={`flex items-center justify-between cursor-text w-[120px] h-full pl-2 text-sm relative border-l border-black-10 border-white/5 ${
+                className={`flex items-center justify-between cursor-text flex-[1.1] h-full pl-2 text-sm relative border-l border-black-10 border-white/5 ${
                   darkMode ? 'text-white/50 bg-[#1B1B1E]' : 'text-black/50 bg-gray-400'
                 } ${inputFocused ? 'v2-border-gradient v2-border-gradient-right' : ''}`}
               >
-                <span className="text-xs">
-                  <span>Custom</span>
-                </span>
-
                 <Controller
                   name={'slippageInput'}
                   control={form.control}
@@ -439,10 +435,12 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
                         allowLeadingZeros={false}
                         suffix="%"
                         className={`w-full h-full py-4 pr-4 text-sm text-right bg-transparent rounded-lg pointer-events-all ${
-                          darkMode ? 'placeholder:text-white/25 text-white/50' : 'placeholder:text-black/50 text-black/50'
+                          darkMode
+                            ? 'placeholder:text-white/25 text-white/50'
+                            : 'placeholder:text-black/50 text-black/50'
                         }`}
                         decimalSeparator={detectedSeparator}
-                        placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
+                        placeholder={'Custom'}
                       />
                     );
                   }}

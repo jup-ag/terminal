@@ -361,7 +361,7 @@ const Form: React.FC<{
             ) : error ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : (
-              <V2SexyChameleonText>Swap</V2SexyChameleonText>
+              <div className="text-white">Swap</div>
             )}
           </JupButton>
         )}
