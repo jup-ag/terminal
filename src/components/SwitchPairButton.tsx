@@ -25,9 +25,11 @@ const SwitchPairButton = ({
     <div className="flex justify-center">
       <div
         onClick={onClick}
-        className={`border border-black/50 fill-current text-black bg-black/10 dark:text-white-35 dark:hover:text-white/50 dark:border dark:border-white-35 dark:hover:border-white/50 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
-          disabled ? 'opacity-50 cursor-not-allowed' : ''
-        } ${className}`}
+        className={`border bg-black/10 fill-current h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
+          darkMode
+            ? 'border-[#424242] text-white-35 hover:text-white/50 hover:border-white/50'
+            : 'border-[#e0e0e0] text-black'
+        } ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       >
         <div className="block -rotate-45">
           <IconSwitchPairDark darkMode={darkMode} />

@@ -165,15 +165,15 @@ const Form: React.FC<{
       <div className="flex flex-col w-full px-2 mt-2 rounded-xl">
         <div className="flex-col">
           <div className={classNames('border-b border-transparent transition-all', fixedOutputFomMintClass)}>
-            <div className={`rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-400'}`}>
-              <div className={classNames('px-x border-transparent rounded-xl ')}>
+            <div className={`rounded-xl border ${darkMode ? 'border-[#424242]' : 'border-[#e0e0e0]'}`}>
+              <div className={classNames('px-x border-transparent rounded-xl')}>
                 <div>
                   <div className={classNames('py-5 px-4 flex flex-col dark:text-white')}>
                     <div className="flex items-center justify-between">
                       <button
                         type="button"
-                        className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 text-white ${
-                          darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
+                        className={`py-2 px-3 rounded-2xl flex items-center text-white ${
+                          darkMode ? 'bg-[#36373E] hover:bg-white/20' : 'bg-gray-400 hover:bg-gray-500'
                         }`}
                         disabled={fixedInputMint}
                         onClick={onClickSelectFromMint}
@@ -191,7 +191,7 @@ const Form: React.FC<{
                         )}
                       </button>
 
-                      <div className="text-right">
+                      <div className={`text-right ${darkMode ? 'text-white' : 'text-black'}`}>
                         <NumericFormat
                           disabled={swapMode === 'ExactOut'}
                           value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
@@ -202,7 +202,7 @@ const Form: React.FC<{
                           onValueChange={({ value }) => onChangeFromValue(value)}
                           placeholder={'0.00'}
                           className={classNames(
-                            'h-full w-full bg-transparent text-white text-right font-semibold text-lg border-none focus:outline-none focus:ring-0',
+                            'h-full w-full bg-transparent text-right font-semibold text-lg border-none focus:outline-none focus:ring-0',
                             { 'cursor-not-allowed': inputAmountDisabled },
                           )}
                           decimalSeparator={detectedSeparator}
@@ -212,7 +212,9 @@ const Form: React.FC<{
                     </div>
 
                     {fromTokenInfo?.address ? (
-                      <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-white'}`}>
+                      <div
+                        className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-black/30'}`}
+                      >
                         <div
                           className={classNames('flex mt-3 space-x-1 text-xs items-center fill-current', {
                             'cursor-pointer': swapMode !== 'ExactOut',
@@ -247,68 +249,72 @@ const Form: React.FC<{
             )}
           </div>
 
-          <div className={`border-b border-transparent rounded-xl ${darkMode ? 'bg-[#212128]' : 'bg-gray-400'}`}>
-            <div className="border-transparent px-x rounded-xl">
-              <div>
-                <div className="flex flex-col px-4 py-5 dark:text-white">
-                  <div className="flex items-center justify-between">
-                    <button
-                      type="button"
-                      className={`py-2 px-3 rounded-2xl flex items-center hover:bg-white/20 disabled:hover:bg-[#36373E] text-white ${
-                        darkMode ? 'bg-[#36373E]' : 'bg-gray-500'
-                      }`}
-                      disabled={fixedOutputMint}
-                      onClick={onClickSelectToMint}
-                    >
-                      <div className="w-5 h-5">
-                        <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
-                      </div>
-                      <div className="ml-4 mr-2 font-semibold" translate="no">
-                        {toTokenInfo?.symbol}
-                      </div>
+          <div className="border-b border-transparent rounded-xl">
+            <div
+              className={`border-transparent px-x rounded-xl border ${
+                darkMode ? 'border-[#424242]' : 'border-[#e0e0e0]'
+              }`}
+            >
+              <div className="flex flex-col px-4 py-5 dark:text-white">
+                <div className="flex items-center justify-between">
+                  <button
+                    type="button"
+                    className={`py-2 px-3 rounded-2xl flex items-center text-white ${
+                      darkMode
+                        ? 'bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E]'
+                        : 'bg-gray-400 hover:bg-gray-500 disabled:hover:bg-gray-300'
+                    }`}
+                    disabled={fixedOutputMint}
+                    onClick={onClickSelectToMint}
+                  >
+                    <div className="w-5 h-5">
+                      <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
+                    </div>
+                    <div className="ml-4 mr-2 font-semibold" translate="no">
+                      {toTokenInfo?.symbol}
+                    </div>
 
-                      {fixedOutputMint ? null : (
-                        <span className="fill-current text-white/25">
-                          <ChevronDownIcon />
-                        </span>
+                    {fixedOutputMint ? null : (
+                      <span className="fill-current text-white/25">
+                        <ChevronDownIcon />
+                      </span>
+                    )}
+                  </button>
+
+                  <div className={`text-right ${darkMode ? 'text-white' : 'text-black'}`}>
+                    <NumericFormat
+                      disabled={!swapMode || swapMode === 'ExactIn'}
+                      value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                      decimalScale={toTokenInfo?.decimals}
+                      thousandSeparator={thousandSeparator}
+                      allowNegative={false}
+                      valueIsNumericString
+                      onValueChange={({ value }) => onChangeToValue(value)}
+                      placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
+                      className={classNames(
+                        'h-full w-full bg-transparent text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg border-none focus:outline-none focus:ring-0',
                       )}
-                    </button>
-
-                    <div className="text-right">
-                      <NumericFormat
-                        disabled={!swapMode || swapMode === 'ExactIn'}
-                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
-                        decimalScale={toTokenInfo?.decimals}
-                        thousandSeparator={thousandSeparator}
-                        allowNegative={false}
-                        valueIsNumericString
-                        onValueChange={({ value }) => onChangeToValue(value)}
-                        placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
-                        className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg border-none focus:outline-none focus:ring-0',
-                        )}
-                        decimalSeparator={detectedSeparator}
-                        isAllowed={withValueLimit}
-                      />
-                    </div>
+                      decimalSeparator={detectedSeparator}
+                      isAllowed={withValueLimit}
+                    />
                   </div>
-
-                  {toTokenInfo?.address ? (
-                    <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-white'}`}>
-                      <div className="flex items-center mt-3 space-x-1 text-xs fill-current">
-                        <WalletIcon darkMode={darkMode} width={10} height={10} />
-                        <CoinBalance mintAddress={toTokenInfo.address} />
-                        <span>{toTokenInfo.symbol}</span>
-                      </div>
-
-                      {form.toValue ? (
-                        <span className="text-xs">
-                          <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
                 </div>
+
+                {toTokenInfo?.address ? (
+                  <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+                    <div className="flex items-center mt-3 space-x-1 text-xs fill-current">
+                      <WalletIcon darkMode={darkMode} width={10} height={10} />
+                      <CoinBalance mintAddress={toTokenInfo.address} />
+                      <span>{toTokenInfo.symbol}</span>
+                    </div>
+
+                    {form.toValue ? (
+                      <span className="text-xs">
+                        <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
