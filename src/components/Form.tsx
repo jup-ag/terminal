@@ -249,73 +249,67 @@ const Form: React.FC<{
             )}
           </div>
 
-          <div className="border-b border-transparent rounded-xl">
-            <div
-              className={`border-transparent px-x rounded-xl border ${
-                darkMode ? 'border-[#424242]' : 'border-[#e0e0e0]'
-              }`}
-            >
-              <div className="flex flex-col px-4 py-5 dark:text-white">
-                <div className="flex items-center justify-between">
-                  <button
-                    type="button"
-                    className={`py-2 px-3 rounded-2xl flex items-center text-white ${
-                      darkMode
-                        ? 'bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E]'
-                        : 'bg-gray-400 hover:bg-gray-500 disabled:hover:bg-gray-300'
-                    }`}
-                    disabled={fixedOutputMint}
-                    onClick={onClickSelectToMint}
-                  >
-                    <div className="w-5 h-5">
-                      <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
-                    </div>
-                    <div className="ml-4 mr-2 font-semibold" translate="no">
-                      {toTokenInfo?.symbol}
-                    </div>
+          <div className={`px-x rounded-xl border ${darkMode ? 'border-[#424242]' : 'border-[#e0e0e0]'}`}>
+            <div className="flex flex-col px-4 py-5 dark:text-white">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  className={`py-2 px-3 rounded-2xl flex items-center text-white ${
+                    darkMode
+                      ? 'bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E]'
+                      : 'bg-gray-400 hover:bg-gray-500 disabled:hover:bg-gray-300'
+                  }`}
+                  disabled={fixedOutputMint}
+                  onClick={onClickSelectToMint}
+                >
+                  <div className="w-5 h-5">
+                    <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
+                  </div>
+                  <div className="ml-4 mr-2 font-semibold" translate="no">
+                    {toTokenInfo?.symbol}
+                  </div>
 
-                    {fixedOutputMint ? null : (
-                      <span className="fill-current text-white/25">
-                        <ChevronDownIcon />
-                      </span>
+                  {fixedOutputMint ? null : (
+                    <span className="fill-current text-white/25">
+                      <ChevronDownIcon />
+                    </span>
+                  )}
+                </button>
+
+                <div className={`text-right ${darkMode ? 'text-white' : 'text-black'}`}>
+                  <NumericFormat
+                    disabled={!swapMode || swapMode === 'ExactIn'}
+                    value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                    decimalScale={toTokenInfo?.decimals}
+                    thousandSeparator={thousandSeparator}
+                    allowNegative={false}
+                    valueIsNumericString
+                    onValueChange={({ value }) => onChangeToValue(value)}
+                    placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
+                    className={classNames(
+                      'h-full w-full bg-transparent text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg border-none focus:outline-none focus:ring-0',
                     )}
-                  </button>
-
-                  <div className={`text-right ${darkMode ? 'text-white' : 'text-black'}`}>
-                    <NumericFormat
-                      disabled={!swapMode || swapMode === 'ExactIn'}
-                      value={typeof form.toValue === 'undefined' ? '' : form.toValue}
-                      decimalScale={toTokenInfo?.decimals}
-                      thousandSeparator={thousandSeparator}
-                      allowNegative={false}
-                      valueIsNumericString
-                      onValueChange={({ value }) => onChangeToValue(value)}
-                      placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
-                      className={classNames(
-                        'h-full w-full bg-transparent text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg border-none focus:outline-none focus:ring-0',
-                      )}
-                      decimalSeparator={detectedSeparator}
-                      isAllowed={withValueLimit}
-                    />
-                  </div>
+                    decimalSeparator={detectedSeparator}
+                    isAllowed={withValueLimit}
+                  />
                 </div>
-
-                {toTokenInfo?.address ? (
-                  <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
-                    <div className="flex items-center mt-3 space-x-1 text-xs fill-current">
-                      <WalletIcon darkMode={darkMode} width={10} height={10} />
-                      <CoinBalance mintAddress={toTokenInfo.address} />
-                      <span>{toTokenInfo.symbol}</span>
-                    </div>
-
-                    {form.toValue ? (
-                      <span className="text-xs">
-                        <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
-                      </span>
-                    ) : null}
-                  </div>
-                ) : null}
               </div>
+
+              {toTokenInfo?.address ? (
+                <div className={`flex items-center justify-between ${darkMode ? 'text-white/30' : 'text-black/30'}`}>
+                  <div className="flex items-center mt-3 space-x-1 text-xs fill-current">
+                    <WalletIcon darkMode={darkMode} width={10} height={10} />
+                    <CoinBalance mintAddress={toTokenInfo.address} />
+                    <span>{toTokenInfo.symbol}</span>
+                  </div>
+
+                  {form.toValue ? (
+                    <span className="text-xs">
+                      <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           </div>
 
