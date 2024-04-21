@@ -15,12 +15,20 @@ import { toLamports } from 'src/misc/utils';
 // Constants
 // --------------------
 const APP_NAME = 'jupiter-terminal';
+
 const COMPUTE_UNIT_MAX_LIMIT = 1_400_000;
 const COMPUTE_UNIT_LIMIT_MARGIN_ERROR = 1.2;
-const PRIORITY_FEE_DEFAULT = 0.000_3;
+
+const PRIORITY_FEE_DEFAULT: number = 0.000_3;
+const PRIORITY_LEVEL_DEFAULT: PriorityLevel = 'MEDIUM';
+const PRIORITY_MODE_DEFAULT: PriorityMode = 'MAX';
+
 export const PRIORITY_LEVEL_MULTIPLIER_HIGH = 1.5;
 export const PRIORITY_LEVEL_MULTIPLIER_VERY_HIGH = 3;
 
+// --------------------
+// Types
+// --------------------
 export type PriorityMode = 'MAX' | 'EXACT';
 export type PriorityLevel = 'MEDIUM' | 'HIGH' | 'VERY_HIGH';
 
@@ -99,9 +107,9 @@ interface PrioritizationFeeContextValue {
 
 const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
   // state
-  priorityFee: 0,
-  priorityMode: 'EXACT',
-  priorityLevel: 'MEDIUM',
+  priorityFee: PRIORITY_FEE_DEFAULT,
+  priorityMode: PRIORITY_MODE_DEFAULT,
+  priorityLevel: PRIORITY_LEVEL_DEFAULT,
 
   // derived state
   prioritizationFeeLamports: 0,
@@ -119,10 +127,13 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
     `${APP_NAME}-global-priority-fee`,
     PRIORITY_FEE_DEFAULT,
   );
-  const [priorityMode, setPriorityMode] = useLocalStorage<PriorityMode>(`${APP_NAME}-global-priority-mode`, 'MAX');
+  const [priorityMode, setPriorityMode] = useLocalStorage<PriorityMode>(
+    `${APP_NAME}-global-priority-mode`,
+    PRIORITY_MODE_DEFAULT,
+  );
   const [priorityLevel, setPriorityLevel] = useLocalStorage<PriorityLevel>(
     `${APP_NAME}-global-priority-level`,
-    'MEDIUM',
+    PRIORITY_LEVEL_DEFAULT,
   );
 
   // derrived state
