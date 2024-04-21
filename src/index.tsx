@@ -1,11 +1,10 @@
-import React from 'react';
-
+import { Provider, useAtom } from 'jotai';
 import JupiterApp from './components/Jupiter';
 import { ContextProvider } from './contexts/ContextProvider';
+import { PrioritizationFeeContextProvider } from './contexts/PrioritizationFeeContextProvider';
 import { ScreenProvider } from './contexts/ScreenProvider';
 import { TokenContextProvider } from './contexts/TokenContextProvider';
 import WalletPassthroughProvider from './contexts/WalletPassthroughProvider';
-import { Provider, useAtom } from 'jotai';
 import { appProps } from './library';
 
 const App = () => {
@@ -15,11 +14,13 @@ const App = () => {
   return (
     <ContextProvider {...props}>
       <WalletPassthroughProvider>
-        <TokenContextProvider {...props}>
-          <ScreenProvider>
-            <JupiterApp {...props} />
-          </ScreenProvider>
-        </TokenContextProvider>
+        <PrioritizationFeeContextProvider>
+          <TokenContextProvider {...props}>
+            <ScreenProvider>
+              <JupiterApp {...props} />
+            </ScreenProvider>
+          </TokenContextProvider>
+        </PrioritizationFeeContextProvider>
       </WalletPassthroughProvider>
     </ContextProvider>
   );

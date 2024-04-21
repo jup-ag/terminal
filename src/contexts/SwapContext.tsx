@@ -1,22 +1,24 @@
+import { Owner, executeTransaction } from '@jup-ag/common';
 import { ZERO } from '@jup-ag/math';
-import {
-  OnTransaction,
-  QuoteResponseMeta,
-  SwapMode,
-  SwapResult,
-  UseJupiterProps,
-  useJupiter,
-} from '@jup-ag/react-hook';
+import { QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
+import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
-import { PublicKey } from '@solana/web3.js';
+import {
+  AddressLookupTableAccount,
+  ComputeBudgetProgram,
+  PublicKey,
+  TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+} from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -25,12 +27,17 @@ import {
 } from 'react';
 import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
+import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
-import { useAccounts } from './accounts';
+import {
+  PRIORITY_LEVEL_MULTIPLIER_HIGH,
+  PRIORITY_LEVEL_MULTIPLIER_VERY_HIGH,
+  usePrioritizationFee,
+} from './PrioritizationFeeContextProvider';
+import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
-import { useScreenState } from './ScreenProvider';
+import { useAccounts } from './accounts';
 export interface IForm {
   fromMint: string;
   toMint: string;
@@ -58,7 +65,7 @@ export interface ISwapContext {
   toTokenInfo?: TokenInfo | null;
   quoteResponseMeta: QuoteResponseMeta | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
-  onSubmit: () => Promise<SwapResult | null>;
+  onSubmit: () => Promise<void>;
   onRequestIx: () => Promise<IOnRequestIxCallback>;
   lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null } | null;
   formProps: FormProps;
@@ -77,8 +84,6 @@ export interface ISwapContext {
     exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
-    priorityFeeInSOL: number;
-    setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
   };
   setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
@@ -231,6 +236,10 @@ export const SwapContextProvider: FC<{
     setProgramIdsExcluded,
   } = useJupiter(jupiterParams);
 
+  const { data: referenceFees } = useReferenceFeesQuery();
+  const { prioritizationFeeLamports, priorityLevel, getOptimalComputeUnitLimitAndPrice } = usePrioritizationFee();
+  const { connection } = useConnection();
+
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
     if (!ogQuoteResponseMeta) {
@@ -258,7 +267,7 @@ export const SwapContextProvider: FC<{
       }
       return newValue;
     });
-  }, [quoteResponseMeta, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
+  }, [form.fromValue, fromTokenInfo?.decimals, jupiterSwapMode, quoteResponseMeta, toTokenInfo?.decimals]);
 
   const [txStatus, setTxStatus] = useState<
     | {
@@ -269,71 +278,6 @@ export const SwapContextProvider: FC<{
   >(undefined);
 
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
-  const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
-      return null;
-    }
-
-    let intervalId: NodeJS.Timer | undefined;
-    try {
-      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
-        const timeout = { current: 0 };
-
-        const result = await exchange({
-          wallet: wallet?.adapter as SignerWalletAdapter,
-          routeInfo: quoteResponseMeta,
-          onTransaction: async (txid, awaiter) => {
-            if (timeout.current === 0) {
-              timeout.current = Date.now() + 60_000;
-            }
-
-            if (!intervalId) {
-              intervalId = setInterval(() => {
-                if (Date.now() > timeout.current) {
-                  setTxStatus({ txid: '', status: 'timeout' });
-                  rej(new Error('Transaction timed-out'));
-                }
-              }, 1_000);
-            }
-
-            const tx = txStatus?.txid === txid ? txStatus : undefined;
-            if (!tx) {
-              setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-            }
-
-            const success = !((await awaiter) instanceof Error);
-
-            setTxStatus((prev) => {
-              const tx = prev?.txid === txid ? prev : undefined;
-              if (tx) {
-                tx.status = success ? 'success' : 'fail';
-              }
-              return prev ? { ...prev } : undefined;
-            });
-          },
-          computeUnitPriceMicroLamports,
-        });
-
-        setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
-        return result;
-      })
-        .catch((err) => {
-          console.log(err);
-          setTxStatus({ txid: '', status: 'fail' });
-          return null;
-        })
-        .finally(() => {
-          if (intervalId) {
-            clearInterval(intervalId);
-          }
-        });
-
-      return swapResult;
-    } catch (error) {
-      console.log('Swap error', error);
-      return null;
-    }
-  }, [walletPublicKey, quoteResponseMeta]);
 
   const onSubmitWithIx = useCallback(
     (swapResult: SwapResult) => {
@@ -371,7 +315,7 @@ export const SwapContextProvider: FC<{
         body: JSON.stringify({
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
-          computeUnitPriceMicroLamports,
+          computeUnitPriceMicroLamports: prioritizationFeeLamports,
         }),
       })
     ).json();
@@ -403,6 +347,145 @@ export const SwapContextProvider: FC<{
     };
   }, [walletPublicKey, quoteResponseMeta]);
 
+  const deserializeInstruction = (instruction: IOnRequestIxCallback['instructions']['swapInstruction']) => {
+    return new TransactionInstruction({
+      programId: new PublicKey(instruction.programId),
+      keys: instruction.accounts.map((key) => ({
+        pubkey: new PublicKey(key.pubkey),
+        isSigner: key.isSigner,
+        isWritable: key.isWritable,
+      })),
+      data: Buffer.from(instruction.data, 'base64'),
+    });
+  };
+
+  const getAddressLookupTableAccounts = useCallback(
+    async (keys: string[]): Promise<AddressLookupTableAccount[]> => {
+      const addressLookupTableAccountInfos = await connection.getMultipleAccountsInfo(
+        keys.map((key) => new PublicKey(key)),
+      );
+
+      return addressLookupTableAccountInfos.reduce((acc, accountInfo, index) => {
+        const addressLookupTableAddress = keys[index];
+        if (accountInfo) {
+          const addressLookupTableAccount = new AddressLookupTableAccount({
+            key: new PublicKey(addressLookupTableAddress),
+            state: AddressLookupTableAccount.deserialize(accountInfo.data),
+          });
+          acc.push(addressLookupTableAccount);
+        }
+
+        return acc;
+      }, new Array<AddressLookupTableAccount>());
+    },
+    [connection],
+  );
+
+  const onSubmit = useCallback(async () => {
+    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
+      throw new Error('Missing wallet or quote');
+    }
+
+    // Fetch necessary data from APIs
+    const { meta, instructions, onSubmitWithIx } = await onRequestIx();
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+
+    // Destructure instructions
+    const {
+      setupInstructions,
+      swapInstruction: swapInstructionPayload,
+      cleanupInstruction,
+      addressLookupTableAddresses,
+      // Note: Not using this as we need to calculate the optimal compute unit limit and price
+      computeBudgetInstructions,
+    } = instructions;
+
+    // Prepare address lookup table accounts
+    const addressLookupTableAccounts = await getAddressLookupTableAccounts(addressLookupTableAddresses);
+
+    // Prepare transaction instructions
+    const setupTransactionInstructions = setupInstructions.map(deserializeInstruction);
+    const swapTransactionInstruction = deserializeInstruction(swapInstructionPayload);
+    const cleanupTransactionInstruction = cleanupInstruction ? deserializeInstruction(cleanupInstruction) : null;
+
+    const filteredInstructions = [
+      ...setupTransactionInstructions,
+      swapTransactionInstruction,
+      cleanupTransactionInstruction,
+    ].filter(Boolean) as TransactionInstruction[];
+
+    // Prepare payer key
+    const payerKey = new PublicKey(walletPublicKey);
+
+    // Set optimal compute unit limit and price
+    let referenceFee = 0;
+    if (referenceFees?.jup) {
+      switch (priorityLevel) {
+        case 'MEDIUM':
+          referenceFee = referenceFees.swapFee;
+          break;
+        case 'HIGH':
+          referenceFee = referenceFees.swapFee * PRIORITY_LEVEL_MULTIPLIER_HIGH;
+          break;
+        case 'VERY_HIGH':
+          referenceFee = referenceFees.swapFee * PRIORITY_LEVEL_MULTIPLIER_VERY_HIGH;
+          break;
+        default:
+          break;
+      }
+    }
+    const { units, microLamports } = await getOptimalComputeUnitLimitAndPrice({
+      connection,
+      instructions: filteredInstructions,
+      payer: payerKey,
+      lookupTables: addressLookupTableAccounts,
+      referenceFee,
+    });
+    filteredInstructions.unshift(ComputeBudgetProgram.setComputeUnitPrice({ microLamports }));
+    if (units) {
+      filteredInstructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units }));
+    }
+
+    // Compile to V0 message
+    const messageV0 = new TransactionMessage({
+      instructions: filteredInstructions,
+      payerKey,
+      recentBlockhash: blockhash,
+    }).compileToV0Message(addressLookupTableAccounts);
+    const transaction = new VersionedTransaction(messageV0);
+
+    // Execute the transaction
+    const swapResult = await executeTransaction({
+      connection,
+      wallet: wallet.adapter as SignerWalletAdapter,
+      onTransaction: undefined,
+      inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
+      outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
+      sourceAddress: meta.sourceAddress,
+      destinationAddress: meta.destinationAddress,
+      swapTransaction: transaction,
+      blockhashWithExpiryBlockHeight: {
+        blockhash,
+        lastValidBlockHeight,
+      },
+      owner: new Owner(new PublicKey(walletPublicKey)),
+      wrapUnwrapSOL: Boolean(cleanupInstruction),
+    });
+
+    // Handle the result
+    onSubmitWithIx(swapResult);
+  }, [
+    connection,
+    getAddressLookupTableAccounts,
+    getOptimalComputeUnitLimitAndPrice,
+    onRequestIx,
+    priorityLevel,
+    quoteResponseMeta,
+    referenceFees?.jup,
+    wallet?.adapter,
+    walletPublicKey,
+  ]);
+
   const refreshAll = () => {
     refresh();
     refreshAccount();
@@ -423,19 +506,8 @@ export const SwapContextProvider: FC<{
       setTxStatus(undefined);
       refreshAccount();
     },
-    [setupInitialAmount, form],
+    [refreshAccount, setupInitialAmount],
   );
-
-  const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
-  const computeUnitPriceMicroLamports = useMemo(() => {
-    if (priorityFeeInSOL === undefined) return 0;
-    return new Decimal(priorityFeeInSOL)
-      .mul(10 ** 9) // sol into lamports
-      .mul(10 ** 6) // lamports into microlamports
-      .div(1_400_000) // divide by CU
-      .round()
-      .toNumber();
-  }, [priorityFeeInSOL]);
 
   // onFormUpdate callback
   useEffect(() => {
@@ -485,8 +557,6 @@ export const SwapContextProvider: FC<{
           error,
           asLegacyTransaction,
           setAsLegacyTransaction,
-          priorityFeeInSOL,
-          setPriorityFeeInSOL,
         },
         setUserSlippage,
       }}
