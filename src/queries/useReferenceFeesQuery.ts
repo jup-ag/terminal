@@ -28,7 +28,7 @@ interface MarketReferenceFee {
 
 export const useReferenceFeesQuery = () => {
   return useQuery(
-    ['jup-claim-market-reference'],
+    ['market-reference-fees'],
     async () => {
       const data = (await fetch('https://cache.jup.ag/reference-fees')).json() as unknown as MarketReferenceFee;
       return data;
