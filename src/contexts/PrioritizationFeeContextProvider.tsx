@@ -93,7 +93,7 @@ interface PrioritizationFeeContextValue {
   priorityLevel: PriorityLevel;
 
   // derived state
-  prioritizationFeeLamports: number;
+  priorityFeeLamports: number;
 
   // method
   setPriorityFee: (priority: number) => void;
@@ -112,7 +112,7 @@ const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
   priorityLevel: PRIORITY_LEVEL_DEFAULT,
 
   // derived state
-  prioritizationFeeLamports: 0,
+  priorityFeeLamports: 0,
 
   // method
   setPriorityFee: () => {},
@@ -137,7 +137,7 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
   );
 
   // derrived state
-  const prioritizationFeeLamports = useMemo(() => toLamports(priorityFee, 9), [priorityFee]); // 1 SOL = 1_000_000_000 lamports
+  const priorityFeeLamports = useMemo(() => toLamports(priorityFee, 9), [priorityFee]); // 1 SOL = 1_000_000_000 lamports
 
   const getOptimalComputeUnitLimitAndPrice = async (payload: GetOptimalComputeUnitLimitAndPricePayload) => {
     // Unit
@@ -153,7 +153,7 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
 
     // Price
     const userPriorityFeeMicroLamports = computePriceMicroLamportsFromFeeLamports(
-      prioritizationFeeLamports,
+      priorityFeeLamports,
       simulationUnitsWithMarginError,
     );
     /**
@@ -179,7 +179,7 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
     <PrioritizationFeeContext.Provider
       value={{
         priorityFee,
-        prioritizationFeeLamports,
+        priorityFeeLamports,
         priorityMode,
         priorityLevel,
 

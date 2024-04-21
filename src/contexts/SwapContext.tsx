@@ -237,7 +237,7 @@ export const SwapContextProvider: FC<{
   } = useJupiter(jupiterParams);
 
   const { data: referenceFees } = useReferenceFeesQuery();
-  const { prioritizationFeeLamports, priorityLevel, getOptimalComputeUnitLimitAndPrice } = usePrioritizationFee();
+  const { priorityFeeLamports, priorityLevel, getOptimalComputeUnitLimitAndPrice } = usePrioritizationFee();
   const { connection } = useConnection();
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
@@ -515,13 +515,13 @@ export const SwapContextProvider: FC<{
   );
 
   const computeUnitPriceMicroLamports = useMemo(() => {
-    if (prioritizationFeeLamports === undefined) return 0;
-    return new Decimal(prioritizationFeeLamports)
+    if (priorityFeeLamports === undefined) return 0;
+    return new Decimal(priorityFeeLamports)
       .mul(10 ** 6) // lamports into microlamports
       .div(1_400_000) // divide by CU
       .round()
       .toNumber();
-  }, [prioritizationFeeLamports]);
+  }, [priorityFeeLamports]);
 
   // onFormUpdate callback
   useEffect(() => {
