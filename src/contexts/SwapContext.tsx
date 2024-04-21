@@ -315,7 +315,12 @@ export const SwapContextProvider: FC<{
         body: JSON.stringify({
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
-          computeUnitPriceMicroLamports: prioritizationFeeLamports,
+          /**
+           * Note: This is not optimal `computeUnitLimit` as it's not calculated based on the transaction `instructions`
+           * This is just a placeholder value to make the API call, we will replace it with the optimal value later,
+           * by simulate the transaction and get the optimal value.
+           */
+          computeUnitPriceMicroLamports,
         }),
       })
     ).json();
@@ -508,6 +513,15 @@ export const SwapContextProvider: FC<{
     },
     [refreshAccount, setupInitialAmount],
   );
+
+  const computeUnitPriceMicroLamports = useMemo(() => {
+    if (prioritizationFeeLamports === undefined) return 0;
+    return new Decimal(prioritizationFeeLamports)
+      .mul(10 ** 6) // lamports into microlamports
+      .div(1_400_000) // divide by CU
+      .round()
+      .toNumber();
+  }, [prioritizationFeeLamports]);
 
   // onFormUpdate callback
   useEffect(() => {
