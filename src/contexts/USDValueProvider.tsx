@@ -3,8 +3,8 @@ import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMe
 import { useDebounce, useLocalStorage } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
 import { useAccounts } from './accounts';
-import { useTokenContext } from './TokenContextProvider';
 import { useSwapContext } from './SwapContext';
+import { useTokenContext } from './TokenContextProvider';
 
 const MAXIMUM_PARAM_SUPPORT = 100;
 const CACHE_EXPIRE_TIME = 1000 * 60 * 1; // 1 min
@@ -21,6 +21,7 @@ export interface ITokenUSDValue {
 
 export interface USDValueState {
   tokenPriceMap: ITokenUSDValue;
+  getUSDValue(cgId: string | string[]): void;
 }
 
 export const USDValueProviderContext = createContext<USDValueState>({} as USDValueState);
@@ -44,8 +45,7 @@ const hasExpired = (timestamp: number) => {
 export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { accounts } = useAccounts();
   const { tokenMap } = useTokenContext();
-  const { fromTokenInfo, toTokenInfo,
-  } = useSwapContext();
+  const { fromTokenInfo, toTokenInfo } = useSwapContext();
 
   const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(STORAGE_KEY, {});
   const [addresses, setAddresses] = useState<Set<string>>(new Set());
@@ -190,9 +190,9 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const newSet = new Set([...prev]);
       if (fromTokenInfo?.address) newSet.add(fromTokenInfo?.address);
       if (toTokenInfo?.address) newSet.add(toTokenInfo?.address);
-      return newSet
+      return newSet;
     });
-  }, [fromTokenInfo, toTokenInfo])
+  }, [fromTokenInfo, toTokenInfo]);
 
   // use memo so that it avoid a rerendering
   const priceMap = useMemo(() => {
@@ -202,5 +202,21 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, [tokenPriceMap, cachedPrices]);
 
-  return <USDValueProviderContext.Provider value={{ tokenPriceMap: priceMap }}>{children}</USDValueProviderContext.Provider>;
+  const getUSDValue = useCallback((tokenAddresses: string | string[]) => {
+    setAddresses((prev) => {
+      let newTokenAddresses = Array.isArray(tokenAddresses) ? tokenAddresses : [tokenAddresses];
+      return new Set([...prev, ...newTokenAddresses]);
+    });
+  }, []);
+
+  return (
+    <USDValueProviderContext.Provider value={{ tokenPriceMap: priceMap, getUSDValue }}>
+      {children}
+    </USDValueProviderContext.Provider>
+  );
 };
+
+export function useUSDValue() {
+  const context = useContext(USDValueProviderContext);
+  return context;
+}

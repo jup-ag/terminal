@@ -11,21 +11,21 @@ import JupButton from './JupButton';
 
 import TokenIcon from './TokenIcon';
 
-import { WRAPPED_SOL_MINT } from '../constants';
-import { useSwapContext } from 'src/contexts/SwapContext';
-import useTimeDiff from './useTimeDiff/useTimeDiff';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import WalletIcon from 'src/icons/WalletIcon';
-import ChevronDownIcon from 'src/icons/ChevronDownIcon';
-import PriceInfo from './PriceInfo/index';
-import { RoutesSVG } from 'src/icons/RoutesSVG';
-import SwitchPairButton from './SwitchPairButton';
 import { SwapMode } from '@jup-ag/react-hook';
-import classNames from 'classnames';
-import { detectedSeparator } from 'src/misc/utils';
-import CoinBalanceUSD from './CoinBalanceUSD';
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
+import classNames from 'classnames';
+import { useSwapContext } from 'src/contexts/SwapContext';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import ChevronDownIcon from 'src/icons/ChevronDownIcon';
+import { RoutesSVG } from 'src/icons/RoutesSVG';
+import WalletIcon from 'src/icons/WalletIcon';
+import { detectedSeparator } from 'src/misc/utils';
+import { WRAPPED_SOL_MINT } from '../constants';
+import { CoinBalanceUSD } from './CoinBalanceUSD';
+import PriceInfo from './PriceInfo/index';
 import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
+import SwitchPairButton from './SwitchPairButton';
+import useTimeDiff from './useTimeDiff/useTimeDiff';
 
 const Form: React.FC<{
   onSubmit: () => void;
