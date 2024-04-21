@@ -37,6 +37,11 @@ export const useReferenceFeesQuery = () => {
       keepPreviousData: true,
       refetchInterval: 60_000,
       refetchIntervalInBackground: false,
+      retry: false,
+      retryOnMount: false,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     },
   );
 };
