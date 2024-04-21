@@ -14,7 +14,7 @@ import { toLamports } from 'src/misc/utils';
 // --------------------
 // Constants
 // --------------------
-const APP_NAME = 'Jupiter';
+const APP_NAME = 'jupiter-terminal';
 const COMPUTE_UNIT_MAX_LIMIT = 1_400_000;
 const COMPUTE_UNIT_LIMIT_MARGIN_ERROR = 1.2;
 const PRIORITY_FEE_DEFAULT = 0.000_3;

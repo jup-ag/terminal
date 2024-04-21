@@ -138,11 +138,11 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   // variable
   const isMaxPriorityMode = useMemo(() => unsavedPriorityMode === 'MAX', [unsavedPriorityMode]);
-  const unsavedPriorityFeeMicroLamports = useMemo(() => toLamports(unsavedPriorityFee, 9), [unsavedPriorityFee]);
+  const unsavedPriorityFeeLamports = useMemo(() => toLamports(unsavedPriorityFee, 9), [unsavedPriorityFee]);
   const isPrioritizationFeeLowerThanReferenceFee = useMemo(() => {
     const referenceFeeInMediumPriorityLevel = referenceFees?.jup.m ?? 0;
-    return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeMicroLamports;
-  }, [referenceFees?.jup.m, unsavedPriorityFeeMicroLamports]);
+    return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeLamports;
+  }, [referenceFees?.jup.m, unsavedPriorityFeeLamports]);
   /* END OF PRIORITY FEE */
 
   /* OTHERS */
