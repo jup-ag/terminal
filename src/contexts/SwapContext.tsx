@@ -466,57 +466,53 @@ export const SwapContextProvider: FC<{
     const transaction = new VersionedTransaction(messageV0);
 
     // Execute the transaction
-    try {
-      const swapResultPromise = executeTransaction({
-        connection,
-        wallet: wallet.adapter as SignerWalletAdapter,
-        inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
-        outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
-        sourceAddress: meta.sourceAddress,
-        destinationAddress: meta.destinationAddress,
-        swapTransaction: transaction,
-        blockhashWithExpiryBlockHeight: {
-          blockhash,
-          lastValidBlockHeight,
-        },
-        owner: new Owner(new PublicKey(walletPublicKey)),
-        wrapUnwrapSOL: Boolean(cleanupInstruction),
-        onTransaction: async (txid, awaiter) => {
-          const tx = txStatus?.txid === txid ? txStatus : undefined;
-          if (!tx) {
-            setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-          }
-
-          const success = !((await awaiter) instanceof Error);
-
-          setTxStatus((prev) => {
-            const tx = prev?.txid === txid ? prev : undefined;
-            if (tx) {
-              tx.status = success ? 'success' : 'fail';
-            }
-            return prev ? { ...prev } : undefined;
-          });
-        },
-      });
-
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new SwapTransactionTimeoutError()), 60_000);
-      });
-
-      try {
-        const swapResult = await Promise.race([timeoutPromise, swapResultPromise]);
-        return swapResult as SwapResult;
-      } catch (error) {
-        if (error instanceof SwapTransactionTimeoutError) {
-          setTxStatus({ txid: '', status: 'timeout' });
-          throw error;
+    const swapResultPromise = executeTransaction({
+      connection,
+      wallet: wallet.adapter as SignerWalletAdapter,
+      inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
+      outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
+      sourceAddress: meta.sourceAddress,
+      destinationAddress: meta.destinationAddress,
+      swapTransaction: transaction,
+      blockhashWithExpiryBlockHeight: {
+        blockhash,
+        lastValidBlockHeight,
+      },
+      owner: new Owner(new PublicKey(walletPublicKey)),
+      wrapUnwrapSOL: Boolean(cleanupInstruction),
+      onTransaction: async (txid, awaiter) => {
+        const tx = txStatus?.txid === txid ? txStatus : undefined;
+        if (!tx) {
+          setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
         }
+
+        const success = !((await awaiter) instanceof Error);
+
+        setTxStatus((prev) => {
+          const tx = prev?.txid === txid ? prev : undefined;
+          if (tx) {
+            tx.status = success ? 'success' : 'fail';
+          }
+          return prev ? { ...prev } : undefined;
+        });
+      },
+    });
+
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new SwapTransactionTimeoutError()), 60_000);
+    });
+
+    try {
+      const swapResult = (await Promise.race([timeoutPromise, swapResultPromise])) as SwapResult;
+      setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
+      return swapResult;
+    } catch (error) {
+      if (error instanceof SwapTransactionTimeoutError) {
+        setTxStatus({ txid: '', status: 'timeout' });
+        return null;
       }
 
-      // Note: This is not reachable due to race condition handling
-      setTxStatus({ txid: '', status: 'fail' });
-      return null;
-    } catch (error) {
+      // Not `SwapTransactionTimeoutError`
       setTxStatus({ txid: '', status: 'fail' });
       console.log('Swap error', error);
       return null;
