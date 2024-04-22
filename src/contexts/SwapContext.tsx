@@ -514,8 +514,10 @@ export const SwapContextProvider: FC<{
       }
 
       // Note: This is not reachable due to race condition handling
+      setTxStatus({ txid: '', status: 'fail' });
       return null;
     } catch (error) {
+      setTxStatus({ txid: '', status: 'fail' });
       console.log('Swap error', error);
       return null;
     }
