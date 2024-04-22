@@ -1,6 +1,6 @@
-import { Owner, executeTransaction } from '@jup-ag/common';
+import { executeTransaction } from '@jup-ag/common';
 import { ZERO } from '@jup-ag/math';
-import { QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
+import { Owner, QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
 import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import {
@@ -65,7 +65,7 @@ export interface ISwapContext {
   toTokenInfo?: TokenInfo | null;
   quoteResponseMeta: QuoteResponseMeta | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
-  onSubmit: () => Promise<void>;
+  onSubmit: () => Promise<SwapResult | null>;
   onRequestIx: () => Promise<IOnRequestIxCallback>;
   lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null } | null;
   formProps: FormProps;
@@ -90,6 +90,12 @@ export interface ISwapContext {
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
+
+export class SwapTransactionTimeoutError extends Error {
+  constructor() {
+    super('Transaction timed-out');
+  }
+}
 
 export function useSwapContext() {
   const context = useContext(SwapContext);
@@ -460,25 +466,59 @@ export const SwapContextProvider: FC<{
     const transaction = new VersionedTransaction(messageV0);
 
     // Execute the transaction
-    const swapResult = await executeTransaction({
-      connection,
-      wallet: wallet.adapter as SignerWalletAdapter,
-      onTransaction: undefined,
-      inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
-      outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
-      sourceAddress: meta.sourceAddress,
-      destinationAddress: meta.destinationAddress,
-      swapTransaction: transaction,
-      blockhashWithExpiryBlockHeight: {
-        blockhash,
-        lastValidBlockHeight,
-      },
-      owner: new Owner(new PublicKey(walletPublicKey)),
-      wrapUnwrapSOL: Boolean(cleanupInstruction),
-    });
+    try {
+      const swapResultPromise = executeTransaction({
+        connection,
+        wallet: wallet.adapter as SignerWalletAdapter,
+        inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
+        outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
+        sourceAddress: meta.sourceAddress,
+        destinationAddress: meta.destinationAddress,
+        swapTransaction: transaction,
+        blockhashWithExpiryBlockHeight: {
+          blockhash,
+          lastValidBlockHeight,
+        },
+        owner: new Owner(new PublicKey(walletPublicKey)),
+        wrapUnwrapSOL: Boolean(cleanupInstruction),
+        onTransaction: async (txid, awaiter) => {
+          const tx = txStatus?.txid === txid ? txStatus : undefined;
+          if (!tx) {
+            setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+          }
 
-    // Handle the result
-    onSubmitWithIx(swapResult);
+          const success = !((await awaiter) instanceof Error);
+
+          setTxStatus((prev) => {
+            const tx = prev?.txid === txid ? prev : undefined;
+            if (tx) {
+              tx.status = success ? 'success' : 'fail';
+            }
+            return prev ? { ...prev } : undefined;
+          });
+        },
+      });
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new SwapTransactionTimeoutError()), 60_000);
+      });
+
+      try {
+        const swapResult = await Promise.race([timeoutPromise, swapResultPromise]);
+        return swapResult as SwapResult;
+      } catch (error) {
+        if (error instanceof SwapTransactionTimeoutError) {
+          setTxStatus({ txid: '', status: 'timeout' });
+          throw error;
+        }
+      }
+
+      // Note: This is not reachable due to race condition handling
+      return null;
+    } catch (error) {
+      console.log('Swap error', error);
+      return null;
+    }
   }, [
     connection,
     getAddressLookupTableAccounts,
