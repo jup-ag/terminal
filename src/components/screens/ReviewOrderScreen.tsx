@@ -89,7 +89,8 @@ const ConfirmationScreen = () => {
           type="button"
           onClick={onSubmit}
         >
-          <V2SexyChameleonText>Confirm</V2SexyChameleonText>
+          {/* <V2SexyChameleonText>Confirm</V2SexyChameleonText> */}
+          <div className="text-white">Confirm</div>
         </JupButton>
       )}
     </div>

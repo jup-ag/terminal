@@ -240,13 +240,17 @@ const V2FeatureButton = () => {
               <div className="w-full mt-4 border-b border-white/10" />
 
               <Title>More callbacks</Title>
-              <Desc>With new callbacks that should make state sharing, notifications, and more, between your dApp and Terminal even easier.</Desc>
+              <Desc>
+                With new callbacks that should make state sharing, notifications, and more, between your dApp and
+                Terminal even easier.
+              </Desc>
               <div className="w-full mt-2">
                 <SnippetNewCallbacks />
               </div>
 
               <JupButton className="my-20 w-[200px]" size="lg" onClick={onExit}>
-                <V2SexyChameleonText>Close</V2SexyChameleonText>
+                {/* <V2SexyChameleonText>Close</V2SexyChameleonText> */}
+                <div className="text-white">Close</div>
               </JupButton>
             </div>
           </div>

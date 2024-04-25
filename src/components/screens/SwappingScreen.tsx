@@ -261,9 +261,10 @@ const SwappingScreen = () => {
 
         <div className="flex px-5 pb-4 mt-auto space-x-2">
           <JupButton darkMode={darkMode} size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
-            <V2SexyChameleonText>
+            {/* <V2SexyChameleonText>
               <span className="text-sm">Swap More</span>
-            </V2SexyChameleonText>
+            </V2SexyChameleonText> */}
+            <div className="text-white">Swap More</div>
           </JupButton>
 
           {displayMode !== 'integrated' ? (
@@ -300,7 +301,8 @@ const SwappingScreen = () => {
               type="button"
               onClick={onGoBack}
             >
-              <V2SexyChameleonText>Retry</V2SexyChameleonText>
+              {/* <V2SexyChameleonText>Retry</V2SexyChameleonText> */}
+              <div className="text-white">Retry</div>
             </JupButton>
           </div>
         </div>
