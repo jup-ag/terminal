@@ -1,9 +1,9 @@
-import Decimal from 'decimal.js';
-import BN from 'bn.js';
-import JSBI from 'jsbi';
-import { RefObject, useEffect, useRef } from 'react';
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
+import BN from 'bn.js';
+import Decimal from 'decimal.js';
+import JSBI from 'jsbi';
+import { RefObject, useEffect, useRef } from 'react';
 
 const userLocale =
   typeof window !== 'undefined'
@@ -154,4 +154,11 @@ export function getAssociatedTokenAddressSync(mint: PublicKey, owner: PublicKey,
     ASSOCIATED_TOKEN_PROGRAM_ID,
   );
   return ata;
+}
+
+export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
+  const amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
+  const precision = Math.pow(10, decimals);
+
+  return Math.floor(amount * precision);
 }
