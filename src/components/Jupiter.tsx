@@ -1,7 +1,7 @@
 import { JupiterProvider } from '@jup-ag/react-hook';
 import { useConnection } from '@jup-ag/wallet-adapter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { SwapContextProvider } from 'src/contexts/SwapContext';
@@ -11,6 +11,7 @@ import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { IInit } from 'src/types';
 
 import { PublicKey } from '@solana/web3.js';
+import { PrioritizationFeeContextProvider } from 'src/contexts/PrioritizationFeeContextProvider';
 import CloseIcon from 'src/icons/CloseIcon';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
@@ -96,20 +97,22 @@ const JupiterApp = (props: IInit) => {
           platformFeeAndAccounts={platformFeeAndAccounts}
           asLegacyTransaction={asLegacyTransaction}
         >
-          <SwapContextProvider
-            displayMode={displayMode}
-            formProps={formProps}
-            scriptDomain={props.scriptDomain}
-            asLegacyTransaction={asLegacyTransaction}
-            setAsLegacyTransaction={setAsLegacyTransaction}
-            maxAccounts={maxAccounts}
-            useUserSlippage={props.useUserSlippage ?? true}
-            slippagePresets={props.slippagePresets}
-          >
-            <USDValueProvider>
-              <Content />
-            </USDValueProvider>
-          </SwapContextProvider>
+          <PrioritizationFeeContextProvider>
+            <SwapContextProvider
+              displayMode={displayMode}
+              formProps={formProps}
+              scriptDomain={props.scriptDomain}
+              asLegacyTransaction={asLegacyTransaction}
+              setAsLegacyTransaction={setAsLegacyTransaction}
+              maxAccounts={maxAccounts}
+              useUserSlippage={props.useUserSlippage ?? true}
+              slippagePresets={props.slippagePresets}
+            >
+              <USDValueProvider>
+                <Content />
+              </USDValueProvider>
+            </SwapContextProvider>
+          </PrioritizationFeeContextProvider>
         </JupiterProvider>
       </AccountsProvider>
     </QueryClientProvider>

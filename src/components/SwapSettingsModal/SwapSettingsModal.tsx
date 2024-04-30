@@ -1,38 +1,49 @@
+import classNames from 'classnames';
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
-import classNames from 'classnames';
 
-import SwapSettingButton from './SwapSettingButton';
-import InformationMessage from '../InformationMessage';
 import CloseIcon from 'src/icons/CloseIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
+import InformationMessage from '../InformationMessage';
 import Tooltip from '../Tooltip';
+import SwapSettingButton from './SwapSettingButton';
 
-import Decimal from 'decimal.js';
-import JupButton from '../JupButton';
-import { detectedSeparator, formatNumber } from 'src/misc/utils';
-import {
-  PRIORITY_HIGH,
-  PRIORITY_MAXIMUM_SUGGESTED,
-  PRIORITY_NONE,
-  PRIORITY_TURBO,
-  useSwapContext,
-} from 'src/contexts/SwapContext';
-import Toggle from '../Toggle';
-import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
-import ExternalIcon from 'src/icons/ExternalIcon';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { DEFAULT_SLIPPAGE } from 'src/constants';
+import { PriorityLevel, PriorityMode, usePrioritizationFee } from 'src/contexts/PrioritizationFeeContextProvider';
+import { useSwapContext } from 'src/contexts/SwapContext';
+import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import ExternalIcon from 'src/icons/ExternalIcon';
+import { SOL_TOKEN_INFO } from 'src/misc/constants';
+import { detectedSeparator, formatNumber, toLamports } from 'src/misc/utils';
+import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
+import { CoinBalanceUSD } from '../CoinBalanceUSD';
+import JupButton from '../JupButton';
+import Toggle from '../Toggle';
+
+const PRIORITY_LEVEL_MAP: Record<PriorityLevel, string> = {
+  MEDIUM: 'Fast',
+  HIGH: 'Turbo',
+  VERY_HIGH: 'Ultra',
+};
+
+const PRIORITY_MODE_MAP: Record<PriorityMode, string> = {
+  MAX: 'Max Cap',
+  EXACT: 'Exact Fee',
+};
 
 const Separator = () => <div className="my-4 border-b border-white/10" />;
 
-export type Forms = {
+type Form = {
+  // Priority Fee
+  unsavedPriorityFee: number;
+  unsavedPriorityMode: PriorityMode;
+  unsavedPriorityLevel: PriorityLevel;
+  hasUnsavedFeeChanges: boolean;
+
   slippagePreset?: string;
   slippageInput?: string;
-  priorityPreset?: number;
-  priorityInSOLInput?: number;
-  priorityInSOLPreset?: number;
 
   onlyDirectRoutes: boolean;
   useWSol: boolean;
@@ -40,41 +51,34 @@ export type Forms = {
   preferredTokenListMode: PreferredTokenListMode;
 };
 
+// constants
+const MINIMUM_PRIORITY_FEE = 0;
 const MINIMUM_SLIPPAGE = 0;
 const MAXIMUM_SLIPPAGE = 50; // 50%
 const MINIMUM_SUGGESTED_SLIPPAGE = 0.05; // 0.05%
 const MAXIMUM_SUGGESTED_SLIPPAGE = 10; // 10%
 
-export const PRIORITY_TEXT = {
-  [PRIORITY_NONE]: `Normal`,
-  [PRIORITY_HIGH]: `High`,
-  [PRIORITY_TURBO]: `Turbo`,
-};
-
-const PRIORITY_PRESET: number[] = [PRIORITY_NONE, PRIORITY_HIGH, PRIORITY_TURBO];
-
-const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
+const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
     form: { slippageBps },
     setForm,
-    jupiter: { asLegacyTransaction, setAsLegacyTransaction, priorityFeeInSOL, setPriorityFeeInSOL },
+    jupiter: { asLegacyTransaction, setAsLegacyTransaction },
     setUserSlippage,
   } = useSwapContext();
+  const { data: referenceFees } = useReferenceFeesQuery();
   const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
+  const { priorityFee, priorityMode, priorityLevel, setPriorityFee, setPriorityMode, setPriorityLevel } =
+    usePrioritizationFee();
   const { wallet } = useWalletPassThrough();
 
-  const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], [DEFAULT_SLIPPAGE]);
+  const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], []);
 
   const slippageInitialPreset = useMemo(() => {
     const value = slippageBps / 100;
     return SLIPPAGE_PRESET.find((preset) => Number(preset) === value);
   }, [slippageBps, SLIPPAGE_PRESET]);
 
-  const priorityInitialPreset = useMemo(() => {
-    return PRIORITY_PRESET.find((preset) => Number(preset) === priorityFeeInSOL);
-  }, [priorityFeeInSOL]);
-
-  const form = useForm<Forms>({
+  const form = useForm<Form>({
     defaultValues: {
       ...(slippageBps
         ? slippageInitialPreset
@@ -85,27 +89,29 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               slippageInput: String(slippageBps / 100),
             }
         : {}),
-      ...(typeof priorityFeeInSOL !== 'undefined' && typeof priorityInitialPreset !== 'undefined'
-        ? {
-            priorityInSOLPreset: priorityInitialPreset,
-          }
-        : {
-            priorityInSOLInput: priorityFeeInSOL,
-          }),
       asLegacyTransaction,
       preferredTokenListMode,
+      // Priority Fee
+      unsavedPriorityFee: priorityFee,
+      unsavedPriorityMode: priorityMode,
+      unsavedPriorityLevel: priorityLevel,
+      hasUnsavedFeeChanges: false,
     },
   });
 
   /* SLIPPAGE */
+  // ref
+  const inputRef = useRef<HTMLInputElement>();
   const inputFocused = useRef(!slippageInitialPreset);
 
+  // form value
   const slippageInput = form.watch('slippageInput');
   const slippagePreset = form.watch('slippagePreset');
+
+  // variable
   const isWithinSlippageLimits = useMemo(() => {
     return Number(slippageInput) >= MINIMUM_SLIPPAGE && Number(slippageInput) <= MAXIMUM_SLIPPAGE;
   }, [slippageInput]);
-
   const slippageSuggestionText = useMemo(() => {
     if (inputFocused.current === false) return '';
     if (Number(slippageInput) <= MINIMUM_SUGGESTED_SLIPPAGE) {
@@ -118,85 +124,94 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
 
     return '';
   }, [slippageInput]);
-
-  const inputRef = useRef<HTMLInputElement>();
   /* END OF SLIPPAGE */
 
   /* PRIORITY FEE */
-  const [inputPriorityFocused, setInputPriorityFocused] = useState(typeof priorityInitialPreset === 'undefined');
+  // state
+  const [isPriorityFeeInputFocused, setIsPriorityFeeInputFocused] = useState(false);
 
-  const priorityInSOLPreset = form.watch('priorityInSOLPreset');
-  const inputPriorityRef = useRef<HTMLInputElement>();
-  const priorityInSOLInput = form.watch('priorityInSOLInput');
-  const isWithinPriorityLimits = useMemo(() => {
-    return Number(priorityInSOLInput) <= PRIORITY_MAXIMUM_SUGGESTED;
-  }, [priorityInSOLInput]);
+  // form value
+  const unsavedPriorityFee = form.watch('unsavedPriorityFee');
+  const unsavedPriorityMode = form.watch('unsavedPriorityMode');
+  const unsavedPriorityLevel = form.watch('unsavedPriorityLevel');
+  const hasUnsavedFeeChanges = form.watch('hasUnsavedFeeChanges');
 
-  const prioritySuggestionText = useMemo(() => {
-    if (Number(priorityInSOLInput) > PRIORITY_MAXIMUM_SUGGESTED) {
-      return (
-        <span>
-          Warning, max priority fee is over the suggested amount of {formatNumber.format(PRIORITY_MAXIMUM_SUGGESTED)}{' '}
-          SOL.
-        </span>
-      );
-    }
-    return '';
-  }, [priorityInSOLInput]);
+  // variable
+  const isMaxPriorityMode = useMemo(() => unsavedPriorityMode === 'MAX', [unsavedPriorityMode]);
+  const unsavedPriorityFeeLamports = useMemo(() => toLamports(unsavedPriorityFee, 9), [unsavedPriorityFee]);
+  const isPrioritizationFeeLowerThanReferenceFee = useMemo(() => {
+    const referenceFeeInMediumPriorityLevel = referenceFees?.jup.m ?? 0;
+    return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeLamports;
+  }, [referenceFees?.jup.m, unsavedPriorityFeeLamports]);
   /* END OF PRIORITY FEE */
 
-  const isDisabled = (() => {
-    const isSlippageDisabled = (() => {
-      if (inputFocused.current && !slippageInput) return true;
-      if (slippagePreset) return false;
-      else return !isWithinSlippageLimits;
-    })();
-
-    const isPriorityInputDisabled = (() => {
-      if (inputPriorityFocused && !priorityInSOLInput) return true;
-      if (typeof priorityInSOLPreset !== 'undefined') return false;
-      else return !isWithinPriorityLimits;
-    })();
-
-    return isSlippageDisabled || isPriorityInputDisabled;
-  })();
-
+  /* OTHERS */
   const asLegacyTransactionInput = form.watch('asLegacyTransaction');
   const preferredTokenListModeInput = form.watch('preferredTokenListMode');
-  const onClickSave = useCallback((values: Forms) => {
-    const {
-      slippageInput,
-      slippagePreset,
-      priorityInSOLInput,
-      priorityInSOLPreset,
-      asLegacyTransaction,
-      preferredTokenListMode,
-    } = values;
-    const value = slippageInput ? Number(slippageInput) : Number(slippagePreset);
-
-    if (typeof value === 'number') {
-      setForm((prev) => ({
-        ...prev,
-        slippageBps: value * 100,
-      }));
-    }
-
-    const priority = Number(priorityInSOLInput ?? priorityInSOLPreset);
-    if (typeof priority === 'number') {
-      setPriorityFeeInSOL(priority);
-    }
-
-    setAsLegacyTransaction(asLegacyTransaction);
-    setPreferredTokenListMode(preferredTokenListMode);
-    // To save user slippage into local storage
-    setUserSlippage(value);
-
-    closeModal();
-  }, []);
-
   const detectedVerTxSupport = useMemo(() => {
     return wallet?.adapter?.supportedTransactionVersions?.has(0);
   }, [wallet]);
+  /* END OF OTHERS */
+
+  const isButtonDisabled = useMemo(() => {
+    // Slippage
+    if (inputFocused.current && !slippageInput) {
+      return true;
+    }
+    if (!slippagePreset) {
+      return !isWithinSlippageLimits;
+    }
+
+    // Priority Fee
+    if (hasUnsavedFeeChanges && unsavedPriorityFee <= MINIMUM_PRIORITY_FEE) {
+      return true;
+    }
+
+    return false;
+  }, [hasUnsavedFeeChanges, isWithinSlippageLimits, slippageInput, slippagePreset, unsavedPriorityFee]);
+
+  // method
+  const onClickSave = useCallback(
+    (values: Form) => {
+      const { slippageInput, slippagePreset, asLegacyTransaction, preferredTokenListMode } = values;
+      const value = slippageInput ? Number(slippageInput) : Number(slippagePreset);
+
+      if (typeof value === 'number') {
+        setForm((prev) => ({
+          ...prev,
+          slippageBps: value * 100,
+        }));
+      }
+
+      setAsLegacyTransaction(asLegacyTransaction);
+      setPreferredTokenListMode(preferredTokenListMode);
+      // To save user slippage into local storage
+      setUserSlippage(value);
+
+      // Priority Fee
+      if (hasUnsavedFeeChanges) {
+        setPriorityFee(unsavedPriorityFee);
+        setPriorityMode(unsavedPriorityMode);
+        setPriorityLevel(unsavedPriorityLevel);
+      }
+
+      closeModal();
+    },
+    [
+      closeModal,
+      hasUnsavedFeeChanges,
+      setAsLegacyTransaction,
+      setForm,
+      setPreferredTokenListMode,
+      setPriorityFee,
+      setPriorityLevel,
+      setPriorityMode,
+      setUserSlippage,
+      unsavedPriorityFee,
+      unsavedPriorityLevel,
+      unsavedPriorityMode,
+    ],
+  );
 
   return (
     <div className={classNames('w-full rounded-xl flex flex-col bg-jupiter-bg text-white shadow-xl max-h-[90%]')}>
@@ -214,10 +229,10 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
         className={classNames('relative w-full overflow-y-auto webkit-scrollbar overflow-x-hidden')}
       >
         <div>
+          {/**************************** PRIORTY *****************************/}
           <div className={classNames('mt-2 px-5')}>
-            {/**************************** PRIORTY *****************************/}
-            <div className="flex items-center text-sm text-white/75 font-[500]">
-              <span>Transaction Priority</span>
+            <div className="flex items-center text-sm font-semibold">
+              <span>Global Priority Fee</span>
               <Tooltip
                 variant="dark"
                 className="!left-0 !top-16 w-[50%]"
@@ -234,113 +249,177 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
               </Tooltip>
             </div>
 
-            <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden">
-              <Controller
-                name="priorityInSOLInput"
-                control={form.control}
-                render={({}) => {
-                  return (
-                    <>
-                      {PRIORITY_PRESET.map((item, idx) => {
-                        const name = PRIORITY_TEXT[item as keyof typeof PRIORITY_TEXT];
-                        return (
-                          <SwapSettingButton
-                            key={idx}
-                            idx={idx}
-                            itemsCount={PRIORITY_PRESET.length}
-                            roundBorder={idx === 0 ? 'left' : idx === SLIPPAGE_PRESET.length - 1 ? 'right' : undefined}
-                            highlighted={!inputPriorityFocused && priorityInSOLPreset === item}
-                            onClick={() => {
-                              form.setValue('priorityInSOLPreset', item);
-                              form.setValue('priorityInSOLInput', undefined);
-                              setInputPriorityFocused(false);
-                            }}
-                          >
-                            <div className="whitespace-nowrap">
-                              <p className="text-sm text-white">{name}</p>
-                              <span className="mt-1 text-xs">{item} SOL</span>
-                            </div>
-                          </SwapSettingButton>
-                        );
-                      })}
-                    </>
-                  );
-                }}
-              />
+            <p className="text-xs text-white/50 font-[500] mt-2">
+              These fees apply across Jupiter’s entire product suite, such as Swap, Perps, DCA, Limit Order
+            </p>
+
+            <div
+              className={`transition-height duration-300 ease-in-out animate-fade-in ${
+                isMaxPriorityMode ? 'h-[94px] opacity-100' : 'h-0 opacity-0 overflow-hidden'
+              }`}
+            >
+              <p className="text-sm text-white/75 font-[500] mt-4">Priority Level</p>
+              <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden">
+                <Controller
+                  name="unsavedPriorityLevel"
+                  control={form.control}
+                  render={({ field: { value, onChange } }) => {
+                    return (
+                      <>
+                        {Object.entries(PRIORITY_LEVEL_MAP).map(([level, name], idx) => {
+                          return (
+                            <SwapSettingButton
+                              key={idx}
+                              idx={idx}
+                              itemsCount={Object.keys(PRIORITY_LEVEL_MAP).length}
+                              roundBorder={
+                                idx === 0
+                                  ? 'left'
+                                  : idx === Object.keys(PRIORITY_LEVEL_MAP).length - 1
+                                  ? 'right'
+                                  : undefined
+                              }
+                              highlighted={value === level}
+                              onClick={() => {
+                                form.setValue('hasUnsavedFeeChanges', true);
+                                onChange(level);
+                              }}
+                            >
+                              <div className="whitespace-nowrap">
+                                <p className="text-sm text-white">{name}</p>
+                              </div>
+                            </SwapSettingButton>
+                          );
+                        })}
+                      </>
+                    );
+                  }}
+                />
+              </div>
             </div>
 
-            <div className="mt-1">
-              <span className="text-white/75 font-500 text-xs">or set manually:</span>
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-sm text-white/75 font-[500]">Priority Mode</p>
+              <div className="flex items-center rounded-xl ring-1 ring-white/5 overflow-hidden">
+                <Controller
+                  name="unsavedPriorityMode"
+                  control={form.control}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <>
+                        {Object.entries(PRIORITY_MODE_MAP).map(([level, name], idx) => {
+                          return (
+                            <SwapSettingButton
+                              key={idx}
+                              idx={idx}
+                              itemsCount={Object.keys(PRIORITY_MODE_MAP).length}
+                              roundBorder={
+                                idx === 0
+                                  ? 'left'
+                                  : idx === Object.keys(PRIORITY_MODE_MAP).length - 1
+                                  ? 'right'
+                                  : undefined
+                              }
+                              className="h-7"
+                              highlighted={value === level}
+                              onClick={() => {
+                                form.setValue('hasUnsavedFeeChanges', true);
+                                onChange(level);
+                              }}
+                            >
+                              <div className="whitespace-nowrap">
+                                <p className="text-xxs whitespace-nowrap">{name}</p>
+                              </div>
+                            </SwapSettingButton>
+                          );
+                        })}
+                      </>
+                    );
+                  }}
+                />
+              </div>
+            </div>
 
+            <div className="text-xs text-white/25 font-normal mt-2">
+              {isMaxPriorityMode ? (
+                <>
+                  <p>Jupiter intelligently minimizes and decides the best fee for you.</p>
+                  <p>Set a max cap to prevent overpaying.</p>
+                </>
+              ) : (
+                'Jupiter will use the exact fee you set.'
+              )}
+            </div>
+
+            <div className="mt-2">
+              <div className="flex items-center justify-between mt-4">
+                {isMaxPriorityMode ? (
+                  <p className="text-sm text-white/75 font-[500]">Set Max Cap</p>
+                ) : (
+                  <p className="text-sm text-white/75 font-[500]">Exact Fee</p>
+                )}
+                <span className="text-xxs mt-1 text-white/25 font-normal self-end">
+                  <CoinBalanceUSD
+                    tokenInfo={SOL_TOKEN_INFO}
+                    amount={unsavedPriorityFee?.toString()}
+                    maxDecimals={4}
+                    prefix="~"
+                  />
+                </span>
+              </div>
               <div
                 className={`relative mt-1 ${
-                  inputPriorityFocused ? 'v2-border-gradient v2-border-gradient-center' : ''
+                  isPriorityFeeInputFocused ? 'v2-border-gradient v2-border-gradient-center' : ''
                 }`}
               >
                 <Controller
-                  name={'priorityInSOLInput'}
+                  name={'unsavedPriorityFee'}
                   control={form.control}
-                  render={({ field: { onChange, value } }) => {
+                  render={({ field: { value, onChange } }) => {
                     const thousandSeparator = detectedSeparator === ',' ? '.' : ',';
 
                     return (
                       <NumericFormat
-                        value={typeof value === 'undefined' ? '' : value}
-                        decimalScale={9}
-                        thousandSeparator={thousandSeparator}
-                        getInputRef={(el: HTMLInputElement) => (inputPriorityRef.current = el)}
-                        allowNegative={false}
+                        value={value}
                         onValueChange={({ floatValue }) => {
+                          if (typeof floatValue !== 'number') return;
+                          form.setValue('hasUnsavedFeeChanges', true);
                           onChange(floatValue);
-
-                          // Prevent both slippageInput and slippagePreset to reset each oter
-                          if (typeof floatValue !== 'undefined') {
-                            form.setValue('priorityInSOLPreset', undefined);
-                          }
                         }}
                         onFocus={() => {
-                          inputPriorityRef.current?.focus();
-                          setInputPriorityFocused(true);
+                          setIsPriorityFeeInputFocused(true);
                         }}
-                        maxLength={12}
-                        placeholder={'0.0000'}
+                        onBlur={() => {
+                          setIsPriorityFeeInputFocused(false);
+                        }}
+                        inputMode="decimal"
+                        decimalScale={9}
+                        allowNegative={false}
+                        thousandSeparator={thousandSeparator}
+                        allowedDecimalSeparators={['.', ',']}
+                        suffix=" SOL"
+                        placeholder={'Enter custom value'}
                         className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
-                        decimalSeparator={detectedSeparator}
                       />
                     );
                   }}
                 />
-                <span className="absolute right-4 top-4 text-sm text-white/50">SOL</span>
-              </div>
-
-              <div className="">
-                {typeof priorityInSOLPreset === 'undefined' && priorityInSOLInput !== 0 ? (
-                  <span className="text-xs text-white/50">
-                    <span>This will cost an additional {new Decimal(priorityInSOLInput || 0).toString()} SOL.</span>
-                  </span>
-                ) : null}
-
-                {inputPriorityFocused && !isWithinPriorityLimits && (
-                  <InformationMessage
-                    iconSize={14}
-                    className="!text-jupiter-primary !px-0"
-                    message={`Please set a priority fee within ${formatNumber.format(PRIORITY_MAXIMUM_SUGGESTED)} SOL`}
-                  />
-                )}
-
-                {typeof priorityInSOLPreset === 'undefined' && prioritySuggestionText && (
-                  <InformationMessage
-                    iconSize={14}
-                    className="!text-jupiter-primary !px-0 mb-2"
-                    message={prioritySuggestionText}
-                  />
-                )}
               </div>
             </div>
+            {isPrioritizationFeeLowerThanReferenceFee && (
+              <InformationMessage
+                iconSize={24}
+                className="!text-jupiter-primary !px-0"
+                message={
+                  'Your current maximum fee is below the market rate. Please raise it to ensure your transactions are processed.'
+                }
+              />
+            )}
 
             <Separator />
-            {/**************************** SLIPPAGE *****************************/}
-            <div className="flex items-center text-sm text-white/75 font-[500]">
+
+            {/* /**************************** SLIPPAGE **************************** */}
+            <div className="flex items-center text-sm font-semibold">
               <span>Slippage Settings</span>
             </div>
 
@@ -503,7 +582,7 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
           </div>
 
           <div className="px-5 pb-5">
-            <JupButton type="submit" className={'w-full mt-4'} disabled={isDisabled} size={'lg'}>
+            <JupButton type="submit" className={'w-full mt-4'} disabled={isButtonDisabled} size={'lg'}>
               <span>Save Settings</span>
             </JupButton>
           </div>
@@ -513,4 +592,4 @@ const SetSlippage: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   );
 };
 
-export default SetSlippage;
+export default SwapSettingsModal;
