@@ -11,6 +11,7 @@ import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import JupiterLogo from 'src/icons/JupiterLogo';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 const ErrorIcon = () => {
   return (
@@ -54,6 +55,8 @@ const SwappingScreen = () => {
 
   const { tokenPriceMap } = useUSDValueProvider();
 
+  const { publicKey } = useWalletPassThrough();
+
   const onSwapMore = () => {
     reset();
     setErrorMessage('');
@@ -88,6 +91,7 @@ const SwappingScreen = () => {
           swapResult: lastSwapResult?.swapResult,
           quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
           result: {
+            connectedAddress: publicKey,
             from_token_ca: fromTokenInfo?.address,
             from_token_amount: lastSwapResult.swapResult.inputAmount / 10 ** (fromTokenInfo?.decimals || 0),
             from_token_chain: fromTokenInfo?.chainId,
