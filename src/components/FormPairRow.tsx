@@ -35,7 +35,7 @@ const FormPairRow: React.FC<{
       translate="no"
     >
       <div
-        className="flex items-center rounded-xl space-x-4 my-2 p-3 justify-between bg-[#2C2D33] hover:bg-black/10"
+        className="flex items-center rounded-xl space-x-4 my-2 p-3 justify-between bg-v2-lily/10 hover:bg-v2-lily/5"
         onClick={() => onSubmit(item)}
       >
         <div className="flex-shrink-0">

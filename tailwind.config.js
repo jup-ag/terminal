@@ -15,13 +15,14 @@ module.exports = {
     extend: {
       colors: {
         'jupiter-input-light': '#EBEFF1',
-        'jupiter-bg': '#3A3B43',
         'jupiter-jungle-green': '#24AE8F',
         'jupiter-primary': '#FBA43A',
         warning: '#FAA63C',
         
         'v3-bg': 'rgba(28, 41, 54, 1)',
         'v3-primary': '#c7f284',
+        'v3-modal': '#222B33',
+        'v2-lily': '#E8F9FF',
       },
       fontSize: {
         xxs: ['0.625rem', '1rem'],

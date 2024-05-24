@@ -200,30 +200,14 @@ export const SwapContextProvider: FC<{
     setupInitialAmount();
   }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount, tokenMap]);
 
-  const paramsDeps = useMemo(() => {
-    return [
-      form.fromMint,
-      form.slippageBps,
-      form.toMint,
-      fromTokenInfo?.address,
-      jupiterSwapMode,
-      maxAccounts,
-      toTokenInfo?.address,
-      // We don't want both to trigger the effect, since ExactIn and ExactOut is exclusive
-      jupiterSwapMode === SwapMode.ExactOut ? form.toValue : form.fromValue,
-    ].join('')
-  }, [
-    form.fromMint,
-    form.fromValue,
-    form.slippageBps,
-    form.toMint,
-    form.toValue,
-    fromTokenInfo?.address,
-    jupiterSwapMode,
-    maxAccounts,
-    toTokenInfo?.address,
-  ]);
-
+  // We dont want to effect to keep trigger for fromValue and toValue
+  const userInputChange = useMemo(() => {
+    if (jupiterSwapMode === SwapMode.ExactOut) {
+      return form.toValue;
+    } else {
+      return form.fromValue;
+    }
+  }, [form.fromValue, form.toValue, jupiterSwapMode]);
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
       if (jupiterSwapMode === SwapMode.ExactOut) {
@@ -244,7 +228,16 @@ export const SwapContextProvider: FC<{
       maxAccounts,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsDeps]);
+  }, [
+    form.fromMint,
+    form.slippageBps,
+    form.toMint,
+    userInputChange,
+    fromTokenInfo?.address,
+    jupiterSwapMode,
+    maxAccounts,
+    toTokenInfo?.address,
+  ]);
 
   const {
     quoteResponseMeta: ogQuoteResponseMeta,

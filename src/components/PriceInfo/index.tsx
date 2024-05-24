@@ -126,7 +126,7 @@ const Index = ({
 
           {priorityFee > 0 ? (
             <div className="flex items-center justify-between text-xs">
-              <div className="text-white/30">Priority Fee</div>
+              <div className="text-white/30">Max Priority Fee</div>
               <div className="text-white/30">{priorityFee} SOL</div>
             </div>
           ) : null}

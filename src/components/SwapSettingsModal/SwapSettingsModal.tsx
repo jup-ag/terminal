@@ -214,7 +214,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
   );
 
   return (
-    <div className={classNames('w-full rounded-xl flex flex-col bg-jupiter-bg text-white shadow-xl max-h-[90%]')}>
+    <div className={classNames('w-full rounded-xl flex flex-col bg-v3-modal text-white shadow-xl max-h-[90%]')}>
       <div className="flex justify-between items-center p-4 border-b border-white/10">
         <div className="text-sm font-semibold">
           <span>Swap Settings</span>
@@ -253,13 +253,54 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
               These fees apply across Jupiter’s entire product suite, such as Swap, Perps, DCA, Limit Order
             </p>
 
+            <div className="flex flex-col mt-2">
+              <p className="text-xs font-semibold">Priority Mode</p>
+              <div className="mt-2 flex items-center rounded-xl ring-1 ring-white/5 overflow-hidden">
+                <Controller
+                  name="unsavedPriorityMode"
+                  control={form.control}
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <>
+                        {Object.entries(PRIORITY_MODE_MAP).map(([level, name], idx) => {
+                          return (
+                            <SwapSettingButton
+                              key={idx}
+                              idx={idx}
+                              itemsCount={Object.keys(PRIORITY_MODE_MAP).length}
+                              roundBorder={
+                                idx === 0
+                                  ? 'left'
+                                  : idx === Object.keys(PRIORITY_MODE_MAP).length - 1
+                                  ? 'right'
+                                  : undefined
+                              }
+                              highlighted={value === level}
+                              onClick={() => {
+                                form.setValue('hasUnsavedFeeChanges', true);
+                                onChange(level);
+                              }}
+                            >
+                              <div className="whitespace-nowrap px-4">
+                                <p className="text-xs whitespace-nowrap">{name}</p>
+                              </div>
+                            </SwapSettingButton>
+                          );
+                        })}
+                      </>
+                    );
+                  }}
+                />
+              </div>
+            </div>
+
             <div
               className={`transition-height duration-300 ease-in-out animate-fade-in ${
-                isMaxPriorityMode ? 'h-[94px] opacity-100' : 'h-0 opacity-0 overflow-hidden'
+                isMaxPriorityMode ? 'h-[76px] opacity-100' : 'h-0 opacity-0 overflow-hidden'
               }`}
             >
-              <p className="text-sm text-white/75 font-[500] mt-4">Priority Level</p>
-              <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden">
+              <p className="text-xs font-semibold mt-4">Priority Level</p>
+              <div className="flex items-center mt-2 rounded-xl ring-1 ring-white/5 overflow-hidden">
                 <Controller
                   name="unsavedPriorityLevel"
                   control={form.control}
@@ -298,56 +339,14 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
               </div>
             </div>
 
-            <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-white/75 font-[500]">Priority Mode</p>
-              <div className="flex items-center rounded-xl ring-1 ring-white/5 overflow-hidden">
-                <Controller
-                  name="unsavedPriorityMode"
-                  control={form.control}
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <>
-                        {Object.entries(PRIORITY_MODE_MAP).map(([level, name], idx) => {
-                          return (
-                            <SwapSettingButton
-                              key={idx}
-                              idx={idx}
-                              itemsCount={Object.keys(PRIORITY_MODE_MAP).length}
-                              roundBorder={
-                                idx === 0
-                                  ? 'left'
-                                  : idx === Object.keys(PRIORITY_MODE_MAP).length - 1
-                                  ? 'right'
-                                  : undefined
-                              }
-                              className="h-7"
-                              highlighted={value === level}
-                              onClick={() => {
-                                form.setValue('hasUnsavedFeeChanges', true);
-                                onChange(level);
-                              }}
-                            >
-                              <div className="whitespace-nowrap">
-                                <p className="text-xxs whitespace-nowrap">{name}</p>
-                              </div>
-                            </SwapSettingButton>
-                          );
-                        })}
-                      </>
-                    );
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="text-xs text-white/25 font-normal mt-2">
+            <div className="text-xs text-v2-lily/50">
               {isMaxPriorityMode ? (
                 <>
                   <p>Jupiter intelligently minimizes and decides the best fee for you.</p>
                   <p>Set a max cap to prevent overpaying.</p>
                 </>
               ) : (
-                'Jupiter will use the exact fee you set.'
+                <p className='mt-2'>Jupiter will use the exact fee you set.</p>
               )}
             </div>
 
@@ -367,11 +366,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   />
                 </span>
               </div>
-              <div
-                className={`relative mt-1 ${
-                  isPriorityFeeInputFocused ? 'v2-border-gradient v2-border-gradient-center' : ''
-                }`}
-              >
+              <div className={`relative mt-1`}>
                 <Controller
                   name={'unsavedPriorityFee'}
                   control={form.control}
@@ -423,7 +418,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
               <span>Slippage Settings</span>
             </div>
 
-            <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden text-sm h-[52px]">
+            <div className="flex items-center mt-2.5 rounded-xl ring-1 ring-white/5 overflow-hidden text-sm">
               <Controller
                 name="slippagePreset"
                 control={form.control}
@@ -461,9 +456,10 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   inputRef.current?.focus();
                   inputFocused.current = true;
                 }}
-                className={`flex items-center justify-between cursor-text w-[120px] h-full text-white/50 bg-[#1B1B1E] pl-2 text-sm relative border-l border-black-10 border-white/5 ${
-                  inputFocused.current ? 'v2-border-gradient v2-border-gradient-right' : ''
-                }`}
+                className={classNames(
+                  `flex items-center justify-between cursor-text w-[120px] !h-[42px] text-white/50 bg-[#1B1B1E] pl-2 text-sm relative`,
+                  inputFocused.current ? 'border border-v3-primary rounded-r-xl' : '',
+                )}
               >
                 <span className="text-xs">
                   <span>Custom</span>
@@ -493,7 +489,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         }}
                         allowLeadingZeros={false}
                         suffix="%"
-                        className="h-full w-full bg-transparent py-4 pr-4 text-sm rounded-lg placeholder:text-white/25 text-white/50 text-right pointer-events-all"
+                        className="w-full bg-[#1B1B1E] pr-4 text-sm rounded-lg placeholder:text-v2-lily/25 text-v2-lily/50 text-right pointer-events-all"
                         decimalSeparator={detectedSeparator}
                         placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                       />

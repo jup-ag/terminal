@@ -50,7 +50,8 @@ const Form: React.FC<{
     if (hasExpired) {
       refresh();
     }
-  }, [hasExpired, refresh]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasExpired]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
