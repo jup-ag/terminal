@@ -30,18 +30,9 @@ export const CoinBalanceUSD = (props: ComponentProps) => {
 
   if (!amountInUSD || amountInUSD <= 0) return <>{''}</>;
 
-  if (maxDecimals) {
-    if (new Decimal(amountInUSD).lte(0.1)) {
-      return (
-        <>
-          {prefix}${parseFloat(formatNumber.format(amountInUSD, maxDecimals))}
-        </>
-      );
-    }
-  }
   return (
     <>
-      {prefix}${formatNumber.format(amountInUSD, 2)}
+      {prefix}${formatNumber.format(amountInUSD, maxDecimals || 2)}
     </>
   );
 };

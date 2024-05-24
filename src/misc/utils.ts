@@ -157,8 +157,8 @@ export function getAssociatedTokenAddressSync(mint: PublicKey, owner: PublicKey,
 }
 
 export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
-  const amount = BN.isBN(lamportsAmount) ? lamportsAmount.toNumber() : Number(lamportsAmount);
-  const precision = Math.pow(10, decimals);
-
-  return Math.floor(amount * precision);
+  return new Decimal(lamportsAmount.toString())
+    .mul(10 ** decimals)
+    .floor()
+    .toNumber();
 }
