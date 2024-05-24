@@ -1,23 +1,17 @@
-import {
-  AddressLookupTableAccount,
-  ComputeBudgetProgram,
-  Connection,
-  PublicKey,
-  TransactionInstruction,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
-import { createContext, useContext, useMemo } from 'react';
+import { Transaction, VersionedTransaction } from '@solana/web3.js';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import { useLocalStorage } from 'src/hooks/useLocalStorage';
 import { toLamports } from 'src/misc/utils';
+import {
+  extractComputeUnitLimit,
+  modifyComputeUnitLimitIx,
+  modifyPriorityFeeIx,
+} from '@mercurial-finance/optimist';
 
 // --------------------
 // Constants
 // --------------------
 const APP_NAME = 'jupiter-terminal';
-
-const COMPUTE_UNIT_MAX_LIMIT = 1_400_000;
-const COMPUTE_UNIT_LIMIT_MARGIN_ERROR = 1.2;
 
 const PRIORITY_FEE_DEFAULT: number = 0.000_3;
 const PRIORITY_LEVEL_DEFAULT: PriorityLevel = 'MEDIUM';
@@ -39,53 +33,6 @@ function computePriceMicroLamportsFromFeeLamports(feeLamports: number, computeUn
   return Math.floor((feeLamports * 1_000_000) / computeUnitLimit);
 }
 
-interface GetSimulationUnitsPayload {
-  connection: Connection;
-  instructions: TransactionInstruction[];
-  payer: PublicKey;
-  lookupTables: AddressLookupTableAccount[];
-}
-
-/**
- *
- * Code snippets from the Solana documentation
- * @see https://solana.com/developers/guides/advanced/how-to-request-optimal-compute#how-to-request-compute-budget
- */
-const getSimulationUnits = async (payload: GetSimulationUnitsPayload) => {
-  const { connection, instructions, payer, lookupTables } = payload;
-
-  const testInstructions = [
-    ComputeBudgetProgram.setComputeUnitLimit({ units: COMPUTE_UNIT_MAX_LIMIT }),
-    ...instructions,
-  ];
-
-  const testVersionedTxn = new VersionedTransaction(
-    new TransactionMessage({
-      instructions: testInstructions,
-      payerKey: payer,
-      recentBlockhash: PublicKey.default.toString(),
-    }).compileToV0Message(lookupTables),
-  );
-
-  const simulation = await connection.simulateTransaction(testVersionedTxn, {
-    replaceRecentBlockhash: true,
-    sigVerify: false,
-  });
-  if (simulation.value.err) {
-    return undefined;
-  }
-  return simulation.value.unitsConsumed;
-};
-
-const addMarginErrorForComputeUnitLimit = (units: number, margin: number) => Math.floor(units * margin);
-
-// --------------------
-// Context
-// --------------------
-interface GetOptimalComputeUnitLimitAndPricePayload extends GetSimulationUnitsPayload {
-  referenceFee: number;
-}
-
 interface PrioritizationFeeContextValue {
   // state
   priorityFee: number;
@@ -99,10 +46,10 @@ interface PrioritizationFeeContextValue {
   setPriorityFee: (priority: number) => void;
   setPriorityMode: React.Dispatch<React.SetStateAction<PriorityMode>>;
   setPriorityLevel: React.Dispatch<React.SetStateAction<PriorityLevel>>;
-  getOptimalComputeUnitLimitAndPrice: (payload: GetOptimalComputeUnitLimitAndPricePayload) => Promise<{
-    units: number;
-    microLamports: number;
-  }>;
+  modifyComputeUnitPriceAndLimit: (
+    tx: Transaction | VersionedTransaction,
+    options: { referenceFee?: number | null; minimumFee?: number | null; requestComputeBudgetLimit?: number },
+  ) => Promise<void>;
 }
 
 const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
@@ -118,7 +65,7 @@ const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
   setPriorityFee: () => {},
   setPriorityMode: () => {},
   setPriorityLevel: () => {},
-  getOptimalComputeUnitLimitAndPrice: async () => ({ units: 0, microLamports: 0 }),
+  modifyComputeUnitPriceAndLimit: async () => {},
 });
 
 export function PrioritizationFeeContextProvider({ children }: { children: React.ReactNode }) {
@@ -139,41 +86,37 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
   // derrived state
   const priorityFeeLamports = useMemo(() => toLamports(priorityFee, 9), [priorityFee]); // 1 SOL = 1_000_000_000 lamports
 
-  const getOptimalComputeUnitLimitAndPrice = async (payload: GetOptimalComputeUnitLimitAndPricePayload) => {
-    // Unit
-    const simulationUnits = await getSimulationUnits(payload);
-    /**
-     * Best practices to always add a margin error to the simulation units (10% ~ 20%)
-     * @see https://solana.com/developers/guides/advanced/how-to-request-optimal-compute#special-considerations
-     */
-    const simulationUnitsWithMarginError = addMarginErrorForComputeUnitLimit(
-      simulationUnits ?? 0,
-      COMPUTE_UNIT_LIMIT_MARGIN_ERROR,
-    );
+  const modifyComputeUnitPriceAndLimit = useCallback(
+    async (
+      tx: Transaction | VersionedTransaction,
+      options: { referenceFee?: number | null; minimumFee?: number | null; requestComputeBudgetLimit?: number },
+    ) => {
+      if (priorityFee > 0) {
+        const computeUnitLimit = options.requestComputeBudgetLimit || extractComputeUnitLimit(tx) || 1_400_000;
+        const userMaxPriorityFee = computePriceMicroLamportsFromFeeLamports(priorityFee * 10 ** 9, computeUnitLimit);
 
-    // Price
-    const userPriorityFeeMicroLamports = computePriceMicroLamportsFromFeeLamports(
-      priorityFeeLamports,
-      simulationUnitsWithMarginError,
-    );
-    /**
-     * > If the user has selected `EXACT` mode, then the price should be the user's priority fee.
-     * > If the user has selected `MAX` mode, then the price should be the
-     *   minimum of the user's priority fee and the market reference fee.
-     */
-    const priceMicroLamports = Math.round(
-      priorityMode === 'EXACT'
-        ? userPriorityFeeMicroLamports
-        : Math.min(userPriorityFeeMicroLamports, payload.referenceFee),
-    );
+        const minimumFee = options.minimumFee
+          ? computePriceMicroLamportsFromFeeLamports(options.minimumFee * 10 ** 9, computeUnitLimit)
+          : null;
 
-    return {
-      // `computeUnitLimit`
-      units: simulationUnitsWithMarginError,
-      // `computeUnitPrice`
-      microLamports: priceMicroLamports,
-    };
-  };
+        let priceMicroLamports = 0;
+
+        const marketAndRpcReference = Math.max(options.referenceFee || 0, minimumFee || 0);
+
+        priceMicroLamports = Math.round(
+          priorityMode === 'EXACT'
+            ? userMaxPriorityFee
+            : Math.min(userMaxPriorityFee, Math.min(userMaxPriorityFee, marketAndRpcReference)),
+        );
+
+        if (options.requestComputeBudgetLimit) {
+          modifyComputeUnitLimitIx(tx, options.requestComputeBudgetLimit);
+        }
+        modifyPriorityFeeIx(tx, priceMicroLamports);
+      }
+    },
+    [priorityFee, priorityMode],
+  );
 
   return (
     <PrioritizationFeeContext.Provider
@@ -186,7 +129,8 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
         setPriorityFee,
         setPriorityMode,
         setPriorityLevel,
-        getOptimalComputeUnitLimitAndPrice,
+
+        modifyComputeUnitPriceAndLimit,
       }}
     >
       {children}

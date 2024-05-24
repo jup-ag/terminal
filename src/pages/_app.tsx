@@ -81,7 +81,7 @@ export default function App({ Component, pageProps }: AppProps) {
           </UnifiedWalletProvider>
         )
       : React.Fragment;
-  }, [watchAllFields.simulateWalletPassthrough]);
+  }, [wallets, watchAllFields.simulateWalletPassthrough]);
 
   return (
     <>

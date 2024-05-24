@@ -1,16 +1,8 @@
-import { executeTransaction } from '@jup-ag/common';
-import { ZERO } from '@jup-ag/math';
+import { executeTransaction, fetchSourceAddressAndDestinationAddress } from '@jup-ag/common';
 import { Owner, QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
 import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
-import {
-  AddressLookupTableAccount,
-  ComputeBudgetProgram,
-  PublicKey,
-  TransactionInstruction,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -29,11 +21,7 @@ import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
 import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
-import {
-  PRIORITY_LEVEL_MULTIPLIER_HIGH,
-  PRIORITY_LEVEL_MULTIPLIER_VERY_HIGH,
-  usePrioritizationFee,
-} from './PrioritizationFeeContextProvider';
+import { usePrioritizationFee } from './PrioritizationFeeContextProvider';
 import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
@@ -80,11 +68,13 @@ export interface ISwapContext {
       | undefined;
   };
   reset: (props?: { resetValues: boolean }) => void;
-  jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange' | 'quoteResponseMeta'> & {
-    exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
+  jupiter: {
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
+    loading: ReturnType<typeof useJupiter>['loading'];
+    refresh: ReturnType<typeof useJupiter>['refresh'];
+    error: ReturnType<typeof useJupiter>['error'];
   };
   setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
@@ -203,11 +193,11 @@ export const SwapContextProvider: FC<{
         setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
       }, 0);
     }
-  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+  }, [formProps.initialAmount, fromTokenInfo, jupiterSwapMode, toTokenInfo, tokenMap]);
 
   useEffect(() => {
     setupInitialAmount();
-  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+  }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount, tokenMap]);
 
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
@@ -228,22 +218,37 @@ export const SwapContextProvider: FC<{
       slippageBps: form.slippageBps,
       maxAccounts,
     };
-  }, [form, maxAccounts]);
+  }, [
+    form.fromMint,
+    form.fromValue,
+    form.slippageBps,
+    form.toMint,
+    form.toValue,
+    fromTokenInfo,
+    jupiterSwapMode,
+    maxAccounts,
+    toTokenInfo,
+  ]);
 
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
-    exchange,
-    loading: loadingQuotes,
     refresh,
-    lastRefreshTimestamp,
+    loading,
     error,
-    programIdsExcluded,
-    programIdToLabelMap,
-    setProgramIdsExcluded,
+    fetchSwapTransaction,
   } = useJupiter(jupiterParams);
 
   const { data: referenceFees } = useReferenceFeesQuery();
-  const { priorityFeeLamports, priorityLevel, getOptimalComputeUnitLimitAndPrice } = usePrioritizationFee();
+  const { priorityFeeLamports, priorityLevel, modifyComputeUnitPriceAndLimit } = usePrioritizationFee();
+  const computeUnitPriceMicroLamports = useMemo(() => {
+    if (priorityFeeLamports === undefined) return 0;
+    return new Decimal(priorityFeeLamports)
+      .mul(10 ** 6) // lamports into microlamports
+      .div(1_400_000) // divide by CU
+      .round()
+      .toNumber();
+  }, [priorityFeeLamports]);
+
   const { connection } = useConnection();
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
@@ -327,6 +332,7 @@ export const SwapContextProvider: FC<{
            * by simulate the transaction and get the optimal value.
            */
           computeUnitPriceMicroLamports,
+          dynamicComputeUnitLimit: true,
         }),
       })
     ).json();
@@ -343,7 +349,7 @@ export const SwapContextProvider: FC<{
       throw new Error('Failed to get swap instructions');
     }
 
-    const [sourceAddress, destinationAddress] = [inputMint, outputMint].map((mint, idx) =>
+    const [sourceAddress, destinationAddress] = [inputMint, outputMint].map((mint) =>
       getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey(walletPublicKey)),
     );
 
@@ -356,183 +362,131 @@ export const SwapContextProvider: FC<{
       instructions,
       onSubmitWithIx,
     };
-  }, [walletPublicKey, quoteResponseMeta]);
-
-  const deserializeInstruction = (instruction: IOnRequestIxCallback['instructions']['swapInstruction']) => {
-    return new TransactionInstruction({
-      programId: new PublicKey(instruction.programId),
-      keys: instruction.accounts.map((key) => ({
-        pubkey: new PublicKey(key.pubkey),
-        isSigner: key.isSigner,
-        isWritable: key.isWritable,
-      })),
-      data: Buffer.from(instruction.data, 'base64'),
-    });
-  };
-
-  const getAddressLookupTableAccounts = useCallback(
-    async (keys: string[]): Promise<AddressLookupTableAccount[]> => {
-      const addressLookupTableAccountInfos = await connection.getMultipleAccountsInfo(
-        keys.map((key) => new PublicKey(key)),
-      );
-
-      return addressLookupTableAccountInfos.reduce((acc, accountInfo, index) => {
-        const addressLookupTableAddress = keys[index];
-        if (accountInfo) {
-          const addressLookupTableAccount = new AddressLookupTableAccount({
-            key: new PublicKey(addressLookupTableAddress),
-            state: AddressLookupTableAccount.deserialize(accountInfo.data),
-          });
-          acc.push(addressLookupTableAccount);
-        }
-
-        return acc;
-      }, new Array<AddressLookupTableAccount>());
-    },
-    [connection],
-  );
+  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, computeUnitPriceMicroLamports, onSubmitWithIx]);
 
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
-      throw new Error('Missing wallet or quote');
+      return null;
     }
 
-    // Fetch necessary data from APIs
-    const { meta, instructions, onSubmitWithIx } = await onRequestIx();
-    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-
-    // Destructure instructions
-    const {
-      setupInstructions,
-      swapInstruction: swapInstructionPayload,
-      cleanupInstruction,
-      addressLookupTableAddresses,
-      // Note: Not using this as we need to calculate the optimal compute unit limit and price
-      computeBudgetInstructions,
-    } = instructions;
-
-    // Prepare address lookup table accounts
-    const addressLookupTableAccounts = await getAddressLookupTableAccounts(addressLookupTableAddresses);
-
-    // Prepare transaction instructions
-    const setupTransactionInstructions = setupInstructions.map(deserializeInstruction);
-    const swapTransactionInstruction = deserializeInstruction(swapInstructionPayload);
-    const cleanupTransactionInstruction = cleanupInstruction ? deserializeInstruction(cleanupInstruction) : null;
-
-    const filteredInstructions = [
-      ...setupTransactionInstructions,
-      swapTransactionInstruction,
-      cleanupTransactionInstruction,
-    ].filter(Boolean) as TransactionInstruction[];
-
-    // Prepare payer key
-    const payerKey = new PublicKey(walletPublicKey);
-
-    // Set optimal compute unit limit and price
-    let referenceFee = 0;
-    if (referenceFees?.jup) {
-      switch (priorityLevel) {
-        case 'MEDIUM':
-          referenceFee = referenceFees.swapFee;
-          break;
-        case 'HIGH':
-          referenceFee = referenceFees.swapFee * PRIORITY_LEVEL_MULTIPLIER_HIGH;
-          break;
-        case 'VERY_HIGH':
-          referenceFee = referenceFees.swapFee * PRIORITY_LEVEL_MULTIPLIER_VERY_HIGH;
-          break;
-        default:
-          break;
-      }
-    }
-    const { units, microLamports } = await getOptimalComputeUnitLimitAndPrice({
-      connection,
-      instructions: filteredInstructions,
-      payer: payerKey,
-      lookupTables: addressLookupTableAccounts,
-      referenceFee,
-    });
-    filteredInstructions.unshift(ComputeBudgetProgram.setComputeUnitPrice({ microLamports }));
-    if (units) {
-      filteredInstructions.unshift(ComputeBudgetProgram.setComputeUnitLimit({ units }));
-    }
-
-    // Compile to V0 message
-    const messageV0 = new TransactionMessage({
-      instructions: filteredInstructions,
-      payerKey,
-      recentBlockhash: blockhash,
-    }).compileToV0Message(addressLookupTableAccounts);
-    const transaction = new VersionedTransaction(messageV0);
-
-    // Execute the transaction
-    const swapResultPromise = executeTransaction({
-      connection,
-      wallet: wallet.adapter as SignerWalletAdapter,
-      inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
-      outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
-      sourceAddress: meta.sourceAddress,
-      destinationAddress: meta.destinationAddress,
-      swapTransaction: transaction,
-      blockhashWithExpiryBlockHeight: {
-        blockhash,
-        lastValidBlockHeight,
-      },
-      owner: new Owner(new PublicKey(walletPublicKey)),
-      wrapUnwrapSOL: Boolean(cleanupInstruction),
-      onTransaction: async (txid, awaiter) => {
-        const tx = txStatus?.txid === txid ? txStatus : undefined;
-        if (!tx) {
-          setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-        }
-
-        const success = !((await awaiter) instanceof Error);
-
-        setTxStatus((prev) => {
-          const tx = prev?.txid === txid ? prev : undefined;
-          if (tx) {
-            tx.status = success ? 'success' : 'fail';
-          }
-          return prev ? { ...prev } : undefined;
-        });
-      },
-    });
-
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new SwapTransactionTimeoutError()), 60_000);
-    });
-
+    let intervalId: NodeJS.Timer | undefined;
     try {
-      const swapResult = (await Promise.race([timeoutPromise, swapResultPromise])) as SwapResult;
-      setLastSwapResult({ swapResult, quoteResponseMeta: quoteResponseMeta });
+      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
+        const timeout = { current: 0 };
+
+        if (!wallet.adapter.publicKey) return;
+        const swapTransactionResponse = await fetchSwapTransaction({
+          quoteResponseMeta,
+          userPublicKey: wallet.adapter.publicKey,
+          prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
+          wrapUnwrapSOL: true,
+        });
+
+        if ('error' in swapTransactionResponse) {
+          console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
+        } else {
+          modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
+            referenceFee: (() => {
+              if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
+                return referenceFees?.swapFee;
+              }
+
+              if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
+              if (priorityLevel === 'HIGH') return referenceFees.jup.h;
+              if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
+            })(),
+          });
+
+          const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
+          const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
+            connection,
+            inputMint,
+            outputMint,
+            userPublicKey: wallet.adapter.publicKey!,
+          });
+
+          const result = await executeTransaction({
+            connection,
+            wallet: wallet?.adapter as SignerWalletAdapter,
+            onTransaction: async (txid, awaiter) => {
+              if (timeout.current === 0) {
+                timeout.current = Date.now() + 60_000;
+              }
+
+              if (!intervalId) {
+                intervalId = setInterval(() => {
+                  if (Date.now() > timeout.current) {
+                    setTxStatus({ txid: '', status: 'timeout' });
+                    rej(new Error('Transaction timed-out'));
+                  }
+                }, 1_000);
+              }
+
+              const tx = txStatus?.txid === txid ? txStatus : undefined;
+              if (!tx) {
+                setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+              }
+
+              const success = !((await awaiter) instanceof Error);
+
+              setTxStatus((prev) => {
+                const tx = prev?.txid === txid ? prev : undefined;
+                if (tx) {
+                  tx.status = success ? 'success' : 'fail';
+
+                  if (intervalId) {
+                    clearInterval(intervalId);
+                  }
+                }
+                return prev ? { ...prev } : undefined;
+              });
+            },
+            inputMint,
+            outputMint,
+            sourceAddress,
+            destinationAddress,
+            swapTransaction: swapTransactionResponse.swapTransaction,
+            blockhashWithExpiryBlockHeight: {
+              blockhash: swapTransactionResponse.blockhash,
+              lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
+            },
+            owner: new Owner(new PublicKey(walletPublicKey)),
+            wrapUnwrapSOL: true,
+          });
+          setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
+          return result;
+        }
+      })
+        .catch((err) => {
+          console.log(err);
+          setTxStatus({ txid: '', status: 'fail' });
+          return null;
+        })
+        .finally(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        });
+
       return swapResult;
     } catch (error) {
-      if (error instanceof SwapTransactionTimeoutError) {
-        setTxStatus({ txid: '', status: 'timeout' });
-        return null;
-      }
-
-      // Not `SwapTransactionTimeoutError`
-      setTxStatus({ txid: '', status: 'fail' });
       console.log('Swap error', error);
       return null;
     }
   }, [
-    connection,
-    getAddressLookupTableAccounts,
-    getOptimalComputeUnitLimitAndPrice,
-    onRequestIx,
-    priorityLevel,
-    quoteResponseMeta,
-    referenceFees?.jup,
-    wallet?.adapter,
     walletPublicKey,
+    wallet?.adapter,
+    quoteResponseMeta,
+    fetchSwapTransaction,
+    modifyComputeUnitPriceAndLimit,
+    connection,
+    referenceFees?.jup.m,
+    referenceFees?.jup.h,
+    referenceFees?.jup.vh,
+    referenceFees?.swapFee,
+    priorityLevel,
+    txStatus,
   ]);
-
-  const refreshAll = () => {
-    refresh();
-    refreshAccount();
-  };
 
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
@@ -551,15 +505,6 @@ export const SwapContextProvider: FC<{
     },
     [refreshAccount, setupInitialAmount],
   );
-
-  const computeUnitPriceMicroLamports = useMemo(() => {
-    if (priorityFeeLamports === undefined) return 0;
-    return new Decimal(priorityFeeLamports)
-      .mul(10 ** 6) // lamports into microlamports
-      .div(1_400_000) // divide by CU
-      .round()
-      .toNumber();
-  }, [priorityFeeLamports]);
 
   // onFormUpdate callback
   useEffect(() => {
@@ -598,17 +543,12 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          quoteResponseMeta: JSBI.GT(jupiterParams.amount, ZERO) ? quoteResponseMeta : undefined,
-          programIdsExcluded,
-          programIdToLabelMap,
-          setProgramIdsExcluded,
-          exchange,
-          loading: loadingQuotes,
-          refresh: refreshAll,
-          lastRefreshTimestamp,
-          error,
           asLegacyTransaction,
           setAsLegacyTransaction,
+          quoteResponseMeta,
+          loading,
+          refresh,
+          error,
         },
         setUserSlippage,
       }}
