@@ -10,7 +10,7 @@ export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void
     } else { 
       setIsWalletModalOpen(true);
     }
-  }, []);
+  }, [setIsWalletModalOpen]);
 
   return (
     <button

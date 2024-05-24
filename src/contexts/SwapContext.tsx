@@ -75,6 +75,7 @@ export interface ISwapContext {
     loading: ReturnType<typeof useJupiter>['loading'];
     refresh: ReturnType<typeof useJupiter>['refresh'];
     error: ReturnType<typeof useJupiter>['error'];
+    lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
   };
   setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
@@ -199,10 +200,34 @@ export const SwapContextProvider: FC<{
     setupInitialAmount();
   }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount, tokenMap]);
 
+  const paramsDeps = useMemo(() => {
+    return [
+      form.fromMint,
+      form.slippageBps,
+      form.toMint,
+      fromTokenInfo?.address,
+      jupiterSwapMode,
+      maxAccounts,
+      toTokenInfo?.address,
+      // We don't want both to trigger the effect, since ExactIn and ExactOut is exclusive
+      jupiterSwapMode === SwapMode.ExactOut ? form.toValue : form.fromValue,
+    ].join('')
+  }, [
+    form.fromMint,
+    form.fromValue,
+    form.slippageBps,
+    form.toMint,
+    form.toValue,
+    fromTokenInfo?.address,
+    jupiterSwapMode,
+    maxAccounts,
+    toTokenInfo?.address,
+  ]);
+
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
       if (jupiterSwapMode === SwapMode.ExactOut) {
-        if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
+        if (!form.toValue || !toTokenInfo || !hasNumericValue(form.toValue)) return JSBI.BigInt(0);
         return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
       } else {
         if (!form.fromValue || !fromTokenInfo || !hasNumericValue(form.fromValue)) return JSBI.BigInt(0);
@@ -218,23 +243,15 @@ export const SwapContextProvider: FC<{
       slippageBps: form.slippageBps,
       maxAccounts,
     };
-  }, [
-    form.fromMint,
-    form.fromValue,
-    form.slippageBps,
-    form.toMint,
-    form.toValue,
-    fromTokenInfo,
-    jupiterSwapMode,
-    maxAccounts,
-    toTokenInfo,
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsDeps]);
 
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
     refresh,
     loading,
     error,
+    lastRefreshTimestamp,
     fetchSwapTransaction,
   } = useJupiter(jupiterParams);
 
@@ -549,6 +566,7 @@ export const SwapContextProvider: FC<{
           loading,
           refresh,
           error,
+          lastRefreshTimestamp,
         },
         setUserSlippage,
       }}

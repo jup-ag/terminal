@@ -26,7 +26,7 @@ const FormPairRow: React.FC<{
 
     const totalAValue = new Decimal(tokenPrice).mul(balance);
     return totalAValue;
-  }, [accounts, tokenPriceMap])
+  }, [accounts, item.address, tokenPriceMap])
 
   return (
     <li

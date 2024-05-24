@@ -69,7 +69,7 @@ const FormPairSelector = ({
     } else {
       setSearchResult(sortedList);
     }
-  }, [accounts, tokenInfos, searchTerm]);
+  }, [accounts, tokenInfos, searchTerm, tokenPriceMap]);
 
   const listRef = createRef<FixedSizeList>();
   const inputRef = createRef<HTMLInputElement>();

@@ -128,7 +128,7 @@ const RenderShell = (props: IInit) => {
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar';
     }
-  }, [displayMode]);
+  }, [containerClassName, displayMode]);
 
   const onClose = () => {
     if (window.Jupiter) {

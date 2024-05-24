@@ -53,7 +53,7 @@ const Index = ({
       return `${amountText} ${toTokenInfo.symbol}`;
     }
     return '-';
-  }, [quoteResponse]);
+  }, [quoteResponse.otherAmountThreshold, toTokenInfo.decimals, toTokenInfo.symbol]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 

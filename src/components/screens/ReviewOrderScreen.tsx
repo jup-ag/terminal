@@ -38,7 +38,7 @@ const ConfirmationScreen = () => {
     } else {
       onSubmitJupiter();
     }
-  }, []);
+  }, [onRequestIx, onSubmitJupiter, setScreen]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">

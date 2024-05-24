@@ -78,7 +78,7 @@ const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) =>
         }
       },
     };
-  }, [atom]);
+  }, [atom?.passthroughWalletContextState, wallet?.adapter]);
 
   if (!window.Jupiter.enableWalletPassthrough) {
     return <FromWalletAdapter>{children}</FromWalletAdapter>;

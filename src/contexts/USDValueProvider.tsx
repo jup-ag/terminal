@@ -164,7 +164,7 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
           {},
         ),
     );
-  }, []);
+  }, [setCachedPrices]);
 
   useEffect(() => {
     if (!Object.keys(accounts).length || !tokenMap.size) return;

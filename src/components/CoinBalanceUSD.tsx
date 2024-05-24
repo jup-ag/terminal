@@ -1,8 +1,8 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
-import { formatNumber } from 'src/misc/utils';
+import { formatNumber, hasNumericValue } from 'src/misc/utils';
 
 interface ComponentProps {
   tokenInfo: TokenInfo;
@@ -12,16 +12,15 @@ interface ComponentProps {
 }
 
 export const CoinBalanceUSD = (props: ComponentProps) => {
-  // props
   const { tokenInfo, amount, maxDecimals, prefix = '' } = props;
-
-  // hook
   const { tokenPriceMap, getUSDValue } = useUSDValue();
-
-  // variables
   const address = tokenInfo.address;
   const cgPrice = address ? tokenPriceMap[address]?.usd || 0 : 0;
-  const amountInUSD = new Decimal(amount || 0).mul(cgPrice).toNumber();
+  const amountInUSD = useMemo(() => {
+    if (!amount || !hasNumericValue(amount)) return 0;
+
+    return new Decimal(amount).mul(cgPrice).toNumber();
+  }, [amount, cgPrice]);
 
   // effects
   useEffect(() => {

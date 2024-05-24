@@ -1,6 +1,6 @@
 import { SwapMode } from '@jup-ag/react-hook';
 import classNames from 'classnames';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
@@ -107,6 +107,32 @@ const FormConfigurator = ({
 
   const [isImported, setIsImported] = useState(false);
 
+  const onSelect = useCallback(
+    (index: number) => {
+      reset(templateOptions[index].values);
+
+      const templateName = templateOptions[index].name;
+      currentTemplate.current = templateName;
+
+      replace(
+        {
+          query:
+            templateName === 'Default'
+              ? undefined
+              : {
+                  template: templateName,
+                },
+        },
+        undefined,
+        { shallow: true },
+      );
+
+      setActive(index);
+      setIsOpen(false);
+    },
+    [replace, reset],
+  );
+
   useEffect(() => {
     const templateString = query?.import;
     if (templateString) {
@@ -132,34 +158,11 @@ const FormConfigurator = ({
     if (foundIndex >= 0) {
       onSelect(foundIndex);
     }
-  }, [query]);
+  }, [formState.defaultValues, onSelect, query, replace, reset]);
 
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
-
-  const onSelect = (index: number) => {
-    reset(templateOptions[index].values);
-
-    const templateName = templateOptions[index].name;
-    currentTemplate.current = templateName;
-
-    replace(
-      {
-        query:
-          templateName === 'Default'
-            ? undefined
-            : {
-                template: templateName,
-              },
-      },
-      undefined,
-      { shallow: true },
-    );
-
-    setActive(index);
-    setIsOpen(false);
-  };
 
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">

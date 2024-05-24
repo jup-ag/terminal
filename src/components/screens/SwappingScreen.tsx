@@ -86,7 +86,7 @@ const SwappingScreen = () => {
       }
       return;
     }
-  }, [lastSwapResult]);
+  }, [lastSwapResult, screen]);
 
   const onClose = () => {
     if (!displayMode || displayMode === 'modal') {
@@ -113,7 +113,7 @@ const SwappingScreen = () => {
     }
 
     return 'loading';
-  }, [txStatus]);
+  }, [errorMessage, txStatus?.status]);
 
   const { explorer, getExplorer } = usePreferredExplorer();
 
@@ -165,7 +165,7 @@ const SwappingScreen = () => {
             ? getExplorer(lastSwapResult?.swapResult.txid)
             : '',
       };
-    }, [lastSwapResult?.swapResult]);
+    }, []);
 
     if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteResponseMeta) {
       return null;
