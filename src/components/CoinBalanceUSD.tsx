@@ -1,19 +1,38 @@
-import React, { useEffect, useMemo } from 'react';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
-import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
-import { formatNumber, hasNumericValue } from 'src/misc/utils';
+import { useEffect } from 'react';
+import { useUSDValue } from 'src/contexts/USDValueProvider';
+import { formatNumber } from 'src/misc/utils';
 
-const CoinBalanceUSD = ({ tokenInfo, amount }: { tokenInfo: TokenInfo; amount?: string }) => {
-  const { tokenPriceMap } = useUSDValueProvider();
+interface ComponentProps {
+  tokenInfo: TokenInfo;
+  amount?: number | string;
+  maxDecimals?: number;
+  prefix?: string;
+}
 
-  const amountInUSD = useMemo(() => {
-    if (!amount || !hasNumericValue(amount)) return 0;
-    const cgPrice = tokenPriceMap[tokenInfo.address]?.usd || 0;
-    return new Decimal(amount || 0).mul(cgPrice).toNumber();
-  }, [tokenPriceMap, amount]);
+export const CoinBalanceUSD = (props: ComponentProps) => {
+  // props
+  const { tokenInfo, amount, maxDecimals, prefix = '' } = props;
 
-  return amountInUSD && amountInUSD > 0 ? <>${formatNumber.format(amountInUSD, 2)}</> : <>{''}</>;
+  // hook
+  const { tokenPriceMap, getUSDValue } = useUSDValue();
+
+  // variables
+  const address = tokenInfo.address;
+  const cgPrice = address ? tokenPriceMap[address]?.usd || 0 : 0;
+  const amountInUSD = new Decimal(amount || 0).mul(cgPrice).toNumber();
+
+  // effects
+  useEffect(() => {
+    if (address) getUSDValue([address]);
+  }, [address, getUSDValue]);
+
+  if (!amountInUSD || amountInUSD <= 0) return <>{''}</>;
+
+  return (
+    <>
+      {prefix}${formatNumber.format(amountInUSD, maxDecimals || 2)}
+    </>
+  );
 };
-
-export default CoinBalanceUSD;
