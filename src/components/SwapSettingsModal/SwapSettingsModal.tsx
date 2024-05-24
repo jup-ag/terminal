@@ -58,6 +58,8 @@ const MAXIMUM_SLIPPAGE = 50; // 50%
 const MINIMUM_SUGGESTED_SLIPPAGE = 0.05; // 0.05%
 const MAXIMUM_SUGGESTED_SLIPPAGE = 10; // 10%
 
+const SLIPPAGE_PRESET = ['0.3', String(DEFAULT_SLIPPAGE), '1.0'];
+
 const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
     form: { slippageBps },
@@ -71,12 +73,10 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
     usePrioritizationFee();
   const { wallet } = useWalletPassThrough();
 
-  const SLIPPAGE_PRESET = useMemo(() => [String(DEFAULT_SLIPPAGE), '0.5', '1.0'], []);
-
   const slippageInitialPreset = useMemo(() => {
     const value = slippageBps / 100;
     return SLIPPAGE_PRESET.find((preset) => Number(preset) === value);
-  }, [slippageBps, SLIPPAGE_PRESET]);
+  }, [slippageBps]);
 
   const form = useForm<Form>({
     defaultValues: {
