@@ -41,7 +41,7 @@ const noop = () => {};
 const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, children }) => {
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
-  const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [network]);
+  const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [endpoint, network]);
 
   const enableWalletPassthrough = (() => {
     if (typeof window === 'undefined') return undefined;
@@ -55,7 +55,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
 
     // Keeping Solflare to support Metamask Snaps
     return [new SolflareWalletAdapter()];
-  }, [network]);
+  }, [enableWalletPassthrough]);
 
   const [showWalletStatus, setShowWalletStatus] = useState<{
     show: boolean;
@@ -122,7 +122,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
             {children}
           </UnifiedWalletProvider>
         );
-  }, [enableWalletPassthrough]);
+  }, [autoConnect, enableWalletPassthrough, wallets]);
 
   return (
     <>

@@ -50,6 +50,7 @@ const Form: React.FC<{
     if (hasExpired) {
       refresh();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasExpired]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
@@ -100,7 +101,7 @@ const Form: React.FC<{
         }));
       }
     },
-    [balance, fromTokenInfo],
+    [balance, fromTokenInfo?.address, setForm, swapMode],
   );
 
   const onClickSwitchPair = () => {
@@ -133,17 +134,17 @@ const Form: React.FC<{
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
     setSelectPairSelector('fromMint');
-  }, [fixedInputMint]);
+  }, [fixedInputMint, setSelectPairSelector]);
 
   const onClickSelectToMint = useCallback(() => {
     if (fixedOutputMint) return;
     setSelectPairSelector('toMint');
-  }, [fixedOutputMint]);
+  }, [fixedOutputMint, setSelectPairSelector]);
 
   const fixedOutputFomMintClass = useMemo(() => {
     if (swapMode === 'ExactOut' && !form.toValue) return 'opacity-20 hover:opacity-100';
     return '';
-  }, [fixedOutputMint, form.toValue]);
+  }, [form.toValue, swapMode]);
 
   const thousandSeparator = useMemo(() => (detectedSeparator === ',' ? '.' : ','), []);
   // Allow empty input, and input lower than max limit
@@ -158,7 +159,7 @@ const Form: React.FC<{
     } else {
       setIsWalletModalOpen(true);
     }
-  }, []);
+  }, [setIsWalletModalOpen]);
 
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
@@ -195,7 +196,7 @@ const Form: React.FC<{
 
                     <div className="text-right">
                       <NumericFormat
-                        disabled={swapMode === 'ExactOut'}
+                        disabled={fixedAmount || swapMode === 'ExactOut'}
                         value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
                         decimalScale={fromTokenInfo?.decimals}
                         thousandSeparator={thousandSeparator}

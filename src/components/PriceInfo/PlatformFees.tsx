@@ -17,7 +17,7 @@ const PlatformFees = ({ platformFee, tokenInfo }: PlatformFeesInfo & { tokenInfo
       return formatNumber.format(fromLamports(Number(platformFee?.amount), tokenInfo.decimals));
     }
     return null;
-  }, [platformFee]);
+  }, [platformFee, tokenInfo.decimals]);
 
   const feeBps = useMemo(() => {
     if (platformFee) {

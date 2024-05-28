@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 
@@ -16,7 +16,7 @@ const IntegratedTerminal = (props: {
   const passthroughWalletContextState = useWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
-  const launchTerminal = async () => {
+  const launchTerminal = useCallback(async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
@@ -29,7 +29,16 @@ const IntegratedTerminal = (props: {
       defaultExplorer,
       useUserSlippage,
     });
-  };
+  }, [
+    defaultExplorer,
+    formProps,
+    passthroughWalletContextState,
+    rpcUrl,
+    setShowModal,
+    simulateWalletPassthrough,
+    strictTokenList,
+    useUserSlippage,
+  ]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -42,7 +51,7 @@ const IntegratedTerminal = (props: {
     if (intervalId) {
       return () => clearInterval(intervalId);
     }
-  }, []);
+  }, [isLoaded]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -50,7 +59,7 @@ const IntegratedTerminal = (props: {
         launchTerminal();
       }
     }, 200);
-  }, [isLoaded, simulateWalletPassthrough, props]);
+  }, [isLoaded, simulateWalletPassthrough, props, launchTerminal]);
 
   // To make sure passthrough wallet are synced
   useEffect(() => {

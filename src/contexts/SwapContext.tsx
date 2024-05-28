@@ -1,22 +1,16 @@
-import { ZERO } from '@jup-ag/math';
-import {
-  OnTransaction,
-  QuoteResponseMeta,
-  SwapMode,
-  SwapResult,
-  UseJupiterProps,
-  useJupiter,
-} from '@jup-ag/react-hook';
+import { executeTransaction, fetchSourceAddressAndDestinationAddress } from '@jup-ag/common';
+import { Owner, QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
+import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
-  createContext,
   Dispatch,
   FC,
   ReactNode,
   SetStateAction,
+  createContext,
   useCallback,
   useContext,
   useEffect,
@@ -25,12 +19,13 @@ import {
 } from 'react';
 import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
+import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
-import { useAccounts } from './accounts';
+import { usePrioritizationFee } from './PrioritizationFeeContextProvider';
+import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
-import { useScreenState } from './ScreenProvider';
+import { useAccounts } from './accounts';
 export interface IForm {
   fromMint: string;
   toMint: string;
@@ -73,18 +68,25 @@ export interface ISwapContext {
       | undefined;
   };
   reset: (props?: { resetValues: boolean }) => void;
-  jupiter: Omit<ReturnType<typeof useJupiter>, 'exchange' | 'quoteResponseMeta'> & {
-    exchange: ReturnType<typeof useJupiter>['exchange'] | undefined;
+  jupiter: {
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
-    priorityFeeInSOL: number;
-    setPriorityFeeInSOL: Dispatch<SetStateAction<number>>;
     quoteResponseMeta: QuoteResponseMeta | undefined | null;
+    loading: ReturnType<typeof useJupiter>['loading'];
+    refresh: ReturnType<typeof useJupiter>['refresh'];
+    error: ReturnType<typeof useJupiter>['error'];
+    lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
   };
   setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
+
+export class SwapTransactionTimeoutError extends Error {
+  constructor() {
+    super('Transaction timed-out');
+  }
+}
 
 export function useSwapContext() {
   const context = useContext(SwapContext);
@@ -192,16 +194,24 @@ export const SwapContextProvider: FC<{
         setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
       }, 0);
     }
-  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+  }, [formProps.initialAmount, fromTokenInfo, jupiterSwapMode, toTokenInfo, tokenMap]);
 
   useEffect(() => {
     setupInitialAmount();
-  }, [formProps?.initialAmount, jupiterSwapMode, tokenMap]);
+  }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount, tokenMap]);
 
+  // We dont want to effect to keep trigger for fromValue and toValue
+  const userInputChange = useMemo(() => {
+    if (jupiterSwapMode === SwapMode.ExactOut) {
+      return form.toValue;
+    } else {
+      return form.fromValue;
+    }
+  }, [form.fromValue, form.toValue, jupiterSwapMode]);
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
       if (jupiterSwapMode === SwapMode.ExactOut) {
-        if (!form.toValue || !toTokenInfo) return JSBI.BigInt(0);
+        if (!form.toValue || !toTokenInfo || !hasNumericValue(form.toValue)) return JSBI.BigInt(0);
         return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
       } else {
         if (!form.fromValue || !fromTokenInfo || !hasNumericValue(form.fromValue)) return JSBI.BigInt(0);
@@ -217,19 +227,30 @@ export const SwapContextProvider: FC<{
       slippageBps: form.slippageBps,
       maxAccounts,
     };
-  }, [form, maxAccounts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    form.fromMint,
+    form.slippageBps,
+    form.toMint,
+    userInputChange,
+    fromTokenInfo?.address,
+    jupiterSwapMode,
+    maxAccounts,
+    toTokenInfo?.address,
+  ]);
 
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
-    exchange,
-    loading: loadingQuotes,
     refresh,
-    lastRefreshTimestamp,
+    loading,
     error,
-    programIdsExcluded,
-    programIdToLabelMap,
-    setProgramIdsExcluded,
+    lastRefreshTimestamp,
+    fetchSwapTransaction,
   } = useJupiter(jupiterParams);
+
+  const { data: referenceFees } = useReferenceFeesQuery();
+  const { priorityLevel, modifyComputeUnitPriceAndLimit } = usePrioritizationFee();
+  const { connection } = useConnection();
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
   useEffect(() => {
@@ -258,7 +279,7 @@ export const SwapContextProvider: FC<{
       }
       return newValue;
     });
-  }, [quoteResponseMeta, fromTokenInfo, toTokenInfo, jupiterSwapMode]);
+  }, [form.fromValue, fromTokenInfo?.decimals, jupiterSwapMode, quoteResponseMeta, toTokenInfo?.decimals]);
 
   const [txStatus, setTxStatus] = useState<
     | {
@@ -269,71 +290,6 @@ export const SwapContextProvider: FC<{
   >(undefined);
 
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
-  const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
-      return null;
-    }
-
-    let intervalId: NodeJS.Timer | undefined;
-    try {
-      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
-        const timeout = { current: 0 };
-
-        const result = await exchange({
-          wallet: wallet?.adapter as SignerWalletAdapter,
-          routeInfo: quoteResponseMeta,
-          onTransaction: async (txid, awaiter) => {
-            if (timeout.current === 0) {
-              timeout.current = Date.now() + 60_000;
-            }
-
-            if (!intervalId) {
-              intervalId = setInterval(() => {
-                if (Date.now() > timeout.current) {
-                  setTxStatus({ txid: '', status: 'timeout' });
-                  rej(new Error('Transaction timed-out'));
-                }
-              }, 1_000);
-            }
-
-            const tx = txStatus?.txid === txid ? txStatus : undefined;
-            if (!tx) {
-              setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
-            }
-
-            const success = !((await awaiter) instanceof Error);
-
-            setTxStatus((prev) => {
-              const tx = prev?.txid === txid ? prev : undefined;
-              if (tx) {
-                tx.status = success ? 'success' : 'fail';
-              }
-              return prev ? { ...prev } : undefined;
-            });
-          },
-          computeUnitPriceMicroLamports,
-        });
-
-        setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
-        return result;
-      })
-        .catch((err) => {
-          console.log(err);
-          setTxStatus({ txid: '', status: 'fail' });
-          return null;
-        })
-        .finally(() => {
-          if (intervalId) {
-            clearInterval(intervalId);
-          }
-        });
-
-      return swapResult;
-    } catch (error) {
-      console.log('Swap error', error);
-      return null;
-    }
-  }, [walletPublicKey, quoteResponseMeta]);
 
   const onSubmitWithIx = useCallback(
     (swapResult: SwapResult) => {
@@ -371,7 +327,7 @@ export const SwapContextProvider: FC<{
         body: JSON.stringify({
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
-          computeUnitPriceMicroLamports,
+          dynamicComputeUnitLimit: true,
         }),
       })
     ).json();
@@ -388,7 +344,7 @@ export const SwapContextProvider: FC<{
       throw new Error('Failed to get swap instructions');
     }
 
-    const [sourceAddress, destinationAddress] = [inputMint, outputMint].map((mint, idx) =>
+    const [sourceAddress, destinationAddress] = [inputMint, outputMint].map((mint) =>
       getAssociatedTokenAddressSync(new PublicKey(mint), new PublicKey(walletPublicKey)),
     );
 
@@ -401,12 +357,131 @@ export const SwapContextProvider: FC<{
       instructions,
       onSubmitWithIx,
     };
-  }, [walletPublicKey, quoteResponseMeta]);
+  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, onSubmitWithIx]);
 
-  const refreshAll = () => {
-    refresh();
-    refreshAccount();
-  };
+  const onSubmit = useCallback(async () => {
+    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
+      return null;
+    }
+
+    let intervalId: NodeJS.Timer | undefined;
+    try {
+      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
+        const timeout = { current: 0 };
+
+        if (!wallet.adapter.publicKey) return;
+        const swapTransactionResponse = await fetchSwapTransaction({
+          quoteResponseMeta,
+          userPublicKey: wallet.adapter.publicKey,
+          prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
+          wrapUnwrapSOL: true,
+        });
+
+        if ('error' in swapTransactionResponse) {
+          console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
+        } else {
+          modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
+            referenceFee: (() => {
+              if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
+                return referenceFees?.swapFee;
+              }
+
+              if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
+              if (priorityLevel === 'HIGH') return referenceFees.jup.h;
+              if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
+            })(),
+          });
+
+          const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
+          const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
+            connection,
+            inputMint,
+            outputMint,
+            userPublicKey: wallet.adapter.publicKey!,
+          });
+
+          const result = await executeTransaction({
+            connection,
+            wallet: wallet?.adapter as SignerWalletAdapter,
+            onTransaction: async (txid, awaiter) => {
+              if (timeout.current === 0) {
+                timeout.current = Date.now() + 60_000;
+              }
+
+              if (!intervalId) {
+                intervalId = setInterval(() => {
+                  if (Date.now() > timeout.current) {
+                    setTxStatus({ txid: '', status: 'timeout' });
+                    rej(new Error('Transaction timed-out'));
+                  }
+                }, 1_000);
+              }
+
+              const tx = txStatus?.txid === txid ? txStatus : undefined;
+              if (!tx) {
+                setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+              }
+
+              const success = !((await awaiter) instanceof Error);
+
+              setTxStatus((prev) => {
+                const tx = prev?.txid === txid ? prev : undefined;
+                if (tx) {
+                  tx.status = success ? 'success' : 'fail';
+
+                  if (intervalId) {
+                    clearInterval(intervalId);
+                  }
+                }
+                return prev ? { ...prev } : undefined;
+              });
+            },
+            inputMint,
+            outputMint,
+            sourceAddress,
+            destinationAddress,
+            swapTransaction: swapTransactionResponse.swapTransaction,
+            blockhashWithExpiryBlockHeight: {
+              blockhash: swapTransactionResponse.blockhash,
+              lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
+            },
+            owner: new Owner(new PublicKey(walletPublicKey)),
+            wrapUnwrapSOL: true,
+          });
+          setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
+          return result;
+        }
+      })
+        .catch((err) => {
+          console.log(err);
+          setTxStatus({ txid: '', status: 'fail' });
+          return null;
+        })
+        .finally(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+          }
+        });
+
+      return swapResult;
+    } catch (error) {
+      console.log('Swap error', error);
+      return null;
+    }
+  }, [
+    walletPublicKey,
+    wallet?.adapter,
+    quoteResponseMeta,
+    fetchSwapTransaction,
+    modifyComputeUnitPriceAndLimit,
+    connection,
+    referenceFees?.jup.m,
+    referenceFees?.jup.h,
+    referenceFees?.jup.vh,
+    referenceFees?.swapFee,
+    priorityLevel,
+    txStatus,
+  ]);
 
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
@@ -423,19 +498,8 @@ export const SwapContextProvider: FC<{
       setTxStatus(undefined);
       refreshAccount();
     },
-    [setupInitialAmount, form],
+    [refreshAccount, setupInitialAmount],
   );
-
-  const [priorityFeeInSOL, setPriorityFeeInSOL] = useState<number>(PRIORITY_NONE);
-  const computeUnitPriceMicroLamports = useMemo(() => {
-    if (priorityFeeInSOL === undefined) return 0;
-    return new Decimal(priorityFeeInSOL)
-      .mul(10 ** 9) // sol into lamports
-      .mul(10 ** 6) // lamports into microlamports
-      .div(1_400_000) // divide by CU
-      .round()
-      .toNumber();
-  }, [priorityFeeInSOL]);
 
   // onFormUpdate callback
   useEffect(() => {
@@ -474,19 +538,13 @@ export const SwapContextProvider: FC<{
           txStatus,
         },
         jupiter: {
-          quoteResponseMeta: JSBI.GT(jupiterParams.amount, ZERO) ? quoteResponseMeta : undefined,
-          programIdsExcluded,
-          programIdToLabelMap,
-          setProgramIdsExcluded,
-          exchange,
-          loading: loadingQuotes,
-          refresh: refreshAll,
-          lastRefreshTimestamp,
-          error,
           asLegacyTransaction,
           setAsLegacyTransaction,
-          priorityFeeInSOL,
-          setPriorityFeeInSOL,
+          quoteResponseMeta,
+          loading,
+          refresh,
+          error,
+          lastRefreshTimestamp,
         },
         setUserSlippage,
       }}

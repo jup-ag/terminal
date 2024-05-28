@@ -33,7 +33,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
   const balance = useMemo(() => {
     return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
-  }, [walletPublicKey, accounts, form.fromMint]);
+  }, [accounts, form.fromMint]);
 
   const [isDisabled, setIsDisabled] = useState(false);
   useEffect(() => {
@@ -53,7 +53,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
     setErrors({});
     setIsDisabled(false);
-  }, [form, balance]);
+  }, [form, balance, quoteResponseMeta, loading, setErrors]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
   const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);
@@ -87,7 +87,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       }
       setSelectPairSelector(null);
     },
-    [selectPairSelector],
+    [selectPairSelector, setForm],
   );
 
   const availableMints: TokenInfo[] = useMemo(() => {
@@ -102,7 +102,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
   const onSubmitToConfirmation = useCallback(() => {
     setScreen('Confirmation');
-  }, []);
+  }, [setScreen]);
 
   return (
     <>
@@ -117,7 +117,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       </form>
 
       {selectPairSelector !== null ? (
-        <div className="absolute top-0 left-0 h-full w-full bg-jupiter-bg rounded-lg overflow-hidden">
+        <div className="absolute top-0 left-0 h-full w-full bg-v3-modal rounded-lg overflow-hidden">
           <FormPairSelector
             onSubmit={onSelectMint}
             tokenInfos={availableMints}

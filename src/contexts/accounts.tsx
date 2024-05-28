@@ -153,7 +153,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         decimals: 9,
       };
     }
-  }, [publicKey, connected]);
+  }, [publicKey, connected, connection]);
 
   const fetchAllTokens = useCallback(async () => {
     if (!publicKey || !connected) return {};
@@ -183,7 +183,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     );
 
     return reducedResult;
-  }, [publicKey, connected]);
+  }, [publicKey, connected, connection]);
 
   const {
     data: accounts,

@@ -4,16 +4,16 @@ import { TokenInfo } from '@solana/spl-token-registry';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useSwapContext } from 'src/contexts/SwapContext';
+import { useEffect, useMemo, useState } from 'react';
+import { usePrioritizationFee } from 'src/contexts/PrioritizationFeeContextProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { useAccounts } from 'src/contexts/accounts';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
 import Deposits from './Deposits';
 import Fees from './Fees';
-import TransactionFee from './TransactionFee';
-import { useAccounts } from 'src/contexts/accounts';
 import PlatformFees, { PlatformFeesInfo } from './PlatformFees';
+import TransactionFee from './TransactionFee';
 
 const Index = ({
   quoteResponse,
@@ -53,7 +53,7 @@ const Index = ({
       return `${amountText} ${toTokenInfo.symbol}`;
     }
     return '-';
-  }, [quoteResponse]);
+  }, [quoteResponse.otherAmountThreshold, toTokenInfo.decimals, toTokenInfo.symbol]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 
@@ -79,9 +79,7 @@ const Index = ({
   const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
-  const {
-    jupiter: { priorityFeeInSOL },
-  } = useSwapContext();
+  const { priorityFee } = usePrioritizationFee();
 
   return (
     <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
@@ -126,10 +124,10 @@ const Index = ({
             />
           ) : null}
 
-          {priorityFeeInSOL > 0 ? (
+          {priorityFee > 0 ? (
             <div className="flex items-center justify-between text-xs">
-              <div className="text-white/30">Priority Fee</div>
-              <div className="text-white/30">{new Decimal(priorityFeeInSOL).toString()}</div>
+              <div className="text-white/30">Max Priority Fee</div>
+              <div className="text-white/30">{priorityFee} SOL</div>
             </div>
           ) : null}
         </>

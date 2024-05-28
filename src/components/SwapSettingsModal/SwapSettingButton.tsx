@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import React, { HTMLAttributes, useMemo } from 'react';
 
 interface ISwapSettingButton {
@@ -21,20 +22,25 @@ const SwapSettingButton = ({
 }: ISwapSettingButton) => {
   const classes = `relative flex-1 py-4 px-1 text-white/50 bg-[#1B1B1E]`;
   const roundBorderClass = (() => {
-    if (roundBorder === 'left') return 'v2-border-gradient-left';
-    if (roundBorder === 'right') return 'v2-border-gradient-right';
+    if (roundBorder === 'left') return 'rounded-l-xl';
+    if (roundBorder === 'right') return 'rounded-r-xl';
+    return '';
   })();
 
   const borderClassName = useMemo(() => {
-    if (idx > 0 && idx < itemsCount) return 'border-l border-black/10 border-white/5';
+    if (idx > 0 && idx < itemsCount) return 'border-l border-white/10';
   }, [idx, itemsCount]);
 
   return (
     <button
       type="button"
-      className={`${
-        highlighted ? `v2-border-gradient ${roundBorderClass} bg-v2-gradient bg-transparent` : ''
-      } ${borderClassName} ${classes} ${className} relative`}
+      className={classNames(
+        '!h-[42px] relative border border-transparent',
+        borderClassName,
+        highlighted ? ` ${roundBorderClass} !border-v3-primary` : '',
+        classes,
+        className,
+      )}
       onClick={onClick}
     >
       <div className={`h-full w-full leading-none flex justify-center items-center`}>{children}</div>

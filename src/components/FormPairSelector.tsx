@@ -69,14 +69,14 @@ const FormPairSelector = ({
     } else {
       setSearchResult(sortedList);
     }
-  }, [accounts, tokenInfos, searchTerm]);
+  }, [accounts, tokenInfos, searchTerm, tokenPriceMap]);
 
   const listRef = createRef<FixedSizeList>();
   const inputRef = createRef<HTMLInputElement>();
   useEffect(() => inputRef.current?.focus(), [inputRef]);
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2">
+    <div className="flex flex-col h-full w-full py-4 px-2 bg-v3-modal">
       <div className="flex w-full justify-between">
         <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onClose}>
           <LeftArrowIcon width={24} height={24} />
@@ -88,14 +88,14 @@ const FormPairSelector = ({
       </div>
 
       <div
-        className="flex px-5 mt-4 w-[98%] rounded-xl bg-[#212128]"
+        className="flex px-5 mt-4 w-[98%] rounded-xl bg-v2-lily/10"
         style={{ height: SEARCH_BOX_HEIGHT, maxHeight: SEARCH_BOX_HEIGHT }}
       >
         <SearchIcon />
 
         <input
           autoComplete="off"
-          className="w-full rounded-xl ml-4 truncate bg-[#212128] text-white/50 placeholder:text-white/20"
+          className="w-full rounded-xl ml-4 truncate bg-transparent text-white/50 placeholder:text-white/20"
           placeholder={`Search`}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

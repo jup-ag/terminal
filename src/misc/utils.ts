@@ -105,16 +105,6 @@ export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseE
   }, [ref, handler]);
 }
 
-export function useDebouncedEffect(fn: Function, deps: any[], time: number) {
-  const dependencies = [...deps, fn, time];
-  useEffect(() => {
-    const timeout = setTimeout(fn, time);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, dependencies);
-}
-
 export function splitIntoChunks<T>(array: T[], size: number): T[][] {
   return Array.apply<number, T[], T[][]>(0, new Array(Math.ceil(array.length / size))).map((_, index) =>
     array.slice(index * size, (index + 1) * size),

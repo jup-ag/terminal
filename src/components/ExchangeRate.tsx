@@ -63,7 +63,7 @@ const ExchangeRate = ({
 }: ExchangeRateProps) => {
   const [reverse, setReverse] = React.useState(reversible ?? true);
 
-  const rate = React.useMemo(() => calculateRate(rateParams, reverse), [loading, reverse, rateParams])
+  const rate = React.useMemo(() => calculateRate(rateParams, reverse), [reverse, rateParams])
 
   const onReverse: React.MouseEventHandler = React.useCallback((event) => {
     event.stopPropagation();
