@@ -249,16 +249,7 @@ export const SwapContextProvider: FC<{
   } = useJupiter(jupiterParams);
 
   const { data: referenceFees } = useReferenceFeesQuery();
-  const { priorityFeeLamports, priorityLevel, modifyComputeUnitPriceAndLimit } = usePrioritizationFee();
-  const computeUnitPriceMicroLamports = useMemo(() => {
-    if (priorityFeeLamports === undefined) return 0;
-    return new Decimal(priorityFeeLamports)
-      .mul(10 ** 6) // lamports into microlamports
-      .div(1_400_000) // divide by CU
-      .round()
-      .toNumber();
-  }, [priorityFeeLamports]);
-
+  const { priorityLevel, modifyComputeUnitPriceAndLimit } = usePrioritizationFee();
   const { connection } = useConnection();
 
   const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
@@ -336,12 +327,6 @@ export const SwapContextProvider: FC<{
         body: JSON.stringify({
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
-          /**
-           * Note: This is not optimal `computeUnitLimit` as it's not calculated based on the transaction `instructions`
-           * This is just a placeholder value to make the API call, we will replace it with the optimal value later,
-           * by simulate the transaction and get the optimal value.
-           */
-          computeUnitPriceMicroLamports,
           dynamicComputeUnitLimit: true,
         }),
       })
@@ -372,7 +357,7 @@ export const SwapContextProvider: FC<{
       instructions,
       onSubmitWithIx,
     };
-  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, computeUnitPriceMicroLamports, onSubmitWithIx]);
+  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, onSubmitWithIx]);
 
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
