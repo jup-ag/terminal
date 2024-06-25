@@ -38,7 +38,7 @@ export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: st
 ];
 
 const noop = () => {};
-const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, children }) => {
+const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, endpointConfig, children }) => {
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
   const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [endpoint, network]);
@@ -126,7 +126,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
 
   return (
     <>
-      <ConnectionProvider endpoint={selectedEndpoint}>
+      <ConnectionProvider endpoint={selectedEndpoint} config={endpointConfig}>
         <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
       </ConnectionProvider>
       {showWalletStatus.show && showWalletStatus.message ? (

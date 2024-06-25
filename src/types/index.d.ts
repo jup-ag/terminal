@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
-import { PublicKey, TransactionError } from '@solana/web3.js';
+import { ConnectionConfig, PublicKey, TransactionError } from '@solana/web3.js';
 import { QuoteResponseMeta, SwapMode, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
@@ -73,6 +73,11 @@ export interface IOnRequestIxCallback {
 export interface IInit {
   /** Solana RPC endpoint */
   endpoint: string;
+  /**
+   * Configuration for instantiating a Solana RPC Connection object.
+   * [`ConnectionConfig` docs](https://solana-labs.github.io/solana-web3.js/classes/Connection.html)
+   */
+  endpointConfig?: ConnectionConfig;
   /** TODO: Update to use the new platform fee and accounts */
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
   /** Configure Terminal's behaviour and allowed actions for your user */
