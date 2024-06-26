@@ -182,7 +182,7 @@ const Form: React.FC<{
                       onClick={onClickSelectFromMint}
                     >
                       <div className="h-5 w-5">
-                        <TokenIcon tokenInfo={fromTokenInfo} width={20} height={20} />
+                        <TokenIcon info={fromTokenInfo} width={20} height={20} />
                       </div>
                       <div className="ml-4 mr-2 font-semibold" translate="no">
                         {fromTokenInfo?.symbol}
@@ -260,7 +260,7 @@ const Form: React.FC<{
                       onClick={onClickSelectToMint}
                     >
                       <div className="h-5 w-5">
-                        <TokenIcon tokenInfo={toTokenInfo} width={20} height={20} />
+                        <TokenIcon info={toTokenInfo} width={20} height={20} />
                       </div>
                       <div className="ml-4 mr-2 font-semibold" translate="no">
                         {toTokenInfo?.symbol}

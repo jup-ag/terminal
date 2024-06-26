@@ -4,6 +4,7 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { useAccounts } from '../contexts/accounts';
 
 import { formatNumber } from '../misc/utils';
+import { WRAPPED_SOL_MINT } from '@jup-ag/common';
 
 interface ICoinBalanceProps {
   mintAddress: string;
@@ -11,14 +12,15 @@ interface ICoinBalanceProps {
 }
 
 const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
-  const { accounts } = useAccounts();
+  const { accounts, nativeAccount } = useAccounts();
   const { wallet } = useWalletPassThrough();
 
   const walletPublicKey = React.useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const balance = React.useMemo(() => {
+  const balance: number = React.useMemo(() => {
+    if (props.mintAddress === WRAPPED_SOL_MINT.toString()) return nativeAccount?.balance || 0;
     return accounts[props.mintAddress]?.balance || 0;
-  }, [accounts, props.mintAddress]);
+  }, [accounts, nativeAccount, props.mintAddress]);
 
   if (props.hideZeroBalance && balance === 0) return null;
 

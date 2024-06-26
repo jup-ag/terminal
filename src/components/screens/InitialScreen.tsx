@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { TokenInfo } from '@solana/spl-token-registry';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { WRAPPED_SOL_MINT } from '@jup-ag/common';
+import { useScreenState } from 'src/contexts/ScreenProvider';
+import { useSwapContext } from 'src/contexts/SwapContext';
 import Form from '../../components/Form';
 import FormPairSelector from '../../components/FormPairSelector';
-import { useAccounts } from '../../contexts/accounts';
 import { useTokenContext } from '../../contexts/TokenContextProvider';
-import { useSwapContext } from 'src/contexts/SwapContext';
-import { useScreenState } from 'src/contexts/ScreenProvider';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { useAccounts } from '../../contexts/accounts';
 import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 
 interface Props {
@@ -16,8 +16,7 @@ interface Props {
 }
 
 const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
-  const { wallet } = useWalletPassThrough();
-  const { accounts } = useAccounts();
+  const { accounts, nativeAccount } = useAccounts();
   const { tokenMap } = useTokenContext();
   const {
     form,
@@ -29,11 +28,10 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   } = useSwapContext();
   const { setScreen } = useScreenState();
 
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
-
   const balance = useMemo(() => {
+    if (form.fromMint === WRAPPED_SOL_MINT.toString()) return nativeAccount?.balance || 0;
     return form.fromMint ? accounts[form.fromMint]?.balance || 0 : 0;
-  }, [accounts, form.fromMint]);
+  }, [accounts, form.fromMint, nativeAccount?.balance]);
 
   const [isDisabled, setIsDisabled] = useState(false);
   useEffect(() => {
@@ -127,7 +125,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       ) : null}
 
       {showUnknownToken ? (
-        <div className="absolute h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
+        <div className="absolute top-0 h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
           <UnknownTokenModal
             tokensInfo={[showUnknownToken]}
             onClickAccept={() => {
