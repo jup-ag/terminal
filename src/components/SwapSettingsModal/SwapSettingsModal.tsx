@@ -12,7 +12,6 @@ import SwapSettingButton from './SwapSettingButton';
 import { DEFAULT_SLIPPAGE } from 'src/constants';
 import { PriorityLevel, PriorityMode, usePrioritizationFee } from 'src/contexts/PrioritizationFeeContextProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
-import { PreferredTokenListMode, useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { SOL_TOKEN_INFO } from 'src/misc/constants';
@@ -48,7 +47,6 @@ type Form = {
   onlyDirectRoutes: boolean;
   useWSol: boolean;
   asLegacyTransaction: boolean;
-  preferredTokenListMode: PreferredTokenListMode;
 };
 
 // constants
@@ -68,7 +66,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
     setUserSlippage,
   } = useSwapContext();
   const { data: referenceFees } = useReferenceFeesQuery();
-  const { preferredTokenListMode, setPreferredTokenListMode } = useTokenContext();
   const { priorityFee, priorityMode, priorityLevel, setPriorityFee, setPriorityMode, setPriorityLevel } =
     usePrioritizationFee();
   const { wallet } = useWalletPassThrough();
@@ -90,7 +87,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
             }
         : {}),
       asLegacyTransaction,
-      preferredTokenListMode,
       // Priority Fee
       unsavedPriorityFee: priorityFee,
       unsavedPriorityMode: priorityMode,
@@ -147,7 +143,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   /* OTHERS */
   const asLegacyTransactionInput = form.watch('asLegacyTransaction');
-  const preferredTokenListModeInput = form.watch('preferredTokenListMode');
   const detectedVerTxSupport = useMemo(() => {
     return wallet?.adapter?.supportedTransactionVersions?.has(0);
   }, [wallet]);
@@ -173,7 +168,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
   // method
   const onClickSave = useCallback(
     (values: Form) => {
-      const { slippageInput, slippagePreset, asLegacyTransaction, preferredTokenListMode } = values;
+      const { slippageInput, slippagePreset, asLegacyTransaction } = values;
       const value = slippageInput ? Number(slippageInput) : Number(slippagePreset);
 
       if (typeof value === 'number') {
@@ -184,7 +179,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
       }
 
       setAsLegacyTransaction(asLegacyTransaction);
-      setPreferredTokenListMode(preferredTokenListMode);
       // To save user slippage into local storage
       setUserSlippage(value);
 
@@ -202,7 +196,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
       hasUnsavedFeeChanges,
       setAsLegacyTransaction,
       setForm,
-      setPreferredTokenListMode,
       setPriorityFee,
       setPriorityLevel,
       setPriorityMode,
@@ -565,12 +558,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   <ExternalIcon />
                 </a>
               </div>
-              <Toggle
-                active={preferredTokenListModeInput === 'strict'}
-                onClick={() =>
-                  form.setValue('preferredTokenListMode', preferredTokenListModeInput === 'strict' ? 'all' : 'strict')
-                }
-              />
             </div>
             <p className="mt-2 text-xs text-white/50">
               {`The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".`}

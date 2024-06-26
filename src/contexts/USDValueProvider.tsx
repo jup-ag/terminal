@@ -44,7 +44,7 @@ const hasExpired = (timestamp: number) => {
 
 export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { accounts } = useAccounts();
-  const { tokenMap } = useTokenContext();
+  const { getTokenInfo } = useTokenContext();
   const { fromTokenInfo, toTokenInfo } = useSwapContext();
 
   const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(STORAGE_KEY, {});
@@ -167,11 +167,11 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, [setCachedPrices]);
 
   useEffect(() => {
-    if (!Object.keys(accounts).length || !tokenMap.size) return;
+    if (!Object.keys(accounts).length) return;
 
     const userAccountAddresses: string[] = Object.keys(accounts)
       .map((key) => {
-        const token = tokenMap.get(key);
+        const token = getTokenInfo(key);
 
         if (!token) return undefined;
 
@@ -182,7 +182,7 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
     setAddresses((prev) => {
       return new Set([...prev, ...userAccountAddresses]);
     });
-  }, [accounts, tokenMap]);
+  }, [accounts, getTokenInfo]);
 
   // Make sure form token always have USD values
   useEffect(() => {

@@ -128,7 +128,7 @@ export const SwapContextProvider: FC<{
     children,
   } = props;
   const { screen } = useScreenState();
-  const { tokenMap } = useTokenContext();
+  const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
 
@@ -164,21 +164,23 @@ export const SwapContextProvider: FC<{
   );
 
   const fromTokenInfo = useMemo(() => {
-    const tokenInfo = form.fromMint ? tokenMap.get(form.fromMint) : null;
+    if (!isLoaded) return null;
+    const tokenInfo = form.fromMint ? getTokenInfo(form.fromMint) : null;
     return tokenInfo;
-  }, [form.fromMint, tokenMap]);
+  }, [form.fromMint, isLoaded, getTokenInfo]);
 
   const toTokenInfo = useMemo(() => {
-    const tokenInfo = form.toMint ? tokenMap.get(form.toMint) : null;
+    if (!isLoaded) return null;
+    const tokenInfo = form.toMint ? getTokenInfo(form.toMint) : null;
     return tokenInfo;
-  }, [form.toMint, tokenMap]);
+  }, [form.toMint, getTokenInfo, isLoaded]);
 
   // Set value given initial amount
   const setupInitialAmount = useCallback(() => {
-    if (!formProps?.initialAmount || tokenMap.size === 0 || !fromTokenInfo || !toTokenInfo) return;
+    if (!formProps?.initialAmount || !fromTokenInfo || !toTokenInfo) return;
 
     const toUiAmount = (mint: string) => {
-      const tokenInfo = mint ? tokenMap.get(mint) : undefined;
+      const tokenInfo = mint ? getTokenInfo(mint) : undefined;
       if (!tokenInfo) return;
       return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
     };
@@ -194,11 +196,11 @@ export const SwapContextProvider: FC<{
         setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
       }, 0);
     }
-  }, [formProps.initialAmount, fromTokenInfo, jupiterSwapMode, toTokenInfo, tokenMap]);
+  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, jupiterSwapMode, toTokenInfo]);
 
   useEffect(() => {
     setupInitialAmount();
-  }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount, tokenMap]);
+  }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount]);
 
   // We dont want to effect to keep trigger for fromValue and toValue
   const userInputChange = useMemo(() => {
