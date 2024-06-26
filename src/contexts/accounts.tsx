@@ -16,6 +16,7 @@ export interface IAccountsBalance {
   balanceLamports: BN;
   hasBalance: boolean;
   decimals: number;
+  isFrozen: boolean;
 }
 
 interface IAccountContext {
@@ -33,7 +34,7 @@ interface ParsedTokenData {
           isNative: boolean;
           mint: string;
           owner: string;
-          state: string;
+          state: number;
           tokenAmount: {
             amount: string;
             decimals: number;
@@ -153,6 +154,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         balanceLamports: new BN(response?.lamports || 0),
         hasBalance: response?.lamports ? response?.lamports > 0 : false,
         decimals: 9,
+        isFrozen: false,
       };
     }
   }, [publicKey, connected, connection]);
@@ -178,6 +180,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
           pubkey: item.pubkey,
           hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
           decimals: item.account.data.parsed.info.tokenAmount.decimals,
+          isFrozen: item.account.data.parsed.info.state === 2, // 2 is frozen
         };
         return acc;
       },
