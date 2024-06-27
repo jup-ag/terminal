@@ -24,7 +24,7 @@ const Fees = ({ routePlan }: IFees) => {
         const decimals = tokenMint?.decimals ?? 6;
 
         const feeAmount = formatNumber.format(
-          new Decimal(item.swapInfo.feeAmount.toString()).div(Math.pow(10, decimals)).toNumber(),
+          new Decimal(item.swapInfo.feeAmount.toString()).div(Math.pow(10, decimals)),
         );
         const feePct = new Decimal(item.swapInfo.feeAmount.toString())
           .div(
@@ -45,7 +45,7 @@ const Fees = ({ routePlan }: IFees) => {
               </span>
             </div>
             <div className="text-white/30 text-right">
-              {feeAmount} {tokenMint?.symbol} ({formatNumber.format(new Decimal(feePct).mul(100).toNumber())}
+              {feeAmount} {tokenMint?.symbol} ({formatNumber.format(new Decimal(feePct).mul(100))}
               %)
             </div>
           </div>

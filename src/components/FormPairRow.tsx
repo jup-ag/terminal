@@ -1,73 +1,182 @@
+import React, {
+  CSSProperties,
+  useEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { TokenInfo } from '@solana/spl-token-registry';
-import React, { CSSProperties, useMemo } from 'react';
-
-import CoinBalance from './Coinbalance';
-import { PAIR_ROW_HEIGHT } from './FormPairSelector';
+import Decimal from 'decimal.js';
+import { WRAPPED_SOL_MINT } from 'src/constants';
+import { checkIsStrictOrVerified, checkIsToken2022, checkIsUnknownToken } from 'src/misc/tokenTags';
+import { useAccounts } from 'src/contexts/accounts';
+import { formatNumber } from 'src/misc/utils';
 import TokenIcon from './TokenIcon';
 import TokenLink from './TokenLink';
-import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
-import Decimal from 'decimal.js';
-import { useAccounts } from 'src/contexts/accounts';
+import CoinBalance from './Coinbalance';
 
-const FormPairRow: React.FC<{
+export const PAIR_ROW_HEIGHT = 72;
+
+export interface IPairRow {
+  usdValue?: Decimal;
   item: TokenInfo;
   style: CSSProperties;
   onSubmit(item: TokenInfo): void;
-}> = ({ item, style, onSubmit }) => {
-  const isUnknown = useMemo(() => item.tags?.length === 0 || item.tags?.includes('unknown'), [item.tags])
+  suppressCloseModal?: boolean;
+  showExplorer?: boolean;
+  enableUnknownTokenWarning?: boolean;
+  isLST?: boolean;
+}
 
+interface IMultiTag {
+  isVerified: boolean;
+  isLST: boolean;
+  isUnknown: boolean;
+  isToken2022: boolean;
+  isFrozen: boolean;
+}
+
+const MultiTags: React.FC<IPairRow> = ({ item }) => {
   const { accounts } = useAccounts();
-  const { tokenPriceMap } = useUSDValueProvider();
+  const isLoading = useRef<boolean>(false);
+  const isLoaded = useRef<boolean>(false);
+  // It's cheaper to slightly delay and rendering once, than rendering everything all the time
+  const [renderedTag, setRenderedTag] = React.useState<IMultiTag>({
+    isVerified: false,
+    isLST: false,
+    isUnknown: false,
+    isToken2022: false,
+    isFrozen: false,
+  });
 
-  const totalUsdValue = useMemo(() => {
-    const tokenPrice = tokenPriceMap[item.address]?.usd;
-    const balance = accounts[item.address]?.balance;
-    if (!tokenPrice || !balance) return null;
+  useEffect(() => {
+    if (isLoaded.current || isLoading.current) return;
 
-    const totalAValue = new Decimal(tokenPrice).mul(balance);
-    return totalAValue;
-  }, [accounts, item.address, tokenPriceMap])
+    isLoading.current = true;
+    setTimeout(() => {
+      const result = {
+        isVerified: checkIsStrictOrVerified(item),
+        isLST: Boolean(item.tags?.includes('lst')),
+        isUnknown: checkIsUnknownToken(item),
+        isToken2022: Boolean(checkIsToken2022(item)),
+        isFrozen: accounts[item.address]?.isFrozen || false,
+      };
+      setRenderedTag(result);
+      isLoading.current = false;
+      isLoaded.current = true;
+    }, 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const remainingTags = useMemo(() => {
+    // Filter out the tags we've already used
+    const filterTags = ['verified', 'strict', 'lst', 'unknown', 'token-2022', 'new'];
+    const otherTags = item.tags?.filter((item) => filterTags.includes(item) === false);
+    return otherTags;
+  }, [item.tags]);
+
+  if (!renderedTag) return null;
+
+  const { isVerified, isLST, isUnknown, isToken2022, isFrozen } = renderedTag;
+
+  return (
+    <div className="flex justify-end gap-x-1">
+      {isFrozen && (
+        <p className="border rounded-md text-xxs leading-none transition-all py-0.5 px-1 border-warning/50 text-warning/50">
+          <span>Frozen</span>
+        </p>
+      )}
+
+      {isUnknown && (
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20">
+          <span>Unknown</span>
+        </p>
+      )}
+
+      {isToken2022 && (
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20">
+          <span>Token2022</span>
+        </p>
+      )}
+
+      {remainingTags?.map((tag, idx) => (
+        <div
+          key={idx}
+          className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20"
+        >
+          {tag}
+        </div>
+      ))}
+
+      {isLST && (
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
+          <span>LST</span>
+        </p>
+      )}
+
+      {isVerified && (
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
+          {/* We're renaming verified to stict for now, requested by Mei */}
+          <span>Strict</span>
+        </p>
+      )}
+    </div>
+  );
+};
+
+const FormPairRow = (props: IPairRow) => {
+  const {
+    item,
+    style,
+    onSubmit,
+    suppressCloseModal,
+    usdValue,
+    showExplorer = true,
+    enableUnknownTokenWarning = true,
+  } = props;
+  const onClick = React.useCallback(() => {
+    onSubmit(item);
+
+    if (suppressCloseModal) return;
+  }, [onSubmit, item, suppressCloseModal]);
+
+  const usdValueDisplay =
+    usdValue && usdValue.gt(0.01) // If smaller than 0.01 cents, dont show
+      ? `$${formatNumber.format(usdValue.toDP(2).toNumber())}`
+      : '';
 
   return (
     <li
-      className={`cursor-pointer list-none `}
-      style={{ maxHeight: PAIR_ROW_HEIGHT, height: PAIR_ROW_HEIGHT, ...style }}
+      className={`rounded cursor-pointer px-5 my-1 list-none flex w-full items-center bg-v2-lily/5 hover:bg-v2-lily/10`}
+      style={{ maxHeight: PAIR_ROW_HEIGHT - 4, height: PAIR_ROW_HEIGHT - 4, ...style }}
+      onClick={onClick}
       translate="no"
     >
-      <div
-        className="flex items-center rounded-xl space-x-4 my-2 p-3 justify-between bg-v2-lily/10 hover:bg-v2-lily/5"
-        onClick={() => onSubmit(item)}
-      >
+      <div className="flex h-full w-full items-center space-x-4">
         <div className="flex-shrink-0">
-          <div className="h-6 w-6 rounded-full">
-            <TokenIcon info={item} width={24} height={24} />
+          <div className="bg-gray-200 rounded-full">
+            <TokenIcon info={item} width={24} height={24} enableUnknownTokenWarning={enableUnknownTokenWarning} />
           </div>
         </div>
-
         <div className="flex-1 min-w-0">
-          <div className='flex flex-row space-x-2'>
-            <p className="text-sm text-white truncate">
-              {item.symbol}
-            </p>
-            <TokenLink tokenInfo={item} />
-          </div>
-
-          <div className="mt-1 text-xs text-gray-500 truncate flex space-x-1">
-            <CoinBalance mintAddress={item.address} />
-
-            {totalUsdValue && totalUsdValue.gt(0.01) ? (
-              <span className='ml-1'>
-                | ${totalUsdValue.toFixed(2)}
-              </span>
+          <div className="flex space-x-2">
+            <p className="text-sm font-medium text-white truncate">{item.symbol}</p>
+            {/* Intentionally higher z to be clickable */}
+            {showExplorer ? (
+              <div className="z-10" onClick={(e) => e.stopPropagation()}>
+                <TokenLink tokenInfo={item} />
+              </div>
             ) : null}
           </div>
+          <p className="text-xs text-gray-500 dark:text-white-35 truncate">
+            {item.address === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
+          </p>
         </div>
 
-        {isUnknown ? (
-          <p className="ml-auto border rounded-md text-xxs py-[1px] px-1 border-warning text-warning">
-            <span>Unknown</span>
-          </p>
-        ) : null}
+        <div className="text-xs text-v2-lily/50 text-right h-full flex flex-col justify-evenly">
+          <CoinBalance mintAddress={item.address} hideZeroBalance />
+          {usdValueDisplay ? <p>{usdValueDisplay}</p> : null}
+          <MultiTags {...props} />
+        </div>
       </div>
     </li>
   );

@@ -26,7 +26,7 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
   const { data, index, style } = props;
   const item = data.searchResult[index];
 
-  return <FormPairRow key={item.address} item={item} style={style} onSubmit={data.onSubmit} />;
+  return <FormPairRow key={item.address} item={item} style={style} onSubmit={data.onSubmit} usdValue={data.mintToUsdValue.get(item.address)} />;
 }, areEqual);
 
 const generateSearchTerm = (info: TokenInfo, searchValue: string) => {
@@ -126,7 +126,6 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
 
   const userWalletResults = useMemo(() => {
     const userWalletResults: TokenInfo[] = [...tokenMap.values(), ...unknownTokenMap.values()];
-    getUSDValue(userWalletResults.map((item) => item.address));
     return userWalletResults;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -144,7 +143,6 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
       // Show user wallet tokens by default
       if (!searchValue.current) {
         setSearchResult(await sortTokenListByBalance(userWalletResults));
-        console.log({userWalletResults})
         setIsSearching(false);
         return;
       }
@@ -285,6 +283,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
                   itemData={{
                     searchResult,
                     onSubmit,
+                    mintToUsdValue,
                   }}
                   className={classNames('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
                 >

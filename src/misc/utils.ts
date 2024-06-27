@@ -19,16 +19,23 @@ export const numberFormatter = new Intl.NumberFormat(userLocale, {
 });
 
 export const formatNumber = {
-  format: (val?: number, precision?: number) => {
+  format: (val?: number | Decimal, precision?: number) => {
     if (!val && val !== 0) {
       return '--';
     }
 
-    if (precision !== undefined) {
-      return val.toFixed(precision);
-    } else {
-      return numberFormatter.format(val);
+    // Force numberFormatter to respect the desired precision
+    const numberFormatter = new Intl.NumberFormat(userLocale, {
+      style: 'decimal',
+      minimumFractionDigits: precision,
+      maximumFractionDigits: 12,
+    });
+
+    if (typeof val === 'number') {
+      return numberFormatter.format(precision !== undefined ? +val.toFixed(precision) : val);
     }
+
+    return numberFormatter.format(precision !== undefined ? Number(val.toFixed(precision)) : val.toNumber());
   },
 };
 

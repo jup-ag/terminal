@@ -166,24 +166,6 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
     );
   }, [setCachedPrices]);
 
-  useEffect(() => {
-    if (!Object.keys(accounts).length) return;
-
-    const userAccountAddresses: string[] = Object.keys(accounts)
-      .map((key) => {
-        const token = getTokenInfo(key);
-
-        if (!token) return undefined;
-
-        return token.address;
-      })
-      .filter(Boolean) as string[];
-
-    setAddresses((prev) => {
-      return new Set([...prev, ...userAccountAddresses]);
-    });
-  }, [accounts, getTokenInfo]);
-
   // Make sure form token always have USD values
   useEffect(() => {
     setAddresses((prev) => {
@@ -208,6 +190,27 @@ export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
       return new Set([...prev, ...newTokenAddresses]);
     });
   }, []);
+
+  useEffect(() => {
+    if (!Object.keys(accounts).length) return;
+
+    const userAccountAddresses: string[] = Object.keys(accounts)
+      .map((key) => {
+        const token = getTokenInfo(key);
+
+        if (!token) return undefined;
+
+        return token.address;
+      })
+      .filter(Boolean) as string[];
+
+    // Fetch USD value
+    getUSDValue(userAccountAddresses);
+
+    setAddresses((prev) => {
+      return new Set([...prev, ...userAccountAddresses]);
+    });
+  }, [accounts, getTokenInfo, getUSDValue]);
 
   return (
     <USDValueProviderContext.Provider value={{ tokenPriceMap: priceMap, getUSDValue }}>

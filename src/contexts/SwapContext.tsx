@@ -273,15 +273,21 @@ export const SwapContextProvider: FC<{
     setForm((prev) => {
       const newValue = { ...prev };
 
+      if (!fromTokenInfo || !toTokenInfo) return prev;
+
       let { inAmount, outAmount } = quoteResponseMeta?.quoteResponse || {};
       if (jupiterSwapMode === SwapMode.ExactIn) {
-        newValue.toValue = outAmount ? String(fromLamports(outAmount, toTokenInfo?.decimals || 0)) : '';
+        newValue.toValue = outAmount
+          ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed()
+          : '';
       } else {
-        newValue.fromValue = inAmount ? String(fromLamports(inAmount, fromTokenInfo?.decimals || 0)) : '';
+        newValue.fromValue = inAmount
+          ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
+          : '';
       }
       return newValue;
     });
-  }, [form.fromValue, fromTokenInfo?.decimals, jupiterSwapMode, quoteResponseMeta, toTokenInfo?.decimals]);
+  }, [form.fromValue, fromTokenInfo, jupiterSwapMode, quoteResponseMeta, toTokenInfo]);
 
   const [txStatus, setTxStatus] = useState<
     | {

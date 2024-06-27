@@ -15,7 +15,7 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { SOL_TOKEN_INFO } from 'src/misc/constants';
-import { detectedSeparator, formatNumber, toLamports } from 'src/misc/utils';
+import { detectedSeparator, formatNumber, hasNumericValue, toLamports } from 'src/misc/utils';
 import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { CoinBalanceUSD } from '../CoinBalanceUSD';
 import JupButton from '../JupButton';
@@ -353,7 +353,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                 <span className="text-xxs mt-1 text-white/25 font-normal self-end">
                   <CoinBalanceUSD
                     tokenInfo={SOL_TOKEN_INFO}
-                    amount={unsavedPriorityFee?.toString()}
+                    amount={unsavedPriorityFee}
                     maxDecimals={4}
                     prefix="~"
                   />
@@ -370,7 +370,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                       <NumericFormat
                         value={value}
                         onValueChange={({ floatValue }) => {
-                          if (typeof floatValue !== 'number') return;
+                          if (typeof floatValue !== 'number' || floatValue <= 0) return;
                           form.setValue('hasUnsavedFeeChanges', true);
                           onChange(floatValue);
                         }}
