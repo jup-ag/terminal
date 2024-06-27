@@ -1,7 +1,12 @@
-import { ConnectionProvider, UnifiedWalletProvider, WalletAdapterNetwork, WalletName } from '@jup-ag/wallet-adapter';
+import {
+  ConnectionContext,
+  UnifiedWalletProvider,
+  WalletAdapterNetwork,
+  WalletName,
+} from '@jup-ag/wallet-adapter';
 import React, { PropsWithChildren, useState } from 'react';
 
-import { clusterApiUrl } from '@solana/web3.js';
+import { Connection, clusterApiUrl } from '@solana/web3.js';
 import { ReactNode, useMemo } from 'react';
 import { IInit } from 'src/types';
 import { NetworkConfigurationProvider, useNetworkConfiguration } from './NetworkConfigurationProvider';
@@ -38,7 +43,12 @@ export const HARDCODED_WALLET_STANDARDS: { id: string; name: WalletName; url: st
 ];
 
 const noop = () => {};
-const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect, endpoint, children }) => {
+const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
+  autoConnect,
+  endpoint,
+  connectionObj,
+  children,
+}) => {
   const { networkConfiguration } = useNetworkConfiguration();
   const network = networkConfiguration as WalletAdapterNetwork;
   const selectedEndpoint: string = useMemo(() => endpoint ?? clusterApiUrl(network), [endpoint, network]);
@@ -99,7 +109,12 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
                       <p className="space-y-1">
                         {walletName} is not installed.
                         <p className="space-x-1">
-                          <a className="underline font-semibold" target="_blank" rel="noopener noreferrer" href={metadata.url}>
+                          <a
+                            className="underline font-semibold"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            href={metadata.url}
+                          >
                             Visit {walletName} website
                           </a>
                           <span>to install it.</span>
@@ -107,7 +122,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
                       </p>
                     ),
                   });
-          
+
                   setTimeout(() => {
                     setShowWalletStatus({
                       show: false,
@@ -116,7 +131,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
                   }, 5_000);
                 },
               },
-              theme: 'jupiter'
+              theme: 'jupiter',
             }}
           >
             {children}
@@ -124,11 +139,17 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({ autoConnect
         );
   }, [autoConnect, enableWalletPassthrough, wallets]);
 
+  const connection = useMemo(() => {
+    if (endpoint) return new Connection(endpoint);
+    if (connectionObj) return connectionObj;
+    throw new Error('No connection object or endpoint provided');
+  }, [connectionObj, endpoint]);
+
   return (
     <>
-      <ConnectionProvider endpoint={selectedEndpoint}>
+      <ConnectionContext.Provider value={{ connection }}>
         <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
-      </ConnectionProvider>
+      </ConnectionContext.Provider>
       {showWalletStatus.show && showWalletStatus.message ? (
         <div className="absolute bottom-2 w-full px-2">
           <div className="w-full h-full bg-white/10 rounded-lg p-2 text-warning text-xs">
