@@ -16,18 +16,16 @@ export const CoinBalanceUSD = (props: ComponentProps) => {
   const { tokenPriceMap, getUSDValue } = useUSDValue();
   const address = tokenInfo.address;
   const cgPrice = address ? tokenPriceMap[address]?.usd || 0 : 0;
-  const amountInUSD = useMemo(() => {
-    if (!amount || !hasNumericValue(amount)) return 0;
 
-    return new Decimal(amount).mul(cgPrice).toNumber();
+  const amountInUSD = useMemo(() => {
+    if (!amount || !hasNumericValue(amount)) return new Decimal(0);
+    return new Decimal(amount).mul(cgPrice)
   }, [amount, cgPrice]);
 
   // effects
   useEffect(() => {
     if (address) getUSDValue([address]);
   }, [address, getUSDValue]);
-
-  if (!amountInUSD || amountInUSD <= 0) return <>{''}</>;
 
   return (
     <>
