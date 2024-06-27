@@ -176,7 +176,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
         acc[item.account.data.parsed.info.mint] = {
           balance: item.account.data.parsed.info.tokenAmount.uiAmount,
-          balanceLamports: new BN(0),
+          balanceLamports: new BN(item.account.data.parsed.info.tokenAmount.amount),
           pubkey: item.pubkey,
           hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
           decimals: item.account.data.parsed.info.tokenAmount.decimals,

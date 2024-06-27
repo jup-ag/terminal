@@ -1,12 +1,12 @@
-import { TokenInfo } from "@solana/spl-token-registry";
-import Decimal from "decimal.js";
-import { useCallback, useEffect, useRef } from "react";
-import { WRAPPED_SOL_MINT } from "src/constants";
-import { useTokenContext } from "src/contexts/TokenContextProvider";
-import { useUSDValue } from "src/contexts/USDValueProvider";
-import { useAccounts } from "src/contexts/accounts";
-import { checkIsUnknownToken } from "src/misc/tokenTags";
-import { fromLamports } from "src/misc/utils";
+import { TokenInfo } from '@solana/spl-token-registry';
+import Decimal from 'decimal.js';
+import { useCallback, useEffect, useRef } from 'react';
+import { WRAPPED_SOL_MINT } from 'src/constants';
+import { useTokenContext } from 'src/contexts/TokenContextProvider';
+import { useUSDValue } from 'src/contexts/USDValueProvider';
+import { useAccounts } from 'src/contexts/accounts';
+import { checkIsUnknownToken } from 'src/misc/tokenTags';
+import { fromLamports } from 'src/misc/utils';
 
 export const useSortByValue = () => {
   const { getTokenInfo } = useTokenContext();
