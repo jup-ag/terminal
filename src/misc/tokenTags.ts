@@ -1,7 +1,9 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 
 export const checkIsStrictOrVerified = (tokenInfo: TokenInfo) => {
-  return Boolean(tokenInfo.tags?.includes('verified') || tokenInfo.tags?.includes('strict'));
+  return Boolean(
+    tokenInfo.tags?.includes('verified') || tokenInfo.tags?.includes('strict') || tokenInfo.tags?.includes('community'),
+  );
 };
 
 export const checkIsUnknownToken = (tokenInfo: TokenInfo) => {

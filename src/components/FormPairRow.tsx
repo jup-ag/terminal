@@ -69,7 +69,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
 
   const remainingTags = useMemo(() => {
     // Filter out the tags we've already used
-    const filterTags = ['verified', 'strict', 'lst', 'unknown', 'token-2022', 'new'];
+    const filterTags = ['verified', 'strict', 'community', 'lst', 'unknown', 'token-2022', 'new'];
     const otherTags = item.tags?.filter((item) => filterTags.includes(item) === false);
     return otherTags;
   }, [item.tags]);
@@ -116,7 +116,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
       {isVerified && (
         <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
           {/* We're renaming verified to stict for now, requested by Mei */}
-          <span>Strict</span>
+          <span>Community</span>
         </p>
       )}
     </div>
