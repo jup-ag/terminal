@@ -53,8 +53,6 @@ const Content = () => {
   );
 };
 
-const queryClient = new QueryClient();
-
 const JupiterApp = (props: IInit) => {
   const { displayMode, platformFeeAndAccounts: ogPlatformFeeAndAccounts, formProps, maxAccounts } = props;
   const { connection } = useConnection();
@@ -87,7 +85,6 @@ const JupiterApp = (props: IInit) => {
   }, [ogPlatformFeeAndAccounts]);
 
   return (
-    <QueryClientProvider client={queryClient}>
       <AccountsProvider>
         <JupiterProvider
           connection={connection}
@@ -115,7 +112,6 @@ const JupiterApp = (props: IInit) => {
           </PrioritizationFeeContextProvider>
         </JupiterProvider>
       </AccountsProvider>
-    </QueryClientProvider>
   );
 };
 
