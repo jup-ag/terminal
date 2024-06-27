@@ -40,7 +40,7 @@ const FormPairRow: React.FC<{
       >
         <div className="flex-shrink-0">
           <div className="h-6 w-6 rounded-full">
-            <TokenIcon tokenInfo={item} width={24} height={24} />
+            <TokenIcon info={item} width={24} height={24} />
           </div>
         </div>
 

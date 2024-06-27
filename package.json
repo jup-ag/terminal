@@ -41,7 +41,10 @@
     "react-syntax-highlighter": "^15.5.0",
     "react-use": "^17.4.0",
     "react-virtualized-auto-sizer": "1.0.7",
-    "react-window": "1.8.8"
+    "react-window": "1.8.8",
+    "typesense-instantsearch-adapter": "~2.8.0",
+    "typesense": "1.7.2",
+    "react-instantsearch": "~7.7.0"
   },
   "devDependencies": {
     "@svgr/webpack": "^6.5.1",

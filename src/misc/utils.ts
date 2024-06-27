@@ -36,17 +36,18 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
-export function fromLamports(lamportsAmount?: JSBI | BN | number, decimals?: number, rate: number = 1.0): number {
-  if (!lamportsAmount) {
-    return 0;
-  }
+export function fromLamports(lamportsAmount: JSBI | BN | number | bigint, decimals: number): number {
+  return new Decimal(lamportsAmount.toString())
+    .div(10 ** decimals)
+    .toDP(decimals, Decimal.ROUND_DOWN)
+    .toNumber();
+}
 
-  const amount = BN.isBN(lamportsAmount) ? lamportsAmount : lamportsAmount;
-
-  const base = 10;
-  const precision = new Decimal(base).pow(decimals ?? 6);
-
-  return new Decimal(amount.toString()).div(precision).mul(rate).toNumber();
+export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
+  return new Decimal(lamportsAmount.toString())
+    .mul(10 ** decimals)
+    .floor()
+    .toNumber();
 }
 
 // https://usehooks.com/useEventListener/
@@ -144,11 +145,4 @@ export function getAssociatedTokenAddressSync(mint: PublicKey, owner: PublicKey,
     ASSOCIATED_TOKEN_PROGRAM_ID,
   );
   return ata;
-}
-
-export function toLamports(lamportsAmount: JSBI | BN | number, decimals: number): number {
-  return new Decimal(lamportsAmount.toString())
-    .mul(10 ** decimals)
-    .floor()
-    .toNumber();
 }

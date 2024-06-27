@@ -1,17 +1,17 @@
 import React from 'react';
 
-import Decimal from 'decimal.js';
-import { formatNumber } from 'src/misc/utils';
-import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { QuoteResponse, SwapMode } from '@jup-ag/react-hook';
+import Decimal from 'decimal.js';
+import { useTokenContext } from 'src/contexts/TokenContextProvider';
+import { formatNumber } from 'src/misc/utils';
 
 interface IFees {
   routePlan: QuoteResponse['routePlan'] | undefined;
   swapMode: SwapMode | undefined;
 }
 
-const Fees = ({ routePlan, swapMode }: IFees) => {
-  const { tokenMap } = useTokenContext();
+const Fees = ({ routePlan }: IFees) => {
+  const { getTokenInfo } = useTokenContext();
 
   if (!routePlan || (routePlan && routePlan.length === 0)) {
     return null;
@@ -20,7 +20,7 @@ const Fees = ({ routePlan, swapMode }: IFees) => {
   return (
     <>
       {routePlan.map((item, idx) => {
-        const tokenMint = tokenMap.get(item.swapInfo.feeMint.toString());
+        const tokenMint = getTokenInfo(item.swapInfo.feeMint.toString());
         const decimals = tokenMint?.decimals ?? 6;
 
         const feeAmount = formatNumber.format(

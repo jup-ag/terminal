@@ -23,7 +23,7 @@ const UnknownTokenModal: React.FC<{
         <div className="flex space-x-6 w-full justify-center">
           {tokensInfo.map((tokenInfo) => (
             <div key={tokenInfo.address} className="flex flex-col items-center justify-center">
-              <TokenIcon tokenInfo={tokenInfo} width={52} height={52} />
+              <TokenIcon info={tokenInfo} width={52} height={52} />
               <div className="mt-2 font-semibold">{tokenInfo.symbol}</div>
 
               <a

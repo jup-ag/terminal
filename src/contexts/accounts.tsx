@@ -20,6 +20,7 @@ export interface IAccountsBalance {
 
 interface IAccountContext {
   accounts: Record<string, IAccountsBalance>;
+  nativeAccount: IAccountsBalance | null | undefined;
   loading: boolean;
   refresh: () => void;
 }
@@ -55,6 +56,7 @@ interface ParsedTokenData {
 
 const AccountContext = React.createContext<IAccountContext>({
   accounts: {},
+  nativeAccount: undefined,
   loading: true,
   refresh: () => {},
 });
@@ -185,18 +187,18 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     return reducedResult;
   }, [publicKey, connected, connection]);
 
-  const {
-    data: accounts,
-    isLoading,
-    refetch,
-  } = useQuery<Record<string, IAccountsBalance>>(
+  const { data, isLoading, refetch } = useQuery<{
+    nativeAccount: IAccountsBalance | null | undefined;
+    accounts: Record<string, IAccountsBalance>;
+  }>(
     ['accounts', publicKey?.toString()],
     async () => {
       // Fetch all tokens balance
       const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
+
       return {
-        ...accounts,
-        ...(nativeAccount ? { [WRAPPED_SOL_MINT.toString()]: nativeAccount } : {}),
+        nativeAccount,
+        accounts,
       };
     },
     {
@@ -207,7 +209,14 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <AccountContext.Provider value={{ accounts: accounts || {}, loading: isLoading, refresh: refetch }}>
+    <AccountContext.Provider
+      value={{
+        accounts: data?.accounts || {},
+        nativeAccount: data?.nativeAccount,
+        loading: isLoading,
+        refresh: refetch,
+      }}
+    >
       {children}
     </AccountContext.Provider>
   );

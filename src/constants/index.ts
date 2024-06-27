@@ -46,3 +46,5 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   },
   useUserSlippage: true,
 })
+
+export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
