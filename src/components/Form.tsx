@@ -11,7 +11,6 @@ import JupButton from './JupButton';
 
 import TokenIcon from './TokenIcon';
 
-import { SwapMode } from '@jup-ag/react-hook';
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 import classNames from 'classnames';
 import { useSwapContext } from 'src/contexts/SwapContext';
@@ -19,7 +18,7 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import WalletIcon from 'src/icons/WalletIcon';
-import { detectedSeparator } from 'src/misc/utils';
+import { detectedSeparator, hasNumericValue } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
@@ -38,6 +37,7 @@ const Form: React.FC<{
   const {
     form,
     setForm,
+    isToPairFocused,
     errors,
     fromTokenInfo,
     toTokenInfo,
@@ -50,13 +50,13 @@ const Form: React.FC<{
     if (hasExpired) {
       refresh();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasExpired]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
-  const onChangeFromValue = (value: string) => {
-    if (value === '') {
+  const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
+    if (value === '' || !floatValue) {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
@@ -67,8 +67,8 @@ const Form: React.FC<{
     setForm((form) => ({ ...form, fromValue: value }));
   };
 
-  const onChangeToValue = (value: string) => {
-    if (value === '') {
+  const onChangeToValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
+    if (value === '' || !floatValue) {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
@@ -118,7 +118,7 @@ const Form: React.FC<{
   const { inputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
-      if (swapMode === SwapMode.ExactOut) {
+      if (swapMode === 'ExactOut') {
         result.outputAmountDisabled = false;
       } else {
         result.inputAmountDisabled = false;
@@ -153,13 +153,16 @@ const Form: React.FC<{
     [],
   );
 
-  const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
-      window.Jupiter.onRequestConnectWallet();
-    } else {
-      setIsWalletModalOpen(true);
-    }
-  }, [setIsWalletModalOpen]);
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
+        window.Jupiter.onRequestConnectWallet();
+      } else {
+        setIsWalletModalOpen(true);
+      }
+    },
+    [setIsWalletModalOpen],
+  );
 
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
@@ -173,7 +176,12 @@ const Form: React.FC<{
           >
             <div className={classNames('px-x border-transparent rounded-xl ')}>
               <div>
-                <div className={classNames('py-5 px-4 flex flex-col dark:text-white')}>
+                <div
+                  className={classNames(
+                    'py-5 px-4 flex flex-col dark:text-white border border-transparent',
+                    'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
+                  )}
+                >
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
@@ -202,7 +210,7 @@ const Form: React.FC<{
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}
                         valueIsNumericString
-                        onValueChange={({ value }) => onChangeFromValue(value)}
+                        onValueChange={onChangeFromValue}
                         placeholder={'0.00'}
                         className={classNames(
                           'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
@@ -210,6 +218,9 @@ const Form: React.FC<{
                         )}
                         decimalSeparator={detectedSeparator}
                         isAllowed={withValueLimit}
+                        onKeyDown={(e) => {
+                          isToPairFocused.current = false;
+                        }}
                       />
                     </div>
                   </div>
@@ -220,7 +231,10 @@ const Form: React.FC<{
                         className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current', {
                           'cursor-pointer': swapMode !== 'ExactOut',
                         })}
-                        onClick={onClickMax}
+                        onClick={(e) => {
+                          isToPairFocused.current = false;
+                          onClickMax(e);
+                        }}
                       >
                         <WalletIcon width={10} height={10} />
                         <CoinBalance mintAddress={fromTokenInfo.address} />
@@ -251,7 +265,12 @@ const Form: React.FC<{
           <div className="border-b border-transparent bg-[#212128] rounded-xl">
             <div className="px-x border-transparent rounded-xl">
               <div>
-                <div className="py-5 px-4 flex flex-col dark:text-white">
+                <div
+                  className={classNames(
+                    'py-5 px-4 flex flex-col dark:text-white border border-transparent',
+                    'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
+                  )}
+                >
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
@@ -281,13 +300,25 @@ const Form: React.FC<{
                         thousandSeparator={thousandSeparator}
                         allowNegative={false}
                         valueIsNumericString
-                        onValueChange={({ value }) => onChangeToValue(value)}
-                        placeholder={swapMode === 'ExactOut' ? 'Enter desired amount' : ''}
+                        onValueChange={onChangeToValue}
+                        placeholder={swapMode === 'ExactIn' ? '' : 'Enter desired amount'}
                         className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal text-lg',
+                          'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
                         )}
                         decimalSeparator={detectedSeparator}
                         isAllowed={withValueLimit}
+                        onKeyDown={(e) => {
+                          if (
+                            e.metaKey ||
+                            e.ctrlKey ||
+                            e.key === 'Meta' ||
+                            e.key === 'Control' ||
+                            e.key === 'Alt' ||
+                            e.key === 'Shift'
+                          )
+                            return;
+                          isToPairFocused.current = true;
+                        }}
                       />
                     </div>
                   </div>

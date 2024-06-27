@@ -1,4 +1,3 @@
-import { SwapMode } from '@jup-ag/react-hook';
 import { PublicKey } from '@solana/web3.js';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 
@@ -38,7 +37,7 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   formProps: {
     fixedInputMint: false,
     fixedOutputMint: false,
-    swapMode: SwapMode.ExactIn,
+    swapMode: 'ExactInOrOut' as IFormConfigurator['formProps']['swapMode'],
     fixedAmount: false,
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
