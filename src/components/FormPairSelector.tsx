@@ -13,7 +13,7 @@ import { PublicKey } from '@solana/web3.js';
 import debounce from 'lodash.debounce';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
-import { searchOnChainTokens } from 'src/contexts/searchOnChaints';
+import { searchOnChainTokens } from 'src/contexts/searchOnChains';
 import { checkIsBannedToken, checkIsUnknownToken } from 'src/misc/tokenTags';
 import FormPairRow from './FormPairRow';
 import { useSortByValue } from './useSortByValue';

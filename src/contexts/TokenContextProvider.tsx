@@ -54,7 +54,7 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
   const onChainTokenMap = useRef<Map<string, TokenInfo>>(new Map());
 
   useEffect(() => {
-    fetchInitial().then(async (results) => {
+    fetchInitial().then((results) => {
       tokenMap.current = results;
       setIsLoaded(true);
     });

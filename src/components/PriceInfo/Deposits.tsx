@@ -55,6 +55,10 @@ const Deposits = ({
         </div>
         <div className="w-[50%] text-white/30 text-xs text-right">
           {(() => {
+            if (!feeInformation) {
+              return 'Unable to determine fees';
+            }
+
             const content = [
               hasAtaDeposit && (
                 <p key="ata">
