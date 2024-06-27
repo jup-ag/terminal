@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ENV as ChainID, TokenInfo, TokenListContainer } from '@solana/spl-token-registry';
-import { useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
+import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { IInit } from 'src/types';
 import { useInterval } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
@@ -50,7 +50,7 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
   );
   const { data: initialTokenList } = useQuery(['cached-initial-token-list'], async () => {
     // 10 minutes caching
-    if (localTokenList.timestamp && Date.now() - localTokenList.timestamp < 600_000) {
+    if (localTokenList.data.length > 0 && localTokenList.timestamp && Date.now() - localTokenList.timestamp < 600_000) {
       return localTokenList.data;
     }
 
