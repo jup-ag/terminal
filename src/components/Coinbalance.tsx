@@ -4,7 +4,7 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { useAccounts } from '../contexts/accounts';
 
 import { formatNumber } from '../misc/utils';
-import { WRAPPED_SOL_MINT } from '@jup-ag/common';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 interface ICoinBalanceProps {
   mintAddress: string;

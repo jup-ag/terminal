@@ -1,7 +1,6 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { WRAPPED_SOL_MINT } from '@jup-ag/common';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import Form from '../../components/Form';
@@ -9,6 +8,7 @@ import FormPairSelector from '../../components/FormPairSelector';
 import { useTokenContext } from '../../contexts/TokenContextProvider';
 import { useAccounts } from '../../contexts/accounts';
 import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 interface Props {
   isWalletModalOpen: boolean;
