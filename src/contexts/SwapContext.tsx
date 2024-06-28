@@ -82,7 +82,7 @@ export interface ISwapContext {
     error: ReturnType<typeof useJupiter>['error'];
     lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
   };
-  setUserSlippage: Dispatch<SetStateAction<number | undefined>>;
+  setUserSlippage: Dispatch<SetStateAction<number>>;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -139,8 +139,7 @@ export const SwapContextProvider: FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
-  const [userSlippage, setUserSlippage] = useLocalStorage<number | undefined>('jupiter-terminal-slippage', undefined);
-
+  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE);
   const [form, setForm] = useState<IForm>(
     (() => {
       const slippageBps = (() => {

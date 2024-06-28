@@ -1,19 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Jupiter Terminal</title>
+    <script src="http://localhost:3000/main-v2.js" data-preload></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <script src="http://localhost:64266/main-0.1.16.js" data-preload></script>
-</head>
+  <body>
+    <script>
+      document.addEventListener('readystatechange', (e) => {
+        if (document.readyState === 'complete') {
+          console.log(window.Jupiter.init)
+          window.Jupiter.init({
+            endpoint: 'https://api.mainnet-beta.solana.com',
+            formProps: {
+              initialSlippageBps: 1234,
+            },
+            useUserSlippage: false,
+          });
+        }
+      });
+    </script>
 
-<body>
-  <div>
-    Hello world
-  </div>
-  <button onclick="window.Jupiter.init({ mode: 'default', endpoint: 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed' });">Launch Jupiter</button>
-</body>
-
+    <p>Page intended to test production behaviour for Terminal.</p>
+    <p>Open the console to see logs.</p>
+    <p>- Gzipped size</p>
+    <p>- FormConfigurator behaviour</p>
+    <pre>
+      npx serve ./src/
+    </pre>
+  </body>
 </html>

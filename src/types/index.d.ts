@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
-import { PublicKey, TransactionError } from '@solana/web3.js';
+import { Connection, PublicKey, TransactionError } from '@solana/web3.js';
 import { QuoteResponseMeta, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
@@ -77,8 +77,12 @@ export interface IOnRequestIxCallback {
 }
 
 export interface IInit {
+  /** Solana RPC, declare either endpoint, or Connection object */
   /** Solana RPC endpoint */
-  endpoint: string;
+  endpoint?: string;
+  /** Solana RPC Connection object */
+  connectionObj?: Connection;
+
   /** TODO: Update to use the new platform fee and accounts */
   platformFeeAndAccounts?: PlatformFeeAndAccounts;
   /** Configure Terminal's behaviour and allowed actions for your user */
@@ -119,9 +123,23 @@ export interface IInit {
 
   /** Callbacks */
   /** When an error has occured during swap */
-  onSwapError?: ({ error, quoteResponseMeta }: { error?: TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) => void;
+  onSwapError?: ({
+    error,
+    quoteResponseMeta,
+  }: {
+    error?: TransactionError;
+    quoteResponseMeta: QuoteResponseMeta | null;
+  }) => void;
   /** When a swap has been successful */
-  onSuccess?: ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) => void;
+  onSuccess?: ({
+    txid,
+    swapResult,
+    quoteResponseMeta,
+  }: {
+    txid: string;
+    swapResult: SwapResult;
+    quoteResponseMeta: QuoteResponseMeta | null;
+  }) => void;
   /** Callback when there's changes to the form */
   onFormUpdate?: (form: IForm) => void;
   /** Callback when there's changes to the screen */

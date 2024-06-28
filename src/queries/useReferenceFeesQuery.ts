@@ -1,3 +1,4 @@
+import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { useQuery } from '@tanstack/react-query';
 
 interface Fee {
@@ -27,10 +28,21 @@ interface MarketReferenceFee {
 }
 
 export const useReferenceFeesQuery = () => {
+  const [local, setLocal] = useLocalStorage<{ timestamp: number | null; data: MarketReferenceFee | undefined }>(
+    'market-reference-fees-cached',
+    { timestamp: null, data: undefined },
+  );
+
   return useQuery(
-    ['market-reference-fees'],
+    ['market-reference-fees-cached'],
     async () => {
-      const data = (await fetch('https://cache.jup.ag/reference-fees')).json() as unknown as MarketReferenceFee;
+      // 1 minutes caching
+      if (local.data && local.timestamp && Date.now() - local.timestamp < 60_000) {
+        return local.data;
+      }
+
+      const data = await (await fetch('https://cache.jup.ag/reference-fees')).json() as unknown as MarketReferenceFee;
+      setLocal({ timestamp: Date.now(), data });
       return data;
     },
     {
