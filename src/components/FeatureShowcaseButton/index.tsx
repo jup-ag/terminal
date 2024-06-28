@@ -3,17 +3,9 @@ import React, { PropsWithChildren, useEffect, useRef, useState } from 'react';
 import CloseIcon from 'src/icons/CloseIcon';
 import { TwitterTweetEmbed } from 'react-twitter-embed';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
-import SnippetSyncProps from './snippet/SnippetSyncProps';
 import JupButton from '../JupButton';
 import { useOutsideClick } from 'src/misc/utils';
-import Link from 'next/link';
-import ExternalIcon from 'src/icons/ExternalIcon';
-import JupiterLogo from 'src/icons/JupiterLogo';
-import MeteoraLogo from 'src/icons/MeteoraLogo';
-import SnippetReferralAccount from './snippet/SnippetReferralAccount';
-import SnippetNewCallbacks from './snippet/SnippetNewCallbacks';
 import Image from 'next/image';
-import SnippetConnectionObject from './snippet/SnippetConnectionObject';
 import TokenIcon from '../TokenIcon';
 import { SOL_TOKEN_INFO } from 'src/misc/constants';
 

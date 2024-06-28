@@ -18,9 +18,9 @@ With several templates to get you started, and auto generated code snippets.
 
 ## Core features
 
-- `main-v3.js` bundle (~73.6Kb gzipped)
+- `main-v3.js` bundle (~70Kb gzipped)
 
-  - app bundle (~952Kb gzipped) are loaded on-demand when `init()` is called
+  - app bundle (~1.1Mb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 
 - Agnostic
