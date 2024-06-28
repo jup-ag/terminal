@@ -8,6 +8,7 @@ import JSBI from 'jsbi';
 import {
   Dispatch,
   FC,
+  MutableRefObject,
   ReactNode,
   SetStateAction,
   createContext,
@@ -15,6 +16,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
@@ -26,6 +28,7 @@ import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useAccounts } from './accounts';
+
 export interface IForm {
   fromMint: string;
   toMint: string;
@@ -37,6 +40,8 @@ export interface IForm {
 export interface ISwapContext {
   form: IForm;
   setForm: Dispatch<SetStateAction<IForm>>;
+  isToPairFocused: MutableRefObject<boolean>;
+
   errors: Record<string, { title: string; message: string }>;
   setErrors: Dispatch<
     SetStateAction<
@@ -157,11 +162,8 @@ export const SwapContextProvider: FC<{
       };
     })(),
   );
+
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
-  const jupiterSwapMode = useMemo(
-    () => (formProps?.swapMode ? SwapMode[formProps?.swapMode] : SwapMode.ExactIn),
-    [formProps?.swapMode],
-  );
 
   const fromTokenInfo = useMemo(() => {
     if (!isLoaded) return null;
@@ -175,6 +177,10 @@ export const SwapContextProvider: FC<{
     return tokenInfo;
   }, [form.toMint, getTokenInfo, isLoaded]);
 
+  const isToPairFocused = useRef<boolean>(false);
+
+  const swapMode = isToPairFocused.current ? SwapMode.ExactOut : SwapMode.ExactIn;
+
   // Set value given initial amount
   const setupInitialAmount = useCallback(() => {
     if (!formProps?.initialAmount || !fromTokenInfo || !toTokenInfo) return;
@@ -185,7 +191,7 @@ export const SwapContextProvider: FC<{
       return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
     };
 
-    if (jupiterSwapMode === SwapMode.ExactOut) {
+    if (swapMode === SwapMode.ExactOut) {
       setTimeout(() => {
         setForm((prev) => {
           return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
@@ -196,36 +202,42 @@ export const SwapContextProvider: FC<{
         setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
       }, 0);
     }
-  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, jupiterSwapMode, toTokenInfo]);
+  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, swapMode, toTokenInfo]);
 
   useEffect(() => {
     setupInitialAmount();
-  }, [formProps.initialAmount, jupiterSwapMode, setupInitialAmount]);
+  }, [formProps.initialAmount, setupInitialAmount]);
 
   // We dont want to effect to keep trigger for fromValue and toValue
   const userInputChange = useMemo(() => {
-    if (jupiterSwapMode === SwapMode.ExactOut) {
+    if (swapMode === SwapMode.ExactOut) {
       return form.toValue;
     } else {
       return form.fromValue;
     }
-  }, [form.fromValue, form.toValue, jupiterSwapMode]);
+  }, [form.fromValue, form.toValue, swapMode]);
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
-      if (jupiterSwapMode === SwapMode.ExactOut) {
-        if (!form.toValue || !toTokenInfo || !hasNumericValue(form.toValue)) return JSBI.BigInt(0);
-        return JSBI.BigInt(new Decimal(form.toValue).mul(10 ** toTokenInfo.decimals));
-      } else {
-        if (!form.fromValue || !fromTokenInfo || !hasNumericValue(form.fromValue)) return JSBI.BigInt(0);
-        return JSBI.BigInt(new Decimal(form.fromValue).mul(10 ** fromTokenInfo.decimals));
+      // ExactIn
+      if (isToPairFocused.current === false) {
+        if (!fromTokenInfo || !form.fromValue || !hasNumericValue(form.fromValue)) {
+          return JSBI.BigInt(0);
+        }
+        return JSBI.BigInt(new Decimal(form.fromValue).mul(Math.pow(10, fromTokenInfo.decimals)).floor().toFixed());
       }
+
+      // ExactOut
+      if (!toTokenInfo || !form.toValue || !hasNumericValue(form.toValue)) {
+        return JSBI.BigInt(0);
+      }
+      return JSBI.BigInt(new Decimal(form.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed());
     })();
 
     return {
       amount,
       inputMint: form.fromMint ? new PublicKey(form.fromMint) : undefined,
       outputMint: form.toMint ? new PublicKey(form.toMint) : undefined,
-      swapMode: jupiterSwapMode,
+      swapMode,
       slippageBps: form.slippageBps,
       maxAccounts,
     };
@@ -236,11 +248,12 @@ export const SwapContextProvider: FC<{
     form.toMint,
     userInputChange,
     fromTokenInfo?.address,
-    jupiterSwapMode,
+    swapMode,
     maxAccounts,
     toTokenInfo?.address,
   ]);
 
+  // TODO: FIXME: useJupiter hooks currently calls Quote twice when switching SwapMode
   const {
     quoteResponseMeta: ogQuoteResponseMeta,
     refresh,
@@ -262,7 +275,7 @@ export const SwapContextProvider: FC<{
     }
     // the UI sorts the best route depending on ExactIn or ExactOut
     setQuoteResponseMeta(ogQuoteResponseMeta);
-  }, [jupiterSwapMode, ogQuoteResponseMeta]);
+  }, [swapMode, ogQuoteResponseMeta]);
 
   useEffect(() => {
     if (!form.fromValue && !quoteResponseMeta) {
@@ -276,10 +289,8 @@ export const SwapContextProvider: FC<{
       if (!fromTokenInfo || !toTokenInfo) return prev;
 
       let { inAmount, outAmount } = quoteResponseMeta?.quoteResponse || {};
-      if (jupiterSwapMode === SwapMode.ExactIn) {
-        newValue.toValue = outAmount
-          ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed()
-          : '';
+      if (swapMode === SwapMode.ExactIn) {
+        newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
       } else {
         newValue.fromValue = inAmount
           ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
@@ -287,7 +298,7 @@ export const SwapContextProvider: FC<{
       }
       return newValue;
     });
-  }, [form.fromValue, fromTokenInfo, jupiterSwapMode, quoteResponseMeta, toTokenInfo]);
+  }, [form.fromValue, fromTokenInfo, quoteResponseMeta, swapMode, toTokenInfo]);
 
   const [txStatus, setTxStatus] = useState<
     | {
@@ -528,6 +539,7 @@ export const SwapContextProvider: FC<{
       value={{
         form,
         setForm,
+        isToPairFocused,
         errors,
         setErrors,
         fromTokenInfo,

@@ -3,10 +3,11 @@ import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
 import { Connection, PublicKey, TransactionError } from '@solana/web3.js';
-import { QuoteResponseMeta, SwapMode, SwapResult } from '@jup-ag/react-hook';
+import { QuoteResponseMeta, SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
 import { PlatformFeeAndAccounts } from '@jup-ag/common';
+import { SwapMode } from './enums';
 
 declare global {
   interface Window {
@@ -21,7 +22,7 @@ export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-
 export type WidgetSize = 'sm' | 'default';
 
 export interface FormProps {
-  /** Default to `ExactIn`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
+  /** Default to `ExactInOrOut`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
   swapMode?: SwapMode;
   /** Initial amount to swap */
   initialAmount?: string;

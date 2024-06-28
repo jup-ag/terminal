@@ -128,7 +128,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
     const userWalletResults: TokenInfo[] = [...tokenMap.values(), ...unknownTokenMap.values()];
     return userWalletResults;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []);  
 
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
   const { sortTokenListByBalance, filterStrictToken, mintToUsdValue } = useSortByValue();

@@ -1,6 +1,6 @@
-import { SwapMode } from '@jup-ag/react-hook';
 import { PublicKey } from '@solana/web3.js';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
+import { SwapMode } from 'src/types/enums';
 
 export const JUPITER_DEFAULT_RPC = process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC || 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
 export const DEFAULT_SLIPPAGE = 0.5;
@@ -38,7 +38,7 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   formProps: {
     fixedInputMint: false,
     fixedOutputMint: false,
-    swapMode: SwapMode.ExactIn,
+    swapMode: SwapMode.ExactInOrOut,
     fixedAmount: false,
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
