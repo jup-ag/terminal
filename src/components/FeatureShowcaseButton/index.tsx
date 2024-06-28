@@ -12,6 +12,10 @@ import JupiterLogo from 'src/icons/JupiterLogo';
 import MeteoraLogo from 'src/icons/MeteoraLogo';
 import SnippetReferralAccount from './snippet/SnippetReferralAccount';
 import SnippetNewCallbacks from './snippet/SnippetNewCallbacks';
+import Image from 'next/image';
+import SnippetConnectionObject from './snippet/SnippetConnectionObject';
+import TokenIcon from '../TokenIcon';
+import { SOL_TOKEN_INFO } from 'src/misc/constants';
 
 const Title: React.FC<PropsWithChildren> = ({ children }) => (
   <div className="mt-6 text-white text-md text-center font-semibold">{children}</div>
@@ -21,8 +25,8 @@ const Desc: React.FC<PropsWithChildren> = ({ children }) => (
   <div className="text-white/70 text-sm text-center">{children}</div>
 );
 
-export const V2_FEATURE_BUTTON_ID = 'v2-feature-button';
-const V2FeatureButton = () => {
+export const FEATURE_SHOWCASE_BUTTON_ID = 'features-showcase-button';
+const FeatureShowcaseButton = () => {
   const [open, setOpen] = useState(false);
   const [slideIn, setSlideIn] = useState(false);
 
@@ -82,10 +86,10 @@ const V2FeatureButton = () => {
   return (
     <div className="">
       <p
-        id={V2_FEATURE_BUTTON_ID}
+        id={FEATURE_SHOWCASE_BUTTON_ID}
         onClick={onEnter}
         className="mt-2 text-white text-sm font-semibold cursor-pointer border border-white/50 hover:bg-white/10 px-2 py-1 rounded-xl"
-      >{`What's new in V2 ✨`}</p>
+      >{`What's new✨`}</p>
 
       {open && (
         <div className="fixed w-screen min-h-screen left-0 top-0 z-[60] flex justify-center bg-black/50 text-white overflow-y-scroll">
@@ -108,16 +112,23 @@ const V2FeatureButton = () => {
                 </V2SexyChameleonText>
 
                 <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start text-black">
-                  v2
+                  v3
                 </div>
               </div>
 
-              <Title>Now with Jupiter V6 API, powered by The Metis Routing Algo</Title>
+              <Title>
+                Introducing Jupiter Swap V3
+                <p>Leveraging our new Metropolis liquidity backend to enable:</p>
+                <V2SexyChameleonText className="flex flex-col gap-y-1">
+                  Instant Routing, Smart Token Filtering, Ecosystem Token List, more!
+                </V2SexyChameleonText>
+                <p className="text-v2-lily/50 text-xs">Dynamic Slippage (Coming soon in v3.1)</p>
+              </Title>
 
               {open && containerDimensions.width > 0 ? (
                 <div ref={tweetContainerRef} className="flex justify-center w-full min-h-[500px] lg:min-h-[600px]">
                   <TwitterTweetEmbed
-                    tweetId={'1684583550174244864'}
+                    tweetId={'1805278727032774761'}
                     options={{
                       // the max embedded tweet can go is 550px
                       width: Math.min(550, containerDimensions.width),
@@ -131,119 +142,68 @@ const V2FeatureButton = () => {
 
               <div className="border-b border-white/10 w-full mt-4" />
 
-              <Title>Easier Referral Support</Title>
+              <Title>ExactIn or ExactOut</Title>
               <Desc>
-                With the new
-                <span className="mx-1 text-v3-primary">referralAccount</span>
-                support, integrating fees support is now easier than ever.
-              </Desc>
-
-              <div className="mt-2 w-full">
-                <SnippetReferralAccount />
-              </div>
-
-              <Link
-                className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
-                href={'https://docs.jup.ag/docs/apis/adding-fees'}
-                rel="noreferrer noopener"
-                target="_blank"
-              >
-                <span>Learn more</span>
-                <ExternalIcon />
-              </Link>
-
-              <div className="border-b border-white/10 w-full mt-4" />
-
-              <Title>Cross app state sharing with Jupiter Terminal</Title>
-              <Desc>
-                With the new
-                <span className="mx-1 text-v3-primary">syncProps()</span>
-                API, bringing even closer integration with Terminal.
-              </Desc>
-
-              <div className="mt-4 flex flex-col items-center w-full">
-                <Desc>
-                  {`Starting with Wallet Passthrough, `}
-                  <span className="mx-1 text-v3-primary">syncProps()</span>
-                  {`API will make sure your wallet state are
-                always in sync, and Terminal can also callback to your dApp to request for wallet connection.`}
-                </Desc>
-
-                <div className="mt-2 w-full">
-                  <SnippetSyncProps />
+                <span className="mx-1 text-v3-primary">ExactInOrOut</span> are now the default behaviour, enabling
+                seamless switching between ExactIn or ExactOut mode.
+                <div className="flex w-full justify-center mt-5">
+                  <Image
+                    alt="ExactInOrOut demo"
+                    src={'/demo/exactinorout-demo.gif'}
+                    width={Math.min(550, containerDimensions.width)}
+                    height={400}
+                  />
                 </div>
-              </div>
-
+              </Desc>
+             
               <div className="border-b border-white/10 w-full mt-4" />
 
-              <Title>Unified, with Unified Wallet Kit</Title>
+              <Title>New MTS tagging system</Title>
               <Desc>
-                Unified Wallet Kit is an open-sourced, Swiss Army Knife wallet adapter, striving for the best wallet
-                integration experience for developers, and best wallet experience for your users.
-                <br />
-                <br />
-                <div className="flex flex-col items-center justify-center">
-                  <div className="flex items-center space-x-2">
-                    <span>Used by</span>
-                    <Link href="https://jup.ag" target="_blank">
-                      <JupiterLogo />
-                    </Link>
-                    <Link href="https://app.meteora.ag" target="_blank">
-                      <MeteoraLogo />
-                    </Link>
-                  </div>
-
-                  <Link
-                    className="mt-4 px-4 py-2 bg-black rounded-xl flex space-x-2 items-center"
-                    href={'https://github.com/TeamRaccoons/wallet-kit'}
-                    rel="noreferrer noopener"
-                    target="_blank"
-                  >
-                    <span>Open on Github</span>
-                    <ExternalIcon />
-                  </Link>
+                <span className="mx-1 text-v3-primary">MTS tagging system</span> are now integrated, offering better
+                <div className="flex w-full justify-center mt-5">
+                  <Image
+                    alt="New MTS community tags"
+                    src={'/demo/community-tags-demo.png'}
+                    width={Math.min(550, containerDimensions.width)}
+                    height={400}
+                  />
                 </div>
               </Desc>
 
               <div className="border-b border-white/10 w-full mt-4" />
 
-              <Title>RPC Monitor</Title>
+              <Title>Image Optim</Title>
               <Desc>
-                Built in RPC Monitor allows your user to know if their RPC is not responding or the Solana network is
-                degraded.
+                <span className="mx-1 text-v3-primary">Image optim via CDN</span> are now supported for all token
+                images, lower dimensions, and faster loading.
+                <div className="flex w-full justify-center mt-5">
+                  <TokenIcon info={SOL_TOKEN_INFO} />
+                </div>
               </Desc>
-
-              <div className="mt-2 border p-2 border-white/10 rounded-xl">
-                <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                  <span className="flex text-xs justify-center items-center text-left">
-                    <div className="ml-1 text-rock">
-                      <span>
-                        <span>Your RPC is not responding to any requests.</span>
-                      </span>
-                    </div>
-                  </span>
-                </div>
-
-                <div className="mt-2 mb-3 max-w-[384px] bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-                  <span className="flex text-xs justify-center items-center text-left">
-                    <div className="ml-1 text-rock">
-                      <span>
-                        <span>
-                          Solana network is experiencing degraded performance. Transactions may fail to send or confirm.
-                        </span>
-                      </span>
-                    </div>
-                  </span>
-                </div>
-              </div>
 
               <div className="border-b border-white/10 w-full mt-4" />
 
-              <Title>More callbacks</Title>
-              <Desc>With new callbacks that should make state sharing, notifications, and more, between your dApp and Terminal even easier.</Desc>
-              <div className="mt-2 w-full">
-                <SnippetNewCallbacks />
-              </div>
+              <Title>General improvements</Title>
+              <Desc>
+                <ul className="list-disc list-outside text-left space-y-2 p-4">
+                  <li>
+                    <span className="mx-1 text-v3-primary">Local cache improvements</span>
+                    Initial tokens info, and reference fees are now cached, and persisted for several minutes.
+                  </li>
+
+                  <li>
+                    <span className="mx-1 text-v3-primary">RPC via Connection object</span>
+                    RPC connection is now available via Connection object, allowing for more flexible RPC connection,
+                    including websocket customisation, authorization
+                  </li>
+
+                  <li>
+                    <span className="mx-1 text-v3-primary">Bug fixes</span>
+                    Exponentially small numbers failing to parse, and many more.
+                  </li>
+                </ul>
+              </Desc>
 
               <JupButton className="my-20 w-[200px]" size="lg" onClick={onExit}>
                 <V2SexyChameleonText>Close</V2SexyChameleonText>
@@ -256,4 +216,4 @@ const V2FeatureButton = () => {
   );
 };
 
-export default V2FeatureButton;
+export default FeatureShowcaseButton;
