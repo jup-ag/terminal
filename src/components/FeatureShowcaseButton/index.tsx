@@ -152,7 +152,7 @@ const FeatureShowcaseButton = () => {
 
               <Title>New MTS tagging system</Title>
               <Desc>
-                <span className="mx-1 text-v3-primary">MTS tagging system</span> are now integrated, offering better
+                <span className="mx-1 text-v3-primary">MTS tagging system</span> are now integrated.
                 <div className="flex w-full justify-center mt-5">
                   <Image
                     alt="New MTS community tags"
