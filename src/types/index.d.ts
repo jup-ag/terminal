@@ -19,7 +19,12 @@ declare global {
 export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
-export type SwapMode = 'ExactInOrOut' | 'ExactIn' | 'ExactOut';
+// export type SwapMode = 'ExactInOrOut' | 'ExactIn' | 'ExactOut';
+export enum SwapMode {
+  ExactInOrOut = 'ExactInOrOut',
+  ExactIn = 'ExactIn',
+  ExactOut = 'ExactOut',
+}
 
 export interface FormProps {
   /** Default to `ExactInOrOut`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */

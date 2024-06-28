@@ -31,7 +31,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       ...INITIAL_FORM_CONFIG,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: 'ExactOut',
+        swapMode: SwapMode.ExactOut,
         initialAmount: '1000000000',
         fixedAmount: true,
         fixedOutputMint: true,
@@ -45,7 +45,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       ...INITIAL_FORM_CONFIG,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: 'ExactIn',
+        swapMode: SwapMode.ExactIn,
         initialOutputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
         fixedOutputMint: true,
       },
@@ -60,7 +60,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       ...INITIAL_FORM_CONFIG,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: 'ExactOut',
+        swapMode: SwapMode.ExactOut,
       },
     },
   },
@@ -297,7 +297,7 @@ const FormConfigurator = ({
               aria-orientation="vertical"
               aria-labelledby="menu-button"
             >
-              {(['ExactInOrOut', 'ExactIn', 'ExactOut'] as SwapMode[]).map((item, index) => (
+              {Object.values(SwapMode).map((item, index) => (
                 <button
                   key={index}
                   onClick={() => {
