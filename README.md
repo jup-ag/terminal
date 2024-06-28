@@ -18,9 +18,9 @@ With several templates to get you started, and auto generated code snippets.
 
 ## Core features
 
-- `main-v2.js` bundle (~73.6Kb gzipped)
+- `main-v3.js` bundle (~70Kb gzipped)
 
-  - app bundle (~952Kb gzipped) are loaded on-demand when `init()` is called
+  - app bundle (~1.1Mb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 
 - Agnostic
@@ -67,10 +67,10 @@ Terminal is designed to work anywhere the web runs, including React, Plain HTML/
 
 ```html
 <!-- Attach the loading script in your <head /> -->
-<script src="https://terminal.jup.ag/main-v2.js" />
+<script src="https://terminal.jup.ag/main-v3.js" />
 
 <!-- Optionally, preload for better experience, or integrated mode -->
-<script src="https://terminal.jup.ag/main-v2.js" data-preload />
+<script src="https://terminal.jup.ag/main-v3.js" data-preload />
 ```
 
 ### 2. Initialize Jupiter Terminal

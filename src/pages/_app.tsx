@@ -20,7 +20,7 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
-import V2FeatureButton from 'src/components/V2FeatureButton';
+import FeatureShowcaseButton from 'src/components/FeatureShowcaseButton';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -121,7 +121,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   </V2SexyChameleonText>
 
                   <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
-                    v2
+                    v3
                   </div>
                 </div>
                 <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
@@ -130,7 +130,7 @@ export default function App({ Component, pageProps }: AppProps) {
                 </p>
               </div>
 
-              <V2FeatureButton />
+              <FeatureShowcaseButton />
             </div>
 
             <div className="flex justify-center">
