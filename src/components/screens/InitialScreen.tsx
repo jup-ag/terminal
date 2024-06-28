@@ -9,6 +9,7 @@ import { useTokenContext } from '../../contexts/TokenContextProvider';
 import { useAccounts } from '../../contexts/accounts';
 import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 import { WRAPPED_SOL_MINT } from 'src/constants';
+import classNames from 'classnames';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -105,7 +106,12 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   return (
     <>
       {/* Body */}
-      <form onSubmit={onSubmitToConfirmation}>
+      <form
+        onSubmit={onSubmitToConfirmation}
+        className={classNames({
+          hidden: Boolean(selectPairSelector),
+        })}
+      >
         <Form
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
