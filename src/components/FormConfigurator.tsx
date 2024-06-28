@@ -9,7 +9,7 @@ import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { useRouter } from 'next/router';
 import { base64ToJson } from 'src/misc/utils';
-import { SwapMode } from 'src/types';
+import { SwapMode } from 'src/types/enums';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
