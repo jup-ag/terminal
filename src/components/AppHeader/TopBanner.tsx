@@ -7,8 +7,7 @@ import { V2_FEATURE_BUTTON_ID } from '../V2FeatureButton';
 let shouldHide = false; // indicate that user close it once for the session, we dont need to show it again.
 
 const TopBanner = () => {
-  // Perps beta banner
-  const [closeCount, setCloseCount] = useLocalStorage(`perpetual-beta-`, 0);
+  const [closeCount, setCloseCount] = useLocalStorage(`banner-close-count`, 0);
   const [close, setClose] = useState(true);
   useEffect(() => {
     if (shouldHide) {

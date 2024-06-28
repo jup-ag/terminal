@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ENV as ChainID, TokenInfo, TokenListContainer } from '@solana/spl-token-registry';
-import { useConnection } from '@jup-ag/wallet-adapter';
+import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { IInit } from 'src/types';
 import { useInterval } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
@@ -8,6 +8,7 @@ import { useSearchAdapter } from './search';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
 import { checkIsBannedToken } from 'src/misc/tokenTags';
 import TypesenseInstantsearchAdapter from 'typesense-instantsearch-adapter';
+import { useQuery } from '@tanstack/react-query';
 
 export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';
 export const CLUSTER_TO_CHAIN_ID: Record<ENV, ChainID> = {
@@ -26,17 +27,6 @@ const TokenContext = React.createContext<{
   typesenseInstantsearchAdapter: TypesenseInstantsearchAdapter;
 } | null>(null);
 
-const fetchInitial = async () => {
-  const tokens = await (await fetch('https://tokens.jup.ag/tokens?tags=strict,lst')).json();
-  const res = new TokenListContainer(tokens);
-  const list = res.getList();
-
-  return list.reduce((acc, item) => {
-    acc.set(item.address, item);
-    return acc;
-  }, new Map());
-};
-
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
 
 export function TokenContextProvider({ children }: IInit & { children: ReactNode }) {
@@ -53,12 +43,33 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
   const unknownTokenMap = useRef<Map<string, TokenInfo>>(new Map());
   const onChainTokenMap = useRef<Map<string, TokenInfo>>(new Map());
 
+  // Make sure initialTokenList are only fetched once
+  const [localTokenList, setLocalTokenList] = useLocalStorage<{ timestamp: number | null; data: TokenInfo[] }>(
+    'local-token-list',
+    { timestamp: null, data: [] },
+  );
+  const { data: initialTokenList } = useQuery(['cached-initial-token-list'], async () => {
+    // 10 minutes caching
+    if (localTokenList.data.length > 0 && localTokenList.timestamp && Date.now() - localTokenList.timestamp < 600_000) {
+      return localTokenList.data;
+    }
+
+    const tokens = await (await fetch('https://tokens.jup.ag/tokens?tags=strict,lst')).json();
+    const res = new TokenListContainer(tokens);
+    const list = res.getList();
+    setLocalTokenList({ timestamp: Date.now(), data: list });
+    return list;
+  });
+
   useEffect(() => {
-    fetchInitial().then((results) => {
-      tokenMap.current = results;
+    if (initialTokenList) {
+      tokenMap.current = initialTokenList.reduce((acc, item) => {
+        acc.set(item.address, item);
+        return acc;
+      }, new Map());
       setIsLoaded(true);
-    });
-  }, []);
+    }
+  }, [initialTokenList]);
 
   const requestTokenInfo = useCallback(
     async (mintAddresses: string[]): Promise<TokenInfo[]> => {

@@ -47,6 +47,7 @@
     "typesense-instantsearch-adapter": "~2.8.0"
   },
   "devDependencies": {
+    "@jup-ag/common": "6.0.0-beta.9",
     "@svgr/webpack": "^6.5.1",
     "@types/bn.js": "^5.1.5",
     "@types/bs58": "^4.0.4",
@@ -82,8 +83,7 @@
     "typescript": "5.2.2",
     "webpack": "^5.92.1",
     "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^4.10.0",
-    "@jup-ag/common": "6.0.0-beta.9"
+    "webpack-cli": "^4.10.0"
   },
   "pnpm": {
     "overrides": {
