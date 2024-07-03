@@ -45,7 +45,7 @@ async function loadRemote(id: string, href: string, type: 'text/javascript' | 's
         el.href = href;
       }
 
-      document.head.append(el);
+      document.head.prepend(el);
     }
   });
 }
