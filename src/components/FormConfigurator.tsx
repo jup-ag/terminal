@@ -52,6 +52,20 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     },
   },
   {
+    name: 'Buy a project token (non strict)',
+    description: `To purchase a specific token not in the strict list.`,
+    values: {
+      ...INITIAL_FORM_CONFIG,
+      strictTokenList: false,
+      formProps: {
+        ...INITIAL_FORM_CONFIG.formProps,
+        swapMode: SwapMode.ExactIn,
+        initialOutputMint: 'AQvXeBUfK5chiuTxeuAecEWJcMGgoRtaRsk3fUiGtZdu',
+        fixedOutputMint: true,
+      },
+    },
+  },
+  {
     name: 'Exact Out',
     description: `
     On Exact Out mode, user specify the amount of token to receive instead.

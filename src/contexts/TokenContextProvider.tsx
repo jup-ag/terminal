@@ -33,15 +33,15 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
   const typesenseInstantsearchAdapter = useSearchAdapter();
 
   const [isLoaded, setIsLoaded] = useState(false);
-  const tokenMap = useRef<Map<string, TokenInfo>>(
+  const [tokenMap, setTokenMap] = useState<Map<string, TokenInfo>>(
     (() => {
       const tempMap = new Map<string, TokenInfo>();
       // initialTokenInfos?.forEach((item) => tempMap.set(item.address, item)); // TODO: Implement this
       return tempMap;
     })(),
   );
-  const unknownTokenMap = useRef<Map<string, TokenInfo>>(new Map());
-  const onChainTokenMap = useRef<Map<string, TokenInfo>>(new Map());
+  const [unknownTokenMap, setUnknownTokenMap] = useState<Map<string, TokenInfo>>(new Map());
+  const [onChainTokenMap, setOnChainTokenMap] = useState<Map<string, TokenInfo>>(new Map());
 
   // Make sure initialTokenList are only fetched once
   const [localTokenList, setLocalTokenList] = useLocalStorage<{ timestamp: number | null; data: TokenInfo[] }>(
@@ -63,20 +63,22 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
 
   useEffect(() => {
     if (initialTokenList) {
-      tokenMap.current = initialTokenList.reduce((acc, item) => {
+      const newMap = initialTokenList.reduce((acc, item) => {
         acc.set(item.address, item);
         return acc;
       }, new Map());
+      setTokenMap(newMap);
       setIsLoaded(true);
     }
   }, [initialTokenList]);
 
   const requestTokenInfo = useCallback(
     async (mintAddresses: string[]): Promise<TokenInfo[]> => {
+      const newUnknownMap = new Map(unknownTokenMap)
       const filteredAddreses = Array.from(
         new Set(
           mintAddresses
-            .filter((mint) => !tokenMap.current.has(mint)) // we already have it
+            .filter((mint) => !tokenMap.has(mint)) // we already have it
             .filter(Boolean), // filter empty string
         ),
       );
@@ -102,7 +104,7 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
           response.results.forEach((searchResult: SearchResponse<TokenInfo>) => {
             if (!searchResult.hits || !searchResult.hits[0]) return;
             const item = searchResult.hits[0].document;
-            unknownTokenMap.current.set(item.address, item);
+            newUnknownMap.set(item.address, item);
             result.push(item);
           });
         } catch (error) {
@@ -110,9 +112,10 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
         }
       }
 
+      setUnknownTokenMap(newUnknownMap)
       return result;
     },
-    [typesenseInstantsearchAdapter.typesenseClient.multiSearch],
+    [typesenseInstantsearchAdapter.typesenseClient.multiSearch, tokenMap, unknownTokenMap],
   );
 
   const tokenInfoToRequests = useRef<string[]>([]);
@@ -131,25 +134,29 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
       // useDeriveInOut was calling with token symbol
       if (!isAddress(tokenMint)) return undefined;
 
-      const found = tokenMap.current.get(tokenMint) || unknownTokenMap.current.get(tokenMint);
+      const found = tokenMap.get(tokenMint) || unknownTokenMap.get(tokenMint);
       if (!found) tokenInfoToRequests.current.push(tokenMint);
       // prevent banned token
       if (found && checkIsBannedToken(found)) return undefined;
       return found;
     },
-    [tokenMap],
+    [tokenMap, unknownTokenMap],
   );
 
   const addOnchainTokenInfo = useCallback((tokenInfo: TokenInfo) => {
-    unknownTokenMap.current.set(tokenInfo.address, tokenInfo);
-    onChainTokenMap.current.set(tokenInfo.address, tokenInfo);
-  }, []);
+    const newUnknownMap = new Map(unknownTokenMap);
+    const newOnchainMap = new Map(onChainTokenMap);
+    newUnknownMap.set(tokenInfo.address, tokenInfo);
+    newOnchainMap.set(tokenInfo.address, tokenInfo);
+    setUnknownTokenMap(newUnknownMap);
+    setOnChainTokenMap(newOnchainMap);
+  }, [unknownTokenMap, onChainTokenMap]);
 
   return (
     <TokenContext.Provider
       value={{
-        tokenMap: tokenMap.current,
-        unknownTokenMap: unknownTokenMap.current,
+        tokenMap,
+        unknownTokenMap,
         isLoaded,
         getTokenInfo,
         addOnchainTokenInfo,
