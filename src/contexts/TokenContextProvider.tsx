@@ -51,7 +51,7 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
   const { data: initialTokenList } = useQuery(
     ['cached-initial-token-list'],
     async () => {
-      let results;
+      let results: TokenInfo[] = [];
 
       // 10 minutes caching
       if (
