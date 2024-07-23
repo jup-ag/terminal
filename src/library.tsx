@@ -9,7 +9,7 @@ import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
 
-const containerId = 'jupiter-terminal';
+const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
 const bundleName = `main-${packageJson.version}`;
 

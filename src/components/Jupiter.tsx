@@ -27,8 +27,9 @@ const Content = () => {
   const { message } = useTPSMonitor();
   const [isMessageClosed, setIsMessageClosed] = useState(false);
 
+  // ID is required for scoped preflight by tailwind to work 
   return (
-    <div className="relative h-full">
+    <div id="jupiter-terminal" className="relative h-full">
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />
