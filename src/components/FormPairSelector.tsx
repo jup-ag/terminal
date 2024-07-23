@@ -14,7 +14,7 @@ import debounce from 'lodash.debounce';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
 import { searchOnChainTokens } from 'src/contexts/searchOnChains';
-import { checkIsBannedToken, checkIsUnknownToken } from 'src/misc/tokenTags';
+import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import FormPairRow from './FormPairRow';
 import { useSortByValue } from './useSortByValue';
 
@@ -196,8 +196,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
           setSearchResult([hasDirectResult]);
         }
       } else {
-        const filtered = Array.from(newMap.values()).filter((item) => !checkIsBannedToken(item));
-        setSearchResult(await sortTokenListByBalance(filtered));
+        setSearchResult(await sortTokenListByBalance(Array.from(newMap.values())));
       }
 
       // Step 5, If no typesense hits, perform onchain search

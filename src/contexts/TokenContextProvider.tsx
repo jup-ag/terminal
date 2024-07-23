@@ -6,7 +6,6 @@ import { useInterval } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
 import { useSearchAdapter } from './search';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
-import { checkIsBannedToken } from 'src/misc/tokenTags';
 import TypesenseInstantsearchAdapter from 'typesense-instantsearch-adapter';
 import { useQuery } from '@tanstack/react-query';
 
@@ -154,9 +153,6 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
 
       const found = tokenMap.current.get(tokenMint) || unknownTokenMap.current.get(tokenMint);
       if (!found) tokenInfoToRequests.current.push(tokenMint);
-
-      // prevent banned token
-      if (found && checkIsBannedToken(found)) return undefined;
       return found;
     },
     [tokenMap],

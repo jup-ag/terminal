@@ -1,9 +1,4 @@
-import React, {
-  CSSProperties,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
+import React, { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import { WRAPPED_SOL_MINT } from 'src/constants';
@@ -30,7 +25,7 @@ export interface IPairRow {
 interface IMultiTag {
   isVerified: boolean;
   isLST: boolean;
-  isUnknown: boolean;
+  // isUnknown: boolean;
   isToken2022: boolean;
   isFrozen: boolean;
 }
@@ -43,7 +38,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
   const [renderedTag, setRenderedTag] = React.useState<IMultiTag>({
     isVerified: false,
     isLST: false,
-    isUnknown: false,
+    // isUnknown: false,
     isToken2022: false,
     isFrozen: false,
   });
@@ -56,7 +51,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
       const result = {
         isVerified: checkIsStrictOrVerified(item),
         isLST: Boolean(item.tags?.includes('lst')),
-        isUnknown: checkIsUnknownToken(item),
+        // isUnknown: checkIsUnknownToken(item),
         isToken2022: Boolean(checkIsToken2022(item)),
         isFrozen: accounts[item.address]?.isFrozen || false,
       };
@@ -68,36 +63,28 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
   }, []);
 
   const remainingTags = useMemo(() => {
-    // Filter out the tags we've already used
-    const filterTags = ['verified', 'strict', 'community', 'lst', 'unknown', 'token-2022', 'new'];
-    const otherTags = item.tags?.filter((item) => filterTags.includes(item) === false);
-    return otherTags;
+    // Only render whitelisted tags
+    const WHITELISTED_TAGS = ['pump'];
+    return item.tags?.filter((item) => WHITELISTED_TAGS.includes(item));
   }, [item.tags]);
 
   if (!renderedTag) return null;
 
-  const { isVerified, isLST, isUnknown, isToken2022, isFrozen } = renderedTag;
+  const { isVerified, isToken2022, isFrozen } = renderedTag;
 
   return (
     <div className="flex justify-end gap-x-1">
       {isFrozen && (
         <p className="border rounded-md text-xxs leading-none transition-all py-0.5 px-1 border-warning/50 text-warning/50">
-          <span>Frozen</span>
-        </p>
-      )}
-
-      {isUnknown && (
-        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20">
-          <span>Unknown</span>
+          Frozen
         </p>
       )}
 
       {isToken2022 && (
         <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20">
-          <span>Token2022</span>
+          Token2022
         </p>
       )}
-
       {remainingTags?.map((tag, idx) => (
         <div
           key={idx}
@@ -107,16 +94,10 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
         </div>
       ))}
 
-      {isLST && (
-        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
-          <span>LST</span>
-        </p>
-      )}
-
       {isVerified && (
         <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
           {/* We're renaming verified to stict for now, requested by Mei */}
-          <span>Community</span>
+          Community
         </p>
       )}
     </div>
