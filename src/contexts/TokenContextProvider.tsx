@@ -6,7 +6,6 @@ import { useInterval } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
 import { useSearchAdapter } from './search';
 import { SearchResponse } from 'typesense/lib/Typesense/Documents';
-import { checkIsBannedToken } from 'src/misc/tokenTags';
 import TypesenseInstantsearchAdapter from 'typesense-instantsearch-adapter';
 import { useQuery } from '@tanstack/react-query';
 
@@ -29,7 +28,7 @@ const TokenContext = React.createContext<{
 
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
 
-export function TokenContextProvider({ children }: IInit & { children: ReactNode }) {
+export function TokenContextProvider({ formProps, children }: IInit & { children: ReactNode }) {
   const typesenseInstantsearchAdapter = useSearchAdapter();
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,18 +47,39 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
     'local-token-list',
     { timestamp: null, data: [] },
   );
-  const { data: initialTokenList } = useQuery(['cached-initial-token-list'], async () => {
-    // 10 minutes caching
-    if (localTokenList.data.length > 0 && localTokenList.timestamp && Date.now() - localTokenList.timestamp < 600_000) {
-      return localTokenList.data;
-    }
+  const { data: initialTokenList } = useQuery(
+    ['cached-initial-token-list'],
+    async () => {
+      let results: TokenInfo[] = [];
 
-    const tokens = await (await fetch('https://tokens.jup.ag/tokens?tags=strict,lst')).json();
-    const res = new TokenListContainer(tokens);
-    const list = res.getList();
-    setLocalTokenList({ timestamp: Date.now(), data: list });
-    return list;
-  });
+      // 10 minutes caching
+      if (
+        localTokenList.data.length > 0 &&
+        localTokenList.timestamp &&
+        Date.now() - localTokenList.timestamp < 600_000
+      ) {
+        results = localTokenList.data;
+      } else {
+        const tokens = await (await fetch('https://tokens.jup.ag/tokens?tags=strict,lst')).json();
+        const res = new TokenListContainer(tokens);
+        const list = res.getList();
+        setLocalTokenList({ timestamp: Date.now(), data: list });
+        results = list;
+      }
+
+      // Explicitly request for initial input/output token in case they are not in the prebundled or local.
+      const toRequest = [formProps?.initialInputMint, formProps?.initialOutputMint]
+        .filter(Boolean)
+        .filter((item) => results.find((token) => token.address === item) === undefined);
+      const requested = toRequest.length > 0 ? await requestTokenInfo(toRequest as string[]) : [];
+
+      console.log('#', toRequest.length);
+      return results.concat(requested);
+    },
+    {
+      retry: 2,
+    },
+  );
 
   useEffect(() => {
     if (initialTokenList) {
@@ -133,8 +153,6 @@ export function TokenContextProvider({ children }: IInit & { children: ReactNode
 
       const found = tokenMap.current.get(tokenMint) || unknownTokenMap.current.get(tokenMint);
       if (!found) tokenInfoToRequests.current.push(tokenMint);
-      // prevent banned token
-      if (found && checkIsBannedToken(found)) return undefined;
       return found;
     },
     [tokenMap],

@@ -9,7 +9,7 @@ import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
 
-const containerId = 'jupiter-terminal';
+const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
 const bundleName = `main-${packageJson.version}`;
 
@@ -60,6 +60,7 @@ async function loadJupiter() {
     await Promise.all([
       loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript'),
       loadRemote('jupiter-load-styles-tailwind', `${scriptDomain}/${bundleName}-Tailwind.css`, 'stylesheet'),
+      loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
     ]);
     // The sequence matters! the last imported Jupiter.css takes precendent
     loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet');

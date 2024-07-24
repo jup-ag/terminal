@@ -8,15 +8,8 @@ export const checkIsStrictOrVerified = (tokenInfo: TokenInfo) => {
 
 export const checkIsUnknownToken = (tokenInfo: TokenInfo) => {
   const cleanTags = new Set(tokenInfo.tags);
-
-  // first one for backwards compatible
-  return (
-    cleanTags.size === 0 || cleanTags.has('unknown') || (cleanTags.size === 1 && cleanTags.has('pump')) // if token only have ['pump'] tag, and nothing else
-  );
-};
-
-export const checkIsBannedToken = (tokenInfo: TokenInfo) => {
-  return Boolean(tokenInfo.extensions?.isBanned);
+  // if does not have any of these, mark as unknown
+  return !cleanTags.has('community') && !cleanTags.has('lst') && !cleanTags.has('clone');
 };
 
 export const checkIsToken2022 = (tokenInfo: TokenInfo) => {
