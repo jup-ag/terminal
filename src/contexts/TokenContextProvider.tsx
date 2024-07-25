@@ -72,8 +72,6 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
         .filter(Boolean)
         .filter((item) => results.find((token) => token.address === item) === undefined);
       const requested = toRequest.length > 0 ? await requestTokenInfo(toRequest as string[]) : [];
-
-      console.log('#', toRequest.length);
       return results.concat(requested);
     },
     {
