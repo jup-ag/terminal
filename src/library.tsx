@@ -161,50 +161,64 @@ const RenderWidgetShell = (props: IInit) => {
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
 
-    let result: { containerClassName: string; contentClassName: string } | undefined = undefined;
+    let result: { containerClassName: CSSProperties; contentClassName: CSSProperties } | undefined = undefined;
     if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
       result = {
-        containerClassName: 'bottom-6 right-6',
-        contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
+        containerClassName: { position: 'fixed', bottom: 24, right: 24 },
+        contentClassName: size === 'default' ? { bottom: 60, right: -12 } : { bottom: 44, right: -16 },
       };
     }
     if (props.widgetStyle?.position === 'bottom-left') {
       result = {
-        containerClassName: 'bottom-6 left-6',
-        contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
+        containerClassName: { position: 'fixed', bottom: 24, left: 24 },
+        contentClassName: size === 'default' ? { bottom: 60, left: -12 } : { bottom: 44, left: 16 },
       };
     }
     if (props.widgetStyle?.position === 'top-left') {
       result = {
-        containerClassName: 'top-6 left-6',
-        contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
+        containerClassName: { position: 'fixed', top: 24, left: 24 },
+        contentClassName: size === 'default' ? { top: 60, left: -12 } : { top: 44, left: -16 },
       };
     }
     if (props.widgetStyle?.position === 'top-right') {
       result = {
-        containerClassName: 'top-6 right-6',
-        contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
+        containerClassName: { position: 'fixed', top: 24, right: 24 },
+        contentClassName: size === 'default' ? { top: 60, right: -12 } : { top: 44, right: -16 },
       };
     }
 
     return {
       ...result,
-      widgetContainerClassName: size === 'default' ? 'h-14 w-14' : 'h-10 w-10',
+      widgetContainerClassName: size === 'default' ? { height: 56, width: 56 } : { height: 40, width: 40 },
       widgetLogoSize: size === 'default' ? 42 : 32,
     };
   }, [props.widgetStyle?.position, props.widgetStyle?.size]);
 
   return (
-    <div className={`fixed ${classes.containerClassName}`}>
+    <div style={classes.containerClassName}>
       <div
-        className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
+        style={{
+          ...classes.widgetContainerClassName,
+          borderRadius: '100%',
+          backgroundColor: 'black',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+        }}
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? (
           <div
-            className={classNames('text-white fill-current pt-1', {
-              'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
-            })}
+            style={{
+              color: 'white',
+              fill: 'currentcolor',
+              paddingTop: 4,
+              rotate:
+                props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right'
+                  ? '180deg'
+                  : undefined,
+            }}
           >
             <ChevronDownIcon width={classes.widgetLogoSize * 0.4} height={classes.widgetLogoSize * 0.4} />
           </div>
@@ -215,9 +229,8 @@ const RenderWidgetShell = (props: IInit) => {
 
       <div
         id="integrated-terminal"
-        className={`absolute overflow-hidden ${
-          classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-v3-modal transition-opacity duration-300 shadow-2xl ${
+        style={classes.contentClassName}
+        className={`absolute overflow-hidden flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-v3-modal transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >
