@@ -27,7 +27,7 @@ const Content = () => {
   const { message } = useTPSMonitor();
   const [isMessageClosed, setIsMessageClosed] = useState(false);
 
-  // ID is required for scoped preflight by tailwind to work 
+  // ID is required for scoped preflight by tailwind to work
   return (
     <div id="jupiter-terminal" className="relative h-full">
       {screen === 'Initial' ? (
@@ -55,7 +55,7 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const { displayMode, platformFeeAndAccounts: ogPlatformFeeAndAccounts, formProps, maxAccounts } = props;
+  const { displayMode, platformFeeAndAccounts: ogPlatformFeeAndAccounts, formProps } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -85,34 +85,39 @@ const JupiterApp = (props: IInit) => {
     };
   }, [ogPlatformFeeAndAccounts]);
 
+  const maxAccounts = useMemo(() => {
+    if (props.maxAccounts && props.maxAccounts > 64) throw new Error('Max accounts must not be more than 64');
+    return props.maxAccounts || 64;
+  }, [props.maxAccounts]);
+
   return (
-      <AccountsProvider>
-        <JupiterProvider
-          connection={connection}
-          routeCacheDuration={ROUTE_CACHE_DURATION}
-          wrapUnwrapSOL={true}
-          userPublicKey={walletPublicKey || undefined}
-          platformFeeAndAccounts={platformFeeAndAccounts}
-          asLegacyTransaction={asLegacyTransaction}
-        >
-          <PrioritizationFeeContextProvider>
-            <SwapContextProvider
-              displayMode={displayMode}
-              formProps={formProps}
-              scriptDomain={props.scriptDomain}
-              asLegacyTransaction={asLegacyTransaction}
-              setAsLegacyTransaction={setAsLegacyTransaction}
-              maxAccounts={maxAccounts}
-              useUserSlippage={props.useUserSlippage ?? true}
-              slippagePresets={props.slippagePresets}
-            >
-              <USDValueProvider>
-                <Content />
-              </USDValueProvider>
-            </SwapContextProvider>
-          </PrioritizationFeeContextProvider>
-        </JupiterProvider>
-      </AccountsProvider>
+    <AccountsProvider>
+      <JupiterProvider
+        connection={connection}
+        routeCacheDuration={ROUTE_CACHE_DURATION}
+        wrapUnwrapSOL={true}
+        userPublicKey={walletPublicKey || undefined}
+        platformFeeAndAccounts={platformFeeAndAccounts}
+        asLegacyTransaction={asLegacyTransaction}
+      >
+        <PrioritizationFeeContextProvider>
+          <SwapContextProvider
+            displayMode={displayMode}
+            formProps={formProps}
+            scriptDomain={props.scriptDomain}
+            asLegacyTransaction={asLegacyTransaction}
+            setAsLegacyTransaction={setAsLegacyTransaction}
+            maxAccounts={maxAccounts}
+            useUserSlippage={props.useUserSlippage ?? true}
+            slippagePresets={props.slippagePresets}
+          >
+            <USDValueProvider>
+              <Content />
+            </USDValueProvider>
+          </SwapContextProvider>
+        </PrioritizationFeeContextProvider>
+      </JupiterProvider>
+    </AccountsProvider>
   );
 };
 
