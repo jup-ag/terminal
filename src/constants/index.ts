@@ -2,7 +2,18 @@ import { PublicKey } from '@solana/web3.js';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { SwapMode } from 'src/types/enums';
 
-export const JUPITER_DEFAULT_RPC = process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC || 'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
+export const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
+export const USDT_MINT = new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
+export const JLP_MINT = new PublicKey('27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4');
+
+export const HELIUS_MAIN_FRONTEND_RPC =
+  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
+    ? 'https://mainnet.helius-rpc.com/?api-key=4fc1acda-661f-456a-a772-130e0261b878'
+    : 'https://jupiter-fe.helius-rpc.com';
+
+export const JUPITER_DEFAULT_RPC =
+  process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC ||
+  'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
 export const DEFAULT_SLIPPAGE = 0.5;
 
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112');
@@ -45,6 +56,8 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
   },
   useUserSlippage: true,
-})
+});
 
 export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
+
+export const DCA_HIGH_PRICE_IMPACT = 0.5; // 0.5%
