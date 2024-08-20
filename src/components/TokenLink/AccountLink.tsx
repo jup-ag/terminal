@@ -1,4 +1,5 @@
 import { forwardRef, PropsWithChildren, useMemo } from 'react';
+import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import External from 'src/icons/External';
 import { cn } from 'src/misc/cn';
 import { shortenAddress } from 'src/misc/utils';
@@ -10,19 +11,17 @@ interface ComponentProps extends PropsWithChildren {
 
 const AccountLink = forwardRef<HTMLAnchorElement, ComponentProps>((props, ref) => {
   const { address, className, children } = props;
-  //   const {
-  //     constants: { CLUSTER },
-  //   } = useAppConfig();
-  //   const { getTokenExplorer } = usePreferredExplorer();
+
+  const { getTokenExplorer } = usePreferredExplorer();
 
   const { href, shortAddr } = useMemo(() => {
-    // const link = getTokenExplorer(address, CLUSTER);
+    const link = getTokenExplorer(address);
 
     return {
-      href: address,
+      href: link,
       shortAddr: shortenAddress(address, 5),
     };
-  }, [address]);
+  }, [address, getTokenExplorer]);
 
   return (
     <a
