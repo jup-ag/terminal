@@ -18,7 +18,7 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import WalletIcon from 'src/icons/WalletIcon';
-import { detectedSeparator, hasNumericValue } from 'src/misc/utils';
+import { detectedSeparator } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
