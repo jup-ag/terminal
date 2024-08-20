@@ -6,7 +6,7 @@ import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Decimal from 'decimal.js';
 import { formatNumber } from 'src/misc/utils';
-import AccountLink from 'src/components/TokenLink/AccountLink';
+import AccountLink from 'src/components/AccountLink';
 
 export function extractTokenExtensionsInfo(asset: HeliusDASAsset): {
   tokenExtension: boolean;
