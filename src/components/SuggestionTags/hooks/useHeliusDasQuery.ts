@@ -104,7 +104,7 @@ export const useHeliusDASQuery = (tokenInfos: TokenInfo[]) => {
     queryKey: ['get_asset_batch', keys.join('')],
     queryFn: async () => {
       try {
-        const response = await fetch(HELIUS_MAIN_FRONTEND_RPC, {
+        const response = await fetch(HELIUS_MAIN_FRONTEND_RPC || '', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
