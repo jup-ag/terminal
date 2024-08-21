@@ -2,7 +2,6 @@ import { DCA_HIGH_PRICE_IMPACT, JLP_MINT, USDC_MINT, USDT_MINT } from 'src/const
 import { TokenInfo } from '@solana/spl-token-registry';
 import { QuoteResponse } from '@jup-ag/react-hook';
 import { useHeliusDASQuery } from './useHeliusDasQuery';
-import { useLstApyFetcher } from './useLstApy';
 import { useBirdeyeRouteInfo } from './useSwapInfo';
 import { useMemo } from 'react';
 import { SystemProgram } from '@solana/web3.js';
@@ -10,11 +9,9 @@ import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import { UnknownTokenSuggestion } from '../Tags/UnknownTokenSuggestion';
-import { LSTSuggestion } from '../Tags/LSTSuggestion';
 import { AuthorityAndDelegatesSuggestion } from '../Tags/AuthorityAndDelegatesSuggestion';
 import { TransferTaxSuggestion } from '../Tags/TransferTaxSuggestion';
 import { PriceWarningSuggestion } from '../Tags/PriceWarningSuggestion';
-import { DCASuggestion } from '../Tags/DCASuggestion';
 import { extractTokenExtensionsInfo } from '../Tags/Token2022Info';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
 
@@ -33,7 +30,6 @@ export const useSuggestionTags = ({
   quoteResponse: QuoteResponse | undefined;
 }) => {
   const { data: dasQuery } = useHeliusDASQuery([fromTokenInfo, toTokenInfo].filter(Boolean) as TokenInfo[]);
-  const { data: lstApy } = useLstApyFetcher(['JupSOL']);
   const birdeyeInfo = useBirdeyeRouteInfo();
   const { tokenPriceMap } = useUSDValue();
 
@@ -48,34 +44,14 @@ export const useSuggestionTags = ({
       additional: [],
     };
 
-    if (fromTokenInfo) {
+    if (fromTokenInfo && checkIsUnknownToken(fromTokenInfo)) {
       // is unknown
-      if (checkIsUnknownToken(fromTokenInfo)) {
-        list.fromToken.push(
-          <UnknownTokenSuggestion key={'unknown' + fromTokenInfo.address} tokenInfo={fromTokenInfo} />,
-        );
-      }
-
-      // lst token
-      if (lstApy && lstApy.apys[fromTokenInfo.symbol]) {
-        list.fromToken.push(
-          <LSTSuggestion key={'lst' + fromTokenInfo.symbol} apyInPercent={lstApy.apys[fromTokenInfo.symbol]} />,
-        );
-      }
+      list.fromToken.push(<UnknownTokenSuggestion key={'unknown' + fromTokenInfo.address} tokenInfo={fromTokenInfo} />);
     }
 
-    if (toTokenInfo) {
+    if (toTokenInfo && checkIsUnknownToken(toTokenInfo)) {
       // is unknown
-      if (checkIsUnknownToken(toTokenInfo)) {
-        list.toToken.push(<UnknownTokenSuggestion key={'unknown' + toTokenInfo.address} tokenInfo={toTokenInfo} />);
-      }
-
-      // lst token
-      if (lstApy && lstApy.apys[toTokenInfo.symbol]) {
-        list.fromToken.push(
-          <LSTSuggestion key={'lst' + toTokenInfo.symbol} apyInPercent={lstApy.apys[toTokenInfo.symbol]} />,
-        );
-      }
+      list.toToken.push(<UnknownTokenSuggestion key={'unknown' + toTokenInfo.address} tokenInfo={toTokenInfo} />);
     }
 
     // Freeze authority, Permanent delegate, Transfer Tax
@@ -178,19 +154,6 @@ export const useSuggestionTags = ({
 
         return isAboveThreshold && (priceImpactPct || 0) > DCA_HIGH_PRICE_IMPACT;
       })();
-
-      if (isDCASuggested) {
-        list.additional.push(
-          <DCASuggestion
-            key={'dca-' + fromTokenInfo?.address + toTokenInfo?.address}
-            inAmountDecimal={new Decimal(quoteResponse.inAmount.toString())
-              .div(10 ** fromTokenInfo.decimals)
-              .toString()}
-            fromTokenInfo={fromTokenInfo}
-            toTokenInfo={toTokenInfo}
-          />,
-        );
-      }
     }
 
     return list;
@@ -200,7 +163,6 @@ export const useSuggestionTags = ({
     birdeyeInfo.rate,
     dasQuery,
     fromTokenInfo,
-    lstApy,
     quoteResponse,
     toTokenInfo,
     tokenPriceMap,
