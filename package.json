@@ -27,7 +27,6 @@
     "@tanstack/react-query": "^4.36.1",
     "bn.js": "5.2.1",
     "bs58": "5.0.0",
-    "class-variance-authority": "^0.7.0",
     "classnames": "2.3.2",
     "clsx": "^2.1.1",
     "decimal.js": "10.4.3",
@@ -35,7 +34,6 @@
     "jotai": "^2.8.3",
     "jsbi": "4.3.0",
     "lodash.debounce": "^4.0.8",
-    "lucide-react": "^0.428.0",
     "next": "13.4.19",
     "next-seo": "5.15.0",
     "next-themes": "0.2.1",
@@ -50,7 +48,6 @@
     "react-virtualized-auto-sizer": "1.0.7",
     "react-window": "1.8.8",
     "tailwind-merge": "^2.5.2",
-    "tailwindcss-animate": "^1.0.7",
     "typesense": "1.7.2",
     "typesense-instantsearch-adapter": "~2.8.0"
   },
