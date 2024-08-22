@@ -106,12 +106,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   return (
     <>
       {/* Body */}
-      <form
-        onSubmit={onSubmitToConfirmation}
-        className={classNames({
-          hidden: Boolean(selectPairSelector),
-        })}
-      >
+      <form onSubmit={onSubmitToConfirmation}>
         <Form
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
