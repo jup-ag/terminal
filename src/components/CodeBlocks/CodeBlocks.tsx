@@ -73,7 +73,8 @@ const CodeBlocks = ({
   const bodyTag = useMemo(() => {
     if (displayMode === 'integrated') {
       return `<!-- Prepare a div in your <body> for Terminal to render -->
-<div id="integrated-terminal"></div>
+<!-- Adjust the width and height to suit your requirements -->
+<div id="integrated-terminal" style="width: 400px; height: 568px;"></div>
 `;
     }
 
