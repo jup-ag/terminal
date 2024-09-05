@@ -18,24 +18,24 @@ export const numberFormatter = new Intl.NumberFormat(userLocale, {
   maximumFractionDigits: 9,
 });
 
+const getDecimalCount = (value: string) => {
+  const parts = value.split('.');
+  return parts.length > 1 ? parts[1].length : 0;
+};
+
 export const formatNumber = {
-  format: (val?: number | Decimal, precision?: number) => {
-    if (!val && val !== 0) {
-      return '--';
+  format: (val?: string | Decimal, precision?: number): string => {
+    if (!val) {
+      return '';
     }
 
-    // Force numberFormatter to respect the desired precision
+    // Use the default precision if not provided
+    const defaultDecimals = getDecimalCount(val.toString());
+    // format it against user locale
     const numberFormatter = new Intl.NumberFormat(userLocale, {
-      style: 'decimal',
-      minimumFractionDigits: precision,
-      maximumFractionDigits: 12,
+      maximumFractionDigits: precision ?? defaultDecimals,
     });
-
-    if (typeof val === 'number') {
-      return numberFormatter.format(precision !== undefined ? +val.toFixed(precision) : val);
-    }
-
-    return numberFormatter.format(precision !== undefined ? Number(val.toFixed(precision)) : val.toNumber());
+    return numberFormatter.format(val.toString());
   },
 };
 
@@ -95,7 +95,7 @@ export function useReactiveEventListener(
 
 export const isMobile = () => typeof window !== 'undefined' && screen && screen.width <= 480;
 
-export const detectedSeparator = formatNumber.format(1.1).substring(1, 2);
+export const detectedSeparator = formatNumber.format('1.1').substring(1, 2);
 
 export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseEvent) => void) {
   useEffect(() => {

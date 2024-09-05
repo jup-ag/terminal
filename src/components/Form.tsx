@@ -18,13 +18,14 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import { RoutesSVG } from 'src/icons/RoutesSVG';
 import WalletIcon from 'src/icons/WalletIcon';
-import { detectedSeparator, hasNumericValue } from 'src/misc/utils';
+import { detectedSeparator } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
 import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
+import Decimal from 'decimal.js';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -33,7 +34,7 @@ const Form: React.FC<{
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
   const { publicKey } = useWalletPassThrough();
-  const { accounts } = useAccounts();
+  const { accounts, nativeAccount } = useAccounts();
   const {
     form,
     setForm,
@@ -79,9 +80,15 @@ const Form: React.FC<{
     setForm((form) => ({ ...form, toValue: value }));
   };
 
-  const balance = useMemo(() => {
-    return fromTokenInfo ? accounts[fromTokenInfo.address]?.balance || 0 : 0;
-  }, [accounts, fromTokenInfo]);
+  const balance: string | null = useMemo(() => {
+    if (!fromTokenInfo?.address) return null;
+
+    const accBalanceObj =
+      fromTokenInfo?.address === WRAPPED_SOL_MINT.toString() ? nativeAccount : accounts[fromTokenInfo.address];
+    if (!accBalanceObj) return '';
+
+    return accBalanceObj.balance;
+  }, [accounts, fromTokenInfo?.address, nativeAccount]);
 
   const onClickMax = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
@@ -92,12 +99,14 @@ const Form: React.FC<{
       if (fromTokenInfo?.address === WRAPPED_SOL_MINT.toBase58()) {
         setForm((prev) => ({
           ...prev,
-          fromValue: String(balance > MINIMUM_SOL_BALANCE ? (balance - MINIMUM_SOL_BALANCE).toFixed(6) : 0),
+          fromValue: new Decimal(balance).gt(MINIMUM_SOL_BALANCE)
+            ? new Decimal(balance).minus(MINIMUM_SOL_BALANCE).toFixed(9)
+            : '0',
         }));
       } else {
         setForm((prev) => ({
           ...prev,
-          fromValue: String(balance),
+          fromValue: balance,
         }));
       }
     },
@@ -203,25 +212,27 @@ const Form: React.FC<{
                     </button>
 
                     <div className="text-right">
-                      <NumericFormat
-                        disabled={fixedAmount || swapMode === 'ExactOut'}
-                        value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
-                        decimalScale={fromTokenInfo?.decimals}
-                        thousandSeparator={thousandSeparator}
-                        allowNegative={false}
-                        valueIsNumericString
-                        onValueChange={onChangeFromValue}
-                        placeholder={'0.00'}
-                        className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
-                          { 'cursor-not-allowed': inputAmountDisabled },
-                        )}
-                        decimalSeparator={detectedSeparator}
-                        isAllowed={withValueLimit}
-                        onKeyDown={(e) => {
-                          isToPairFocused.current = false;
-                        }}
-                      />
+                      {fromTokenInfo?.decimals && (
+                        <NumericFormat
+                          disabled={fixedAmount || swapMode === 'ExactOut'}
+                          value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
+                          decimalScale={fromTokenInfo.decimals}
+                          thousandSeparator={thousandSeparator}
+                          allowNegative={false}
+                          valueIsNumericString
+                          onValueChange={onChangeFromValue}
+                          placeholder={'0.00'}
+                          className={classNames(
+                            'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
+                            { 'cursor-not-allowed': inputAmountDisabled },
+                          )}
+                          decimalSeparator={detectedSeparator}
+                          isAllowed={withValueLimit}
+                          onKeyDown={(e) => {
+                            isToPairFocused.current = false;
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
 
@@ -293,33 +304,35 @@ const Form: React.FC<{
                     </button>
 
                     <div className="text-right">
-                      <NumericFormat
-                        disabled={!swapMode || swapMode === 'ExactIn'}
-                        value={typeof form.toValue === 'undefined' ? '' : form.toValue}
-                        decimalScale={toTokenInfo?.decimals}
-                        thousandSeparator={thousandSeparator}
-                        allowNegative={false}
-                        valueIsNumericString
-                        onValueChange={onChangeToValue}
-                        placeholder={swapMode === 'ExactIn' ? '' : 'Enter desired amount'}
-                        className={classNames(
-                          'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
-                        )}
-                        decimalSeparator={detectedSeparator}
-                        isAllowed={withValueLimit}
-                        onKeyDown={(e) => {
-                          if (
-                            e.metaKey ||
-                            e.ctrlKey ||
-                            e.key === 'Meta' ||
-                            e.key === 'Control' ||
-                            e.key === 'Alt' ||
-                            e.key === 'Shift'
-                          )
-                            return;
-                          isToPairFocused.current = true;
-                        }}
-                      />
+                      {toTokenInfo?.decimals && (
+                        <NumericFormat
+                          disabled={!swapMode || swapMode === 'ExactIn'}
+                          value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                          decimalScale={toTokenInfo.decimals}
+                          thousandSeparator={thousandSeparator}
+                          allowNegative={false}
+                          valueIsNumericString
+                          onValueChange={onChangeToValue}
+                          placeholder={swapMode === 'ExactIn' ? '' : 'Enter desired amount'}
+                          className={classNames(
+                            'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
+                          )}
+                          decimalSeparator={detectedSeparator}
+                          isAllowed={withValueLimit}
+                          onKeyDown={(e) => {
+                            if (
+                              e.metaKey ||
+                              e.ctrlKey ||
+                              e.key === 'Meta' ||
+                              e.key === 'Control' ||
+                              e.key === 'Alt' ||
+                              e.key === 'Shift'
+                            )
+                              return;
+                            isToPairFocused.current = true;
+                          }}
+                        />
+                      )}
                     </div>
                   </div>
 

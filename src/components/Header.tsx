@@ -22,7 +22,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
 
   const slippageText = useMemo(() => {
     const value = form.slippageBps / 100;
-    return isNaN(value) ? '0' : formatNumber.format(value);
+    return isNaN(value) ? '0' : formatNumber.format(String(value));
   }, [form.slippageBps]);
 
   return (

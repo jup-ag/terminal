@@ -2,6 +2,7 @@ import React from 'react';
 import { TransactionFeeInfo } from '@jup-ag/react-hook';
 import Tooltip from 'src/components/Tooltip';
 import { formatNumber, fromLamports } from 'src/misc/utils';
+import Decimal from 'decimal.js';
 
 const Deposits = ({
   hasSerumDeposit,
@@ -64,13 +65,11 @@ const Deposits = ({
                 <p key="ata">
                   <span>
                     {formatNumber.format(
-                      fromLamports(
-                        feeInformation?.ataDeposits.reduce((s, deposit) => {
-                          s += deposit;
-                          return s;
-                        }, 0),
-                        9,
-                      ),
+                      feeInformation?.ataDeposits
+                        .reduce<Decimal>((s, deposit) => {
+                          return s.add(deposit);
+                        }, new Decimal(0))
+                        .div(10 ** 9),
                     )}{' '}
                     SOL for {feeInformation?.ataDeposits?.length}{' '}
                     {(feeInformation?.ataDeposits?.length || 0) > 0 ? 'ATA account' : 'ATA accounts'}
@@ -81,13 +80,11 @@ const Deposits = ({
                 <p key="serum">
                   <span>
                     {formatNumber.format(
-                      fromLamports(
-                        feeInformation?.openOrdersDeposits.reduce((s, deposit) => {
-                          s += deposit;
-                          return s;
-                        }, 0),
-                        9,
-                      ),
+                      feeInformation?.openOrdersDeposits
+                        .reduce((s, deposit) => {
+                          return s.add(deposit);
+                        }, new Decimal(9))
+                        .div(10 ** 9),
                     )}{' '}
                     SOL for {feeInformation?.openOrdersDeposits.length}{' '}
                     {(feeInformation?.openOrdersDeposits?.length || 0) > 0

@@ -122,7 +122,7 @@ const FormPairRow = (props: IPairRow) => {
 
   const usdValueDisplay =
     usdValue && usdValue.gt(0.01) // If smaller than 0.01 cents, dont show
-      ? `$${formatNumber.format(usdValue.toDP(2).toNumber())}`
+      ? `$${formatNumber.format(usdValue, 2)}` // USD value can hardcode to 2
       : '';
 
   return (

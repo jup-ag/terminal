@@ -82,7 +82,7 @@ const ExchangeRate = ({
             <div className='flex ml-0.5'>
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate.toNumber())} ${toTokenInfo.symbol}`
+                  `${formatNumber.format(rate)} ${toTokenInfo.symbol}`
                 )
                 : (
                   <>
@@ -98,7 +98,7 @@ const ExchangeRate = ({
 
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate.toNumber())} ${fromTokenInfo.symbol}`
+                  `${formatNumber.format(rate)} ${fromTokenInfo.symbol}`
                 )
                 : (
                   <>

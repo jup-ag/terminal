@@ -1,12 +1,13 @@
 import React, { useMemo } from 'react';
 import { TransactionFeeInfo } from '@jup-ag/react-hook';
 import Tooltip from 'src/components/Tooltip';
-import { formatNumber, fromLamports } from 'src/misc/utils';
+import { formatNumber } from 'src/misc/utils';
+import Decimal from 'decimal.js';
 
 const TransactionFee = ({ feeInformation }: { feeInformation: TransactionFeeInfo | undefined }) => {
   const feeText = useMemo(() => {
     if (feeInformation) {
-      return formatNumber.format(fromLamports(feeInformation.signatureFee, 9));
+      return formatNumber.format(new Decimal(feeInformation.signatureFee).div(10 ** 9));
     }
     return '-';
   }, [feeInformation]);
