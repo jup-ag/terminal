@@ -10,6 +10,7 @@ import { useAccounts } from '../../contexts/accounts';
 import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import classNames from 'classnames';
+import Decimal from 'decimal.js';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -42,7 +43,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       return;
     }
 
-    if (Number(form.fromValue) > balance) {
+    if (new Decimal(form.fromValue).gt(balance)) {
       setErrors({
         fromValue: { title: 'Insufficient balance', message: '' },
       });

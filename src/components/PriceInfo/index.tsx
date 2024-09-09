@@ -42,14 +42,14 @@ const Index = ({
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
 
-  const priceImpact = formatNumber.format(new Decimal(quoteResponse?.priceImpactPct || 0).mul(100).toDP(4).toNumber());
-  const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format(0.1)}%` : `~ ${priceImpact}%`;
+  const priceImpact = formatNumber.format(new Decimal(quoteResponse?.priceImpactPct || 0).mul(100).toDP(4));
+  const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format('0.1')}%` : `~ ${priceImpact}%`;
 
   const otherAmountThresholdText = useMemo(() => {
     if (quoteResponse?.otherAmountThreshold) {
       const amount = new Decimal(quoteResponse.otherAmountThreshold.toString()).div(Math.pow(10, toTokenInfo.decimals));
 
-      const amountText = formatNumber.format(amount.toNumber());
+      const amountText = formatNumber.format(amount);
       return `${amountText} ${toTokenInfo.symbol}`;
     }
     return '-';

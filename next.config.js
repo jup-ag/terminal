@@ -7,6 +7,8 @@ const nextConfig = {
       use: ['@svgr/webpack'],
     });
     if (!isServer) config.resolve.fallback.fs = false;
+
+    config.devtool = 'source-map';
     return config;
   },
   reactStrictMode: true,

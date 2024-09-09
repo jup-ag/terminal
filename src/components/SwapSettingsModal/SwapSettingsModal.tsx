@@ -419,7 +419,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   return (
                     <>
                       {SLIPPAGE_PRESET.map((item, idx) => {
-                        const displayText = formatNumber.format(Number(item)) + '%';
+                        const displayText = formatNumber.format(item) + '%';
 
                         return (
                           <SwapSettingButton

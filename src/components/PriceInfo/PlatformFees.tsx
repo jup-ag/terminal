@@ -1,6 +1,7 @@
 import { TokenInfo } from '@solana/spl-token-registry';
+import Decimal from 'decimal.js';
 import React, { useMemo } from 'react';
-import { formatNumber, fromLamports } from 'src/misc/utils';
+import { formatNumber } from 'src/misc/utils';
 
 export type PlatformFeesInfo =
   | {
@@ -14,7 +15,7 @@ export type PlatformFeesInfo =
 const PlatformFees = ({ platformFee, tokenInfo }: PlatformFeesInfo & { tokenInfo: TokenInfo }) => {
   const amountText = useMemo(() => {
     if (platformFee && Number(platformFee?.amount) > 0) {
-      return formatNumber.format(fromLamports(Number(platformFee?.amount), tokenInfo.decimals));
+      return formatNumber.format(new Decimal(platformFee?.amount).div(10 ** tokenInfo.decimals), tokenInfo.decimals);
     }
     return null;
   }, [platformFee, tokenInfo.decimals]);

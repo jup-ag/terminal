@@ -7,14 +7,14 @@ import React, { PropsWithChildren, useCallback, useContext, useEffect, useState 
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
+import Decimal from 'decimal.js';
 
 const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
 export interface IAccountsBalance {
   pubkey: PublicKey;
-  balance: number;
+  balance: string;
   balanceLamports: BN;
-  hasBalance: boolean;
   decimals: number;
   isFrozen: boolean;
 }
@@ -150,9 +150,8 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     if (response) {
       return {
         pubkey: publicKey,
-        balance: fromLamports(response?.lamports || 0, 9),
+        balance: new Decimal(fromLamports(response?.lamports || 0, 9)).toString(),
         balanceLamports: new BN(response?.lamports || 0),
-        hasBalance: response?.lamports ? response?.lamports > 0 : false,
         decimals: 9,
         isFrozen: false,
       };
@@ -175,10 +174,9 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
         if (!expectedAta.equals(item.pubkey)) return acc;
 
         acc[item.account.data.parsed.info.mint] = {
-          balance: item.account.data.parsed.info.tokenAmount.uiAmount,
+          balance: item.account.data.parsed.info.tokenAmount.uiAmountString,
           balanceLamports: new BN(item.account.data.parsed.info.tokenAmount.amount),
           pubkey: item.pubkey,
-          hasBalance: item.account.data.parsed.info.tokenAmount.uiAmount > 0,
           decimals: item.account.data.parsed.info.tokenAmount.decimals,
           isFrozen: item.account.data.parsed.info.state === 2, // 2 is frozen
         };

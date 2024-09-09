@@ -5,6 +5,7 @@ import { useAccounts } from '../contexts/accounts';
 
 import { formatNumber } from '../misc/utils';
 import { WRAPPED_SOL_MINT } from 'src/constants';
+import Decimal from 'decimal.js';
 
 interface ICoinBalanceProps {
   mintAddress: string;
@@ -13,19 +14,21 @@ interface ICoinBalanceProps {
 
 const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
   const { accounts, nativeAccount } = useAccounts();
-  const { wallet } = useWalletPassThrough();
+  const { connected } = useWalletPassThrough();
 
-  const walletPublicKey = React.useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+  const formattedBalance: string | null = React.useMemo(() => {
+    const accBalanceObj =
+      props.mintAddress === WRAPPED_SOL_MINT.toString() ? nativeAccount : accounts[props.mintAddress];
+      if (!accBalanceObj) return '';
 
-  const balance: number = React.useMemo(() => {
-    if (props.mintAddress === WRAPPED_SOL_MINT.toString()) return nativeAccount?.balance || 0;
-    return accounts[props.mintAddress]?.balance || 0;
+    const balance = new Decimal(accBalanceObj.balanceLamports.toString()).div(10 ** accBalanceObj.decimals);
+    return formatNumber.format(balance, accBalanceObj.decimals);
   }, [accounts, nativeAccount, props.mintAddress]);
 
-  if (props.hideZeroBalance && balance === 0) return null;
+  if (props.hideZeroBalance && !formattedBalance) return null;
 
-  if (!walletPublicKey) return <span translate="no">{formatNumber.format(0, 6)}</span>;
-  return <span translate="no">{formatNumber.format(balance, 6)}</span>;
+  if (!connected) return null;
+  return <span translate="no">{formattedBalance}</span>;
 };
 
 export default CoinBalance;
