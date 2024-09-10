@@ -21,6 +21,7 @@ import WidgetTerminal from 'src/content/WidgetTerminal';
 import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
 import FeatureShowcaseButton from 'src/components/FeatureShowcaseButton';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -38,6 +39,14 @@ if ((isDeveloping || isPreview) && typeof window !== 'undefined') {
     (window as any).JupiterRenderer = rendererProps;
   });
 }
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const [tab, setTab] = useState<IInit['displayMode']>('integrated');
@@ -84,7 +93,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [wallets, watchAllFields.simulateWalletPassthrough]);
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <DefaultSeo
         title={'Jupiter Terminal'}
         openGraph={{
@@ -270,6 +279,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <Footer />
         </div>
       </div>
-    </>
+    </QueryClientProvider>
   );
 }
