@@ -320,7 +320,7 @@ Limit the number of accounts to be used by the Swap Instructions.
 "@solana/web3.js": "^1.87.6",
 ```
 
-As of Terminal@3.0.4, Terminal is now available as an NPM package, however, some peer dependencies are required to be installed.
+As of Terminal@3.0.5, Terminal is now available as an NPM package, however, some peer dependencies are required to be installed.
 
 ```tsx
 import { init, syncProps } from '@jup-ag/terminal';
