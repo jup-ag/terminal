@@ -30,8 +30,6 @@
   },
   "peerDependencies": {
     "@solana/spl-token": "^0.1.8",
-    "@solana/spl-token-registry": "~0.2.4574",
-    "@solana/wallet-adapter-wallets": "^0.19.22",
     "@solana/web3.js": "^1.87.6"
   },
   "dependencies": {
@@ -40,6 +38,8 @@
     "@jup-ag/wallet-adapter": "0.2.0",
     "@mercurial-finance/optimist": "0.3.2",
     "@project-serum/anchor": "^0.26.0",
+    "@solana/spl-token-registry": "~0.2.4574",
+    "@solana/wallet-adapter-wallets": "^0.19.22",
     "@tanstack/react-query": "^4.36.1",
     "bn.js": "5.2.1",
     "bs58": "5.0.0",

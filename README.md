@@ -58,8 +58,8 @@ With several templates to get you started, and auto generated code snippets.
 
 - [Demo + Auto Code Gen](https://terminal.jup.ag)
 - [TLDR Example](https://github.com/jup-ag/terminal/tree/main/src/content)
-
-- Step by step 👇
+- [NPM example](#npm-support)
+- Or, step by step 👇
 
 ### 1. Setup HTML
 
@@ -162,6 +162,7 @@ Refer to [Adding your own fees](https://docs.jup.ag/docs/apis/adding-fees) docs 
 _Note: You will need to create the Token fee accounts to collect the platform fee._
 
 #### By referral key `referralAccount` (easiest)
+
 ```tsx
 const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
   referralAccount: '2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy',
@@ -171,13 +172,14 @@ const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
 window.Jupiter.init({
   // ...
   platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-})
+});
 ```
 
-
 #### By defined fee accounts
-Alternatively, you can derive yourself the fee accounts via 
+
+Alternatively, you can derive yourself the fee accounts via
 [Set your fee token account](https://docs.jup.ag/docs/apis/adding-fees#3-set-your-fee-token-account) and declare them like so:
+
 ```tsx
 const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
   feeBps: 100,
@@ -187,7 +189,7 @@ const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
 window.Jupiter.init({
   // ...
   platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-})
+});
 ```
 
 ---
@@ -246,7 +248,7 @@ window.Jupiter.init({
   onFormUpdate (form: IForm) {}
   /** Callback when there's changes to the screen */
   onScreenUpdate (screen: IScreen) {}
-  
+
   /** Advanced usage */
   /** onRequestIxCallback(), refer to dedicated section below */
 });
@@ -310,6 +312,35 @@ Limit the number of accounts to be used by the Swap Instructions.
 
 - [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
 - [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
+
+### NPM support
+
+```
+"@solana/spl-token": "^0.1.8",
+"@solana/web3.js": "^1.87.6",
+```
+
+As of Terminal@3.0.4, Terminal is now available as an NPM package, however, some peer dependencies are required to be installed.
+
+```tsx
+import { init, syncProps } from '@jup-ag/terminal';
+import '@jup-ag/terminal/css';
+
+import { useWallet } from '@solana/wallet-adapter-react'; // Or @jup-ag/wallet-adapter;
+const walletContextState = useWallet();
+useEffect(() => {
+  init({
+    displayMode: 'integrated',
+    integratedTargetId: 'integrated-terminal',
+    endpoint: 'https://api.mainnet-beta.solana.com',
+  });
+}, []);
+
+// Optional: To make sure passthrough wallet are synced
+useEffect(() => {
+  syncProps({ passthroughWalletContextState: walletContextState });
+}, [walletContextState]);
+```
 
 ---
 
