@@ -1,5 +1,4 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import { HeliusDASAsset } from '../hooks/useHeliusDasQuery';
 import { useMemo } from 'react';
 import Spinner from 'src/components/Spinner';
 import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
@@ -7,63 +6,59 @@ import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Decimal from 'decimal.js';
 import { formatNumber } from 'src/misc/utils';
 import AccountLink from 'src/components/AccountLink';
+import { permanentDelegate, TokenInfoWithParsedAccountData, transferFeeConfig } from '../hooks/useQueryTokenMetadata';
 
-export function extractTokenExtensionsInfo(asset: HeliusDASAsset): {
+export function extractTokenExtensionsInfo(asset: TokenInfoWithParsedAccountData): {
   tokenExtension: boolean;
   transferFee: string | null;
   maxTransferFee: string | null;
-  symbol: string;
   mintAuthority: string | undefined;
   freezeAuthority: string | undefined;
   permanentDelegate: string | undefined;
-} {
-  const { mint_extensions: mintExtensions, token_info: tokenInfo } = asset;
+} | null {
+  if (!asset.parsed.info.extensions) return null;
 
-  const { permanent_delegate, transfer_fee_config } = mintExtensions || {};
-  const mintExtensionsTransferFee = transfer_fee_config?.newer_transfer_fee || transfer_fee_config?.older_transfer_fee;
+  const haveTransferFee = asset.parsed.info.extensions.find((item) => item.extension === 'transferFeeConfig') as transferFeeConfig | undefined;
+  const transferFeeObject = haveTransferFee?.state.newerTransferFee || haveTransferFee?.state.olderTransferFee;
+  const transferFee = transferFeeObject?.transferFeeBasisPoints;
+  const maxTransferFee = transferFeeObject?.maximumFee;
 
-  const { decimals, mint_authority, freeze_authority, symbol } = tokenInfo;
+  const havePermanentDelegate = asset.parsed.info.extensions.find((item) => item.extension === 'permanentDelegate') as permanentDelegate | undefined;
+  const permanentDelegate = havePermanentDelegate?.state.delegate;
 
   return {
-    tokenExtension: Boolean(mintExtensions),
+    tokenExtension: asset.parsed.info.extensions.length > 0,
     // fee
-    transferFee: mintExtensionsTransferFee
-      ? new Decimal(mintExtensionsTransferFee.transfer_fee_basis_points).div(100).toFixed(1)
+    transferFee: transferFee ? new Decimal(transferFee).div(100).toFixed(1) : null,
+    maxTransferFee: maxTransferFee
+      ? formatNumber.format(new Decimal(maxTransferFee).div(10 ** asset.tokenInfo.decimals))
       : null,
-    maxTransferFee: mintExtensionsTransferFee
-      ? formatNumber.format(new Decimal(mintExtensionsTransferFee.maximum_fee).div(10 ** decimals))
-      : null,
-    symbol,
 
     // authority
-    mintAuthority: mint_authority,
-    freezeAuthority: freeze_authority,
+    mintAuthority: asset.parsed.info.mintAuthority,
+    freezeAuthority: asset.parsed.info.freezeAuthority,
 
     // delegate
-    permanentDelegate: permanent_delegate?.delegate,
+    permanentDelegate,
   };
 }
 
 interface Token2022InfoProps {
-  tokenInfo: TokenInfo;
-  dasAssets: (HeliusDASAsset | null)[] | undefined;
+  asset: TokenInfoWithParsedAccountData;
   isLoading: boolean;
 }
 
 export const Token2022Info = (props: Token2022InfoProps) => {
   // props
-  const { tokenInfo, dasAssets, isLoading } = props;
-  const { address } = tokenInfo;
+  const tokenInfo = props.asset.tokenInfo;
 
   // variable
   const asset = useMemo(() => {
-    const asset = dasAssets?.find((item) => item?.id === address);
-    if (!asset) return null;
-    return extractTokenExtensionsInfo(asset);
-  }, [dasAssets, address]);
+    return extractTokenExtensionsInfo(props.asset);
+  }, [props.asset]);
 
   // render
-  if (isLoading) {
+  if (props.isLoading) {
     return (
       <div className="flex justify-center my-5">
         <Spinner />
@@ -94,7 +89,7 @@ export const Token2022Info = (props: Token2022InfoProps) => {
         {asset.maxTransferFee ? (
           <ListItem
             label="Max Transfer Fee"
-            content={`${asset.maxTransferFee} ${asset.symbol}`}
+            content={`${asset.maxTransferFee} ${tokenInfo.symbol}`}
             tooltipText="Max cap transfer fee set by the authority mint."
           />
         ) : null}

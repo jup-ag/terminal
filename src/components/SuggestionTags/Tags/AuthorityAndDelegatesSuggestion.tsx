@@ -1,7 +1,7 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import React from 'react';
+import React, { useMemo } from 'react';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
-import BasePill, { DANGER_CLASS } from './BasePill';
+import BasePill, { DANGER_CLASS, SUGGESTION_CLASS } from './BasePill';
 import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
 import { cn } from 'src/misc/cn';
 import { checkIsStrictOrVerified } from 'src/misc/tokenTags';
@@ -15,6 +15,11 @@ export const AuthorityAndDelegatesSuggestion = ({
   freeze: TokenInfo[];
   permanent: TokenInfo[];
 }) => {
+  const isVerified = useMemo(
+    () => freeze.every(checkIsStrictOrVerified) && permanent.every(checkIsStrictOrVerified),
+    [freeze, permanent],
+  );
+
   return (
     <PopoverTooltip
       placement="top"
@@ -82,7 +87,7 @@ export const AuthorityAndDelegatesSuggestion = ({
         </div>
       }
     >
-      <BasePill className={cn(DANGER_CLASS)}>
+      <BasePill className={cn(isVerified ? SUGGESTION_CLASS : DANGER_CLASS)}>
         <InfoIconSVG width={10} height={10} />
         Authority Warning
       </BasePill>

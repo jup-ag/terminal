@@ -6,11 +6,6 @@ export const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyT
 export const USDT_MINT = new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
 export const JLP_MINT = new PublicKey('27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4');
 
-export const HELIUS_MAIN_FRONTEND_RPC =
-  process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test'
-    ? process.env.NEXT_PUBLIC_HELIUS_MAIN_FRONTEND_RPC
-    : 'https://jupiter-fe.helius-rpc.com';
-
 export const JUPITER_DEFAULT_RPC =
   process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC ||
   'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';

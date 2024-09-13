@@ -1,7 +1,6 @@
 import { DCA_HIGH_PRICE_IMPACT, JLP_MINT, USDC_MINT, USDT_MINT } from 'src/constants';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { QuoteResponse } from '@jup-ag/react-hook';
-import { useHeliusDASQuery } from './useHeliusDasQuery';
 import { useLstApyFetcher } from './useLstApy';
 import { useBirdeyeRouteInfo } from './useSwapInfo';
 import { useMemo } from 'react';
@@ -17,6 +16,7 @@ import { PriceWarningSuggestion } from '../Tags/PriceWarningSuggestion';
 import { DCASuggestion } from '../Tags/DCASuggestion';
 import { extractTokenExtensionsInfo } from '../Tags/Token2022Info';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
+import useQueryTokenMetadata from './useQueryTokenMetadata';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
 const MINIMUM_THRESHOLD_FOR_DCA = 1_000; // 1,000 USD, not USDC
@@ -32,7 +32,7 @@ export const useSuggestionTags = ({
   toTokenInfo: TokenInfo | null | undefined;
   quoteResponse: QuoteResponse | undefined;
 }) => {
-  const { data: dasQuery } = useHeliusDASQuery([fromTokenInfo, toTokenInfo].filter(Boolean) as TokenInfo[]);
+  const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
   const { data: lstApy } = useLstApyFetcher(['JupSOL']);
   const birdeyeInfo = useBirdeyeRouteInfo();
   const { tokenPriceMap } = useUSDValue();
@@ -79,9 +79,9 @@ export const useSuggestionTags = ({
     }
 
     // Freeze authority, Permanent delegate, Transfer Tax
-    if (dasQuery && fromTokenInfo && toTokenInfo) {
-      const tokenExt1 = dasQuery[0] ? extractTokenExtensionsInfo(dasQuery[0]) : undefined;
-      const tokenExt2 = dasQuery[1] ? extractTokenExtensionsInfo(dasQuery[1]) : undefined;
+    if (tokenMetadata && fromTokenInfo && toTokenInfo) {
+      const tokenExt1 = tokenMetadata[0] ? extractTokenExtensionsInfo(tokenMetadata[0]) : undefined;
+      const tokenExt2 = tokenMetadata[1] ? extractTokenExtensionsInfo(tokenMetadata[1]) : undefined;
 
       // Freeze authority, Permanent delegate
       const freeze: TokenInfo[] = [];
@@ -125,8 +125,7 @@ export const useSuggestionTags = ({
         list.additional.push(
           <TransferTaxSuggestion
             key={'2022' + fromTokenInfo.address}
-            tokenInfo={fromTokenInfo}
-            dasAsset={dasQuery[0]}
+            asset={tokenMetadata[0]}
             transferFee={tokenExt1.transferFee}
           />,
         );
@@ -134,8 +133,7 @@ export const useSuggestionTags = ({
         list.additional.push(
           <TransferTaxSuggestion
             key={'transfer-tax-' + toTokenInfo.address}
-            tokenInfo={toTokenInfo}
-            dasAsset={dasQuery[1]}
+            asset={tokenMetadata[1]}
             transferFee={tokenExt2.transferFee}
           />,
         );
@@ -198,11 +196,11 @@ export const useSuggestionTags = ({
     birdeyeInfo.isDanger,
     birdeyeInfo.isWarning,
     birdeyeInfo.rate,
-    dasQuery,
     fromTokenInfo,
     lstApy,
     quoteResponse,
     toTokenInfo,
+    tokenMetadata,
     tokenPriceMap,
   ]);
 
