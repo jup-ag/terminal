@@ -14,6 +14,7 @@ import prettierPluginEstree from 'prettier/plugins/estree';
 import prettierPluginTypescript from 'prettier/plugins/typescript';
 import prettier from 'prettier/standalone';
 import dynamic from 'next/dynamic';
+import { useQuery } from '@tanstack/react-query';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
@@ -129,6 +130,36 @@ const CodeBlocks = ({
     setIsCopiedShareLink(true);
   };
 
+  const { data: npmSnippet } = useQuery<string>(
+    ['npmSnippet'],
+    async () => {
+      const formatted = prettier.format(
+        `
+        // npm install @jup-ag/terminal
+        import { init } from '@jup-ag/terminal';
+        import '@jup-ag/terminal/css';
+
+        const walletProps = useWallet();
+        useEffect(() => {
+          init({
+            displayMode: "integrated",
+            integratedTargetId: "integrated-terminal",
+            endpoint: "https://api.mainnet-beta.solana.com",
+          });
+        }, []);
+        `,
+        {
+          parser: 'typescript',
+          plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
+        },
+      );
+      return formatted;
+    },
+    {
+      initialData: '',
+    },
+  );
+
   return (
     <div className="flex flex-col items-center justify-center mt-12">
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
@@ -192,6 +223,16 @@ const CodeBlocks = ({
             <p>Show fully typed API</p>
             <ExternalIcon />
           </Link>
+        </div>
+
+        <div className="mt-10">
+          <hr className="opacity-10 pt-10" />
+          <p className="text-white self-start pb-2 font-semibold">Alternatively, install from NPM</p>
+          <div>
+            <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
+              {npmSnippet}
+            </SyntaxHighlighter>
+          </div>
         </div>
       </div>
     </div>
