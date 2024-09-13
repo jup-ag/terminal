@@ -6,20 +6,18 @@ import { useBirdeyeRouteInfo } from './useSwapInfo';
 import { useMemo } from 'react';
 import { SystemProgram } from '@solana/web3.js';
 import Decimal from 'decimal.js';
-import JSBI from 'jsbi';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import { UnknownTokenSuggestion } from '../Tags/UnknownTokenSuggestion';
 import { LSTSuggestion } from '../Tags/LSTSuggestion';
 import { AuthorityAndDelegatesSuggestion } from '../Tags/AuthorityAndDelegatesSuggestion';
 import { TransferTaxSuggestion } from '../Tags/TransferTaxSuggestion';
-import { PriceWarningSuggestion } from '../Tags/PriceWarningSuggestion';
-import { DCASuggestion } from '../Tags/DCASuggestion';
 import { extractTokenExtensionsInfo } from '../Tags/Token2022Info';
-import { useUSDValue } from 'src/contexts/USDValueProvider';
 import useQueryTokenMetadata from './useQueryTokenMetadata';
+import { usePriceImpact } from './usePriceImpact';
+import PriceImpactWarningSuggestion from '../Tags/PriceImpactWarningSuggestion';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
-const MINIMUM_THRESHOLD_FOR_DCA = 1_000; // 1,000 USD, not USDC
+const HIGH_PRICE_DIFFERENCE = 5; // 5%
 
 const FREEZE_AUTHORITY_IGNORE_LIST = [USDC_MINT.toString(), USDT_MINT.toString(), JLP_MINT.toString()];
 
@@ -28,14 +26,14 @@ export const useSuggestionTags = ({
   toTokenInfo,
   quoteResponse,
 }: {
-  fromTokenInfo: TokenInfo | null | undefined;
-  toTokenInfo: TokenInfo | null | undefined;
+  fromTokenInfo: TokenInfo | undefined;
+  toTokenInfo: TokenInfo | undefined;
   quoteResponse: QuoteResponse | undefined;
 }) => {
   const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
   const { data: lstApy } = useLstApyFetcher(['JupSOL']);
   const birdeyeInfo = useBirdeyeRouteInfo();
-  const { tokenPriceMap } = useUSDValue();
+  const { priceImpactPct } = usePriceImpact(quoteResponse);
 
   const listOfSuggestions = useMemo(() => {
     const list: {
@@ -59,7 +57,11 @@ export const useSuggestionTags = ({
       // lst token
       if (lstApy && lstApy.apys[fromTokenInfo.symbol]) {
         list.fromToken.push(
-          <LSTSuggestion key={'lst' + fromTokenInfo.symbol} apyInPercent={lstApy.apys[fromTokenInfo.symbol]} />,
+          <LSTSuggestion
+            key={'lst' + fromTokenInfo.symbol}
+            tokenInfo={fromTokenInfo}
+            apyInPercent={lstApy.apys[fromTokenInfo.symbol]}
+          />,
         );
       }
     }
@@ -73,7 +75,11 @@ export const useSuggestionTags = ({
       // lst token
       if (lstApy && lstApy.apys[toTokenInfo.symbol]) {
         list.fromToken.push(
-          <LSTSuggestion key={'lst' + toTokenInfo.symbol} apyInPercent={lstApy.apys[toTokenInfo.symbol]} />,
+          <LSTSuggestion
+            key={'lst' + toTokenInfo.symbol}
+            tokenInfo={toTokenInfo}
+            apyInPercent={lstApy.apys[toTokenInfo.symbol]}
+          />,
         );
       }
     }
@@ -140,50 +146,19 @@ export const useSuggestionTags = ({
     }
 
     // Additional suggestion
-    const priceImpactPct = Number(quoteResponse?.priceImpactPct || 0) * 100;
-    const isHighPriceImpact = Number(priceImpactPct || 0) > HIGH_PRICE_IMPACT;
-
-    // is launch page hide price impact
-    if (quoteResponse && fromTokenInfo?.decimals && toTokenInfo?.decimals) {
-      const inputAmount: JSBI = quoteResponse.inAmount;
-      const outputAmount: JSBI = quoteResponse.outAmount;
-
-      if (isHighPriceImpact || birdeyeInfo.isWarning || birdeyeInfo.isDanger) {
-        // lst token
-        list.additional.push(
-          <PriceWarningSuggestion
-            key={'warning-' + fromTokenInfo.address}
-            inputAmount={inputAmount.toString()}
-            inputTokenInfo={fromTokenInfo}
-            outputAmount={outputAmount.toString()}
-            outputTokenInfo={toTokenInfo}
-            priceImpact={priceImpactPct}
-            birdeyeRate={birdeyeInfo.rate || 0}
-            isWarning={birdeyeInfo.isWarning}
-            isDanger={birdeyeInfo.isDanger}
-          />,
-        );
-      }
-    }
+    const isHighPriceImpact = priceImpactPct.gt(HIGH_PRICE_IMPACT);
+    const isHighPriceDifference = new Decimal(birdeyeInfo.percent).gte(HIGH_PRICE_DIFFERENCE);
 
     if (quoteResponse && fromTokenInfo && toTokenInfo) {
-      const isDCASuggested = (() => {
-        const inputTokenPrice = tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0;
-        const inputAmountInUSD = new Decimal(quoteResponse.inAmount.toString())
-          .div(10 ** fromTokenInfo.decimals)
-          .mul(inputTokenPrice);
-        const isAboveThreshold = inputAmountInUSD.gte(MINIMUM_THRESHOLD_FOR_DCA);
-
-        return isAboveThreshold && (priceImpactPct || 0) > DCA_HIGH_PRICE_IMPACT;
-      })();
-
-      if (isDCASuggested) {
-        list.additional.push(
-          <DCASuggestion
-            key={'dca-' + fromTokenInfo?.address + toTokenInfo?.address}
-            inAmountDecimal={new Decimal(quoteResponse.inAmount.toString())
-              .div(10 ** fromTokenInfo.decimals)
-              .toString()}
+      if (isHighPriceImpact || isHighPriceDifference) {
+        list.additional.unshift(
+          <PriceImpactWarningSuggestion
+            quoteResponse={quoteResponse}
+            birdeyeRate={birdeyeInfo.rate}
+            isHighPriceImpact={isHighPriceImpact}
+            priceDifferencePct={birdeyeInfo.percent}
+            isWarning={birdeyeInfo.isWarning}
+            isDanger={birdeyeInfo.isDanger}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
           />,
@@ -192,17 +167,7 @@ export const useSuggestionTags = ({
     }
 
     return list;
-  }, [
-    birdeyeInfo.isDanger,
-    birdeyeInfo.isWarning,
-    birdeyeInfo.rate,
-    fromTokenInfo,
-    lstApy,
-    quoteResponse,
-    toTokenInfo,
-    tokenMetadata,
-    tokenPriceMap,
-  ]);
+  }, [birdeyeInfo, priceImpactPct, fromTokenInfo, lstApy, quoteResponse, toTokenInfo, tokenMetadata]);
 
   return listOfSuggestions;
 };

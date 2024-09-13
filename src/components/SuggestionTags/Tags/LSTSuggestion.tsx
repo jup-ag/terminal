@@ -4,8 +4,17 @@ import InfoIconSVG from 'src/icons/InfoIconSVG';
 import BasePill, { HAPPY_CLASS } from './BasePill';
 import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
 import { cn } from 'src/misc/cn';
+import { TokenInfo } from '@solana/spl-token-registry';
+import { useMobile } from 'src/hooks/useMobile';
+import Tooltip from 'src/components/Tooltip';
 
-export const LSTSuggestion = ({ apyInPercent }: { apyInPercent: number | undefined }) => {
+export const LSTSuggestion = ({
+  tokenInfo,
+  apyInPercent,
+}: {
+  tokenInfo: TokenInfo;
+  apyInPercent: number | undefined;
+}) => {
   const apyCalculation = useMemo(() => {
     if (apyInPercent) {
       return new Decimal(apyInPercent).mul(100).toFixed(2);
@@ -14,8 +23,11 @@ export const LSTSuggestion = ({ apyInPercent }: { apyInPercent: number | undefin
     return undefined;
   }, [apyInPercent]);
 
+  const isMobile = useMobile();
+
   return (
     <PopoverTooltip
+      persistOnClick={isMobile}
       placement="top"
       drawShades
       buttonContentClassName="!cursor-help"
@@ -32,7 +44,7 @@ export const LSTSuggestion = ({ apyInPercent }: { apyInPercent: number | undefin
               <div className="text-white/75">Estimated APY:</div>
               <div className="flex flex-row items-center gap-1">
                 {apyCalculation}%
-                <PopoverTooltip
+                <Tooltip
                   variant="dark"
                   content={
                     <span className="flex rounded-lg text-xs text-white-75">
@@ -43,7 +55,7 @@ export const LSTSuggestion = ({ apyInPercent }: { apyInPercent: number | undefin
                   <div className="flex items-center text-white/30 fill-current">
                     <InfoIconSVG height={12} width={12} />
                   </div>
-                </PopoverTooltip>
+                </Tooltip>
               </div>
             </div>
           )}
@@ -51,7 +63,7 @@ export const LSTSuggestion = ({ apyInPercent }: { apyInPercent: number | undefin
       }
     >
       <BasePill className={cn(HAPPY_CLASS)}>
-        {apyInPercent ? `${new Decimal(apyInPercent).mul(100).toFixed(2)}% ` : null}
+        {apyCalculation ? `${tokenInfo.symbol} ${apyCalculation}% ` : null}
         LST
       </BasePill>
     </PopoverTooltip>
