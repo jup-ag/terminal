@@ -1,25 +1,24 @@
-import { DCA_HIGH_PRICE_IMPACT, JLP_MINT, USDC_MINT, USDT_MINT } from 'src/constants';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { QuoteResponse } from '@jup-ag/react-hook';
-import { useLstApyFetcher } from './useLstApy';
-import { useBirdeyeRouteInfo } from './useSwapInfo';
-import { useMemo } from 'react';
+import { TokenInfo } from '@solana/spl-token-registry';
 import { SystemProgram } from '@solana/web3.js';
 import Decimal from 'decimal.js';
-import JSBI from 'jsbi';
-import { checkIsUnknownToken } from 'src/misc/tokenTags';
-import { UnknownTokenSuggestion } from '../Tags/UnknownTokenSuggestion';
-import { LSTSuggestion } from '../Tags/LSTSuggestion';
-import { AuthorityAndDelegatesSuggestion } from '../Tags/AuthorityAndDelegatesSuggestion';
-import { TransferTaxSuggestion } from '../Tags/TransferTaxSuggestion';
-import { PriceWarningSuggestion } from '../Tags/PriceWarningSuggestion';
-import { DCASuggestion } from '../Tags/DCASuggestion';
-import { extractTokenExtensionsInfo } from '../Tags/Token2022Info';
+import { useMemo } from 'react';
+import { DCA_HIGH_PRICE_IMPACT, JLP_MINT, USDC_MINT, USDT_MINT } from 'src/constants';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
+import { checkIsUnknownToken } from 'src/misc/tokenTags';
+import { AuthorityAndDelegatesSuggestion } from '../Tags/AuthorityAndDelegatesSuggestion';
+import { DCASuggestion } from '../Tags/DCASuggestion';
+import PriceImpactWarningSuggestion from '../Tags/PriceImpactWarningSuggestion';
+import { TransferTaxSuggestion } from '../Tags/TransferTaxSuggestion';
+import { UnknownTokenSuggestion } from '../Tags/UnknownTokenSuggestion';
+import { extractTokenExtensionsInfo } from './extractTokenExtensionsInfo';
+import { usePriceImpact } from './usePriceImpact';
 import useQueryTokenMetadata from './useQueryTokenMetadata';
+import { useBirdeyeRouteInfo } from './useSwapInfo';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
 const MINIMUM_THRESHOLD_FOR_DCA = 1_000; // 1,000 USD, not USDC
+const HIGH_PRICE_DIFFERENCE = 5; // 5%
 
 const FREEZE_AUTHORITY_IGNORE_LIST = [USDC_MINT.toString(), USDT_MINT.toString(), JLP_MINT.toString()];
 
@@ -33,9 +32,9 @@ export const useSuggestionTags = ({
   quoteResponse: QuoteResponse | undefined;
 }) => {
   const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
-  const { data: lstApy } = useLstApyFetcher(['JupSOL']);
   const birdeyeInfo = useBirdeyeRouteInfo();
   const { tokenPriceMap } = useUSDValue();
+  const { priceImpactPct } = usePriceImpact(quoteResponse);
 
   const listOfSuggestions = useMemo(() => {
     const list: {
@@ -55,26 +54,12 @@ export const useSuggestionTags = ({
           <UnknownTokenSuggestion key={'unknown' + fromTokenInfo.address} tokenInfo={fromTokenInfo} />,
         );
       }
-
-      // lst token
-      if (lstApy && lstApy.apys[fromTokenInfo.symbol]) {
-        list.fromToken.push(
-          <LSTSuggestion key={'lst' + fromTokenInfo.symbol} apyInPercent={lstApy.apys[fromTokenInfo.symbol]} />,
-        );
-      }
     }
 
     if (toTokenInfo) {
       // is unknown
       if (checkIsUnknownToken(toTokenInfo)) {
         list.toToken.push(<UnknownTokenSuggestion key={'unknown' + toTokenInfo.address} tokenInfo={toTokenInfo} />);
-      }
-
-      // lst token
-      if (lstApy && lstApy.apys[toTokenInfo.symbol]) {
-        list.fromToken.push(
-          <LSTSuggestion key={'lst' + toTokenInfo.symbol} apyInPercent={lstApy.apys[toTokenInfo.symbol]} />,
-        );
       }
     }
 
@@ -136,27 +121,21 @@ export const useSuggestionTags = ({
     }
 
     // Additional suggestion
-    const priceImpactPct = Number(quoteResponse?.priceImpactPct || 0) * 100;
-    const isHighPriceImpact = Number(priceImpactPct || 0) > HIGH_PRICE_IMPACT;
+    const isHighPriceImpact = priceImpactPct.gt(HIGH_PRICE_IMPACT);
+    const isHighPriceDifference = new Decimal(birdeyeInfo.percent).gte(HIGH_PRICE_DIFFERENCE);
 
-    // is launch page hide price impact
-    if (quoteResponse && fromTokenInfo?.decimals && toTokenInfo?.decimals) {
-      const inputAmount: JSBI = quoteResponse.inAmount;
-      const outputAmount: JSBI = quoteResponse.outAmount;
-
-      if (isHighPriceImpact || birdeyeInfo.isWarning || birdeyeInfo.isDanger) {
-        // lst token
-        list.additional.push(
-          <PriceWarningSuggestion
-            key={'warning-' + fromTokenInfo.address}
-            inputAmount={inputAmount.toString()}
-            inputTokenInfo={fromTokenInfo}
-            outputAmount={outputAmount.toString()}
-            outputTokenInfo={toTokenInfo}
-            priceImpact={priceImpactPct}
-            birdeyeRate={birdeyeInfo.rate || 0}
+    if (quoteResponse && fromTokenInfo && toTokenInfo) {
+      if (isHighPriceImpact || isHighPriceDifference) {
+        list.additional.unshift(
+          <PriceImpactWarningSuggestion
+            quoteResponse={quoteResponse}
+            birdeyeRate={birdeyeInfo.rate}
+            isHighPriceImpact={isHighPriceImpact}
+            priceDifferencePct={birdeyeInfo.percent}
             isWarning={birdeyeInfo.isWarning}
             isDanger={birdeyeInfo.isDanger}
+            fromTokenInfo={fromTokenInfo}
+            toTokenInfo={toTokenInfo}
           />,
         );
       }
@@ -170,7 +149,7 @@ export const useSuggestionTags = ({
           .mul(inputTokenPrice);
         const isAboveThreshold = inputAmountInUSD.gte(MINIMUM_THRESHOLD_FOR_DCA);
 
-        return isAboveThreshold && (priceImpactPct || 0) > DCA_HIGH_PRICE_IMPACT;
+        return isAboveThreshold && priceImpactPct.gt(DCA_HIGH_PRICE_IMPACT);
       })();
 
       if (isDCASuggested) {
@@ -191,9 +170,10 @@ export const useSuggestionTags = ({
   }, [
     birdeyeInfo.isDanger,
     birdeyeInfo.isWarning,
+    birdeyeInfo.percent,
     birdeyeInfo.rate,
     fromTokenInfo,
-    lstApy,
+    priceImpactPct,
     quoteResponse,
     toTokenInfo,
     tokenMetadata,

@@ -3,7 +3,7 @@ import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
 
-export type transferFeeConfig = {
+export type ExtTransferFeeConfig = {
   extension: 'transferFeeConfig';
   state: {
     newerTransferFee: {
@@ -22,14 +22,14 @@ export type transferFeeConfig = {
   };
 };
 
-export type mintCloseAuthority = {
+export type ExtMintCloseAuthority = {
   extension: 'mintCloseAuthority';
   state: {
     closeAuthority: '2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk';
   };
 };
 
-export type confidentialTransferMint = {
+export type ExtConfidentialTransferMint = {
   extension: 'confidentialTransferMint';
   state: {
     auditorElgamalPubkey: null;
@@ -38,21 +38,21 @@ export type confidentialTransferMint = {
   };
 };
 
-export type transferHook = {
+export type ExtTransferHook = {
   extension: 'transferHook';
   state: {
     authority: '2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk';
     programId: null;
   };
 };
-export type metadataPointer = {
+export type ExtMetadataPointer = {
   extension: 'metadataPointer';
   state: {
     authority: '2apBGMsS6ti9RyF5TwQTDswXBWskiJP2LD4cUEDqYJjk';
     metadataAddress: 'HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM';
   };
 };
-export type tokenMetadata = {
+export type ExtTokenMetadata = {
   extension: 'tokenMetadata';
   state: {
     additionalMetadata: [];
@@ -64,7 +64,7 @@ export type tokenMetadata = {
   };
 };
 
-export type permanentDelegate = {
+export type ExtPermanentDelegate = {
   extension: 'permanentDelegate';
   state: {
     delegate: string;
@@ -72,13 +72,13 @@ export type permanentDelegate = {
 };
 
 type Extensions =
-  | transferFeeConfig
-  | mintCloseAuthority
-  | confidentialTransferMint
-  | transferHook
-  | metadataPointer
-  | tokenMetadata
-  | permanentDelegate;
+  | ExtTransferFeeConfig
+  | ExtMintCloseAuthority
+  | ExtConfidentialTransferMint
+  | ExtTransferHook
+  | ExtMetadataPointer
+  | ExtTokenMetadata
+  | ExtPermanentDelegate;
 
 export interface TokenInfoWithParsedAccountData {
   tokenInfo: TokenInfo;
