@@ -1,12 +1,17 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import React, { useMemo } from 'react';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
+import Separator from '../../Separator/Separator';
 import BasePill, { DANGER_CLASS, SUGGESTION_CLASS } from './BasePill';
-import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
-import { cn } from 'src/misc/cn';
+
+import Link from 'next/link';
+import ExternalIcon from 'src/icons/ExternalIcon';
+import { FREEZE_AUTHORITY_LINK } from 'src/constants';
 import { checkIsStrictOrVerified } from 'src/misc/tokenTags';
+import { useMobile } from 'src/hooks/useMobile';
+import { cn } from 'src/misc/cn';
 import TokenLink from 'src/components/TokenLink';
-import Separator from 'src/components/Separator/Separator';
+import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
 
 export const AuthorityAndDelegatesSuggestion = ({
   freeze,
@@ -20,18 +25,20 @@ export const AuthorityAndDelegatesSuggestion = ({
     [freeze, permanent],
   );
 
+  const isMobile = useMobile();
+
   return (
     <PopoverTooltip
       placement="top"
-      drawShades
+      persistOnClick={isMobile}
       buttonContentClassName="!cursor-help"
       content={
         <div className="p-1">
           {freeze.length > 0 && (
             <>
-              <p className="font-semibold">Freeze Authority</p>
+              <p className="font-semibold">{`Freeze Authority`}</p>
               <div className="text-v2-lily/50 mt-1">
-                <p>The token you are trading have Freeze Authority, and can be frozen</p>
+                <p>{`This authority has the ability to freeze your token account, preventing you from further trading.`}</p>
               </div>
               <div className="mt-2 flex gap-2">
                 {freeze.map((tokenInfo) => (
@@ -57,13 +64,9 @@ export const AuthorityAndDelegatesSuggestion = ({
 
           {permanent.length > 0 && (
             <>
-              <p className="font-semibold">Permanent Delegates</p>
+              <p className="font-semibold">{`Permanent Delegates`}</p>
               <div className="text-v2-lily/50 mt-1">
-                <p>
-                  The token you are trading have Permanent Delegates, permanent delegate has unrestricted delegate
-                  privileges over all Token Accounts for that mint, enabling them to burn or transfer tokens without
-                  limitation
-                </p>
+                <p>{`This authority has the ability to control all token accounts of that mint, enabling them to burn or transfer your tokens.`}</p>
               </div>
               <div className="mt-2 flex gap-2">
                 {permanent.map((tokenInfo) => (
@@ -84,6 +87,20 @@ export const AuthorityAndDelegatesSuggestion = ({
               </div>
             </>
           )}
+
+          <Separator />
+
+          <div className="mt-2">
+            <div className="text-v2-lily/50">To understand more about the warnings</div>
+            <Link
+              target="_blank"
+              href={FREEZE_AUTHORITY_LINK}
+              className="rounded-lg whitespace-nowrap px-2 py-0.5 flex gap-x-1 items-center border border-v2-lily/10 bg-v2-lily/10 w-fit mt-2"
+            >
+              <span>{`Read More`}</span>
+              <ExternalIcon />
+            </Link>
+          </div>
         </div>
       }
     >

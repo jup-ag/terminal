@@ -56,3 +56,5 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
 export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
 export const DCA_HIGH_PRICE_IMPACT = 0.5; // 0.5%
+export const FREEZE_AUTHORITY_LINK =
+  'https://station.jup.ag/guides/jupiter-swap/how-swap-works/how-swap-works#freeze-authority';
