@@ -87,38 +87,34 @@ export const useSuggestionTags = ({
       const freeze: TokenInfo[] = [];
       const permanent: TokenInfo[] = [];
 
-      (() => {
-        if (
-          tokenExt1?.freezeAuthority &&
-          FREEZE_AUTHORITY_IGNORE_LIST.includes(fromTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
-          (tokenExt1.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
-        ) {
-          freeze.push(fromTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
-        }
+      if (
+        tokenExt1?.freezeAuthority &&
+        FREEZE_AUTHORITY_IGNORE_LIST.includes(fromTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
+        (tokenExt1.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
+      ) {
+        freeze.push(fromTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
+      }
 
-        if (tokenExt1?.permanentDelegate) {
-          permanent.push(fromTokenInfo);
-        }
-      })();
+      if (tokenExt1?.permanentDelegate) {
+        permanent.push(fromTokenInfo);
+      }
 
-      (() => {
-        if (
-          tokenExt2?.freezeAuthority &&
-          FREEZE_AUTHORITY_IGNORE_LIST.includes(toTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
-          (tokenExt2.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
-        ) {
-          freeze.push(toTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
-        }
-        if (tokenExt2?.permanentDelegate) {
-          permanent.push(toTokenInfo);
-        }
+      if (
+        tokenExt2?.freezeAuthority &&
+        FREEZE_AUTHORITY_IGNORE_LIST.includes(toTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
+        (tokenExt2.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
+      ) {
+        freeze.push(toTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
+      }
+      if (tokenExt2?.permanentDelegate) {
+        permanent.push(toTokenInfo);
+      }
 
-        if (freeze.length > 0 || permanent.length > 0) {
-          list.additional.push(
-            <AuthorityAndDelegatesSuggestion key={`additional-suggestions`} freeze={freeze} permanent={permanent} />,
-          );
-        }
-      })();
+      if (freeze.length > 0 || permanent.length > 0) {
+        list.additional.push(
+          <AuthorityAndDelegatesSuggestion key={`additional-suggestions`} freeze={freeze} permanent={permanent} />,
+        );
+      }
 
       // Transfer Tax
       tokenExt1?.transferFee &&
