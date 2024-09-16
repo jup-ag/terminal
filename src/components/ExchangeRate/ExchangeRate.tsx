@@ -42,6 +42,7 @@ export const ExchangeRateComponent = ({
               },
               isReversed,
             ),
+            isReversed ? outputPair.decimals : inputPair.decimals,
           ),
     [loading, isReversed, inputAmount, outputAmount, inputPair, outputPair],
   );
