@@ -141,31 +141,6 @@ export const useSuggestionTags = ({
       }
     }
 
-    if (quoteResponse && fromTokenInfo && toTokenInfo) {
-      const isDCASuggested = (() => {
-        const inputTokenPrice = tokenPriceMap[fromTokenInfo?.address || '']?.usd || 0;
-        const inputAmountInUSD = new Decimal(quoteResponse.inAmount.toString())
-          .div(10 ** fromTokenInfo.decimals)
-          .mul(inputTokenPrice);
-        const isAboveThreshold = inputAmountInUSD.gte(MINIMUM_THRESHOLD_FOR_DCA);
-
-        return isAboveThreshold && priceImpactPct.gt(DCA_HIGH_PRICE_IMPACT);
-      })();
-
-      if (isDCASuggested) {
-        list.additional.push(
-          <DCASuggestion
-            key={'dca-' + fromTokenInfo?.address + toTokenInfo?.address}
-            inAmountDecimal={new Decimal(quoteResponse.inAmount.toString())
-              .div(10 ** fromTokenInfo.decimals)
-              .toString()}
-            fromTokenInfo={fromTokenInfo}
-            toTokenInfo={toTokenInfo}
-          />,
-        );
-      }
-    }
-
     return list;
   }, [
     birdeyeInfo.isDanger,
@@ -177,7 +152,6 @@ export const useSuggestionTags = ({
     quoteResponse,
     toTokenInfo,
     tokenMetadata,
-    tokenPriceMap,
   ]);
 
   return listOfSuggestions;
