@@ -53,14 +53,6 @@ const PriceImpactWarningSuggestion = ({
     [tradeValue, fromTokenInfo.address, tokenPriceMap],
   );
 
-  const toTokenValue = useMemo(
-    () =>
-      new Decimal(outAmount.toString())
-        .div(10 ** toTokenInfo.decimals)
-        .mul(tokenPriceMap[toTokenInfo.address || '']?.usd || 0),
-    [outAmount, toTokenInfo.address, toTokenInfo.decimals, tokenPriceMap],
-  );
-
   const shouldPromptDca = useMemo(() => fromTokenValue.gte(1_000), [fromTokenValue]);
 
   const [reverse, setReverse] = React.useState(true);
@@ -86,12 +78,13 @@ const PriceImpactWarningSuggestion = ({
   const { pillTitle, title, description } = useMemo(() => {
     if (isHighPriceImpact) {
       return {
-        pillTitle: `${new Decimal(priceImpactPct).mul(100).toNumber().toFixed(2)}% Price Impac`,
+        pillTitle: `${new Decimal(priceImpactPct).mul(100).toNumber().toFixed(2)}% Price Impact`,
         title: shouldPromptDca ? `Looks like your trade size is too large.` : `Looks like you are getting a bad rate.`,
         description: shouldPromptDca ? (
           <Link
             shallow
-            href={`/dca/${fromTokenInfo.address}-${toTokenInfo.address}?${new URLSearchParams({
+            target='_blank'
+            href={`https://jup.ag/dca/${fromTokenInfo.address}-${toTokenInfo.address}?${new URLSearchParams({
               inAmount: tradeValue.toString(),
               frequency: 'minute',
               frequencyValue: '10',

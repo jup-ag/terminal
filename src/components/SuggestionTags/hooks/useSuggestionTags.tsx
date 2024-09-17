@@ -3,11 +3,9 @@ import { TokenInfo } from '@solana/spl-token-registry';
 import { SystemProgram } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import { useMemo } from 'react';
-import { DCA_HIGH_PRICE_IMPACT, JLP_MINT, USDC_MINT, USDT_MINT } from 'src/constants';
-import { useUSDValue } from 'src/contexts/USDValueProvider';
+import { JLP_MINT, USDC_MINT, USDT_MINT } from 'src/constants';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import { AuthorityAndDelegatesSuggestion } from '../Tags/AuthorityAndDelegatesSuggestion';
-import { DCASuggestion } from '../Tags/DCASuggestion';
 import PriceImpactWarningSuggestion from '../Tags/PriceImpactWarningSuggestion';
 import { TransferTaxSuggestion } from '../Tags/TransferTaxSuggestion';
 import { UnknownTokenSuggestion } from '../Tags/UnknownTokenSuggestion';
@@ -17,7 +15,6 @@ import useQueryTokenMetadata from './useQueryTokenMetadata';
 import { useBirdeyeRouteInfo } from './useSwapInfo';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
-const MINIMUM_THRESHOLD_FOR_DCA = 1_000; // 1,000 USD, not USDC
 const HIGH_PRICE_DIFFERENCE = 5; // 5%
 
 const FREEZE_AUTHORITY_IGNORE_LIST = [USDC_MINT.toString(), USDT_MINT.toString(), JLP_MINT.toString()];
@@ -33,7 +30,6 @@ export const useSuggestionTags = ({
 }) => {
   const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
   const birdeyeInfo = useBirdeyeRouteInfo();
-  const { tokenPriceMap } = useUSDValue();
   const { priceImpactPct } = usePriceImpact(quoteResponse);
 
   const listOfSuggestions = useMemo(() => {
