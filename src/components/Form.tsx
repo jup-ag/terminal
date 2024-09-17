@@ -26,6 +26,8 @@ import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
+import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
+import SuggestionTags from './SuggestionTags';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -55,6 +57,12 @@ const Form: React.FC<{
   }, [hasExpired]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
+
+  const listOfSuggestions = useSuggestionTags({
+    fromTokenInfo,
+    toTokenInfo,
+    quoteResponse: route?.quoteResponse,
+  });
 
   const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
     if (value === '' || !floatValue) {
@@ -368,6 +376,8 @@ const Form: React.FC<{
             </div>
           ) : null}
         </div>
+
+        <SuggestionTags loading={loading} listOfSuggestions={listOfSuggestions} />
 
         {walletPublicKey ? <FormError errors={errors} /> : null}
       </div>

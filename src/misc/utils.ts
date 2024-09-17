@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js';
 import BN from 'bn.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
-import { RefObject, useEffect, useRef } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 
 const userLocale =
   typeof window !== 'undefined'
@@ -96,6 +96,24 @@ export function useReactiveEventListener(
 export const isMobile = () => typeof window !== 'undefined' && screen && screen.width <= 480;
 
 export const detectedSeparator = formatNumber.format('1.1').substring(1, 2);
+
+export function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  useEffect(
+    () => {
+      // Update debounced value after delay
+      const handler = setTimeout(() => {
+        setDebouncedValue(value);
+      }, delay);
+      // Cancel the timeout if value changes (also on delay change or unmount)
+      return () => {
+        clearTimeout(handler);
+      };
+    },
+    [value, delay], // Only re-call effect if value or delay changes
+  );
+  return debouncedValue;
+}
 
 export function useOutsideClick(ref: RefObject<HTMLElement>, handler: (e: MouseEvent) => void) {
   useEffect(() => {

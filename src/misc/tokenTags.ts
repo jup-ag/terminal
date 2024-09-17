@@ -6,10 +6,9 @@ export const checkIsStrictOrVerified = (tokenInfo: TokenInfo) => {
   );
 };
 
+// If it's not VERIFIED, it's unknown
 export const checkIsUnknownToken = (tokenInfo: TokenInfo) => {
-  const cleanTags = new Set(tokenInfo.tags);
-  // if does not have any of these, mark as unknown
-  return !cleanTags.has('community') && !cleanTags.has('lst') && !cleanTags.has('clone');
+  return checkIsStrictOrVerified(tokenInfo) === false;
 };
 
 export const checkIsToken2022 = (tokenInfo: TokenInfo) => {
