@@ -265,8 +265,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                                 idx === 0
                                   ? 'left'
                                   : idx === Object.keys(PRIORITY_MODE_MAP).length - 1
-                                  ? 'right'
-                                  : undefined
+                                    ? 'right'
+                                    : undefined
                               }
                               highlighted={value === level}
                               onClick={() => {
@@ -310,8 +310,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                                 idx === 0
                                   ? 'left'
                                   : idx === Object.keys(PRIORITY_LEVEL_MAP).length - 1
-                                  ? 'right'
-                                  : undefined
+                                    ? 'right'
+                                    : undefined
                               }
                               highlighted={value === level}
                               onClick={() => {
@@ -339,7 +339,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   <p>Set a max cap to prevent overpaying.</p>
                 </>
               ) : (
-                <p className='mt-2'>Jupiter will use the exact fee you set.</p>
+                <p className="mt-2">Jupiter will use the exact fee you set.</p>
               )}
             </div>
 
@@ -351,12 +351,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   <p className="text-sm text-white/75 font-[500]">Exact Fee</p>
                 )}
                 <span className="text-xxs mt-1 text-white/25 font-normal self-end">
-                  <CoinBalanceUSD
-                    tokenInfo={SOL_TOKEN_INFO}
-                    amount={unsavedPriorityFee}
-                    maxDecimals={4}
-                    prefix="~"
-                  />
+                  <CoinBalanceUSD tokenInfo={SOL_TOKEN_INFO} amount={unsavedPriorityFee} maxDecimals={4} prefix="~" />
                 </span>
               </div>
               <div className={`relative mt-1`}>
@@ -365,7 +360,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   control={form.control}
                   render={({ field: { value, onChange } }) => {
                     const thousandSeparator = detectedSeparator === ',' ? '.' : ',';
-
                     return (
                       <NumericFormat
                         value={value}
@@ -385,6 +379,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         allowNegative={false}
                         thousandSeparator={thousandSeparator}
                         allowedDecimalSeparators={['.', ',']}
+                        decimalSeparator={detectedSeparator}
                         suffix=" SOL"
                         placeholder={'Enter custom value'}
                         className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
@@ -483,7 +478,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         allowLeadingZeros={false}
                         suffix="%"
                         className="w-full bg-[#1B1B1E] pr-4 text-sm rounded-lg placeholder:text-v2-lily/25 text-v2-lily/50 text-right pointer-events-all"
-                        decimalSeparator={detectedSeparator}
+                        // decimalSeparator={detectedSeparator}
+                        allowedDecimalSeparators={['.', ',']}
                         placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                       />
                     );
