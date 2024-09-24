@@ -42,7 +42,7 @@ type Form = {
   hasUnsavedFeeChanges: boolean;
 
   slippagePreset?: string;
-  slippageInput?: string;
+  slippageInput?: number;
 
   onlyDirectRoutes: boolean;
   useWSol: boolean;
@@ -77,15 +77,13 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   const form = useForm<Form>({
     defaultValues: {
-      ...(slippageBps
-        ? slippageInitialPreset
-          ? {
-              slippagePreset: String(slippageInitialPreset),
-            }
-          : {
-              slippageInput: String(slippageBps / 100),
-            }
-        : {}),
+      ...(slippageInitialPreset
+        ? {
+            slippagePreset: String(slippageInitialPreset),
+          }
+        : {
+            slippageInput: Number((slippageBps / 100).toFixed(2)),
+          }),
       asLegacyTransaction,
       // Priority Fee
       unsavedPriorityFee: priorityFee,
@@ -150,7 +148,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   const isButtonDisabled = useMemo(() => {
     // Slippage
-    if (inputFocused.current && !slippageInput) {
+    if (inputFocused.current && slippageInput && slippageInput < 0) {
       return true;
     }
     if (!slippagePreset) {
@@ -174,7 +172,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
       if (typeof value === 'number') {
         setForm((prev) => ({
           ...prev,
-          slippageBps: value * 100,
+          slippageBps: value ? value * 100 : 0,
         }));
       }
 
@@ -426,7 +424,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                             highlighted={!inputFocused.current && Number(value) === Number(item)}
                             onClick={() => {
                               inputFocused.current = false;
-                              form.setValue('slippageInput', '');
+                              form.setValue('slippageInput', undefined);
                               onChange(item);
                             }}
                           >
@@ -468,7 +466,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
                         allowNegative={false}
                         onValueChange={({ value, floatValue }) => {
-                          onChange(value);
+                          if (typeof floatValue === 'undefined') return;
+                          onChange(floatValue);
 
                           // Prevent both slippageInput and slippagePreset to reset each oter
                           if (typeof floatValue !== 'undefined') {
@@ -478,7 +477,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         allowLeadingZeros={false}
                         suffix="%"
                         className="w-full bg-[#1B1B1E] pr-4 text-sm rounded-lg placeholder:text-v2-lily/25 text-v2-lily/50 text-right pointer-events-all"
-                        // decimalSeparator={detectedSeparator}
+                        decimalSeparator={detectedSeparator}
                         allowedDecimalSeparators={['.', ',']}
                         placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                       />
