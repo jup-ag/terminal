@@ -132,7 +132,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   // variable
   const isMaxPriorityMode = useMemo(() => unsavedPriorityMode === 'MAX', [unsavedPriorityMode]);
-  const unsavedPriorityFeeLamports = useMemo(() => toLamports(unsavedPriorityFee, 9), [unsavedPriorityFee]);
+  const unsavedPriorityFeeLamports = useMemo(() => unsavedPriorityFee ? toLamports(unsavedPriorityFee, 9) : 0, [unsavedPriorityFee]);
   const isPrioritizationFeeLowerThanReferenceFee = useMemo(() => {
     const referenceFeeInMediumPriorityLevel = referenceFees?.jup.m ?? 0;
     return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeLamports;
@@ -357,12 +357,15 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   name={'unsavedPriorityFee'}
                   control={form.control}
                   render={({ field: { value, onChange } }) => {
-                    const thousandSeparator = detectedSeparator === ',' ? '.' : ',';
                     return (
                       <NumericFormat
-                        value={value}
+                        value={typeof value === 'undefined' ? '' : value}
+                        isAllowed={(value) => {
+                          // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
+                          return (value.floatValue || 0) <= 1 && (value.floatValue || 0) >= 0;
+                        }}
                         onValueChange={({ floatValue }) => {
-                          if (typeof floatValue !== 'number' || floatValue <= 0) return;
+                          if (typeof floatValue === 'undefined') return;
                           form.setValue('hasUnsavedFeeChanges', true);
                           onChange(floatValue);
                         }}
@@ -375,16 +378,16 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         inputMode="decimal"
                         decimalScale={9}
                         allowNegative={false}
-                        thousandSeparator={thousandSeparator}
                         allowedDecimalSeparators={['.', ',']}
                         decimalSeparator={detectedSeparator}
-                        suffix=" SOL"
                         placeholder={'Enter custom value'}
                         className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
                       />
                     );
                   }}
                 />
+
+                <div className='absolute right-4 top-4 text-xs text-v2-lily/50'>SOL</div>
               </div>
             </div>
             {isPrioritizationFeeLowerThanReferenceFee && (
@@ -465,7 +468,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         }}
                         getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
                         allowNegative={false}
-                        onValueChange={({ value, floatValue }) => {
+                        onValueChange={({ floatValue }) => {
                           if (typeof floatValue === 'undefined') return;
                           onChange(floatValue);
 
