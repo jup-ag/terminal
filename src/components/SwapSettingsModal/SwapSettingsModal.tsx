@@ -42,7 +42,7 @@ type Form = {
   hasUnsavedFeeChanges: boolean;
 
   slippagePreset?: string;
-  slippageInput?: string;
+  slippageInput?: number;
 
   onlyDirectRoutes: boolean;
   useWSol: boolean;
@@ -77,15 +77,13 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   const form = useForm<Form>({
     defaultValues: {
-      ...(slippageBps
-        ? slippageInitialPreset
-          ? {
-              slippagePreset: String(slippageInitialPreset),
-            }
-          : {
-              slippageInput: String(slippageBps / 100),
-            }
-        : {}),
+      ...(slippageInitialPreset
+        ? {
+            slippagePreset: String(slippageInitialPreset),
+          }
+        : {
+            slippageInput: Number((slippageBps / 100).toFixed(2)),
+          }),
       asLegacyTransaction,
       // Priority Fee
       unsavedPriorityFee: priorityFee,
@@ -134,7 +132,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   // variable
   const isMaxPriorityMode = useMemo(() => unsavedPriorityMode === 'MAX', [unsavedPriorityMode]);
-  const unsavedPriorityFeeLamports = useMemo(() => toLamports(unsavedPriorityFee, 9), [unsavedPriorityFee]);
+  const unsavedPriorityFeeLamports = useMemo(() => unsavedPriorityFee ? toLamports(unsavedPriorityFee, 9) : 0, [unsavedPriorityFee]);
   const isPrioritizationFeeLowerThanReferenceFee = useMemo(() => {
     const referenceFeeInMediumPriorityLevel = referenceFees?.jup.m ?? 0;
     return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeLamports;
@@ -150,7 +148,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   const isButtonDisabled = useMemo(() => {
     // Slippage
-    if (inputFocused.current && !slippageInput) {
+    if (inputFocused.current && slippageInput && slippageInput < 0) {
       return true;
     }
     if (!slippagePreset) {
@@ -174,7 +172,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
       if (typeof value === 'number') {
         setForm((prev) => ({
           ...prev,
-          slippageBps: value * 100,
+          slippageBps: value ? value * 100 : 0,
         }));
       }
 
@@ -265,8 +263,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                                 idx === 0
                                   ? 'left'
                                   : idx === Object.keys(PRIORITY_MODE_MAP).length - 1
-                                  ? 'right'
-                                  : undefined
+                                    ? 'right'
+                                    : undefined
                               }
                               highlighted={value === level}
                               onClick={() => {
@@ -310,8 +308,8 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                                 idx === 0
                                   ? 'left'
                                   : idx === Object.keys(PRIORITY_LEVEL_MAP).length - 1
-                                  ? 'right'
-                                  : undefined
+                                    ? 'right'
+                                    : undefined
                               }
                               highlighted={value === level}
                               onClick={() => {
@@ -339,7 +337,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   <p>Set a max cap to prevent overpaying.</p>
                 </>
               ) : (
-                <p className='mt-2'>Jupiter will use the exact fee you set.</p>
+                <p className="mt-2">Jupiter will use the exact fee you set.</p>
               )}
             </div>
 
@@ -351,12 +349,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   <p className="text-sm text-white/75 font-[500]">Exact Fee</p>
                 )}
                 <span className="text-xxs mt-1 text-white/25 font-normal self-end">
-                  <CoinBalanceUSD
-                    tokenInfo={SOL_TOKEN_INFO}
-                    amount={unsavedPriorityFee}
-                    maxDecimals={4}
-                    prefix="~"
-                  />
+                  <CoinBalanceUSD tokenInfo={SOL_TOKEN_INFO} amount={unsavedPriorityFee} maxDecimals={4} prefix="~" />
                 </span>
               </div>
               <div className={`relative mt-1`}>
@@ -364,13 +357,15 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   name={'unsavedPriorityFee'}
                   control={form.control}
                   render={({ field: { value, onChange } }) => {
-                    const thousandSeparator = detectedSeparator === ',' ? '.' : ',';
-
                     return (
                       <NumericFormat
-                        value={value}
+                        value={typeof value === 'undefined' ? '' : value}
+                        isAllowed={(value) => {
+                          // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
+                          return (value.floatValue || 0) <= 1 && (value.floatValue || 0) >= 0;
+                        }}
                         onValueChange={({ floatValue }) => {
-                          if (typeof floatValue !== 'number' || floatValue <= 0) return;
+                          if (typeof floatValue === 'undefined') return;
                           form.setValue('hasUnsavedFeeChanges', true);
                           onChange(floatValue);
                         }}
@@ -383,15 +378,16 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         inputMode="decimal"
                         decimalScale={9}
                         allowNegative={false}
-                        thousandSeparator={thousandSeparator}
                         allowedDecimalSeparators={['.', ',']}
-                        suffix=" SOL"
+                        decimalSeparator={detectedSeparator}
                         placeholder={'Enter custom value'}
                         className={`text-left h-full w-full bg-[#1B1B1E] placeholder:text-white/25 py-4 px-5 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative`}
                       />
                     );
                   }}
                 />
+
+                <div className='absolute right-4 top-4 text-xs text-v2-lily/50'>SOL</div>
               </div>
             </div>
             {isPrioritizationFeeLowerThanReferenceFee && (
@@ -431,7 +427,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                             highlighted={!inputFocused.current && Number(value) === Number(item)}
                             onClick={() => {
                               inputFocused.current = false;
-                              form.setValue('slippageInput', '');
+                              form.setValue('slippageInput', undefined);
                               onChange(item);
                             }}
                           >
@@ -472,8 +468,9 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         }}
                         getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
                         allowNegative={false}
-                        onValueChange={({ value, floatValue }) => {
-                          onChange(value);
+                        onValueChange={({ floatValue }) => {
+                          if (typeof floatValue === 'undefined') return;
+                          onChange(floatValue);
 
                           // Prevent both slippageInput and slippagePreset to reset each oter
                           if (typeof floatValue !== 'undefined') {
@@ -484,6 +481,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                         suffix="%"
                         className="w-full bg-[#1B1B1E] pr-4 text-sm rounded-lg placeholder:text-v2-lily/25 text-v2-lily/50 text-right pointer-events-all"
                         decimalSeparator={detectedSeparator}
+                        allowedDecimalSeparators={['.', ',']}
                         placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
                       />
                     );
