@@ -159,7 +159,7 @@ export const SwapContextProvider: FC<{
   );
   const [form, setForm] = useState<IForm>(
     (() => {
-      const slippageBps = (() => {
+      const getSlippageBps = (slippage: number) => {
         if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
           return Math.ceil(userSlippage * 100);
         }
@@ -168,25 +168,15 @@ export const SwapContextProvider: FC<{
           return formProps?.initialSlippageBps;
         }
         return Math.ceil(DEFAULT_SLIPPAGE * 100);
-      })();
-      const dynamicSlippageBps = (() => {
-        if (typeof userSlippageDynamic !== 'undefined') {
-          return Math.ceil(userSlippageDynamic * 100);
-        }
-
-        if (formProps?.initialSlippageBps) {
-          return formProps?.initialSlippageBps;
-        }
-        return Math.ceil(DEFAULT_SLIPPAGE * 100);
-      })();
+      };
 
       return {
         fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
         toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
         fromValue: '',
         toValue: '',
-        slippageBps,
-        dynamicSlippageBps,
+        slippageBps: getSlippageBps(userSlippage),
+        dynamicSlippageBps: getSlippageBps(userSlippageDynamic),
         userSlippageMode,
       };
     })(),
