@@ -376,7 +376,6 @@ export const SwapContextProvider: FC<{
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
           dynamicComputeUnitLimit: true,
-          // dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
         }),
       })
     ).json();
@@ -411,8 +410,6 @@ export const SwapContextProvider: FC<{
     wallet?.adapter,
     quoteResponseMeta,
     onSubmitWithIx,
-    // form.userSlippageMode,
-    // form.dynamicSlippageBps,
   ]);
 
   const onSubmit = useCallback(async () => {
