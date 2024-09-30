@@ -29,12 +29,17 @@ import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useAccounts } from './accounts';
 
+export type SlippageMode = 'DYNAMIC' | 'FIXED';
+const SLIPPAGE_MODE_DEFAULT: SlippageMode = 'FIXED';
+
 export interface IForm {
   fromMint: string;
   toMint: string;
   fromValue: string;
   toValue: string;
   slippageBps: number;
+  userSlippageMode: SlippageMode;
+  dynamicSlippageBps: number;
 }
 
 export interface ISwapContext {
@@ -83,6 +88,8 @@ export interface ISwapContext {
     lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
   };
   setUserSlippage: Dispatch<SetStateAction<number>>;
+  setUserSlippageDynamic: Dispatch<SetStateAction<number>>;
+  setUserSlippageMode: Dispatch<SetStateAction<SlippageMode>>;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -110,6 +117,8 @@ const INITIAL_FORM = {
   fromValue: '',
   toValue: '',
   slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
+  userSlippageMode: SLIPPAGE_MODE_DEFAULT,
+  dynamicSlippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
 };
 
 export const SwapContextProvider: FC<{
@@ -140,11 +149,29 @@ export const SwapContextProvider: FC<{
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
   const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE);
+  const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
+    'jupiter-terminal-slippage-dym',
+    DEFAULT_SLIPPAGE,
+  );
+  const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
+    'jupiter-terminal-slippage-mode',
+    SLIPPAGE_MODE_DEFAULT,
+  );
   const [form, setForm] = useState<IForm>(
     (() => {
       const slippageBps = (() => {
         if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
           return Math.ceil(userSlippage * 100);
+        }
+
+        if (formProps?.initialSlippageBps) {
+          return formProps?.initialSlippageBps;
+        }
+        return Math.ceil(DEFAULT_SLIPPAGE * 100);
+      })();
+      const dynamicSlippageBps = (() => {
+        if (typeof userSlippageDynamic !== 'undefined') {
+          return Math.ceil(userSlippageDynamic * 100);
         }
 
         if (formProps?.initialSlippageBps) {
@@ -159,6 +186,8 @@ export const SwapContextProvider: FC<{
         fromValue: '',
         toValue: '',
         slippageBps,
+        dynamicSlippageBps,
+        userSlippageMode,
       };
     })(),
   );
@@ -347,6 +376,7 @@ export const SwapContextProvider: FC<{
           quoteResponse: quoteResponseMeta.original,
           userPublicKey: walletPublicKey,
           dynamicComputeUnitLimit: true,
+          // dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
         }),
       })
     ).json();
@@ -376,7 +406,14 @@ export const SwapContextProvider: FC<{
       instructions,
       onSubmitWithIx,
     };
-  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, onSubmitWithIx]);
+  }, [
+    walletPublicKey,
+    wallet?.adapter,
+    quoteResponseMeta,
+    onSubmitWithIx,
+    // form.userSlippageMode,
+    // form.dynamicSlippageBps,
+  ]);
 
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
@@ -394,6 +431,8 @@ export const SwapContextProvider: FC<{
           userPublicKey: wallet.adapter.publicKey,
           prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
           wrapUnwrapSOL: true,
+          allowOptimizedWrappedSolTokenAccount: false,
+          dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
         });
 
         if ('error' in swapTransactionResponse) {
@@ -500,6 +539,8 @@ export const SwapContextProvider: FC<{
     referenceFees?.swapFee,
     priorityLevel,
     txStatus,
+    form.userSlippageMode,
+    form.dynamicSlippageBps,
   ]);
 
   const reset = useCallback(
@@ -567,6 +608,8 @@ export const SwapContextProvider: FC<{
           lastRefreshTimestamp,
         },
         setUserSlippage,
+        setUserSlippageDynamic,
+        setUserSlippageMode,
       }}
     >
       {children}
