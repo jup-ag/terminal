@@ -117,8 +117,10 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   // variable
   const isWithinSlippageLimits = useMemo(() => {
-    return Number(slippageInput) >= MINIMUM_SLIPPAGE && Number(slippageInput) <= MAXIMUM_SLIPPAGE;
-  }, [slippageInput]);
+    const fixedSlippageLimit = Number(slippageInput) >= MINIMUM_SLIPPAGE && Number(slippageInput) <= MAXIMUM_SLIPPAGE;
+    const dynamicSlippageLimit = Number(dynamicSlippageInput) >= MINIMUM_SLIPPAGE && Number(dynamicSlippageInput) <= MAXIMUM_SLIPPAGE;
+    return slippageMode === 'FIXED' ? fixedSlippageLimit : dynamicSlippageLimit;
+  }, [slippageInput, dynamicSlippageInput, slippageMode]);
   const isSlippageDynamicMode = useMemo(() => slippageMode === 'DYNAMIC', [slippageMode]);
 
   const slippageSuggestionText = useMemo(() => {
@@ -175,7 +177,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
     if (inputFocused.current && dynamicSlippageInput && dynamicSlippageInput < 0) {
       return true;
     }
-    if (!dynamicSlippageInput && !slippagePreset) {
+    if (!slippagePreset) {
       return !isWithinSlippageLimits;
     }
 
@@ -618,7 +620,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
             )}
 
             <div>
-              {slippagePreset === undefined && !isWithinSlippageLimits && !isSlippageDynamicMode && (
+              {inputFocused.current && !isWithinSlippageLimits && (
                 <InformationMessage
                   iconSize={14}
                   className="!text-jupiter-primary !px-0"
