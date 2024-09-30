@@ -160,8 +160,8 @@ export const SwapContextProvider: FC<{
   const [form, setForm] = useState<IForm>(
     (() => {
       const getSlippageBps = (slippage: number) => {
-        if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
-          return Math.ceil(userSlippage * 100);
+        if (typeof slippage !== 'undefined') {
+          return Math.ceil(slippage * 100);
         }
 
         if (formProps?.initialSlippageBps) {
