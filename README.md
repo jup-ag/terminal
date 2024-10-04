@@ -70,7 +70,7 @@ Terminal is designed to work anywhere the web runs, including React, Plain HTML/
 <script src="${origin}/main-v3.js"></script>
 
 <!-- Optionally, preload for better experience, or integrated mode -->
-<script src="https://terminal.jup.ag/main-v3.js" data-preload />
+<script src="https://terminal.jup.ag/main-v3.js" data-preload></script>
 ```
 
 ### 2. Initialize Jupiter Terminal
