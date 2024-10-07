@@ -16,8 +16,8 @@ importers:
         specifier: 4.0.0-beta.21
         version: 4.0.0-beta.21
       '@jup-ag/react-hook':
-        specifier: 6.0.0-beta.9
-        version: 6.0.0-beta.9(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+        specifier: 6.1.0
+        version: 6.1.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
       '@jup-ag/wallet-adapter':
         specifier: 0.2.0
         version: 0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
@@ -2016,8 +2016,8 @@ packages:
   '@jspm/core@2.0.1':
     resolution: {integrity: sha512-Lg3PnLp0QXpxwLIAuuJboLeRaIhrgJjeuh797QADg3xz8wGLugQOS5DpsE8A6i6Adgzf+bacllkKZG3J0tGfDw==}
 
-  '@jup-ag/api@6.0.20':
-    resolution: {integrity: sha512-HaPWYpbcQiCkoq1fTKspFIismFI8Rw9ZzgC47PMNY+ZLN0IEDtSYcm3rVEyxO+E3StRxj9uKrNbok32SRCXWvQ==}
+  '@jup-ag/api@6.0.27':
+    resolution: {integrity: sha512-Y6UwtmYVCjrwlejP+ZEJtIxtRIm7Fp+fgEbIdg3N8+BbX/Qi4fVHOF8wg4q2/pq8i4kZufcDaS5s6c/no4IQzg==}
 
   '@jup-ag/common@6.0.0-beta.9':
     resolution: {integrity: sha512-SetQ2vhY4O9mtvK1IkAcphn+9MJPNmfbEcXVe5bZU5mZIc2tTOq2Y7ZS+VGoKmX1j7PhTcu20oxrjHVOWlwKvA==}
@@ -2029,8 +2029,8 @@ packages:
     resolution: {integrity: sha512-5dPbmOkOvCbWGl2YCaDfNxTT54YIVc7NOVgybhgSwOu7evUNKBMUPEzEJZy2vexyxqOzHk+U5pO4hj+lzf8Bgg==}
     engines: {node: '>=10'}
 
-  '@jup-ag/react-hook@6.0.0-beta.9':
-    resolution: {integrity: sha512-ouV+bpsh7KpSAlavnCOXV557BbStZjV0o0+/JzobaRRoOZCET/85FaFiG5CvEgfCXyME9yVhyUJNY4zRebV5Lg==}
+  '@jup-ag/react-hook@6.1.0':
+    resolution: {integrity: sha512-6mWpsvQy+z2tAMi+4dnl8b2ncdiJ76y00WV6gVvF9NZikUsDF4PjwzarA8ykikkpwE7ZJWD+b7ClWNInD9VIIA==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': 1.87.6
@@ -10709,7 +10709,7 @@ snapshots:
 
   '@jspm/core@2.0.1': {}
 
-  '@jup-ag/api@6.0.20': {}
+  '@jup-ag/api@6.0.27': {}
 
   '@jup-ag/common@6.0.0-beta.9(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
@@ -10731,9 +10731,9 @@ snapshots:
       decimal.js: 10.4.2
       jsbi: 4.3.0
 
-  '@jup-ag/react-hook@6.0.0-beta.9(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@jup-ag/react-hook@6.1.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)':
     dependencies:
-      '@jup-ag/api': 6.0.20
+      '@jup-ag/api': 6.0.27
       '@jup-ag/common': 6.0.0-beta.9(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@mercurial-finance/optimist': 0.3.2(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/spl-token': 0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
