@@ -60,6 +60,8 @@ type Form = {
 const MINIMUM_PRIORITY_FEE = 0;
 const MINIMUM_SLIPPAGE = 0;
 const MAXIMUM_SLIPPAGE = 50; // 50%
+const MINIMUM_DYNAMIC_SLIPPAGE = 0.1;
+const MAXIMUM_DYNAMIC_SLIPPAGE = 100; // 100%
 const MINIMUM_SUGGESTED_SLIPPAGE = 0.05; // 0.05%
 const MAXIMUM_SUGGESTED_SLIPPAGE = 10; // 10%
 
@@ -118,17 +120,16 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
   // variable
   const isWithinSlippageLimits = useMemo(() => {
     const fixedSlippageLimit = Number(slippageInput) >= MINIMUM_SLIPPAGE && Number(slippageInput) <= MAXIMUM_SLIPPAGE;
-    const dynamicSlippageLimit = Number(dynamicSlippageInput) >= MINIMUM_SLIPPAGE && Number(dynamicSlippageInput) <= MAXIMUM_SLIPPAGE;
+    const dynamicSlippageLimit =
+      Number(dynamicSlippageInput) >= MINIMUM_DYNAMIC_SLIPPAGE &&
+      Number(dynamicSlippageInput) <= MAXIMUM_DYNAMIC_SLIPPAGE;
     return slippageMode === 'FIXED' ? fixedSlippageLimit : dynamicSlippageLimit;
   }, [slippageInput, dynamicSlippageInput, slippageMode]);
   const isSlippageDynamicMode = useMemo(() => slippageMode === 'DYNAMIC', [slippageMode]);
 
   const slippageSuggestionText = useMemo(() => {
     if (inputFocused.current === false) return '';
-    if (
-      (!isSlippageDynamicMode && Number(slippageInput) <= MINIMUM_SUGGESTED_SLIPPAGE) ||
-      (isSlippageDynamicMode && Number(dynamicSlippageInput) <= MINIMUM_SUGGESTED_SLIPPAGE)
-    ) {
+    if (!isSlippageDynamicMode && Number(slippageInput) <= MINIMUM_SUGGESTED_SLIPPAGE) {
       return <span>Your transaction may fail</span>;
     }
 
@@ -155,7 +156,10 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
 
   // variable
   const isMaxPriorityMode = useMemo(() => unsavedPriorityMode === 'MAX', [unsavedPriorityMode]);
-  const unsavedPriorityFeeLamports = useMemo(() => unsavedPriorityFee ? toLamports(unsavedPriorityFee, 9) : 0, [unsavedPriorityFee]);
+  const unsavedPriorityFeeLamports = useMemo(
+    () => (unsavedPriorityFee ? toLamports(unsavedPriorityFee, 9) : 0),
+    [unsavedPriorityFee],
+  );
   const isPrioritizationFeeLowerThanReferenceFee = useMemo(() => {
     const referenceFeeInMediumPriorityLevel = referenceFees?.jup.m ?? 0;
     return referenceFeeInMediumPriorityLevel > unsavedPriorityFeeLamports;
@@ -170,6 +174,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
   /* END OF OTHERS */
 
   const isButtonDisabled = useMemo(() => {
+    // localStorage.clear();
     // Slippage
     if (inputFocused.current && slippageInput && slippageInput < 0) {
       return true;
@@ -428,7 +433,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                   }}
                 />
 
-                <div className='absolute right-4 top-4 text-xs text-v2-lily/50'>SOL</div>
+                <div className="absolute right-4 top-4 text-xs text-v2-lily/50">SOL</div>
               </div>
             </div>
             {isPrioritizationFeeLowerThanReferenceFee && (
@@ -489,46 +494,54 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
             </div>
 
             {isSlippageDynamicMode && (
-              <div
-                className={`flex items-center mt-2.5 rounded-xl overflow-hidden text-sm justify-between`}
-                onClick={() => {
-                  inputRef.current?.focus();
-                  inputFocused.current = true;
-                }}
-              >
-                <div>Max Slippage: </div>
-                <Controller
-                  name={'dynamicSlippageInput'}
-                  control={form.control}
-                  render={({ field: { value, onChange } }) => {
-                    return (
-                      <NumericFormat
-                        value={typeof value === 'undefined' ? '' : value}
-                        decimalScale={2}
-                        isAllowed={(value) => {
-                          // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
-                          return (value.floatValue || 0) <= 100 && (value.floatValue || 0) >= 0;
-                        }}
-                        getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
-                        allowNegative={false}
-                        onValueChange={({ floatValue }) => {
-                          if (typeof floatValue === 'undefined') {
-                            onChange(0);
-                            return;
-                          }
-                          onChange(floatValue);
-                        }}
-                        allowLeadingZeros={false}
-                        suffix="%"
-                        className="text-right w-1/3 bg-[#1B1B1E] placeholder:text-white/25 py-2 px-3 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative border border-v3-primary"
-                        decimalSeparator={detectedSeparator}
-                        allowedDecimalSeparators={['.', ',']}
-                        placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
-                      />
-                    );
+              <>
+                <div
+                  className={`flex items-center mt-2.5 rounded-xl overflow-hidden text-sm justify-between`}
+                  onClick={() => {
+                    inputRef.current?.focus();
+                    inputFocused.current = true;
                   }}
-                />
-              </div>
+                >
+                  <div>Max Slippage: </div>
+                  <Controller
+                    name={'dynamicSlippageInput'}
+                    control={form.control}
+                    render={({ field: { value, onChange } }) => {
+                      return (
+                        <NumericFormat
+                          value={typeof value === 'undefined' ? '' : value}
+                          decimalScale={2}
+                          isAllowed={(value) => {
+                            // This is for onChange events, we dont care about Minimum slippage here, to allow more natural inputs
+                            return (value.floatValue || 0) <= 100 && (value.floatValue || 0) >= 0;
+                          }}
+                          getInputRef={(el: HTMLInputElement) => (inputRef.current = el)}
+                          allowNegative={false}
+                          onValueChange={({ floatValue }) => {
+                            if (typeof floatValue === 'undefined') {
+                              onChange(0);
+                              return;
+                            }
+                            onChange(floatValue);
+                          }}
+                          allowLeadingZeros={false}
+                          suffix="%"
+                          className="text-right w-1/3 bg-[#1B1B1E] placeholder:text-white/25 py-2 px-3 text-sm rounded-xl ring-1 ring-white/5 text-white/50 pointer-events-all relative border border-v3-primary"
+                          decimalSeparator={detectedSeparator}
+                          allowedDecimalSeparators={['.', ',']}
+                          placeholder={detectedSeparator === ',' ? '0,00%' : '0.00%'}
+                        />
+                      );
+                    }}
+                  />
+                </div>
+                <div className="text-xs text-v2-lily/50 mt-2">
+                  <p>
+                    Set a max slippage you are willing to accept. Jupiter will intelligently minimize slippage, up to
+                    your max.
+                  </p>
+                </div>
+              </>
             )}
 
             {!isSlippageDynamicMode && (
@@ -620,11 +633,19 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
             )}
 
             <div>
-              {inputFocused.current && !isWithinSlippageLimits && (
+              {inputFocused.current && !isSlippageDynamicMode && !isWithinSlippageLimits && (
                 <InformationMessage
                   iconSize={14}
                   className="!text-jupiter-primary !px-0"
                   message={`Please set a slippage value that is within ${MINIMUM_SLIPPAGE}% to ${MAXIMUM_SLIPPAGE}%`}
+                />
+              )}
+
+              {inputFocused.current && isSlippageDynamicMode && !isWithinSlippageLimits && (
+                <InformationMessage
+                  iconSize={14}
+                  className="!text-jupiter-primary !px-0"
+                  message={`Minimum slippage is set to ${MINIMUM_DYNAMIC_SLIPPAGE}%`}
                 />
               )}
 
