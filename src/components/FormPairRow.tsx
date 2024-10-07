@@ -62,11 +62,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const remainingTags = useMemo(() => {
-    // Only render whitelisted tags
-    const WHITELISTED_TAGS = ['pump'];
-    return item.tags?.filter((item) => WHITELISTED_TAGS.includes(item));
-  }, [item.tags]);
+  const remainingTags: string[] = []; // we use to show 'pump'
 
   if (!renderedTag) return null;
 
