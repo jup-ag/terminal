@@ -174,7 +174,6 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
   /* END OF OTHERS */
 
   const isButtonDisabled = useMemo(() => {
-    // localStorage.clear();
     // Slippage
     if (inputFocused.current && slippageInput && slippageInput < 0) {
       return true;
