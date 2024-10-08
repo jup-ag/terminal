@@ -106,7 +106,7 @@ export const AuthorityAndDelegatesSuggestion = ({
     >
       <BasePill className={cn(isVerified ? SUGGESTION_CLASS : DANGER_CLASS)}>
         <InfoIconSVG width={10} height={10} />
-        Authority Warning
+        Token Permission
       </BasePill>
     </PopoverTooltip>
   );
