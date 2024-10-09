@@ -43,6 +43,7 @@ const CodeBlocks = ({
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
     endpoint: 'https://api.mainnet-beta.solana.com',
+    rpcRefetchInterval: 10000,
     ...(formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined),
     ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
       ? { defaultExplorer: formConfigurator.defaultExplorer }
@@ -145,6 +146,7 @@ const CodeBlocks = ({
             displayMode: "integrated",
             integratedTargetId: "integrated-terminal",
             endpoint: "https://api.mainnet-beta.solana.com",
+            rpcRefetchInterval: 10000,
           });
         }, []);
         `,
