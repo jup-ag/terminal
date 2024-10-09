@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { atom, createStore, PrimitiveAtom } from 'jotai';
+import { atom, createStore } from 'jotai';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 
