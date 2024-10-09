@@ -1,4 +1,4 @@
-import { useConnection } from '@jup-ag/wallet-adapter';
+import { useConnection, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { AccountLayout, TOKEN_PROGRAM_ID, Token, AccountInfo as TokenAccountInfo, u64 } from '@solana/spl-token';
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
@@ -139,7 +139,11 @@ export const TokenAccountParser = (
   };
 };
 
-const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
+type AccountsProviderProps = PropsWithChildren<{
+  refetchInterval?: number;
+}>;
+
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 10_000 }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -204,7 +208,7 @@ const AccountsProvider: React.FC<PropsWithChildren> = ({ children }) => {
     },
     {
       enabled: Boolean(publicKey?.toString() && connected),
-      refetchInterval: 10_000,
+      refetchInterval,
       refetchIntervalInBackground: false,
     },
   );
