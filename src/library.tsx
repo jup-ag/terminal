@@ -8,7 +8,7 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import { terminalInViewAtom, useTerminalInView } from './stores/jotai-terminal-in-view';
+import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
 
 const containerId = 'jupiter-terminal-instance';
@@ -112,9 +112,7 @@ const RenderShell = (props: IInit) => {
   const containerStyles = props.containerStyles;
   const containerClassName = props.containerClassName;
 
-  const { setTerminalInView } = useTerminalInView();
-
-  useEffect(() => setTerminalInView(true), [setTerminalInView]);
+  useEffect(() => setTerminalInView(true), []);
 
   const displayClassName = useMemo(() => {
     // Default Modal
@@ -164,7 +162,6 @@ const RenderShell = (props: IInit) => {
 
 const RenderWidgetShell = (props: IInit) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { terminalInView, setTerminalInView } = useTerminalInView();
 
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
@@ -208,7 +205,7 @@ const RenderWidgetShell = (props: IInit) => {
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
           setIsOpen(!isOpen);
-          setTerminalInView(!terminalInView);
+          setTerminalInView(!getTerminalInView());
         }}
       >
         {isOpen ? (
@@ -258,7 +255,7 @@ async function init(props: IInit) {
   const instanceExist = document.getElementById(containerId);
   window.Jupiter.store = store;
   store.set(appProps, { ...props, scriptDomain });
-  store.set(terminalInViewAtom, false);
+  setTerminalInView(false);
 
   // Remove previous instance
   if (instanceExist) {

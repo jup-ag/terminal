@@ -1,14 +1,14 @@
-import { useConnection, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
-import { AccountLayout, TOKEN_PROGRAM_ID, Token, AccountInfo as TokenAccountInfo, u64 } from '@solana/spl-token';
+import { useConnection } from '@jup-ag/wallet-adapter';
+import { AccountLayout, TOKEN_PROGRAM_ID, AccountInfo as TokenAccountInfo, u64 } from '@solana/spl-token';
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
 import BN from 'bn.js';
-import React, { PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
+import React, { PropsWithChildren, useCallback, useContext } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import Decimal from 'decimal.js';
-import { useTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { getTerminalInView } from 'src/stores/jotai-terminal-in-view';
 
 const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
@@ -147,7 +147,7 @@ type AccountsProviderProps = PropsWithChildren<{
 const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 10_000 }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
-  const { terminalInView } = useTerminalInView();
+  const terminalInView = getTerminalInView();
 
   const fetchNative = useCallback(async () => {
     if (!publicKey || !connected) return null;

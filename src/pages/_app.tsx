@@ -22,7 +22,7 @@ import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
 import FeatureShowcaseButton from 'src/components/FeatureShowcaseButton';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { terminalInViewAtom } from 'src/stores/jotai-terminal-in-view';
+import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -58,9 +58,7 @@ export default function App({ Component, pageProps }: AppProps) {
       window.Jupiter._instance = null;
     }
 
-    if (window.Jupiter.store) {
-      window.Jupiter.store.set(terminalInViewAtom, false);
-    }
+    setTerminalInView(false);
   }, [tab]);
 
   const rpcUrl = useMemo(() => JUPITER_DEFAULT_RPC, []);
