@@ -1,5 +1,5 @@
 import { createRoot } from 'react-dom/client';
-import { atom, createStore } from 'jotai';
+import { atom, createStore, PrimitiveAtom } from 'jotai';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import classNames from 'classnames';
 
@@ -8,6 +8,8 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
+import { terminalInViewAtom, useTerminalInView } from './stores/jotai-terminal-in-view';
+import React from 'react';
 
 const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
@@ -110,6 +112,10 @@ const RenderShell = (props: IInit) => {
   const containerStyles = props.containerStyles;
   const containerClassName = props.containerClassName;
 
+  const { setTerminalInView } = useTerminalInView();
+
+  useEffect(() => setTerminalInView(true), [setTerminalInView]);
+
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
@@ -132,6 +138,7 @@ const RenderShell = (props: IInit) => {
 
   const onClose = () => {
     if (window.Jupiter) {
+      setTerminalInView(false);
       window.Jupiter.close();
     }
   };
@@ -157,6 +164,7 @@ const RenderShell = (props: IInit) => {
 
 const RenderWidgetShell = (props: IInit) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { terminalInView, setTerminalInView } = useTerminalInView();
 
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
@@ -198,7 +206,10 @@ const RenderWidgetShell = (props: IInit) => {
     <div className={`fixed ${classes.containerClassName}`}>
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setTerminalInView(!terminalInView);
+        }}
       >
         {isOpen ? (
           <div
@@ -247,6 +258,7 @@ async function init(props: IInit) {
   const instanceExist = document.getElementById(containerId);
   window.Jupiter.store = store;
   store.set(appProps, { ...props, scriptDomain });
+  store.set(terminalInViewAtom, false);
 
   // Remove previous instance
   if (instanceExist) {

@@ -8,6 +8,7 @@ import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import Decimal from 'decimal.js';
+import { useTerminalInView } from 'src/stores/jotai-terminal-in-view';
 
 const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
@@ -143,9 +144,12 @@ type AccountsProviderProps = PropsWithChildren<{
   refetchInterval?: number;
 }>;
 
-const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 10_000 }) => {
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 3_000 }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
+  const { terminalInView } = useTerminalInView();
+
+  React.useEffect(() => console.log('terminalInView', terminalInView), [terminalInView]);
 
   const fetchNative = useCallback(async () => {
     if (!publicKey || !connected) return null;
@@ -207,7 +211,7 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
       };
     },
     {
-      enabled: Boolean(publicKey?.toString() && connected),
+      enabled: Boolean(publicKey?.toString() && connected && terminalInView),
       refetchInterval,
       refetchIntervalInBackground: false,
     },
