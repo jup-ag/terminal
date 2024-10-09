@@ -92,7 +92,7 @@ export interface IInit {
   useUserSlippage?: boolean;
   /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
   slippagePresets?: number[];
-  /** RPC refetch interval in milliseconds, defaults to 10_000 */
+  /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   rpcRefetchInterval?: number;
 
   /** Display & Styling */
