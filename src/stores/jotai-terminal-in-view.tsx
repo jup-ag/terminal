@@ -1,5 +1,4 @@
 import { atom } from 'jotai';
-import { useEffect } from 'react';
 
 export const terminalInViewAtom = atom<boolean>(false);
 

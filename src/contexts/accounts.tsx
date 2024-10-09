@@ -144,12 +144,10 @@ type AccountsProviderProps = PropsWithChildren<{
   refetchInterval?: number;
 }>;
 
-const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 3_000 }) => {
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 10_000 }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
   const { terminalInView } = useTerminalInView();
-
-  React.useEffect(() => console.log('terminalInView', terminalInView), [terminalInView]);
 
   const fetchNative = useCallback(async () => {
     if (!publicKey || !connected) return null;
