@@ -449,7 +449,6 @@ const FormConfigurator = ({
           onChange={(e) => {
             const regex = /^[0-9\b]+$/;
             const value = e.target.value;
-            // Min 1000
             if (value === '' || regex.test(value)) {
               setValue('rpcRefetchInterval', Number(value));
             }
