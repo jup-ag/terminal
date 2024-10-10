@@ -91,6 +91,7 @@ const FormConfigurator = ({
   strictTokenList,
   defaultExplorer,
   formProps,
+  rpcRefetchInterval = 10_000,
 
   // Hook form
   reset,
@@ -106,10 +107,11 @@ const FormConfigurator = ({
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
+  const [configureRpcRefetchInterval, setConfigureRpcRefetchInterval] = useState(rpcRefetchInterval !== undefined);
 
   const onSelect = useCallback(
     (index: number) => {
-      console.log('called')
+      console.log('called');
       reset(templateOptions[index].values);
 
       const templateName = templateOptions[index].name;
@@ -419,6 +421,41 @@ const FormConfigurator = ({
           onClick={() => setValue('strictTokenList', !strictTokenList)}
         />
       </div>
+      <div className="w-full border-b border-white/10 py-3" />
+
+      {/* RPC Refetch Interval  */}
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">RPC Refetch Interval</p>
+          <p className="text-xs text-white/30">{`Set the interval in milliseconds to refetch getTokenAccountsByOwner.`}</p>
+        </div>
+        <Toggle
+          className="min-w-[40px]"
+          active={configureRpcRefetchInterval}
+          onClick={() => {
+            if (configureRpcRefetchInterval) {
+              setValue('rpcRefetchInterval', undefined);
+            }
+            setConfigureRpcRefetchInterval(!configureRpcRefetchInterval);
+          }}
+        />
+      </div>
+      {configureRpcRefetchInterval && (
+        <input
+          className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+          value={rpcRefetchInterval}
+          inputMode="numeric"
+          placeholder="10000"
+          onChange={(e) => {
+            const regex = /^[0-9\b]+$/;
+            const value = e.target.value;
+            // Min 1000
+            if (value === '' || regex.test(value)) {
+              setValue('rpcRefetchInterval', Number(value));
+            }
+          }}
+        />
+      )}
       <div className="w-full border-b border-white/10 py-3" />
 
       {/* Preferred Explorer  */}
