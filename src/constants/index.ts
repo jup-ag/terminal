@@ -35,6 +35,7 @@ export interface IFormConfigurator {
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
   useUserSlippage: boolean;
+  rpcRefetchInterval?: number;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
@@ -51,6 +52,7 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
   },
   useUserSlippage: true,
+  rpcRefetchInterval: 10000,
 });
 
 export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');

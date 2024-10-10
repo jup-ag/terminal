@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import RefreshSVG from 'src/icons/RefreshSVG';
 import SettingsSVG from 'src/icons/SettingsSVG';
@@ -8,6 +8,7 @@ import JupiterLogo from '../icons/JupiterLogo';
 
 import { WalletButton } from './WalletComponents';
 import SwapSettingsModal from './SwapSettingsModal/SwapSettingsModal';
+import { useAccounts } from 'src/contexts/accounts';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const {
@@ -15,6 +16,13 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
     jupiter: { refresh },
   } = useSwapContext();
   const [showSlippapgeSetting, setShowSlippageSetting] = useState(false);
+
+  const { refresh: refreshAccounts } = useAccounts();
+
+  const onRefresh = useCallback(() => {
+    refreshAccounts();
+    refresh();
+  }, [refreshAccounts, refresh]);
 
   const jupiterDirectLink = useMemo(() => {
     return `https://jup.ag/swap/${form.fromMint}-${form.toMint}?inAmount=${form.fromValue}`;
@@ -37,7 +45,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           <button
             type="button"
             className="p-2 h-7 w-7 flex items-center justify-center border rounded-full border-white/10 bg-black/10 text-white/30 fill-current"
-            onClick={refresh}
+            onClick={onRefresh}
           >
             <RefreshSVG />
           </button>
