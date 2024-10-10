@@ -33,11 +33,23 @@ const WidgetTerminal = (props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       endpoint: rpcUrl,
+      rpcRefetchInterval: 10_000,
       strictTokenList,
       defaultExplorer,
       useUserSlippage,
     });
-  }, [defaultExplorer, formProps, passthroughWalletContextState, position, rpcUrl, setShowModal, simulateWalletPassthrough, size, strictTokenList, useUserSlippage]);
+  }, [
+    defaultExplorer,
+    formProps,
+    passthroughWalletContextState,
+    position,
+    rpcUrl,
+    setShowModal,
+    simulateWalletPassthrough,
+    size,
+    strictTokenList,
+    useUserSlippage,
+  ]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;

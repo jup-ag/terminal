@@ -21,6 +21,7 @@ const IntegratedTerminal = (props: {
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
       endpoint: rpcUrl,
+      rpcRefetchInterval: 10_000,
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,

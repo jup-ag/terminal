@@ -19,6 +19,7 @@ const ModalTerminal = (props: {
   const launchTerminal = () => {
     window.Jupiter.init({
       endpoint: rpcUrl,
+      rpcRefetchInterval: 10_000,
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,

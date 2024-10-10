@@ -144,7 +144,7 @@ type AccountsProviderProps = PropsWithChildren<{
   refetchInterval?: number;
 }>;
 
-const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval = 10_000 }) => {
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
 
