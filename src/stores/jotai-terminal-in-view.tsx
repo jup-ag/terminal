@@ -6,7 +6,7 @@ export const getTerminalInView = (): boolean => {
   const store = window.Jupiter?.store;
   if (!store) {
     console.warn('Jupiter store is not available.');
-    return false; // Default value when store is unavailable
+    return false;
   }
   return store.get(terminalInViewAtom);
 };
