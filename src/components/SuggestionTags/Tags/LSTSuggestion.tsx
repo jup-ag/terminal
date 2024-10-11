@@ -7,6 +7,8 @@ import { TokenInfo } from '@solana/spl-token-registry';
 import { useMobile } from 'src/hooks/useMobile';
 import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
 import { cn } from 'src/misc/cn';
+import Link from 'next/link';
+import { JUPSOL_TOKEN_INFO } from 'src/constants';
 
 export const LSTSuggestion = ({
   tokenInfo,
@@ -33,14 +35,36 @@ export const LSTSuggestion = ({
       buttonContentClassName="!cursor-help"
       content={
         <div className="p-2 text-xs">
-          <p>
-
-              JupSOL is a liquid-staked token, representing SOL staked to Jupiter’s 0% fee validator. Jupiter uses this
-              validator to help land transactions for all users.
-          </p>
-          <p>
-Swap for this token and hold it in your wallet or across DeFi while enjoying staking yields!
-          </p>
+          <div className="space-y-2">
+            {tokenInfo.address === JUPSOL_TOKEN_INFO.address ? (
+              <>
+                <p>
+                  JupSOL is a liquid-staked token, representing SOL staked to Jupiter’s 0% fee validator. Jupiter uses
+                  this validator to help land transactions for all users.
+                </p>
+                <p>Swap for this token and hold it in your wallet or across DeFi while enjoying staking yields!</p>
+              </>
+            ) : (
+              <>
+                <p>
+                  {tokenInfo.symbol} is a Liquid Staking Token (LST) which can be traded, used in DeFi applications, or
+                  transferred while still earning staking rewards.
+                </p>
+                <p>
+                  Jupiter has our own LST,{' '}
+                  <Link
+                    href="https://station.jup.ag/guides/jupsol/jupsol"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-v2-primary hover:underline"
+                  >
+                    {JUPSOL_TOKEN_INFO.symbol}
+                  </Link>
+                  !
+                </p>
+              </>
+            )}
+          </div>
 
           {apyCalculation && (
             <div className="mt-4 flex justify-between gap-x-10 rounded-lg border border-[#667085] bg-white/5 px-4 py-2">
@@ -56,10 +80,7 @@ Swap for this token and hold it in your wallet or across DeFi while enjoying sta
                   }
                 >
                   <div className="flex items-center fill-current text-white/30">
-                    <InfoIconSVG
-                      height={12}
-                      width={12}
-                    />
+                    <InfoIconSVG height={12} width={12} />
                   </div>
                 </Tooltip>
               </div>
