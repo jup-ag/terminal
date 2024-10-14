@@ -4,10 +4,11 @@ import Decimal from 'decimal.js';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { checkIsStrictOrVerified, checkIsToken2022, checkIsUnknownToken } from 'src/misc/tokenTags';
 import { useAccounts } from 'src/contexts/accounts';
-import { formatNumber } from 'src/misc/utils';
+import { formatNumber, hasNumericValue } from 'src/misc/utils';
 import TokenIcon from './TokenIcon';
 import TokenLink from './TokenLink';
 import CoinBalance from './Coinbalance';
+import { useLstApyFetcher } from './SuggestionTags/hooks/useLstApy';
 
 export const PAIR_ROW_HEIGHT = 72;
 
@@ -29,6 +30,26 @@ interface IMultiTag {
   isToken2022: boolean;
   isFrozen: boolean;
 }
+
+const LSTTag: React.FC<{ mintAddress: string }> = ({ mintAddress }) => {
+  const { data: lstApy } = useLstApyFetcher();
+
+  const apy = useMemo(() => {
+    if (!lstApy) return;
+
+    const value = lstApy.apys[mintAddress];
+    if (value && hasNumericValue(value)) {
+      return new Decimal(value).mul(100).toDP(2).toString();
+    }
+    return;
+  }, [lstApy, mintAddress]);
+
+  return (
+    <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
+      LST {apy ? `${apy}%` : ''}
+    </p>
+  );
+};
 
 const MultiTags: React.FC<IPairRow> = ({ item }) => {
   const { accounts } = useAccounts();
@@ -66,7 +87,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
 
   if (!renderedTag) return null;
 
-  const { isVerified, isToken2022, isFrozen } = renderedTag;
+  const { isVerified, isToken2022, isFrozen, isLST } = renderedTag;
 
   return (
     <div className="flex justify-end gap-x-1">
@@ -89,6 +110,8 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
           {tag}
         </div>
       ))}
+
+      {isLST && <LSTTag mintAddress={item.address} />}
 
       {isVerified && (
         <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">

@@ -58,3 +58,14 @@ export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC
 export const DCA_HIGH_PRICE_IMPACT = 0.5; // 0.5%
 export const FREEZE_AUTHORITY_LINK =
   'https://station.jup.ag/guides/jupiter-swap/how-swap-works/how-swap-works#freeze-authority';
+
+export const JUPSOL_TOKEN_INFO = {
+  address: 'jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v',
+  chainId: 101,
+  name: 'Jupiter Staked SOL',
+  symbol: 'JupSOL',
+  decimals: 9,
+  logoURI: 'https://static.jup.ag/jupSOL/icon.png',
+  tags: ['verified', 'community', 'strict', 'lst'],
+  freeze_authority: null,
+};
