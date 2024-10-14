@@ -446,7 +446,7 @@ const FormConfigurator = ({
           className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
           value={refetchIntervalForTokenAccounts}
           inputMode="numeric"
-          placeholder="10000"
+          placeholder="10000 (10s)"
           onChange={(e) => {
             const regex = /^[0-9\b]+$/;
             const value = e.target.value;
