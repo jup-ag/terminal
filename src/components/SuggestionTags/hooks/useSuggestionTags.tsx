@@ -72,7 +72,7 @@ export const useSuggestionTags = ({
       }
 
       if (lstApy && lstApy.apys[toTokenInfo.address]) {
-        list.fromToken.push(
+        list.toToken.push(
           <LSTSuggestion
             key={'lst' + toTokenInfo.symbol}
             tokenInfo={toTokenInfo}
