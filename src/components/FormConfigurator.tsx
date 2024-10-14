@@ -424,10 +424,10 @@ const FormConfigurator = ({
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
-      {/* RPC Refetch Interval  */}
+      {/* Refetch interval for token accounts  */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-white/75">RPC Refetch Interval</p>
+          <p className="text-sm text-white/75">Refetch interval for token accounts</p>
           <p className="text-xs text-white/30">{`Set the interval in milliseconds to refetch getTokenAccountsByOwner.`}</p>
         </div>
         <Toggle
