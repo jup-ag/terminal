@@ -141,7 +141,7 @@ const CodeBlocks = ({
         const walletProps = useWallet();
         useEffect(() => {
           if (typeof window !== "undefined") {
-            import("@dicksonp/terminal").then((mod) => {
+            import("@jup-ag/terminal").then((mod) => {
               const init = mod.init;
               init({
                 displayMode: "integrated",
