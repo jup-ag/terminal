@@ -66,7 +66,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
 
   if (!renderedTag) return null;
 
-  const { isVerified, isToken2022, isFrozen } = renderedTag;
+  const { isVerified, isToken2022, isFrozen, isLST } = renderedTag;
 
   return (
     <div className="flex justify-end gap-x-1">
@@ -90,12 +90,21 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
         </div>
       ))}
 
+
+{isLST && (
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
+          LST
+        </p>
+      )}
+
       {isVerified && (
         <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
           {/* We're renaming verified to stict for now, requested by Mei */}
           Community
         </p>
       )}
+
+
     </div>
   );
 };
