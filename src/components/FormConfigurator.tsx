@@ -91,7 +91,7 @@ const FormConfigurator = ({
   strictTokenList,
   defaultExplorer,
   formProps,
-  rpcRefetchInterval = 10_000,
+  refetchIntervalForTokenAccounts = 10_000,
 
   // Hook form
   reset,
@@ -107,11 +107,12 @@ const FormConfigurator = ({
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
-  const [configureRpcRefetchInterval, setConfigureRpcRefetchInterval] = useState(rpcRefetchInterval !== undefined);
+  const [configureRefetchIntervalForTokenAccounts, setConfigureRefetchIntervalForTokenAccounts] = useState(
+    refetchIntervalForTokenAccounts !== undefined,
+  );
 
   const onSelect = useCallback(
     (index: number) => {
-      console.log('called');
       reset(templateOptions[index].values);
 
       const templateName = templateOptions[index].name;
@@ -431,26 +432,26 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={configureRpcRefetchInterval}
+          active={configureRefetchIntervalForTokenAccounts}
           onClick={() => {
-            if (configureRpcRefetchInterval) {
-              setValue('rpcRefetchInterval', undefined);
+            if (configureRefetchIntervalForTokenAccounts) {
+              setValue('refetchIntervalForTokenAccounts', undefined);
             }
-            setConfigureRpcRefetchInterval(!configureRpcRefetchInterval);
+            setConfigureRefetchIntervalForTokenAccounts(!configureRefetchIntervalForTokenAccounts);
           }}
         />
       </div>
-      {configureRpcRefetchInterval && (
+      {configureRefetchIntervalForTokenAccounts && (
         <input
           className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-          value={rpcRefetchInterval}
+          value={refetchIntervalForTokenAccounts}
           inputMode="numeric"
           placeholder="10000"
           onChange={(e) => {
             const regex = /^[0-9\b]+$/;
             const value = e.target.value;
             if (value === '' || regex.test(value)) {
-              setValue('rpcRefetchInterval', Number(value));
+              setValue('refetchIntervalForTokenAccounts', Number(value));
             }
           }}
         />

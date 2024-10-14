@@ -43,7 +43,9 @@ const CodeBlocks = ({
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
     endpoint: 'https://api.mainnet-beta.solana.com',
-    ...(formConfigurator.rpcRefetchInterval && { rpcRefetchInterval: formConfigurator.rpcRefetchInterval }),
+    ...(formConfigurator.refetchIntervalForTokenAccounts && {
+      refetchIntervalForTokenAccounts: formConfigurator.refetchIntervalForTokenAccounts,
+    }),
     ...(formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined),
     ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
       ? { defaultExplorer: formConfigurator.defaultExplorer }

@@ -141,10 +141,10 @@ export const TokenAccountParser = (
 };
 
 type AccountsProviderProps = PropsWithChildren<{
-  refetchInterval?: number;
+  refetchIntervalForTokenAccounts?: number;
 }>;
 
-const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchInterval }) => {
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIntervalForTokenAccounts }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
 
@@ -209,7 +209,7 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
     },
     {
       enabled: Boolean(publicKey?.toString() && connected && getTerminalInView()),
-      refetchInterval,
+      refetchInterval: refetchIntervalForTokenAccounts,
       refetchIntervalInBackground: false,
     },
   );

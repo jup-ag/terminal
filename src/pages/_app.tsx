@@ -237,7 +237,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'modal' ? (
                         <ModalTerminal
                           rpcUrl={rpcUrl}
-                          rpcRefetchInterval={watchAllFields.rpcRefetchInterval}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -248,7 +248,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
                           rpcUrl={rpcUrl}
-                          rpcRefetchInterval={watchAllFields.rpcRefetchInterval}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -259,7 +259,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'widget' ? (
                         <WidgetTerminal
                           rpcUrl={rpcUrl}
-                          rpcRefetchInterval={watchAllFields.rpcRefetchInterval}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
