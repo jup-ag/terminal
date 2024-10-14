@@ -91,8 +91,7 @@ const FormConfigurator = ({
   strictTokenList,
   defaultExplorer,
   formProps,
-  refetchIntervalForTokenAccounts = 10_000,
-
+  refetchIntervalForTokenAccounts,
   // Hook form
   reset,
   setValue,
@@ -107,9 +106,6 @@ const FormConfigurator = ({
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
-  const [configureRefetchIntervalForTokenAccounts, setConfigureRefetchIntervalForTokenAccounts] = useState(
-    refetchIntervalForTokenAccounts !== undefined,
-  );
 
   const onSelect = useCallback(
     (index: number) => {
@@ -432,16 +428,13 @@ const FormConfigurator = ({
         </div>
         <Toggle
           className="min-w-[40px]"
-          active={configureRefetchIntervalForTokenAccounts}
-          onClick={() => {
-            if (configureRefetchIntervalForTokenAccounts) {
-              setValue('refetchIntervalForTokenAccounts', undefined);
-            }
-            setConfigureRefetchIntervalForTokenAccounts(!configureRefetchIntervalForTokenAccounts);
-          }}
+          active={!!refetchIntervalForTokenAccounts}
+          onClick={() =>
+            setValue('refetchIntervalForTokenAccounts', refetchIntervalForTokenAccounts ? undefined : 10_000)
+          }
         />
       </div>
-      {configureRefetchIntervalForTokenAccounts && (
+      {refetchIntervalForTokenAccounts && (
         <input
           className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
           value={refetchIntervalForTokenAccounts}
