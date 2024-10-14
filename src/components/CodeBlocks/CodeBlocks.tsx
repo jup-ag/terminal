@@ -136,16 +136,20 @@ const CodeBlocks = ({
       const formatted = prettier.format(
         `
         // npm install @jup-ag/terminal
-        import { init } from '@jup-ag/terminal';
         import '@jup-ag/terminal/css';
 
         const walletProps = useWallet();
         useEffect(() => {
-          init({
-            displayMode: "integrated",
-            integratedTargetId: "integrated-terminal",
-            endpoint: "https://api.mainnet-beta.solana.com",
-          });
+          if (typeof window !== "undefined") {
+            import("@dicksonp/terminal").then((mod) => {
+              const init = mod.init;
+              init({
+                displayMode: "integrated",
+                integratedTargetId: "integrated-terminal",
+                endpoint: "https://api.mainnet-beta.solana.com",
+              });
+            });
+          }
         }, []);
         `,
         {
