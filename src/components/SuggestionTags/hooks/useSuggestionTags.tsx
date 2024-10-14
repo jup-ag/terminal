@@ -13,6 +13,8 @@ import { extractTokenExtensionsInfo } from './extractTokenExtensionsInfo';
 import { usePriceImpact } from './usePriceImpact';
 import useQueryTokenMetadata from './useQueryTokenMetadata';
 import { useBirdeyeRouteInfo } from './useSwapInfo';
+import { useLstApyFetcher } from './useLstApy';
+import { LSTSuggestion } from '../Tags/LSTSuggestion';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
 const HIGH_PRICE_DIFFERENCE = 5; // 5%
@@ -31,6 +33,7 @@ export const useSuggestionTags = ({
   const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
   const birdeyeInfo = useBirdeyeRouteInfo();
   const { priceImpactPct } = usePriceImpact(quoteResponse);
+  const { data: lstApy } = useLstApyFetcher();
 
   const listOfSuggestions = useMemo(() => {
     const list: {
@@ -50,12 +53,32 @@ export const useSuggestionTags = ({
           <UnknownTokenSuggestion key={'unknown' + fromTokenInfo.address} tokenInfo={fromTokenInfo} />,
         );
       }
+
+      if (lstApy && lstApy.apys[fromTokenInfo.address]) {
+        list.fromToken.push(
+          <LSTSuggestion
+            key={'lst' + fromTokenInfo.symbol}
+            tokenInfo={fromTokenInfo}
+            apyInPercent={lstApy.apys[fromTokenInfo.address]}
+          />,
+        );
+      }
     }
 
     if (toTokenInfo) {
       // is unknown
       if (checkIsUnknownToken(toTokenInfo)) {
         list.toToken.push(<UnknownTokenSuggestion key={'unknown' + toTokenInfo.address} tokenInfo={toTokenInfo} />);
+      }
+
+      if (lstApy && lstApy.apys[toTokenInfo.address]) {
+        list.toToken.push(
+          <LSTSuggestion
+            key={'lst' + toTokenInfo.symbol}
+            tokenInfo={toTokenInfo}
+            apyInPercent={lstApy.apys[toTokenInfo.address]}
+          />,
+        );
       }
     }
 
@@ -148,6 +171,7 @@ export const useSuggestionTags = ({
     quoteResponse,
     toTokenInfo,
     tokenMetadata,
+    lstApy,
   ]);
 
   return listOfSuggestions;
