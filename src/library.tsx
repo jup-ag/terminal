@@ -204,8 +204,13 @@ const RenderWidgetShell = (props: IInit) => {
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
-          setIsOpen(!isOpen);
-          setTerminalInView(!getTerminalInView());
+          if (isOpen) {
+            setIsOpen(false);
+            setTerminalInView(false);
+          } else {
+            setIsOpen(true);
+            setTerminalInView(true);
+          }
         }}
       >
         {isOpen ? (
