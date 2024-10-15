@@ -52,7 +52,6 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
   },
   useUserSlippage: true,
-  refetchIntervalForTokenAccounts: 10000,
 });
 
 export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
