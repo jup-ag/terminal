@@ -15,7 +15,7 @@ const bundleName = `main-${packageJson.version}`;
 
 const scriptDomain =
   (() => {
-    if (typeof window === 'undefined') return '';
+    if (typeof window === 'undefined' || typeof document === 'undefined') return '';
 
     const url = (document.currentScript as HTMLScriptElement)?.src;
     if (url) {
@@ -231,6 +231,8 @@ const store = createStore();
 const appProps = atom<IInit | undefined>(undefined);
 
 async function init(props: IInit) {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return '';
+
   const {
     enableWalletPassthrough,
     passthroughWalletContextState,
@@ -297,8 +299,8 @@ async function init(props: IInit) {
   window.Jupiter.onRequestIxCallback = onRequestIxCallback;
 }
 
-const attributes = (document.currentScript as HTMLScriptElement)?.attributes;
-if (typeof window !== 'undefined') {
+const attributes = typeof document !== 'undefined' ? (document.currentScript as HTMLScriptElement)?.attributes : undefined;
+if (typeof window !== 'undefined' && typeof document !== 'undefined' && attributes) {
   document.onreadystatechange = function () {
     const loadComplete = document.readyState === 'complete';
     const shouldPreload = Boolean(attributes.getNamedItem('data-preload'));
