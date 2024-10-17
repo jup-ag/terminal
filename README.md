@@ -313,6 +313,9 @@ Limit the number of accounts to be used by the Swap Instructions.
 - [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
 - [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
 
+### refetchIntervalForTokenAccounts: number
+Specify the interval for getTokenAccountsByOwner calls, defaults to 10_000 (10s)
+
 ### NPM support
 
 ```
