@@ -35,6 +35,7 @@ export interface IFormConfigurator {
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
   useUserSlippage: boolean;
+  refetchIntervalForTokenAccounts?: number;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({

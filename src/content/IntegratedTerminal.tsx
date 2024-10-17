@@ -4,13 +4,22 @@ import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
   rpcUrl: string;
+  refetchIntervalForTokenAccounts?: number;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   useUserSlippage: boolean;
 }) => {
-  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer, useUserSlippage } = props;
+  const {
+    rpcUrl,
+    formProps,
+    simulateWalletPassthrough,
+    strictTokenList,
+    defaultExplorer,
+    useUserSlippage,
+    refetchIntervalForTokenAccounts,
+  } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useWallet();
@@ -21,6 +30,7 @@ const IntegratedTerminal = (props: {
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
       endpoint: rpcUrl,
+      refetchIntervalForTokenAccounts,
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
@@ -38,6 +48,7 @@ const IntegratedTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     useUserSlippage,
+    refetchIntervalForTokenAccounts,
   ]);
 
   useEffect(() => {

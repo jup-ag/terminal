@@ -22,6 +22,7 @@ import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
 import FeatureShowcaseButton from 'src/components/FeatureShowcaseButton';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -56,6 +57,8 @@ export default function App({ Component, pageProps }: AppProps) {
     if (window.Jupiter._instance) {
       window.Jupiter._instance = null;
     }
+
+    setTerminalInView(false);
   }, [tab]);
 
   const rpcUrl = useMemo(() => JUPITER_DEFAULT_RPC, []);
@@ -234,6 +237,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'modal' ? (
                         <ModalTerminal
                           rpcUrl={rpcUrl}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -244,6 +248,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
                           rpcUrl={rpcUrl}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -254,6 +259,7 @@ export default function App({ Component, pageProps }: AppProps) {
                       {tab === 'widget' ? (
                         <WidgetTerminal
                           rpcUrl={rpcUrl}
+                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}

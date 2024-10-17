@@ -7,13 +7,22 @@ import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/typ
 
 const WidgetTerminal = (props: {
   rpcUrl: string;
+  refetchIntervalForTokenAccounts?: number;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   useUserSlippage: boolean;
 }) => {
-  const { rpcUrl, formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer, useUserSlippage } = props;
+  const {
+    rpcUrl,
+    formProps,
+    simulateWalletPassthrough,
+    strictTokenList,
+    defaultExplorer,
+    useUserSlippage,
+    refetchIntervalForTokenAccounts,
+  } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -33,11 +42,24 @@ const WidgetTerminal = (props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       endpoint: rpcUrl,
+      refetchIntervalForTokenAccounts,
       strictTokenList,
       defaultExplorer,
       useUserSlippage,
     });
-  }, [defaultExplorer, formProps, passthroughWalletContextState, position, rpcUrl, setShowModal, simulateWalletPassthrough, size, strictTokenList, useUserSlippage]);
+  }, [
+    defaultExplorer,
+    formProps,
+    passthroughWalletContextState,
+    position,
+    rpcUrl,
+    setShowModal,
+    simulateWalletPassthrough,
+    size,
+    strictTokenList,
+    useUserSlippage,
+    refetchIntervalForTokenAccounts,
+  ]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
