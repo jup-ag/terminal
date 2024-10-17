@@ -426,29 +426,21 @@ const FormConfigurator = ({
           <p className="text-sm text-white/75">Refetch interval for token accounts</p>
           <p className="text-xs text-white/30">{`Set the interval in milliseconds to refetch getTokenAccountsByOwner.`}</p>
         </div>
-        <Toggle
-          className="min-w-[40px]"
-          active={!!refetchIntervalForTokenAccounts}
-          onClick={() =>
-            setValue('refetchIntervalForTokenAccounts', refetchIntervalForTokenAccounts ? undefined : 10_000)
-          }
-        />
       </div>
-      {refetchIntervalForTokenAccounts && (
-        <input
-          className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-          value={refetchIntervalForTokenAccounts}
-          inputMode="numeric"
-          placeholder="10000 (10s)"
-          onChange={(e) => {
-            const regex = /^[0-9\b]+$/;
-            const value = e.target.value;
-            if (value === '' || regex.test(value)) {
-              setValue('refetchIntervalForTokenAccounts', Number(value));
-            }
-          }}
-        />
-      )}
+
+      <input
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10 placeholder:text-v2-lily/10"
+        value={refetchIntervalForTokenAccounts}
+        inputMode="numeric"
+        placeholder="10000 (10s)"
+        onChange={(e) => {
+          const regex = /^[0-9\b]+$/;
+          const value = e.target.value;
+          if (value === '' || regex.test(value)) {
+            setValue('refetchIntervalForTokenAccounts', Number(value));
+          }
+        }}
+      />
       <div className="w-full border-b border-white/10 py-3" />
 
       {/* Preferred Explorer  */}
