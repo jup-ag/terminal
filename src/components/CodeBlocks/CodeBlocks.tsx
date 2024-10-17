@@ -43,6 +43,9 @@ const CodeBlocks = ({
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
     endpoint: 'https://api.mainnet-beta.solana.com',
+    ...(formConfigurator.refetchIntervalForTokenAccounts && {
+      refetchIntervalForTokenAccounts: formConfigurator.refetchIntervalForTokenAccounts,
+    }),
     ...(formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined),
     ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
       ? { defaultExplorer: formConfigurator.defaultExplorer }
@@ -89,6 +92,36 @@ const CodeBlocks = ({
     '\n',
   );
 
+  const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
+    ['npmSnippet'],
+    async () => {
+      const formatted = prettier.format(
+        `
+        // npm install @jup-ag/terminal
+        import '@jup-ag/terminal/css';
+
+        const walletProps = useWallet();
+        useEffect(() => {
+          if (typeof window !== "undefined") {
+            import("@jup-ag/terminal").then((mod) => {
+              const init = mod.init;
+              init(${formPropsSnippet});
+            });
+          }
+        }, []);
+        `,
+        {
+          parser: 'typescript',
+          plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
+        },
+      );
+      return formatted;
+    },
+    {
+      initialData: '',
+    },
+  );
+
   const [snippet, setSnippet] = useState(``);
   useEffect(() => {
     prettier
@@ -98,8 +131,9 @@ const CodeBlocks = ({
       })
       .then((res) => {
         setSnippet(res);
+        refetchNpmSnippet();
       });
-  }, [unformattedSnippet]);
+  }, [unformattedSnippet, refetchNpmSnippet]);
 
   const documentSnippet = useMemo(() => [headTag, bodyTag].filter(Boolean).join('\n'), [headTag, bodyTag]);
 
@@ -129,40 +163,6 @@ const CodeBlocks = ({
     navigator.clipboard.writeText(`${window.location.origin}?import=${stringifiedQuery.replaceAll('"', '')}`);
     setIsCopiedShareLink(true);
   };
-
-  const { data: npmSnippet } = useQuery<string>(
-    ['npmSnippet'],
-    async () => {
-      const formatted = prettier.format(
-        `
-        // npm install @jup-ag/terminal
-        import '@jup-ag/terminal/css';
-
-        const walletProps = useWallet();
-        useEffect(() => {
-          if (typeof window !== "undefined") {
-            import("@jup-ag/terminal").then((mod) => {
-              const init = mod.init;
-              init({
-                displayMode: "integrated",
-                integratedTargetId: "integrated-terminal",
-                endpoint: "https://api.mainnet-beta.solana.com",
-              });
-            });
-          }
-        }, []);
-        `,
-        {
-          parser: 'typescript',
-          plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
-        },
-      );
-      return formatted;
-    },
-    {
-      initialData: '',
-    },
-  );
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">

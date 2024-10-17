@@ -55,7 +55,12 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const { displayMode, platformFeeAndAccounts: ogPlatformFeeAndAccounts, formProps } = props;
+  const {
+    displayMode,
+    platformFeeAndAccounts: ogPlatformFeeAndAccounts,
+    formProps,
+    refetchIntervalForTokenAccounts,
+  } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -91,7 +96,7 @@ const JupiterApp = (props: IInit) => {
   }, [props.maxAccounts]);
 
   return (
-    <AccountsProvider>
+    <AccountsProvider refetchIntervalForTokenAccounts={refetchIntervalForTokenAccounts}>
       <JupiterProvider
         connection={connection}
         routeCacheDuration={ROUTE_CACHE_DURATION}
