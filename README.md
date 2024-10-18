@@ -10,9 +10,17 @@ With several templates to get you started, and auto generated code snippets.
 
 ---
 
-## Breaking change v1 to v2
+## Terminal V1 & V2 is now deprecated, please update to V3!
 
-- Fee token account updated to use Jupiter referral token account. Check out [Fee supports section](#fee-supports)
+We're deprecating Terminal V1/V2 in favor for V3. Please update to enjoy new routing upgrades. 
+
+### V3 Features:
+
+- Instant Routing: Support new tokens and markets instantly.
+- Smart Token Filtering: Reduce scam tokens when searching by CA or Token Mint. Intelligent Sorting based on Volume and Balance.
+- Ecosystem Token List: New Token List with Labels labeled (here)[https://www.jupresear.ch/t/ecosystem-master-token-list/19786].
+
+
 
 ---
 
