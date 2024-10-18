@@ -67,10 +67,10 @@ Terminal is designed to work anywhere the web runs, including React, Plain HTML/
 
 ```html
 <!-- Attach the loading script in your <head /> -->
-<script src="https://terminal.jup.ag/main-v3.js" />
+<script src="https://terminal.jup.ag/main-v3.js"></script>
 
 <!-- Optionally, preload for better experience, or integrated mode -->
-<script src="https://terminal.jup.ag/main-v3.js" data-preload />
+<script src="https://terminal.jup.ag/main-v3.js" data-preload></script>
 ```
 
 ### 2. Initialize Jupiter Terminal
