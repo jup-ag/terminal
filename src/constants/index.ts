@@ -10,6 +10,7 @@ export const JUPITER_DEFAULT_RPC =
   process.env.NEXT_PUBLIC_JUPITER_DEFAULT_RPC ||
   'https://neat-hidden-sanctuary.solana-mainnet.discover.quiknode.pro/2af5315d336f9ae920028bbb90a73b724dc1bbed';
 export const DEFAULT_SLIPPAGE = 0.5;
+export const DEFAULT_DYNAMIC_SLIPPAGE = 3.0;
 
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112');
 export const SOL_MINT_TOKEN_INFO = {

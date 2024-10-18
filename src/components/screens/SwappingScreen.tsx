@@ -10,6 +10,7 @@ import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import JupiterLogo from 'src/icons/JupiterLogo';
+import Decimal from 'decimal.js';
 
 const ErrorIcon = () => {
   return (
@@ -97,31 +98,13 @@ const SwappingScreen = () => {
     setScreen('Initial');
   };
 
-  const swapState: 'success' | 'error' | 'loading' | 'timeout' = useMemo(() => {
-    if (txStatus?.status === 'timeout') {
-      return 'timeout';
-    }
-
-    const hasErrors = txStatus?.status === 'fail';
-    if (hasErrors || errorMessage) {
-      return 'error';
-    }
-
-    const allSuccess = txStatus?.status === 'success';
-    if (allSuccess) {
-      return 'success';
-    }
-
-    return 'loading';
-  }, [errorMessage, txStatus?.status]);
-
   const { explorer, getExplorer } = usePreferredExplorer();
 
   const Content = () => {
     return (
       <>
         <div className="flex w-full justify-center">
-          <div className="text-white">{swapState === 'loading' ? 'Performing Swap' : ''}</div>
+          <div className="text-white">{'Swapping'}</div>
         </div>
 
         <div className="flex w-full justify-center items-center mt-9">
@@ -130,17 +113,24 @@ const SwappingScreen = () => {
           </div>
         </div>
 
-        {txStatus === undefined ? (
-          <span className="text-white text-center mt-8 text-sm px-4">Awaiting approval from your wallet...</span>
-        ) : null}
-
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
-          {swapState === 'loading' && (
+          {(txStatus?.status === 'loading' ||
+            txStatus?.status === 'pending-approval' ||
+            txStatus?.status === 'sending') && (
             <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
               <Spinner spinnerColor={'white'} />
 
-              <div className="ml-4 text-white text-sm">
-                <span>Swapping</span>
+              <div className="ml-4 flex w-full justify-between">
+                <span className="text-white text-sm">
+                  {txStatus.status === 'loading' && 'Preparing transactions'}
+                  {txStatus.status === 'pending-approval' && 'Pending Approval'}
+                  {txStatus.status === 'sending' && 'Swapping'}
+                </span>
+                {txStatus?.quotedDynamicSlippageBps ? (
+                  <span className="text-xs text-v2-lily/50">
+                    Slippage: {new Decimal(txStatus?.quotedDynamicSlippageBps).div(100).toFixed(2)}%
+                  </span>
+                ) : null}
               </div>
             </div>
           )}
@@ -235,7 +225,7 @@ const SwappingScreen = () => {
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
-      {errorMessage || swapState === 'error' ? (
+      {errorMessage || txStatus?.status === 'fail' ? (
         <div className="flex justify-center">
           <div className="flex flex-col items-center justify-center text-center mt-12">
             <ErrorIcon />
@@ -251,7 +241,7 @@ const SwappingScreen = () => {
         </div>
       ) : null}
 
-      {!errorMessage && swapState === 'timeout' ? (
+      {!errorMessage && txStatus?.status === 'timeout' ? (
         <div className="flex justify-center">
           <div className="flex flex-col items-center justify-center text-center mt-12">
             <ErrorIcon />
@@ -266,8 +256,12 @@ const SwappingScreen = () => {
           </div>
         </div>
       ) : null}
-      {!errorMessage && swapState === 'loading' ? <Content /> : null}
-      {!errorMessage && swapState === 'success' ? <SuccessContent /> : null}
+      {(!errorMessage && txStatus?.status === 'loading') ||
+      txStatus?.status === 'pending-approval' ||
+      txStatus?.status === 'sending' ? (
+        <Content />
+      ) : null}
+      {!errorMessage && txStatus?.status === 'success' ? <SuccessContent /> : null}
     </div>
   );
 };

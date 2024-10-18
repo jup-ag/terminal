@@ -57,7 +57,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           >
             <SettingsSVG />
             <span suppressHydrationWarning className="text-xs text-white-30">
-              {`${form.userSlippageMode === 'FIXED' ? 'F' : 'D'}->${slippageText}`}%
+              {`${form.userSlippageMode === 'FIXED' ? `${slippageText}%` : 'Dynamic'}`}
             </span>
           </button>
 

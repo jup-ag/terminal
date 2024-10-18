@@ -452,8 +452,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
               <span>Slippage Settings</span>
             </div>
 
-            <div className="flex flex-col mt-2">
-              <p className="text-xs font-semibold">Mode</p>
+            <div className="flex flex-col">
               <div className="mt-2 flex items-center rounded-xl ring-1 ring-white/5 overflow-hidden">
                 <Controller
                   name="slippageMode"
@@ -501,7 +500,7 @@ const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal })
                     inputFocused.current = true;
                   }}
                 >
-                  <div>Max Slippage: </div>
+                  <div className='text-sm text-white/75 font-[500]'>Max Slippage: </div>
                   <Controller
                     name={'dynamicSlippageInput'}
                     control={form.control}
