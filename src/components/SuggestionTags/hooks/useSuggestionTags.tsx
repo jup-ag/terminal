@@ -19,7 +19,7 @@ import { LSTSuggestion } from '../Tags/LSTSuggestion';
 const HIGH_PRICE_IMPACT = 5; // 5%
 const HIGH_PRICE_DIFFERENCE = 5; // 5%
 
-const FREEZE_AUTHORITY_IGNORE_LIST = [USDC_MINT.toString(), USDT_MINT.toString(), JLP_MINT.toString()];
+const FREEZE_AUTHORITY_IGNORE_LIST: string[] = []; // Used to be USDC, USDT, JLP
 
 export const useSuggestionTags = ({
   fromTokenInfo,
@@ -96,7 +96,7 @@ export const useSuggestionTags = ({
         FREEZE_AUTHORITY_IGNORE_LIST.includes(fromTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
         (tokenExt1.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
       ) {
-        freeze.push(fromTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
+        freeze.push(fromTokenInfo); // Only mark non-strict token
       }
 
       if (tokenExt1?.permanentDelegate) {
@@ -108,7 +108,7 @@ export const useSuggestionTags = ({
         FREEZE_AUTHORITY_IGNORE_LIST.includes(toTokenInfo.address) === false && // Ignore bluechip like, USDC, USDT
         (tokenExt2.freezeAuthority === SystemProgram.programId.toString()) === false // Ignore system program
       ) {
-        freeze.push(toTokenInfo); // Only mark non-strict token, so USDC, USDT, don't get marked
+        freeze.push(toTokenInfo); // Only mark non-strict token
       }
       if (tokenExt2?.permanentDelegate) {
         permanent.push(toTokenInfo);
