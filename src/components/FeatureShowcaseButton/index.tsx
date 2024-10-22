@@ -112,9 +112,8 @@ const FeatureShowcaseButton = () => {
                 Introducing Jupiter Swap V3
                 <p>Leveraging our new Metropolis liquidity backend to enable:</p>
                 <V2SexyChameleonText className="flex flex-col gap-y-1">
-                  Instant Routing, Smart Token Filtering, Ecosystem Token List, more!
+                  Instant Routing, Smart Token Filtering, Ecosystem Token List, Dynamic Slippage, more!
                 </V2SexyChameleonText>
-                <p className="text-v2-lily/50 text-xs">Dynamic Slippage (Coming soon in v3.1)</p>
               </Title>
 
               {open && containerDimensions.width > 0 ? (
@@ -134,6 +133,22 @@ const FeatureShowcaseButton = () => {
 
               <div className="border-b border-white/10 w-full mt-4" />
 
+              <Title>Dynamic slippage</Title>
+              <Desc>
+                <span className="mx-1 text-v3-primary">Dynamic slippage</span> optimizes your slippage to safeguard
+                against front-running while maximizing transaction success rate.
+                <div className="flex w-full justify-center mt-5">
+                  <Image
+                    alt="ExactInOrOut demo"
+                    src={'/demo/dynamic-slippage-demo.gif'}
+                    width={Math.min(550, containerDimensions.width)}
+                    height={400}
+                  />
+                </div>
+              </Desc>
+
+              <div className="border-b border-white/10 w-full mt-4" />
+
               <Title>ExactIn or ExactOut</Title>
               <Desc>
                 <span className="mx-1 text-v3-primary">ExactInOrOut</span> are now the default behaviour, enabling
@@ -147,7 +162,7 @@ const FeatureShowcaseButton = () => {
                   />
                 </div>
               </Desc>
-             
+
               <div className="border-b border-white/10 w-full mt-4" />
 
               <Title>New MTS tagging system</Title>

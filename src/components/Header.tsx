@@ -29,9 +29,9 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
   }, [form]);
 
   const slippageText = useMemo(() => {
-    const value = form.slippageBps / 100;
+    const value = form.userSlippageMode === 'FIXED' ? form.slippageBps / 100 : form.dynamicSlippageBps / 100;
     return isNaN(value) ? '0' : formatNumber.format(String(value));
-  }, [form.slippageBps]);
+  }, [form.slippageBps, form.dynamicSlippageBps, form.userSlippageMode]);
 
   return (
     <div className="mt-2 h-7 pl-3 pr-2">
@@ -57,7 +57,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           >
             <SettingsSVG />
             <span suppressHydrationWarning className="text-xs text-white-30">
-              {slippageText}%
+              {`${form.userSlippageMode === 'FIXED' ? `${slippageText}%` : 'Dynamic'}`}
             </span>
           </button>
 

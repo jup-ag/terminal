@@ -21,7 +21,7 @@ export const CurrentUserBadge: React.FC = () => {
       </div>
 
       <div className="ml-2">
-        <div className="text-xs text-white">{shortenAddress(`${publicKey}`)}</div>
+        <div className="text-xs text-white">{shortenAddress(`${publicKey}`, 2)}</div>
       </div>
     </div>
   );

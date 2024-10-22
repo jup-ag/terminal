@@ -19,7 +19,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
+import { DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT, DEFAULT_SLIPPAGE_PCT, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
 import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
@@ -29,14 +29,20 @@ import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useAccounts } from './accounts';
 
+export type SlippageMode = 'DYNAMIC' | 'FIXED';
+const SLIPPAGE_MODE_DEFAULT: SlippageMode = 'DYNAMIC';
+
 export interface IForm {
   fromMint: string;
   toMint: string;
   fromValue: string;
   toValue: string;
   slippageBps: number;
+  userSlippageMode: SlippageMode;
+  dynamicSlippageBps: number;
 }
 
+export type SwappingStatus = 'loading' | 'pending-approval' | 'sending' | 'fail' | 'success' | 'timeout';
 export interface ISwapContext {
   form: IForm;
   setForm: Dispatch<SetStateAction<IForm>>;
@@ -68,7 +74,8 @@ export interface ISwapContext {
     txStatus:
       | {
           txid: string;
-          status: 'loading' | 'fail' | 'success' | 'timeout';
+          status: SwappingStatus;
+          quotedDynamicSlippageBps: string | undefined;
         }
       | undefined;
   };
@@ -83,6 +90,8 @@ export interface ISwapContext {
     lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
   };
   setUserSlippage: Dispatch<SetStateAction<number>>;
+  setUserSlippageDynamic: Dispatch<SetStateAction<number>>;
+  setUserSlippageMode: Dispatch<SetStateAction<SlippageMode>>;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -109,7 +118,9 @@ const INITIAL_FORM = {
   toMint: WRAPPED_SOL_MINT.toString(),
   fromValue: '',
   toValue: '',
-  slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
+  slippageBps: Math.ceil(DEFAULT_SLIPPAGE_PCT * 100),
+  userSlippageMode: SLIPPAGE_MODE_DEFAULT,
+  dynamicSlippageBps: Math.ceil(DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT * 100),
 };
 
 export const SwapContextProvider: FC<{
@@ -139,26 +150,36 @@ export const SwapContextProvider: FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
-  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE);
+  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE_PCT);
+  const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
+    'jupiter-terminal-slippage-dynamic',
+    DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
+  );
+  const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
+    'jupiter-terminal-slippage-mode',
+    SLIPPAGE_MODE_DEFAULT,
+  );
   const [form, setForm] = useState<IForm>(
     (() => {
-      const slippageBps = (() => {
-        if (props.useUserSlippage && typeof userSlippage !== 'undefined') {
-          return Math.ceil(userSlippage * 100);
+      const getSlippageBps = (slippage: number) => {
+        if (typeof slippage !== 'undefined') {
+          return Math.ceil(slippage * 100);
         }
 
         if (formProps?.initialSlippageBps) {
           return formProps?.initialSlippageBps;
         }
-        return Math.ceil(DEFAULT_SLIPPAGE * 100);
-      })();
+        return Math.ceil(DEFAULT_SLIPPAGE_PCT * 100);
+      };
 
       return {
         fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
         toMint: formProps?.initialOutputMint ?? WRAPPED_SOL_MINT.toString(),
         fromValue: '',
         toValue: '',
-        slippageBps,
+        slippageBps: getSlippageBps(userSlippage),
+        dynamicSlippageBps: getSlippageBps(userSlippageDynamic),
+        userSlippageMode,
       };
     })(),
   );
@@ -300,14 +321,7 @@ export const SwapContextProvider: FC<{
     });
   }, [form.fromValue, fromTokenInfo, quoteResponseMeta, swapMode, toTokenInfo]);
 
-  const [txStatus, setTxStatus] = useState<
-    | {
-        txid: string;
-        status: 'loading' | 'fail' | 'success' | 'timeout';
-      }
-    | undefined
-  >(undefined);
-
+  const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
 
   const onSubmitWithIx = useCallback(
@@ -317,12 +331,16 @@ export const SwapContextProvider: FC<{
 
         if ('txid' in swapResult) {
           console.log({ swapResult });
-          setTxStatus({ txid: swapResult.txid, status: 'success' });
+          setTxStatus((prev) => ({
+            txid: swapResult.txid,
+            status: 'success',
+            quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps,
+          }));
           setLastSwapResult({ swapResult, quoteResponseMeta });
         }
       } catch (error) {
         console.log('Swap error', error);
-        setTxStatus({ txid: '', status: 'fail' });
+        setTxStatus((prev) => ({ txid: '', status: 'fail', quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps }));
         setLastSwapResult({ swapResult, quoteResponseMeta });
       }
     },
@@ -389,16 +407,31 @@ export const SwapContextProvider: FC<{
         const timeout = { current: 0 };
 
         if (!wallet.adapter.publicKey) return;
+
+        setTxStatus({
+          txid: '',
+          status: 'loading',
+          quotedDynamicSlippageBps: '',
+        });
+
         const swapTransactionResponse = await fetchSwapTransaction({
           quoteResponseMeta,
           userPublicKey: wallet.adapter.publicKey,
           prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
           wrapUnwrapSOL: true,
+          allowOptimizedWrappedSolTokenAccount: false,
+          dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
         });
 
         if ('error' in swapTransactionResponse) {
           console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
         } else {
+          setTxStatus({
+            txid: '',
+            status: 'pending-approval',
+            quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+          });
+
           modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
             referenceFee: (() => {
               if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
@@ -430,7 +463,11 @@ export const SwapContextProvider: FC<{
               if (!intervalId) {
                 intervalId = setInterval(() => {
                   if (Date.now() > timeout.current) {
-                    setTxStatus({ txid: '', status: 'timeout' });
+                    setTxStatus((prev) => ({
+                      txid: '',
+                      status: 'timeout',
+                      quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps,
+                    }));
                     rej(new Error('Transaction timed-out'));
                   }
                 }, 1_000);
@@ -438,7 +475,11 @@ export const SwapContextProvider: FC<{
 
               const tx = txStatus?.txid === txid ? txStatus : undefined;
               if (!tx) {
-                setTxStatus((prev) => ({ ...prev, txid, status: 'loading' }));
+                setTxStatus((prev) => ({
+                  txid,
+                  status: 'sending',
+                  quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps,
+                }));
               }
 
               const success = !((await awaiter) instanceof Error);
@@ -467,14 +508,22 @@ export const SwapContextProvider: FC<{
             owner: new Owner(new PublicKey(walletPublicKey)),
             wrapUnwrapSOL: true,
           });
+          
           setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
-          return result;
+          
+          if ('error' in result) {
+            return rej(result)
+          }
+          return res(result);
         }
       })
         .catch((err) => {
-          console.log(err);
-          setTxStatus({ txid: '', status: 'fail' });
-          return null;
+          setTxStatus({
+            txid: '',
+            status: 'fail',
+            quotedDynamicSlippageBps: '',
+          });
+          return err;
         })
         .finally(() => {
           if (intervalId) {
@@ -492,6 +541,8 @@ export const SwapContextProvider: FC<{
     wallet?.adapter,
     quoteResponseMeta,
     fetchSwapTransaction,
+    form.userSlippageMode,
+    form.dynamicSlippageBps,
     modifyComputeUnitPriceAndLimit,
     connection,
     referenceFees?.jup.m,
@@ -567,6 +618,8 @@ export const SwapContextProvider: FC<{
           lastRefreshTimestamp,
         },
         setUserSlippage,
+        setUserSlippageDynamic,
+        setUserSlippageMode,
       }}
     >
       {children}
