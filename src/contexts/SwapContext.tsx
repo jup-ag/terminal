@@ -19,7 +19,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { DEFAULT_DYNAMIC_SLIPPAGE, DEFAULT_SLIPPAGE, WRAPPED_SOL_MINT } from 'src/constants';
+import { DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT, DEFAULT_SLIPPAGE_PCT, WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
 import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
@@ -118,9 +118,9 @@ const INITIAL_FORM = {
   toMint: WRAPPED_SOL_MINT.toString(),
   fromValue: '',
   toValue: '',
-  slippageBps: Math.ceil(DEFAULT_SLIPPAGE * 100),
+  slippageBps: Math.ceil(DEFAULT_SLIPPAGE_PCT * 100),
   userSlippageMode: SLIPPAGE_MODE_DEFAULT,
-  dynamicSlippageBps: Math.ceil(DEFAULT_DYNAMIC_SLIPPAGE * 100),
+  dynamicSlippageBps: Math.ceil(DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT * 100),
 };
 
 export const SwapContextProvider: FC<{
@@ -150,10 +150,10 @@ export const SwapContextProvider: FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
-  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE);
+  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE_PCT);
   const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
     'jupiter-terminal-slippage-dynamic',
-    DEFAULT_DYNAMIC_SLIPPAGE,
+    DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
   );
   const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
     'jupiter-terminal-slippage-mode',
@@ -169,7 +169,7 @@ export const SwapContextProvider: FC<{
         if (formProps?.initialSlippageBps) {
           return formProps?.initialSlippageBps;
         }
-        return Math.ceil(DEFAULT_SLIPPAGE * 100);
+        return Math.ceil(DEFAULT_SLIPPAGE_PCT * 100);
       };
 
       return {

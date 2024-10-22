@@ -100,6 +100,8 @@ const SwappingScreen = () => {
 
   const { explorer, getExplorer } = usePreferredExplorer();
 
+  const isLoading =
+    txStatus?.status === 'loading' || txStatus?.status === 'pending-approval' || txStatus?.status === 'sending';
   const Content = () => {
     return (
       <>
@@ -114,9 +116,7 @@ const SwappingScreen = () => {
         </div>
 
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
-          {(txStatus?.status === 'loading' ||
-            txStatus?.status === 'pending-approval' ||
-            txStatus?.status === 'sending') && (
+          {isLoading && (
             <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
               <Spinner spinnerColor={'white'} />
 
@@ -256,11 +256,7 @@ const SwappingScreen = () => {
           </div>
         </div>
       ) : null}
-      {(!errorMessage && txStatus?.status === 'loading') ||
-      txStatus?.status === 'pending-approval' ||
-      txStatus?.status === 'sending' ? (
-        <Content />
-      ) : null}
+      {!errorMessage && isLoading ? <Content /> : null}
       {!errorMessage && txStatus?.status === 'success' ? <SuccessContent /> : null}
     </div>
   );

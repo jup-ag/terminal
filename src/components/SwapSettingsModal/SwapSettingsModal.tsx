@@ -9,7 +9,7 @@ import InformationMessage from '../InformationMessage';
 import Tooltip from '../Tooltip';
 import SwapSettingButton from './SwapSettingButton';
 
-import { DEFAULT_SLIPPAGE } from 'src/constants';
+import { DEFAULT_SLIPPAGE_PCT } from 'src/constants';
 import { PriorityLevel, PriorityMode, usePrioritizationFee } from 'src/contexts/PrioritizationFeeContextProvider';
 import { SlippageMode, useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
@@ -65,7 +65,7 @@ const MAXIMUM_DYNAMIC_SLIPPAGE = 100; // 100%
 const MINIMUM_SUGGESTED_SLIPPAGE = 0.05; // 0.05%
 const MAXIMUM_SUGGESTED_SLIPPAGE = 10; // 10%
 
-const SLIPPAGE_PRESET = ['0.3', String(DEFAULT_SLIPPAGE), '1.0'];
+const SLIPPAGE_PRESET = ['0.3', String(DEFAULT_SLIPPAGE_PCT), '1.0'];
 
 const SwapSettingsModal: React.FC<{ closeModal: () => void }> = ({ closeModal }) => {
   const {
