@@ -505,7 +505,7 @@ export const SwapContextProvider: FC<{
               blockhash: swapTransactionResponse.blockhash,
               lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
             },
-            owner: new Owner(new PublicKey(walletPublicKey)),
+            owner: new Owner(new PublicKey(walletPublicKey)) as any,
             wrapUnwrapSOL: true,
           });
           
