@@ -2,7 +2,7 @@ import { Transaction, VersionedTransaction } from '@solana/web3.js';
 import { createContext, useCallback, useContext, useMemo } from 'react';
 import { useLocalStorage } from 'src/hooks/useLocalStorage';
 import { toLamports } from 'src/misc/utils';
-import { extractComputeUnitLimit, modifyComputeUnitLimitIx, modifyPriorityFeeIx } from '@mercurial-finance/optimist';
+import { extractComputeUnitLimit, modifyComputeUnitLimitIx, modifyComputeUnitPriceIx } from '@mercurial-finance/optimist';
 
 // --------------------
 // Constants
@@ -106,7 +106,7 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
         if (options.requestComputeBudgetLimit) {
           modifyComputeUnitLimitIx(tx, options.requestComputeBudgetLimit);
         }
-        modifyPriorityFeeIx(tx, priceMicroLamports);
+        modifyComputeUnitPriceIx(tx, priceMicroLamports);
       }
     },
     [priorityFee, priorityMode],

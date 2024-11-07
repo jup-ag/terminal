@@ -1,6 +1,6 @@
 {
   "name": "@jup-ag/terminal",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -36,9 +36,10 @@
   },
   "dependencies": {
     "@jup-ag/math": "4.0.0-beta.21",
-    "@jup-ag/react-hook": "6.1.0",
+    "@jup-ag/react-hook": "6.2.0",
+    "@solana/spl-token-0.4": "npm:@solana/spl-token@0.4.0",
     "@jup-ag/wallet-adapter": "0.2.0",
-    "@mercurial-finance/optimist": "0.3.2",
+    "@mercurial-finance/optimist": "0.4.0",
     "@popperjs/core": "^2.11.8",
     "@project-serum/anchor": "^0.26.0",
     "@radix-ui/react-popover": "^1.1.1",

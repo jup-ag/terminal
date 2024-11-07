@@ -232,7 +232,7 @@ const SwappingScreen = () => {
 
             <p className="text-white mt-2">Swap Failed</p>
             <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
-            {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
+            {errorMessage ? <p className="text-white/50 text-xs mt-2 break-all">{errorMessage}</p> : ''}
 
             <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
               <V2SexyChameleonText>Retry</V2SexyChameleonText>
