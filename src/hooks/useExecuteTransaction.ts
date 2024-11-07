@@ -74,15 +74,10 @@ export const useExecuteTransaction = () => {
               reject(e);
             });
 
-          // Pre-2.0 RPC produces the wrong lastValidBlockHeight, but our Quote API are alredy using the correct one
-          const rpcIsVersion2 = (
-            (await connection.getLatestBlockhashAndContext('processed')).context as any
-          ).apiVersion.startsWith('2.');
-
           response = await handleSendTransaction({
             connection,
             blockhash: options.blockhash,
-            lastValidBlockHeight: rpcIsVersion2 ? options.lastValidBlockHeight : options.lastValidBlockHeight + 150,
+            lastValidBlockHeight: options.lastValidBlockHeight,
             signedTransaction: signedTx,
             skipPreflight: options.skipPreflight ?? true,
             idl: IDL_V6,
