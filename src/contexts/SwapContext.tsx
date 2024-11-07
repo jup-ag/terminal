@@ -1,4 +1,4 @@
-import { executeTransaction, fetchSourceAddressAndDestinationAddress } from '@jup-ag/common';
+import { fetchSourceAddressAndDestinationAddress, getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
 import { Owner, QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
 import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
@@ -28,6 +28,7 @@ import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useAccounts } from './accounts';
+import { useExecuteTransaction } from 'src/hooks/useExecuteTransaction';
 
 export type SlippageMode = 'DYNAMIC' | 'FIXED';
 const SLIPPAGE_MODE_DEFAULT: SlippageMode = 'DYNAMIC';
@@ -396,146 +397,152 @@ export const SwapContextProvider: FC<{
     };
   }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, onSubmitWithIx]);
 
+  const executeTransaction = useExecuteTransaction();
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
       return null;
     }
 
     let intervalId: NodeJS.Timer | undefined;
-    try {
-      const swapResult = await new Promise<SwapResult | null>(async (res, rej) => {
-        const timeout = { current: 0 };
 
-        if (!wallet.adapter.publicKey) return;
+    const swapResult = new Promise<SwapResult | null>(async (res, rej) => {
+      if (!wallet.adapter.publicKey) return null;
 
-        setTxStatus({
-          txid: '',
-          status: 'loading',
-          quotedDynamicSlippageBps: '',
+      setTxStatus({
+        txid: '',
+        status: 'loading',
+        quotedDynamicSlippageBps: '',
+      });
+
+      const swapTransactionResponse = await fetchSwapTransaction({
+        quoteResponseMeta,
+        userPublicKey: wallet.adapter.publicKey,
+        prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
+        wrapUnwrapSOL: true,
+        allowOptimizedWrappedSolTokenAccount: false,
+        dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
+      });
+
+      if ('error' in swapTransactionResponse) {
+        console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
+      } else {
+        modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
+          referenceFee: (() => {
+            if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
+              return referenceFees?.swapFee;
+            }
+
+            if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
+            if (priorityLevel === 'HIGH') return referenceFees.jup.h;
+            if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
+          })(),
         });
 
-        const swapTransactionResponse = await fetchSwapTransaction({
-          quoteResponseMeta,
-          userPublicKey: wallet.adapter.publicKey,
-          prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
-          wrapUnwrapSOL: true,
-          allowOptimizedWrappedSolTokenAccount: false,
-          dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
+        const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
+        const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
+          connection,
+          inputMint,
+          outputMint,
+          userPublicKey: wallet.adapter.publicKey!,
         });
 
-        if ('error' in swapTransactionResponse) {
-          console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
-        } else {
+        const result = await executeTransaction(
+          swapTransactionResponse.swapTransaction,
+          {
+            blockhash: swapTransactionResponse.blockhash,
+            lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
+            skipPreflight: true,
+          },
+          {
+            onPending: () => {
+              setTxStatus({
+                txid: '',
+                status: 'pending-approval',
+                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+              });
+            },
+            onSending: () => {
+              setTxStatus({
+                txid: '',
+                status: 'sending',
+                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+              });
+            },
+            onProcessed: () => {
+              // Not using processed for now
+            },
+            onSuccess: (txid, transactionResponse) => {
+              setTxStatus({
+                txid,
+                status: 'success',
+                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+              });
+
+              const [sourceTokenBalanceChange, destinationTokenBalanceChange] =
+                getTokenBalanceChangesFromTransactionResponse({
+                  txid,
+                  inputMint,
+                  outputMint,
+                  user: wallet.adapter.publicKey!,
+                  sourceAddress,
+                  destinationAddress,
+                  transactionResponse,
+                  hasWrappedSOL: false,
+                });
+
+              setLastSwapResult({
+                swapResult: {
+                  txid,
+                  inputAddress: inputMint,
+                  outputAddress: outputMint,
+                  inputAmount: sourceTokenBalanceChange,
+                  outputAmount: destinationTokenBalanceChange,
+                },
+                quoteResponseMeta: quoteResponseMeta,
+              });
+
+              return res({
+                txid,
+                inputAddress: inputMint,
+                outputAddress: outputMint,
+                inputAmount: sourceTokenBalanceChange,
+                outputAmount: destinationTokenBalanceChange,
+              });
+            },
+          },
+        );
+
+        if ('transactionResponse' in result === false) {
+          console.log(result);
+
+          setLastSwapResult({
+            swapResult: {
+              error: 'error' in result ? result.error : undefined,
+            },
+            quoteResponseMeta: quoteResponseMeta,
+          });
+
           setTxStatus({
-            txid: '',
-            status: 'pending-approval',
+            txid: result.txid || '',
+            status: 'error' in result && result.error?.message.includes('expired') ? 'timeout' : 'fail',
             quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
           });
 
-          modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
-            referenceFee: (() => {
-              if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
-                return referenceFees?.swapFee;
-              }
-
-              if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
-              if (priorityLevel === 'HIGH') return referenceFees.jup.h;
-              if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
-            })(),
-          });
-
-          const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
-          const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
-            connection,
-            inputMint,
-            outputMint,
-            userPublicKey: wallet.adapter.publicKey!,
-          });
-
-          const result = await executeTransaction({
-            connection,
-            wallet: wallet?.adapter as SignerWalletAdapter,
-            onTransaction: async (txid, awaiter) => {
-              if (timeout.current === 0) {
-                timeout.current = Date.now() + 60_000;
-              }
-
-              if (!intervalId) {
-                intervalId = setInterval(() => {
-                  if (Date.now() > timeout.current) {
-                    setTxStatus((prev) => ({
-                      txid: '',
-                      status: 'timeout',
-                      quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps,
-                    }));
-                    rej(new Error('Transaction timed-out'));
-                  }
-                }, 1_000);
-              }
-
-              const tx = txStatus?.txid === txid ? txStatus : undefined;
-              if (!tx) {
-                setTxStatus((prev) => ({
-                  txid,
-                  status: 'sending',
-                  quotedDynamicSlippageBps: prev?.quotedDynamicSlippageBps,
-                }));
-              }
-
-              const success = !((await awaiter) instanceof Error);
-
-              setTxStatus((prev) => {
-                const tx = prev?.txid === txid ? prev : undefined;
-                if (tx) {
-                  tx.status = success ? 'success' : 'fail';
-
-                  if (intervalId) {
-                    clearInterval(intervalId);
-                  }
-                }
-                return prev ? { ...prev } : undefined;
-              });
-            },
-            inputMint,
-            outputMint,
-            sourceAddress,
-            destinationAddress,
-            swapTransaction: swapTransactionResponse.swapTransaction,
-            blockhashWithExpiryBlockHeight: {
-              blockhash: swapTransactionResponse.blockhash,
-              lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
-            },
-            owner: new Owner(new PublicKey(walletPublicKey)) as any,
-            wrapUnwrapSOL: true,
-          });
-          
-          setLastSwapResult({ swapResult: result, quoteResponseMeta: quoteResponseMeta });
-          
-          if ('error' in result) {
-            return rej(result)
-          }
-          return res(result);
+          return rej(null);
         }
+      }
+    })
+      .catch((result: SwapResult) => {
+        console.log(result);
+        return null;
       })
-        .catch((err) => {
-          setTxStatus({
-            txid: '',
-            status: 'fail',
-            quotedDynamicSlippageBps: '',
-          });
-          return err;
-        })
-        .finally(() => {
-          if (intervalId) {
-            clearInterval(intervalId);
-          }
-        });
+      .finally(() => {
+        if (intervalId) {
+          clearInterval(intervalId);
+        }
+      });
 
-      return swapResult;
-    } catch (error) {
-      console.log('Swap error', error);
-      return null;
-    }
+    return swapResult;
   }, [
     walletPublicKey,
     wallet?.adapter,
@@ -545,12 +552,12 @@ export const SwapContextProvider: FC<{
     form.dynamicSlippageBps,
     modifyComputeUnitPriceAndLimit,
     connection,
+    executeTransaction,
     referenceFees?.jup.m,
     referenceFees?.jup.h,
     referenceFees?.jup.vh,
     referenceFees?.swapFee,
     priorityLevel,
-    txStatus,
   ]);
 
   const reset = useCallback(
