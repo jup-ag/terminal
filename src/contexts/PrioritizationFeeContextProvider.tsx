@@ -9,8 +9,8 @@ import { extractComputeUnitLimit, modifyComputeUnitLimitIx, modifyComputeUnitPri
 // --------------------
 const APP_NAME = 'jupiter-terminal';
 
-const PRIORITY_FEE_DEFAULT: number = 0.000_3;
-const PRIORITY_LEVEL_DEFAULT: PriorityLevel = 'MEDIUM';
+const PRIORITY_FEE_DEFAULT: number = 0.004;
+const PRIORITY_LEVEL_DEFAULT: PriorityLevel = 'HIGH';
 const PRIORITY_MODE_DEFAULT: PriorityMode = 'MAX';
 
 export const PRIORITY_LEVEL_MULTIPLIER_HIGH = 1.5;
@@ -67,7 +67,7 @@ const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
 export function PrioritizationFeeContextProvider({ children }: { children: React.ReactNode }) {
   // state
   const [priorityFee, setPriorityFee] = useLocalStorage<number>(
-    `${APP_NAME}-global-priority-fee`,
+    `${APP_NAME}-global-priority-fee-0.004`,
     PRIORITY_FEE_DEFAULT,
   );
   const [priorityMode, setPriorityMode] = useLocalStorage<PriorityMode>(

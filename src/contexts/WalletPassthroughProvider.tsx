@@ -1,28 +1,10 @@
-import { useWallet, Wallet, WalletName } from '@jup-ag/wallet-adapter';
-import { PublicKey } from '@solana/web3.js';
+import { SendTransactionOptions, useWallet, Wallet, WalletContextState, WalletName } from '@jup-ag/wallet-adapter';
+import { Connection, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js';
 import { useAtom } from 'jotai';
-import React, {
-  createContext,
-  FC,
-  PropsWithChildren,
-  ReactNode,
-  useContext,
-  useMemo,
-} from 'react';
+import React, { createContext, FC, PropsWithChildren, ReactNode, useContext, useMemo } from 'react';
 import { appProps } from 'src/library';
 
-interface IWalletPassThrough {
-  publicKey: PublicKey | null;
-  wallets: Wallet[];
-  wallet: Wallet | null;
-  connect: () => Promise<void>;
-  select: (walletName: WalletName<string>) => void;
-  connecting: boolean;
-  connected: boolean;
-  disconnect: () => Promise<void>;
-}
-
-const initialPassThrough = {
+const initialPassThrough: WalletContextState = {
   publicKey: null,
   wallets: [],
   wallet: null,
@@ -31,40 +13,31 @@ const initialPassThrough = {
   connecting: false,
   connected: false,
   disconnect: async () => {},
+  autoConnect: false,
+  disconnecting: false,
+  sendTransaction: async (transaction: Transaction | VersionedTransaction, connection: Connection, options?: SendTransactionOptions) => '',
+  signTransaction: undefined,
+  signAllTransactions: undefined,
+  signMessage: undefined,
+  signIn: undefined,
 };
 
-export const WalletPassthroughContext = createContext<IWalletPassThrough>(initialPassThrough);
+export const WalletPassthroughContext = createContext<WalletContextState>(initialPassThrough);
 
-export function useWalletPassThrough(): IWalletPassThrough {
+export function useWalletPassThrough(): WalletContextState {
   return useContext(WalletPassthroughContext);
 }
 
 const FromWalletAdapter: FC<PropsWithChildren> = ({ children }) => {
-  const { publicKey, wallets, wallet, connect, select, connecting, connected, disconnect } = useWallet();
-
-  return (
-    <WalletPassthroughContext.Provider
-      value={{
-        publicKey,
-        wallets,
-        wallet,
-        connect,
-        select,
-        connecting,
-        connected,
-        disconnect,
-      }}
-    >
-      {children}
-    </WalletPassthroughContext.Provider>
-  );
+  const walletContextState = useWallet();
+  return <WalletPassthroughContext.Provider value={walletContextState}>{children}</WalletPassthroughContext.Provider>;
 };
 
 const WalletPassthroughProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [atom] = useAtom(appProps);
-  const wallet = atom?.passthroughWalletContextState?.wallet
+  const wallet = atom?.passthroughWalletContextState?.wallet;
 
-  const walletPassthrough: IWalletPassThrough = useMemo(() => {
+  const walletPassthrough: WalletContextState = useMemo(() => {
     return {
       ...initialPassThrough,
       ...atom?.passthroughWalletContextState,
