@@ -1,8 +1,9 @@
 import { getSignature, IDL_V6, JUPITER_PROGRAM_V6_ID } from '@jup-ag/common';
-import { useConnection, useWallet } from '@jup-ag/wallet-adapter';
+import { useConnection } from '@jup-ag/wallet-adapter';
 import { handleSendTransaction, TransactionError } from '@mercurial-finance/optimist';
 import { Blockhash, Signer, Transaction, VersionedTransaction, VersionedTransactionResponse } from '@solana/web3.js';
 import { useCallback } from 'react';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 interface TransactionOptions {
   extraSigners?: Signer[];
@@ -22,7 +23,7 @@ type IExecuteTransactionResult =
 
 export const useExecuteTransaction = () => {
   const { connection } = useConnection();
-  const wallet = useWallet();
+  const wallet = useWalletPassThrough();
 
   const executeTransaction = useCallback(
     async (
