@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 const TYPESENSE_CLUSTER = {
   apiKey: '', // Jupiter search endpoint handles this.
   nodes: [{ url: 'https://search1.jup.ag' }, { url: 'https://search2.jup.ag' }, { url: 'https://search3.jup.ag' }],
-  nearestNode: { url: 'https://search1.jup.ag' },
+  nearestNode: { url: 'https://search.jup.ag' },
   sort_by: 'daily_volume:desc',
 };
 
