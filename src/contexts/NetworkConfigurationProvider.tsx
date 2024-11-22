@@ -1,5 +1,6 @@
 import { useLocalStorage } from '@jup-ag/wallet-adapter';
-import { createContext, FC, ReactNode, useContext } from 'react';
+import { createContext, FC, PropsWithChildren, ReactNode, useContext } from 'react';
+import { IInit } from 'src/types';
 
 export interface NetworkConfigurationState {
   networkConfiguration: string;
@@ -12,8 +13,11 @@ export function useNetworkConfiguration(): NetworkConfigurationState {
   return useContext(NetworkConfigurationContext);
 }
 
-export const NetworkConfigurationProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [networkConfiguration, setNetworkConfiguration] = useLocalStorage('network', 'mainnet-beta');
+export const NetworkConfigurationProvider: FC<PropsWithChildren<IInit>> = ({ localStoragePrefix, children }) => {
+  const [networkConfiguration, setNetworkConfiguration] = useLocalStorage(
+    `${localStoragePrefix}-network`,
+    'mainnet-beta',
+  );
 
   return (
     <NetworkConfigurationContext.Provider value={{ networkConfiguration, setNetworkConfiguration }}>

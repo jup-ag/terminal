@@ -1,15 +1,14 @@
 import { fetchSourceAddressAndDestinationAddress, getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
-import { Owner, QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
-import { SignerWalletAdapter, useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
+import { QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
+import { useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
   Dispatch,
-  FC,
   MutableRefObject,
-  ReactNode,
+  PropsWithChildren,
   SetStateAction,
   createContext,
   useCallback,
@@ -124,18 +123,16 @@ const INITIAL_FORM = {
   dynamicSlippageBps: Math.ceil(DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT * 100),
 };
 
-export const SwapContextProvider: FC<{
-  displayMode: IInit['displayMode'];
-  scriptDomain?: string;
-  asLegacyTransaction: boolean;
-  setAsLegacyTransaction: React.Dispatch<React.SetStateAction<boolean>>;
-  formProps?: FormProps;
-  maxAccounts?: number;
-  useUserSlippage?: boolean;
-  slippagePresets?: number[];
-  children: ReactNode;
-}> = (props) => {
+export const SwapContextProvider = (
+  props: PropsWithChildren<
+    IInit & {
+      asLegacyTransaction: boolean;
+      setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
+    }
+  >,
+) => {
   const {
+    localStoragePrefix,
     displayMode,
     scriptDomain,
     asLegacyTransaction,
@@ -151,13 +148,16 @@ export const SwapContextProvider: FC<{
 
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
-  const [userSlippage, setUserSlippage] = useLocalStorage<number>('jupiter-terminal-slippage', DEFAULT_SLIPPAGE_PCT);
+  const [userSlippage, setUserSlippage] = useLocalStorage<number>(
+    `${localStoragePrefix}-slippage'`,
+    DEFAULT_SLIPPAGE_PCT,
+  );
   const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
-    'jupiter-terminal-slippage-dynamic',
+    `${localStoragePrefix}-slippage-dynamic`,
     DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
   );
   const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
-    'jupiter-terminal-slippage-mode',
+    `${localStoragePrefix}-slippage-mode`,
     SLIPPAGE_MODE_DEFAULT,
   );
   const [form, setForm] = useState<IForm>(

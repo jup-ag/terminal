@@ -1,13 +1,13 @@
 import { Transaction, VersionedTransaction } from '@solana/web3.js';
-import { createContext, useCallback, useContext, useMemo } from 'react';
+import { createContext, PropsWithChildren, useCallback, useContext, useMemo } from 'react';
 import { useLocalStorage } from 'src/hooks/useLocalStorage';
 import { toLamports } from 'src/misc/utils';
-import { extractComputeUnitLimit, modifyComputeUnitLimitIx, modifyComputeUnitPriceIx } from '@mercurial-finance/optimist';
-
-// --------------------
-// Constants
-// --------------------
-const APP_NAME = 'jupiter-terminal';
+import {
+  extractComputeUnitLimit,
+  modifyComputeUnitLimitIx,
+  modifyComputeUnitPriceIx,
+} from '@mercurial-finance/optimist';
+import { IInit } from 'src/types';
 
 const PRIORITY_FEE_DEFAULT: number = 0.004;
 const PRIORITY_LEVEL_DEFAULT: PriorityLevel = 'HIGH';
@@ -64,19 +64,25 @@ const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
   modifyComputeUnitPriceAndLimit: async () => {},
 });
 
-export function PrioritizationFeeContextProvider({ children }: { children: React.ReactNode }) {
+export function PrioritizationFeeContextProvider({
+  localStoragePrefix,
+  defaultPriorityFee,
+  defaultPriorityMode,
+  defaultPriorityLevel,
+  children,
+}: PropsWithChildren<IInit>) {
   // state
   const [priorityFee, setPriorityFee] = useLocalStorage<number>(
-    `${APP_NAME}-global-priority-fee-0.004`,
-    PRIORITY_FEE_DEFAULT,
+    `${localStoragePrefix}-global-priority-fee-0.004`,
+    defaultPriorityFee || PRIORITY_FEE_DEFAULT,
   );
   const [priorityMode, setPriorityMode] = useLocalStorage<PriorityMode>(
-    `${APP_NAME}-global-priority-mode`,
-    PRIORITY_MODE_DEFAULT,
+    `${localStoragePrefix}-global-priority-mode`,
+    defaultPriorityMode || PRIORITY_MODE_DEFAULT,
   );
   const [priorityLevel, setPriorityLevel] = useLocalStorage<PriorityLevel>(
-    `${APP_NAME}-global-priority-level`,
-    PRIORITY_LEVEL_DEFAULT,
+    `${localStoragePrefix}-global-priority-level`,
+    defaultPriorityLevel || PRIORITY_LEVEL_DEFAULT,
   );
 
   // derrived state
@@ -115,11 +121,15 @@ export function PrioritizationFeeContextProvider({ children }: { children: React
   return (
     <PrioritizationFeeContext.Provider
       value={{
+        // state
         priorityFee,
-        priorityFeeLamports,
         priorityMode,
         priorityLevel,
 
+        // derived state
+        priorityFeeLamports,
+
+        // method
         setPriorityFee,
         setPriorityMode,
         setPriorityLevel,

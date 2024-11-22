@@ -8,6 +8,7 @@ import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
 import { PlatformFeeAndAccounts } from '@jup-ag/common';
 import { SwapMode } from './enums';
+import { PriorityLevel, PriorityMode } from 'src/contexts/PrioritizationFeeContextProvider';
 
 declare global {
   interface Window {
@@ -72,6 +73,11 @@ export interface IOnRequestIxCallback {
 }
 
 export interface IInit {
+  /** Settings saved in local storage will be prefixed with this
+   * You can reset your user's local storage by changing this value
+   */
+  localStoragePrefix?: string;
+
   /** Solana RPC, declare either endpoint, or Connection object */
   /** Solana RPC endpoint */
   endpoint?: string;
@@ -95,8 +101,12 @@ export interface IInit {
   /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   refetchIntervalForTokenAccounts?: number;
 
-  /** Display & Styling */
+  /** Default Priority fees */
+  defaultPriorityFee?: number;
+  defaultPriorityMode?: PriorityMode;
+  defaultPriorityLevel?: PriorityLevel;
 
+  /** Display & Styling */
   /** Display mode */
   displayMode?: 'modal' | 'integrated' | 'widget';
   /** When displayMode is 'integrated', this is the id of the element to render the integrated widget into */

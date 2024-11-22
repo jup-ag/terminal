@@ -55,12 +55,7 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const {
-    displayMode,
-    platformFeeAndAccounts: ogPlatformFeeAndAccounts,
-    formProps,
-    refetchIntervalForTokenAccounts,
-  } = props;
+  const { platformFeeAndAccounts: ogPlatformFeeAndAccounts, refetchIntervalForTokenAccounts } = props;
   const { connection } = useConnection();
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
@@ -90,11 +85,6 @@ const JupiterApp = (props: IInit) => {
     };
   }, [ogPlatformFeeAndAccounts]);
 
-  const maxAccounts = useMemo(() => {
-    if (props.maxAccounts && props.maxAccounts > 64) throw new Error('Max accounts must not be more than 64');
-    return props.maxAccounts || 64;
-  }, [props.maxAccounts]);
-
   return (
     <AccountsProvider refetchIntervalForTokenAccounts={refetchIntervalForTokenAccounts}>
       <JupiterProvider
@@ -105,18 +95,13 @@ const JupiterApp = (props: IInit) => {
         platformFeeAndAccounts={platformFeeAndAccounts}
         asLegacyTransaction={asLegacyTransaction}
       >
-        <PrioritizationFeeContextProvider>
+        <PrioritizationFeeContextProvider {...props}>
           <SwapContextProvider
-            displayMode={displayMode}
-            formProps={formProps}
-            scriptDomain={props.scriptDomain}
+            {...props}
             asLegacyTransaction={asLegacyTransaction}
             setAsLegacyTransaction={setAsLegacyTransaction}
-            maxAccounts={maxAccounts}
-            useUserSlippage={props.useUserSlippage ?? true}
-            slippagePresets={props.slippagePresets}
           >
-            <USDValueProvider>
+            <USDValueProvider {...props}>
               <Content />
             </USDValueProvider>
           </SwapContextProvider>
