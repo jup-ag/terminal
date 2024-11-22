@@ -9,6 +9,7 @@ import EventEmitter from 'events';
 import { PlatformFeeAndAccounts } from '@jup-ag/common';
 import { SwapMode } from './enums';
 import { PriorityLevel, PriorityMode } from 'src/contexts/PrioritizationFeeContextProvider';
+import { SlippageMode } from 'src/contexts/SwapContext';
 
 declare global {
   interface Window {
@@ -94,12 +95,17 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
-  /** Use user's slippage instead of initialSlippageBps, defaults to true */
-  useUserSlippage?: boolean;
   /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
   slippagePresets?: number[];
   /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   refetchIntervalForTokenAccounts?: number;
+  
+  /** Use user's slippage instead of initialSlippageBps, defaults to true */
+  useUserSlippage?: boolean;
+  /** Default Slippage options */
+  defaultFixedSlippage?: number;
+  defaultDynamicSlippage?: number;
+  defaultSlippageMode?: SlippageMode;
 
   /** Default Priority fees */
   defaultPriorityFee?: number;

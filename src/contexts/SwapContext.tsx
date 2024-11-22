@@ -150,15 +150,15 @@ export const SwapContextProvider = (
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
   const [userSlippage, setUserSlippage] = useLocalStorage<number>(
     `${localStoragePrefix}-slippage'`,
-    DEFAULT_SLIPPAGE_PCT,
+    props.defaultFixedSlippage || DEFAULT_SLIPPAGE_PCT,
   );
   const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
     `${localStoragePrefix}-slippage-dynamic`,
-    DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
+    props.defaultDynamicSlippage || DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
   );
   const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
     `${localStoragePrefix}-slippage-mode`,
-    SLIPPAGE_MODE_DEFAULT,
+    props.defaultSlippageMode || SLIPPAGE_MODE_DEFAULT,
   );
   const [form, setForm] = useState<IForm>(
     (() => {
