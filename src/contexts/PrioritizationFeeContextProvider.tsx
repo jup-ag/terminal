@@ -65,7 +65,6 @@ const PrioritizationFeeContext = createContext<PrioritizationFeeContextValue>({
 });
 
 export function PrioritizationFeeContextProvider({
-  localStoragePrefix,
   defaultPriorityFee,
   defaultPriorityMode,
   defaultPriorityLevel,
@@ -73,15 +72,15 @@ export function PrioritizationFeeContextProvider({
 }: PropsWithChildren<IInit>) {
   // state
   const [priorityFee, setPriorityFee] = useLocalStorage<number>(
-    `${localStoragePrefix}-global-priority-fee-0.004`,
+    `${window.Jupiter.localStoragePrefix}-global-priority-fee-0.004`,
     defaultPriorityFee || PRIORITY_FEE_DEFAULT,
   );
   const [priorityMode, setPriorityMode] = useLocalStorage<PriorityMode>(
-    `${localStoragePrefix}-global-priority-mode`,
+    `${window.Jupiter.localStoragePrefix}-global-priority-mode`,
     defaultPriorityMode || PRIORITY_MODE_DEFAULT,
   );
   const [priorityLevel, setPriorityLevel] = useLocalStorage<PriorityLevel>(
-    `${localStoragePrefix}-global-priority-level`,
+    `${window.Jupiter.localStoragePrefix}-global-priority-level`,
     defaultPriorityLevel || PRIORITY_LEVEL_DEFAULT,
   );
 

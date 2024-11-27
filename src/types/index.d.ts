@@ -99,7 +99,7 @@ export interface IInit {
   slippagePresets?: number[];
   /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   refetchIntervalForTokenAccounts?: number;
-  
+
   /** Use user's slippage instead of initialSlippageBps, defaults to true */
   useUserSlippage?: boolean;
   /** Default Slippage options */
@@ -190,4 +190,7 @@ export interface JupiterTerminal {
 
   /** Request Ix instead of direct swap */
   onRequestIxCallback: IInit['onRequestIxCallback'];
+
+  /** Special props */
+  localStoragePrefix: string;
 }

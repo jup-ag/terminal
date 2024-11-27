@@ -252,7 +252,6 @@ async function init(passedProps: IInit) {
   const props: IInit = {
     ...passedProps,
     maxAccounts: passedProps.maxAccounts || 64,
-    localStoragePrefix: passedProps.localStoragePrefix || 'jupiter-terminal',
   };
 
   const {
@@ -321,6 +320,9 @@ async function init(passedProps: IInit) {
   window.Jupiter.onFormUpdate = onFormUpdate;
   window.Jupiter.onScreenUpdate = onScreenUpdate;
   window.Jupiter.onRequestIxCallback = onRequestIxCallback;
+
+  // Special props
+  window.Jupiter.localStoragePrefix = passedProps.localStoragePrefix || 'jupiter-terminal';
 }
 
 const attributes =

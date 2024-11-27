@@ -28,7 +28,7 @@ const TokenContext = React.createContext<{
 
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
 
-export function TokenContextProvider({ localStoragePrefix, formProps, children }: IInit & { children: ReactNode }) {
+export function TokenContextProvider({ formProps, children }: IInit & { children: ReactNode }) {
   const typesenseInstantsearchAdapter = useSearchAdapter();
 
   const [isLoaded, setIsLoaded] = useState(false);
@@ -44,7 +44,7 @@ export function TokenContextProvider({ localStoragePrefix, formProps, children }
 
   // Make sure initialTokenList are only fetched once
   const [localTokenList, setLocalTokenList] = useLocalStorage<{ timestamp: number | null; data: TokenInfo[] }>(
-    `${localStoragePrefix}-local-token-list`,
+    `${window.Jupiter.localStoragePrefix}-local-token-list`,
     { timestamp: null, data: [] },
   );
   const { data: initialTokenList } = useQuery(

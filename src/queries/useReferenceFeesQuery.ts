@@ -29,7 +29,7 @@ interface MarketReferenceFee {
 
 export const useReferenceFeesQuery = () => {
   const [local, setLocal] = useLocalStorage<{ timestamp: number | null; data: MarketReferenceFee | undefined }>(
-    'market-reference-fees-cached',
+    `${window.Jupiter.localStoragePrefix}-market-reference-fees-cached`,
     { timestamp: null, data: undefined },
   );
 
@@ -41,7 +41,7 @@ export const useReferenceFeesQuery = () => {
         return local.data;
       }
 
-      const data = await (await fetch('https://cache.jup.ag/reference-fees')).json() as unknown as MarketReferenceFee;
+      const data = (await (await fetch('https://cache.jup.ag/reference-fees')).json()) as unknown as MarketReferenceFee;
       setLocal({ timestamp: Date.now(), data });
       return data;
     },

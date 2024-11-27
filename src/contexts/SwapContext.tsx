@@ -132,7 +132,6 @@ export const SwapContextProvider = (
   >,
 ) => {
   const {
-    localStoragePrefix,
     displayMode,
     scriptDomain,
     asLegacyTransaction,
@@ -149,15 +148,15 @@ export const SwapContextProvider = (
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
   const [userSlippage, setUserSlippage] = useLocalStorage<number>(
-    `${localStoragePrefix}-slippage'`,
+    `${window.Jupiter.localStoragePrefix}-slippage'`,
     props.defaultFixedSlippage || DEFAULT_SLIPPAGE_PCT,
   );
   const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
-    `${localStoragePrefix}-slippage-dynamic`,
+    `${window.Jupiter.localStoragePrefix}-slippage-dynamic`,
     props.defaultDynamicSlippage || DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT,
   );
   const [userSlippageMode, setUserSlippageMode] = useLocalStorage<SlippageMode>(
-    `${localStoragePrefix}-slippage-mode`,
+    `${window.Jupiter.localStoragePrefix}-slippage-mode`,
     props.defaultSlippageMode || SLIPPAGE_MODE_DEFAULT,
   );
   const [form, setForm] = useState<IForm>(

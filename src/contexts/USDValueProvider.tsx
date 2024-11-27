@@ -42,12 +42,12 @@ const hasExpired = (timestamp: number) => {
   return false;
 };
 
-export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ localStoragePrefix, children }) => {
+export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => {
   const { accounts } = useAccounts();
   const { getTokenInfo } = useTokenContext();
   const { fromTokenInfo, toTokenInfo } = useSwapContext();
 
-  const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(`${localStoragePrefix}-cached-token-prices`, {});
+  const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(`${window.Jupiter.localStoragePrefix}-cached-token-prices`, {});
   const [addresses, setAddresses] = useState<Set<string>>(new Set());
   const [debouncedAddresses, setDebouncedAddresses] = useState<string[]>([]);
 
