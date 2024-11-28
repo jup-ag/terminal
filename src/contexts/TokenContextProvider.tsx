@@ -44,7 +44,7 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
 
   // Make sure initialTokenList are only fetched once
   const [localTokenList, setLocalTokenList] = useLocalStorage<{ timestamp: number | null; data: TokenInfo[] }>(
-    'local-token-list',
+    `${window.Jupiter.localStoragePrefix}-local-token-list`,
     { timestamp: null, data: [] },
   );
   const { data: initialTokenList } = useQuery(

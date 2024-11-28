@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { createContext, FC, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, FC, PropsWithChildren, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDebounce, useLocalStorage } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
 import { useAccounts } from './accounts';
 import { useSwapContext } from './SwapContext';
 import { useTokenContext } from './TokenContextProvider';
+import { IInit } from 'src/types';
 
 const MAXIMUM_PARAM_SUPPORT = 100;
 const CACHE_EXPIRE_TIME = 1000 * 60 * 1; // 1 min
-const STORAGE_KEY = 'jupiter-terminal-cached-token-prices';
 
 interface CacheUSDValue {
   usd: number;
@@ -42,12 +42,12 @@ const hasExpired = (timestamp: number) => {
   return false;
 };
 
-export const USDValueProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => {
   const { accounts } = useAccounts();
   const { getTokenInfo } = useTokenContext();
   const { fromTokenInfo, toTokenInfo } = useSwapContext();
 
-  const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(STORAGE_KEY, {});
+  const [cachedPrices, setCachedPrices] = useLocalStorage<ITokenUSDValue>(`${window.Jupiter.localStoragePrefix}-cached-token-prices`, {});
   const [addresses, setAddresses] = useState<Set<string>>(new Set());
   const [debouncedAddresses, setDebouncedAddresses] = useState<string[]>([]);
 

@@ -8,6 +8,8 @@ import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
 import { PlatformFeeAndAccounts } from '@jup-ag/common';
 import { SwapMode } from './enums';
+import { PriorityLevel, PriorityMode } from 'src/contexts/PrioritizationFeeContextProvider';
+import { SlippageMode } from 'src/contexts/SwapContext';
 
 declare global {
   interface Window {
@@ -72,6 +74,11 @@ export interface IOnRequestIxCallback {
 }
 
 export interface IInit {
+  /** Settings saved in local storage will be prefixed with this
+   * You can reset your user's local storage by changing this value
+   */
+  localStoragePrefix?: string;
+
   /** Solana RPC, declare either endpoint, or Connection object */
   /** Solana RPC endpoint */
   endpoint?: string;
@@ -88,15 +95,24 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
-  /** Use user's slippage instead of initialSlippageBps, defaults to true */
-  useUserSlippage?: boolean;
   /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
   slippagePresets?: number[];
   /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   refetchIntervalForTokenAccounts?: number;
 
-  /** Display & Styling */
+  /** Use user's slippage instead of initialSlippageBps, defaults to true */
+  useUserSlippage?: boolean;
+  /** Default Slippage options */
+  defaultFixedSlippage?: number;
+  defaultDynamicSlippage?: number;
+  defaultSlippageMode?: SlippageMode;
 
+  /** Default Priority fees */
+  defaultPriorityFee?: number;
+  defaultPriorityMode?: PriorityMode;
+  defaultPriorityLevel?: PriorityLevel;
+
+  /** Display & Styling */
   /** Display mode */
   displayMode?: 'modal' | 'integrated' | 'widget';
   /** When displayMode is 'integrated', this is the id of the element to render the integrated widget into */
@@ -174,4 +190,7 @@ export interface JupiterTerminal {
 
   /** Request Ix instead of direct swap */
   onRequestIxCallback: IInit['onRequestIxCallback'];
+
+  /** Special props */
+  localStoragePrefix: string;
 }

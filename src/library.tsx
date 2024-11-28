@@ -243,8 +243,16 @@ const RenderWidgetShell = (props: IInit) => {
 const store = createStore();
 const appProps = atom<IInit | undefined>(undefined);
 
-async function init(props: IInit) {
-  if (typeof window === 'undefined' || typeof document === 'undefined') return '';
+async function init(passedProps: IInit) {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return null;
+
+  // Prechecks
+  if (passedProps.maxAccounts && passedProps.maxAccounts > 64) throw new Error('Max accounts must not be more than 64');
+
+  const props: IInit = {
+    ...passedProps,
+    maxAccounts: passedProps.maxAccounts || 64,
+  };
 
   const {
     enableWalletPassthrough,
@@ -258,6 +266,7 @@ async function init(props: IInit) {
     integratedTargetId,
     ...restProps
   } = props;
+
   const targetDiv = document.createElement('div');
   const instanceExist = document.getElementById(containerId);
   window.Jupiter.store = store;
@@ -311,9 +320,13 @@ async function init(props: IInit) {
   window.Jupiter.onFormUpdate = onFormUpdate;
   window.Jupiter.onScreenUpdate = onScreenUpdate;
   window.Jupiter.onRequestIxCallback = onRequestIxCallback;
+
+  // Special props
+  window.Jupiter.localStoragePrefix = passedProps.localStoragePrefix || 'jupiter-terminal';
 }
 
-const attributes = typeof document !== 'undefined' ? (document.currentScript as HTMLScriptElement)?.attributes : undefined;
+const attributes =
+  typeof document !== 'undefined' ? (document.currentScript as HTMLScriptElement)?.attributes : undefined;
 if (typeof window !== 'undefined' && typeof document !== 'undefined' && attributes) {
   document.onreadystatechange = function () {
     const loadComplete = document.readyState === 'complete';
