@@ -148,7 +148,7 @@ export const SwapContextProvider = (
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
   const [userSlippage, setUserSlippage] = useLocalStorage<number>(
-    `${window.Jupiter.localStoragePrefix}-slippage'`,
+    `${window.Jupiter.localStoragePrefix}-slippage`,
     props.defaultFixedSlippage || DEFAULT_SLIPPAGE_PCT,
   );
   const [userSlippageDynamic, setUserSlippageDynamic] = useLocalStorage<number>(
