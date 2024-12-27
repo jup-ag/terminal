@@ -22,8 +22,8 @@ importers:
         specifier: 6.2.0
         version: 6.2.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)
       '@jup-ag/wallet-adapter':
-        specifier: 0.2.0
-        version: 0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+        specifier: 0.2.2
+        version: 0.2.2(jzgi7watube5ma2j5w747fc5wy)
       '@mercurial-finance/optimist':
         specifier: 0.4.0
         version: 0.4.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10)
@@ -2133,11 +2133,15 @@ packages:
       bn.js: '>=5.2.0'
       react: '>=16'
 
-  '@jup-ag/wallet-adapter@0.2.0':
-    resolution: {integrity: sha512-RAOXbBWWXkOkVGnxo1ibIFMxb69GWg15sN3DEH5Kk3etwU1JNVZxpjmLnbrz7tUbEvajrF5OH1NwRLOmHR3Ihw==}
+  '@jup-ag/wallet-adapter@0.2.2':
+    resolution: {integrity: sha512-BaNkBwwauxZtBP1xS+yxY0hY1qbHZoecRMILUymB2wKd8YMGnw3tgkhEjpmp5TkMQgDwUSJnutf9UQgOL+catg==}
     peerDependencies:
       '@emotion/react': ^11.10.5
       '@emotion/styled': ^11.10.5
+      '@jup-ag/jup-mobile-adapter': '*'
+      '@reown/appkit': '>=1.6.0'
+      '@reown/appkit-adapter-solana': '>=1.6.0'
+      '@reown/appkit-wallet-button': '>=1.6.0'
       '@solana/spl-token': '*'
       '@solana/web3.js': 1.87.6
       decimal.js: '>=10.4.3'
@@ -3651,10 +3655,6 @@ packages:
   '@typescript-eslint/visitor-keys@5.62.0':
     resolution: {integrity: sha512-07ny+LHRzQXepkGg6w0mFY41fVUNBrL2Roj/++7V1txKugfjm/Ci/qSND03r2RhlJhJYMcTn9AhhSSqQp0Ysyw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
-
-  '@wallet-standard/app@1.0.1':
-    resolution: {integrity: sha512-LnLYq2Vy2guTZ8GQKKSXQK3+FRGPil75XEdkZqE6fiLixJhZJoJa5hT7lXxwe0ykVTt9LEThdTbOpT7KadS26Q==}
-    engines: {node: '>=16'}
 
   '@wallet-standard/app@1.1.0':
     resolution: {integrity: sha512-3CijvrO9utx598kjr45hTbbeeykQrQfKmSnxeWOgU25TOEpvcipD/bYDQWIqUv1Oc6KK4YStokSMu/FBNecGUQ==}
@@ -11669,10 +11669,14 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@jup-ag/wallet-adapter@0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
+  '@jup-ag/wallet-adapter@0.2.2(jzgi7watube5ma2j5w747fc5wy)':
     dependencies:
       '@emotion/react': 11.11.4(@types/react@18.0.23)(react@18.2.0)
       '@emotion/styled': 11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0)
+      '@jup-ag/jup-mobile-adapter': 0.0.1(opuqzqlr6rhgixunu5ro2lhorq)
+      '@reown/appkit': 1.6.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@types/react@18.0.23)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)(zod@3.22.4)
+      '@reown/appkit-adapter-solana': 1.6.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@types/react@18.0.23)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)(zod@3.22.4)
+      '@reown/appkit-wallet-button': 1.6.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@types/react@18.0.23)(bufferutil@4.0.8)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)(zod@3.22.4)
       '@solana-mobile/wallet-adapter-mobile': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
       '@solana/spl-token': 0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -13387,21 +13391,21 @@ snapshots:
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-standard-chains': 1.1.0
-      '@solana/wallet-standard-features': 1.1.0
-      '@solana/wallet-standard-util': 1.1.0
+      '@solana/wallet-standard-features': 1.2.0
+      '@solana/wallet-standard-util': 1.1.1
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@wallet-standard/app': 1.0.1
-      '@wallet-standard/base': 1.0.1
+      '@wallet-standard/app': 1.1.0
+      '@wallet-standard/base': 1.1.0
       '@wallet-standard/features': 1.0.3
-      '@wallet-standard/wallet': 1.0.1
+      '@wallet-standard/wallet': 1.1.0
       bs58: 5.0.0
 
   '@solana/wallet-standard-wallet-adapter-react@1.1.1(@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react@18.2.0)':
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-standard-wallet-adapter-base': 1.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)
-      '@wallet-standard/app': 1.0.1
-      '@wallet-standard/base': 1.0.1
+      '@wallet-standard/app': 1.1.0
+      '@wallet-standard/base': 1.1.0
       react: 18.2.0
     transitivePeerDependencies:
       - '@solana/web3.js'
@@ -13920,10 +13924,6 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       eslint-visitor-keys: 3.4.3
-
-  '@wallet-standard/app@1.0.1':
-    dependencies:
-      '@wallet-standard/base': 1.0.1
 
   '@wallet-standard/app@1.1.0':
     dependencies:
