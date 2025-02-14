@@ -1,22 +1,21 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import classNames from 'classnames';
-import React, { createRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { InstantSearch, useInstantSearch, useSearchBox } from 'react-instantsearch';
+import React, { createRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps, areEqual } from 'react-window';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import SearchIcon from 'src/icons/SearchIcon';
 
-
 import { useConnection } from '@jup-ag/wallet-adapter';
-import { PublicKey } from '@solana/web3.js';
 import debounce from 'lodash.debounce';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
-import { searchOnChainTokens } from 'src/contexts/searchOnChains';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import FormPairRow from './FormPairRow';
 import { useSortByValue } from './useSortByValue';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { searchService } from 'src/contexts/SearchService';
+import { useAccounts } from 'src/contexts/accounts';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -26,50 +25,16 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
   const { data, index, style } = props;
   const item = data.searchResult[index];
 
-  return <FormPairRow key={item.address} item={item} style={style} onSubmit={data.onSubmit} usdValue={data.mintToUsdValue.get(item.address)} />;
-}, areEqual);
-
-const generateSearchTerm = (info: TokenInfo, searchValue: string) => {
-  const isMatchingWithSymbol = info.symbol.toLowerCase().indexOf(searchValue) >= 0;
-  const matchingSymbolPercent = isMatchingWithSymbol ? searchValue.length / info.symbol.length : 0;
-  const isUnknown = checkIsUnknownToken(info);
-  const matchingTerm = `${info.symbol} ${info.name}`.toLowerCase();
-
-  return {
-    token: info,
-    matchingIdx: matchingTerm.indexOf(searchValue),
-    matchingSymbolPercent,
-    isUnknown,
-  };
-};
-
-const startSearch = async (items: TokenInfo[], searchValue: string): Promise<TokenInfo[]> => {
-  const normalizedSearchValue = searchValue.toLowerCase();
-
-  const searchTermResults = items.reduce(
-    (acc, item) => {
-      const result = generateSearchTerm(item, normalizedSearchValue);
-      if (result.matchingIdx >= 0) {
-        acc.push(result);
-      }
-      return acc;
-    },
-    [] as Array<ReturnType<typeof generateSearchTerm>>,
+  return (
+    <FormPairRow
+      key={item.address}
+      item={item}
+      style={style}
+      onSubmit={data.onSubmit}
+      usdValue={data.mintToUsdValue.get(item.address)}
+    />
   );
-
-  return searchTermResults
-    .sort((i1, i2) => {
-      const matchingIndex = i1.matchingIdx - i2.matchingIdx;
-      const matchingSymbol =
-        i2.matchingSymbolPercent > i1.matchingSymbolPercent
-          ? 1
-          : i2.matchingSymbolPercent == i1.matchingSymbolPercent && i1.isUnknown && !i2.isUnknown // unknown tokens should be at the bottom
-          ? 0
-          : -1;
-      return matchingIndex >= 0 ? matchingSymbol : matchingIndex;
-    })
-    .map((item) => item.token);
-};
+}, areEqual);
 
 interface IFormPairSelector {
   onSubmit: (value: TokenInfo) => void;
@@ -77,169 +42,74 @@ interface IFormPairSelector {
   tokenInfos: TokenInfo[];
 }
 const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) => {
-  const { tokenMap, unknownTokenMap, addOnchainTokenInfo } = useTokenContext();
-  const { getUSDValue } = useUSDValueProvider();
-  const { connection } = useConnection();
-
-  const {
-    setUiState,
-    results: typesenseResults,
-    error: typesenseError,
-    status: typesenseStatus,
-  } = useInstantSearch({ catchError: true });
-  const { refine, clear, isSearchStalled } = useSearchBox();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const triggerSearch = useCallback(
-    debounce((value: string) => {
-      if (value.length > 2) {
-        refine(value);
-      } else {
-        clear();
-      }
-    }, 200),
-    [],
-  );
+  const { addUnknownTokenInfo } = useTokenContext();
+  const { mutateAsync: performSearch, isLoading } = useMutation(async (value: string) => {
+    const response = await searchService.search(value);
+    return response;
+  });
 
   const searchValue = useRef<string>('');
-  const [triggerLocalSearch, setTriggerLocalSearch] = useState<string>('');
-  const [isSearching, setIsSearching] = useState(false);
-  const haveSearchedOnchain = useRef(false);
+
+  const { data: blueChipTokens } = useQuery({
+    queryKey: ['blueChipTokens'],
+    queryFn: () => searchService.search(''),
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  const { accounts: userAccounts, loading: isInitialLoading } = useAccounts();
+  const { data: userBalanceTokens } = useQuery({
+    queryKey: ['userBalanceTokens', userAccounts],
+    queryFn: async () => {
+      const userMints = Object.keys(userAccounts).filter((key) => userAccounts[key].balanceLamports.gtn(0));
+      return searchService.getUserBalanceTokenInfo(userMints);
+    },
+    enabled: Object.keys(userAccounts).length > 0,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+
+  // Update triggerSearch to use cached user balance tokens
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const triggerSearch = useCallback(
+    debounce(async (value: string) => {
+      try {
+        if (!value || value.length < 1) {
+          setSearchResult(await sortTokenListByBalance([...(blueChipTokens || []), ...(userBalanceTokens || [])]));
+          return;
+        }
+
+        const searchResult = await performSearch(value);
+        setSearchResult(searchResult);
+
+        searchResult.forEach((item) => checkIsUnknownToken(item) && addUnknownTokenInfo(item));
+      } catch (error) {
+        console.error(error);
+      }
+    }, 200),
+    [blueChipTokens, userBalanceTokens], // Add userBalanceTokens to dependencies
+  );
+
   const onChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setSearchResult([]);
-      setIsSearching(true);
-      setTriggerLocalSearch(e.target.value);
-      const value = e.target.value;
-      searchValue.current = value;
-      triggerSearch(value);
-
-      if (searchValue.current.length >= 32 && searchValue.current.length <= 48) {
-        haveSearchedOnchain.current = false;
-      }
+      triggerSearch(e.target.value);
+      searchValue.current = e.target.value;
     },
     [triggerSearch],
   );
 
-  const tokenInfoArray = useMemo(() => {
-    return [...tokenMap.values(), ...unknownTokenMap.values()];
-  }, [tokenMap, unknownTokenMap]);
-
-  const userWalletResults = useMemo(() => {
-    const userWalletResults: TokenInfo[] = [...tokenMap.values(), ...unknownTokenMap.values()];
-    return userWalletResults;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);  
-
   const [searchResult, setSearchResult] = useState<TokenInfo[]>(tokenInfos);
-  const { sortTokenListByBalance, filterStrictToken, mintToUsdValue } = useSortByValue();
-
-  // Multi-tiered search
-  // 1. Search pre-bundled token list (if /all-tokens is available, will supersede this)
-  // 2. Search typesense
-  // 3. Wait for /all-tokens to load, and search
-  // 4. TODO: support on chain search
-  useEffect(() => {
-    (async () => {
-      // Show user wallet tokens by default
-      if (!searchValue.current) {
-        setSearchResult(await sortTokenListByBalance(userWalletResults));
-        setIsSearching(false);
-        return;
-      }
-
-      const newMap = new Map<string, TokenInfo>();
-      const isValidPublickey = (() => {
-        try {
-          return Boolean(new PublicKey(searchValue.current));
-        } catch (error) {
-          return false;
-        }
-      })();
-
-      // Step 0: Check if token is already cached
-      const foundOnStrict = tokenMap.get(searchValue.current);
-      if (foundOnStrict) {
-        setSearchResult([foundOnStrict]);
-        setIsSearching(false);
-        return;
-      }
-
-      // Step 1 or 3
-      if (searchValue.current) {
-        const result = await startSearch(tokenInfoArray, searchValue.current);
-        result.forEach((item) => newMap.set(item.address, item));
-      }
-
-      // Step 2
-      // Typesense tends to keep the last result, by checking `searchValue === typesenseResults.query` we can prevent this
-      if (
-        searchValue.current === typesenseResults.query &&
-        searchValue.current.length > 2 &&
-        typesenseResults &&
-        !typesenseError
-      ) {
-        const hits = typesenseResults.hits as any as TokenInfo[];
-        hits.forEach((item) => newMap.set(item.address, item));
-
-        // Populate all typesense results into unknownTokenMap
-        hits.forEach((item) => {
-          if (tokenMap.has(item.address) || unknownTokenMap.has(item.address)) return;
-          unknownTokenMap.set(item.address, item);
-        });
-      }
-
-      // Step 4, check if there's direct match, prevent imposer token with mint as name
-      // e.g 8ULCkCTUa3XXrNXaDVzPcja2tdJtRdxRr8T4eZjVKqk
-      if (isValidPublickey) {
-        const hasDirectResult = newMap.get(searchValue.current);
-        if (hasDirectResult) {
-          setSearchResult([hasDirectResult]);
-        }
-      } else {
-        setSearchResult(await sortTokenListByBalance(Array.from(newMap.values())));
-      }
-
-      // Step 5, If no typesense hits, perform onchain search
-      // should wait until there's no result, then start searching
-      const foundOnTypesense = Boolean(
-        isValidPublickey && typesenseResults.hits.find((item) => item.address === searchValue.current),
-      );
-      if (isValidPublickey && foundOnTypesense === false) {
-        const tokenInfoOnchain = await searchOnChainTokens(connection, [searchValue.current]);
-        const onChainResult = tokenInfoOnchain.get(searchValue.current);
-        if (onChainResult) {
-          setSearchResult((prev) => {
-            const newMap = new Map<string, TokenInfo>();
-            newMap.set(onChainResult.address, onChainResult);
-            prev.forEach((item) => newMap.set(item.address, item));
-            return Array.from(newMap.values());
-          });
-          addOnchainTokenInfo(onChainResult);
-        }
-        haveSearchedOnchain.current = true;
-      }
-
-      setIsSearching(false);
-    })();
-  }, [
-    typesenseResults,
-    searchValue,
-    sortTokenListByBalance,
-    filterStrictToken,
-    typesenseError,
-    tokenInfoArray,
-    tokenMap,
-    getUSDValue,
-    unknownTokenMap,
-    triggerLocalSearch,
-    connection,
-    addOnchainTokenInfo,
-    userWalletResults,
-  ]);
+  const { sortTokenListByBalance, mintToUsdValue } = useSortByValue();
 
   const listRef = createRef<FixedSizeList>();
   const inputRef = createRef<HTMLInputElement>();
   useEffect(() => inputRef.current?.focus(), [inputRef]);
+
+  // Initial call after loading is done, so balances and tokens are sorted properly
+  useEffect(() => {
+    if (!isInitialLoading) {
+      triggerSearch(searchValue.current);
+    }
+  }, [triggerSearch, isInitialLoading]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2 bg-v3-modal">
@@ -293,7 +163,11 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
           </AutoSizer>
         )}
 
-        {searchResult.length === 0 ? (
+        {isLoading ? (
+          <div className="mt-4 mb-4 text-center text-white/50">
+            <span>Loading...</span>
+          </div>
+        ) : searchResult.length === 0 ? (
           <div className="mt-4 mb-4 text-center text-white/50">
             <span>No tokens found</span>
           </div>
@@ -305,19 +179,4 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
   );
 };
 
-const Comp = (props: IFormPairSelector) => {
-  const { typesenseInstantsearchAdapter } = useTokenContext();
-  return (
-    <InstantSearch
-      indexName="tokens"
-      searchClient={typesenseInstantsearchAdapter.searchClient}
-      future={{
-        preserveSharedStateOnUnmount: true,
-      }}
-    >
-      <FormPairSelector {...props} />
-    </InstantSearch>
-  );
-};
-
-export default Comp;
+export default FormPairSelector;

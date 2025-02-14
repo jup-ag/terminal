@@ -9,6 +9,7 @@ import TokenIcon from './TokenIcon';
 import TokenLink from './TokenLink';
 import CoinBalance from './Coinbalance';
 import { useLstApyFetcher } from './SuggestionTags/hooks/useLstApy';
+import CheckedBadge from './CheckedBadge';
 
 export const PAIR_ROW_HEIGHT = 72;
 
@@ -87,7 +88,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
 
   if (!renderedTag) return null;
 
-  const { isVerified, isToken2022, isFrozen, isLST } = renderedTag;
+  const { isToken2022, isFrozen, isLST } = renderedTag;
 
   return (
     <div className="flex justify-end gap-x-1">
@@ -112,13 +113,6 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
       ))}
 
       {isLST && <LSTTag mintAddress={item.address} />}
-
-      {isVerified && (
-        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
-          {/* We're renaming verified to stict for now, requested by Mei */}
-          Community
-        </p>
-      )}
     </div>
   );
 };
@@ -140,9 +134,9 @@ const FormPairRow = (props: IPairRow) => {
   }, [onSubmit, item, suppressCloseModal]);
 
   const usdValueDisplay =
-  usdValue && usdValue.gte(0.01) // If smaller than 0.01 cents, dont show
-  ? `$${formatNumber.format(usdValue, 2)}` // USD value can hardcode to 2
-  : '';
+    usdValue && usdValue.gte(0.01) // If smaller than 0.01 cents, dont show
+      ? `$${formatNumber.format(usdValue, 2)}` // USD value can hardcode to 2
+      : '';
 
   return (
     <li
@@ -154,22 +148,32 @@ const FormPairRow = (props: IPairRow) => {
       <div className="flex h-full w-full items-center space-x-4">
         <div className="flex-shrink-0">
           <div className="bg-gray-200 rounded-full">
-            <TokenIcon info={item} width={24} height={24} enableUnknownTokenWarning={enableUnknownTokenWarning} />
+            <TokenIcon info={item} width={36} height={36} enableUnknownTokenWarning={enableUnknownTokenWarning} />
           </div>
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex space-x-2">
-            <p className="text-sm font-medium text-white truncate">{item.symbol}</p>
+          <div className="flex flex-col gap-y-px">
+            <div className="flex items-center">
+              <p className="text-sm font-medium text-white truncate">{item.symbol}</p>
+
+              {checkIsStrictOrVerified(item) && (
+                <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary">
+                  <CheckedBadge width={18} height={18} />
+                </p>
+              )}
+            </div>
+
+            <p className="text-xs text-gray-500 dark:text-white-35 truncate">
+              {item.address === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
+            </p>
+
             {/* Intentionally higher z to be clickable */}
             {showExplorer ? (
-              <div className="z-10" onClick={(e) => e.stopPropagation()}>
+              <div className="z-10 w-fit" onClick={(e) => e.stopPropagation()}>
                 <TokenLink tokenInfo={item} />
               </div>
             ) : null}
           </div>
-          <p className="text-xs text-gray-500 dark:text-white-35 truncate">
-            {item.address === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
-          </p>
         </div>
 
         <div className="text-xs text-v2-lily/50 text-right h-full flex flex-col justify-evenly">

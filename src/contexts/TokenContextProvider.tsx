@@ -4,10 +4,8 @@ import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { IInit } from 'src/types';
 import { useInterval } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
-import { useSearchAdapter } from './search';
-import { SearchResponse } from 'typesense/lib/Typesense/Documents';
-import TypesenseInstantsearchAdapter from 'typesense-instantsearch-adapter';
 import { useQuery } from '@tanstack/react-query';
+import { searchService } from './SearchService';
 
 export type ENV = 'mainnet-beta' | 'testnet' | 'devnet' | 'localnet';
 export const CLUSTER_TO_CHAIN_ID: Record<ENV, ChainID> = {
@@ -23,14 +21,12 @@ const TokenContext = React.createContext<{
   isLoaded: boolean;
   getTokenInfo: (mint: string) => TokenInfo | undefined;
   addOnchainTokenInfo: (tokenInfo: TokenInfo) => void;
-  typesenseInstantsearchAdapter: TypesenseInstantsearchAdapter;
+  addUnknownTokenInfo: (tokenInfo: TokenInfo) => void;
 } | null>(null);
 
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
 
 export function TokenContextProvider({ formProps, children }: IInit & { children: ReactNode }) {
-  const typesenseInstantsearchAdapter = useSearchAdapter();
-
   const [isLoaded, setIsLoaded] = useState(false);
   const tokenMap = useRef<Map<string, TokenInfo>>(
     (() => {
@@ -89,49 +85,35 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
     }
   }, [initialTokenList]);
 
-  const requestTokenInfo = useCallback(
-    async (mintAddresses: string[]): Promise<TokenInfo[]> => {
-      const filteredAddreses = Array.from(
-        new Set(
-          mintAddresses
-            .filter((mint) => !tokenMap.current.has(mint)) // we already have it
-            .filter(Boolean), // filter empty string
-        ),
-      );
-      if (filteredAddreses.length === 0) return [];
-      // Memoize that we have tried to request before, let's not request the same mint again
-      filteredAddreses.forEach((mint) => requestedTokenInfo.current.add(mint));
+  const requestTokenInfo = useCallback(async (mintAddresses: string[]): Promise<TokenInfo[]> => {
+    const filteredAddreses = Array.from(
+      new Set(
+        mintAddresses
+          .filter((mint) => !tokenMap.current.has(mint)) // we already have it
+          .filter(Boolean), // filter empty string
+      ),
+    );
+    if (filteredAddreses.length === 0) return [];
+    // Memoize that we have tried to request before, let's not request the same mint again
+    filteredAddreses.forEach((mint) => requestedTokenInfo.current.add(mint));
 
-      const chunks = splitIntoChunks([...filteredAddreses], 50);
-      const result: TokenInfo[] = [];
+    const chunks = splitIntoChunks([...filteredAddreses], 50);
+    const result: TokenInfo[] = [];
 
-      for (const chunk of chunks) {
-        try {
-          const response = await typesenseInstantsearchAdapter.typesenseClient.multiSearch.perform({
-            searches: chunk.map((mint) => ({
-              collection: 'tokens',
-              q: mint,
-              query_by: 'address',
-              filter_by: `address:${mint}`,
-            })),
-          });
-
-          // Set it into tokenMap
-          response.results.forEach((searchResult: SearchResponse<TokenInfo>) => {
-            if (!searchResult.hits || !searchResult.hits[0]) return;
-            const item = searchResult.hits[0].document;
-            unknownTokenMap.current.set(item.address, item);
-            result.push(item);
-          });
-        } catch (error) {
-          console.log('Typesense failed to fetch token info', error);
-        }
+    for (const chunk of chunks) {
+      try {
+        const response = await searchService.search(chunk.join(','));
+        response.forEach((item) => {
+          unknownTokenMap.current.set(item.address, item);
+          result.push(item);
+        });
+      } catch (error) {
+        console.log('Failed to fetch token info', error);
       }
+    }
 
-      return result;
-    },
-    [typesenseInstantsearchAdapter.typesenseClient.multiSearch],
-  );
+    return result;
+  }, []);
 
   const tokenInfoToRequests = useRef<string[]>([]);
   const requestedTokenInfo = useRef<Set<string>>(new Set());
@@ -161,6 +143,10 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
     onChainTokenMap.current.set(tokenInfo.address, tokenInfo);
   }, []);
 
+  const addUnknownTokenInfo = useCallback((tokenInfo: TokenInfo) => {
+    unknownTokenMap.current.set(tokenInfo.address, tokenInfo);
+  }, []);
+
   return (
     <TokenContext.Provider
       value={{
@@ -169,7 +155,7 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
         isLoaded,
         getTokenInfo,
         addOnchainTokenInfo,
-        typesenseInstantsearchAdapter,
+        addUnknownTokenInfo,
       }}
     >
       {children}

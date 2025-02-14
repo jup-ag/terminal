@@ -2,6 +2,7 @@ import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import { useCallback, useEffect, useRef } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
+import { SearchTokenInfo } from 'src/contexts/SearchService';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
 import { useAccounts } from 'src/contexts/accounts';
@@ -53,34 +54,44 @@ export const useSortByValue = () => {
     }
   }, [getTokenInfo, nativeAccount, tokenPriceMap, accounts]);
 
-  const sortTokenListByBalance = useCallback(async (tokenList: TokenInfo[]): Promise<TokenInfo[]> => {
-    const newList = [...tokenList];
+  const sortTokenListByBalance = useCallback(async (tokenList: SearchTokenInfo[]): Promise<SearchTokenInfo[]> => {
+    // Dedupe same mints
+    const dedupeList = (() => {
+      const map = new Map<string, SearchTokenInfo>();
+      tokenList.forEach((item) => {
+        if (!map.has(item.address)) {
+          map.set(item.address, item);
+        }
+      });
+      return Array.from(map.values());
+    })();
 
-    const result = newList.sort((t1, t2) => {
+    const result = dedupeList.sort((t1, t2) => {
       // 1. USD value comparison
       const t1UsdValue = mintToUsdValue.current.get(t1.address);
       const t2UsdValue = mintToUsdValue.current.get(t2.address);
-      if (t1UsdValue) {
-        if (t2UsdValue) {
-          return t2UsdValue.cmp(t1UsdValue);
-        } else {
-          // bump to front if the second token dont have price
-          return -1;
-        }
-      } else if (t2UsdValue) {
-        if (!t1UsdValue) return 1;
+      if (t1UsdValue && t2UsdValue) {
+        // both have price
+        return t2UsdValue.cmp(t1UsdValue);
+      } else if (t1UsdValue && !t2UsdValue) {
+        // only t1 has price
+        return -1;
+      } else if (!t1UsdValue && t2UsdValue) {
+        // only t2 has price
+        return 1;
       }
 
       const t1Balance = mintBalanceMap.current.get(t1.address);
       const t2Balance = mintBalanceMap.current.get(t2.address);
       // 2. balance comparison
-      if (t1Balance) {
-        if (t2Balance) {
-          return new Decimal(t2Balance).cmp(t1Balance);
-        } else {
-          // bump to front if the second token dont have balance
-          return -1;
-        }
+      if (t1Balance && t2Balance) {
+        return new Decimal(t2Balance).cmp(t1Balance);
+      } else if (t1Balance && !t2Balance) {
+        // only t1 has balance
+        return -1;
+      } else if (!t1Balance && t2Balance) {
+        // only t2 has balance
+        return 1;
       }
 
       // 3. Score based sorting
@@ -94,8 +105,8 @@ export const useSortByValue = () => {
       if (t2Volume > t1Volume) t2Score += 1;
 
       // 3.2 deprioritise unknown tokens
-      if (t1.tags?.includes('unknown') || t1.tags?.length === 0) t1Score -= 2;
-      if (t2.tags?.includes('unknown') || t2.tags?.length === 0) t2Score -= 2;
+      if (checkIsUnknownToken(t1)) t1Score -= 2;
+      if (checkIsUnknownToken(t2)) t2Score -= 2;
       return t2Score - t1Score;
     });
     return result;
