@@ -1,5 +1,5 @@
 import { ZERO } from '@jup-ag/math';
-import { QuoteResponse, SwapMode, TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
+import {  SwapMode, TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import classNames from 'classnames';
 import Decimal from 'decimal.js';
@@ -14,6 +14,8 @@ import Deposits from './Deposits';
 import Fees from './Fees';
 import PlatformFees, { PlatformFeesInfo } from './PlatformFees';
 import TransactionFee from './TransactionFee';
+import { UltraQuoteResponse } from 'src/data/UltraSwapService';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 const Index = ({
   quoteResponse,
@@ -23,7 +25,7 @@ const Index = ({
   showFullDetails = false,
   containerClassName,
 }: {
-  quoteResponse: QuoteResponse;
+  quoteResponse: FormattedUltraQuoteResponse;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
   loading: boolean;
@@ -64,7 +66,7 @@ const Index = ({
   useEffect(() => {
     if (quoteResponse) {
       const fee = calculateFeeForSwap(
-        quoteResponse,
+        quoteResponse as any,
         mintToAccountMap,
         new Map(), // we can ignore this as we are using shared accounts
         true,
@@ -117,9 +119,9 @@ const Index = ({
           <Fees routePlan={quoteResponse?.routePlan} swapMode={quoteResponse.swapMode as SwapMode} />
           <TransactionFee feeInformation={feeInformation} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
-          {(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee ? (
+          {(quoteResponse as FormattedUltraQuoteResponse & PlatformFeesInfo).platformFee ? (
             <PlatformFees
-              platformFee={(quoteResponse as QuoteResponse & PlatformFeesInfo).platformFee}
+              platformFee={(quoteResponse as FormattedUltraQuoteResponse & PlatformFeesInfo).platformFee}
               tokenInfo={quoteResponse?.swapMode === SwapMode.ExactIn ? toTokenInfo : fromTokenInfo}
             />
           ) : null}

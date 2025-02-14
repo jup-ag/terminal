@@ -1,12 +1,14 @@
 import React from 'react';
 
-import { QuoteResponse, SwapMode } from '@jup-ag/react-hook';
+import {  SwapMode } from '@jup-ag/react-hook';
 import Decimal from 'decimal.js';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { formatNumber } from 'src/misc/utils';
+import { UltraQuoteResponse } from 'src/data/UltraSwapService';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 interface IFees {
-  routePlan: QuoteResponse['routePlan'] | undefined;
+  routePlan: FormattedUltraQuoteResponse['routePlan'] | undefined;
   swapMode: SwapMode | undefined;
 }
 

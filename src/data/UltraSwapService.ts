@@ -37,7 +37,7 @@ export interface UltraQuoteResponse {
 export interface UltraSwapQuoteParams {
   inputMint: string;
   outputMint: string;
-  amount: number;
+  amount: string;
   taker?: string;
 }
 
@@ -60,7 +60,7 @@ class UltraSwapService implements UltraSwapService {
     ORDER: `${this.BASE_URL}/order`,
   };
 
-  async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<Omit<UltraQuoteResponse, 'swapType'>> {
+  async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<UltraQuoteResponse> {
     const queryParams = new URLSearchParams(
       Object.entries(params)
         .filter(([_, value]) => value !== undefined)

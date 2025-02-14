@@ -314,7 +314,8 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={!swapMode || swapMode === 'ExactIn'}
+                          // disabled={!swapMode || swapMode === 'ExactIn'}
+                          disabled={true}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}

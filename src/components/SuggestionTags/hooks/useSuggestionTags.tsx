@@ -1,4 +1,4 @@
-import { QuoteResponse } from '@jup-ag/react-hook';
+
 import { TokenInfo } from '@solana/spl-token-registry';
 import { SystemProgram } from '@solana/web3.js';
 import Decimal from 'decimal.js';
@@ -15,6 +15,8 @@ import useQueryTokenMetadata from './useQueryTokenMetadata';
 import { useBirdeyeRouteInfo } from './useSwapInfo';
 import { useLstApyFetcher } from './useLstApy';
 import { LSTSuggestion } from '../Tags/LSTSuggestion';
+import { UltraQuoteResponse } from 'src/data/UltraSwapService';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 const HIGH_PRICE_IMPACT = 5; // 5%
 const HIGH_PRICE_DIFFERENCE = 5; // 5%
@@ -28,7 +30,7 @@ export const useSuggestionTags = ({
 }: {
   fromTokenInfo: TokenInfo | null | undefined;
   toTokenInfo: TokenInfo | null | undefined;
-  quoteResponse: QuoteResponse | undefined;
+  quoteResponse: FormattedUltraQuoteResponse | undefined;
 }) => {
   const { data: tokenMetadata } = useQueryTokenMetadata({ fromTokenInfo, toTokenInfo });
   const birdeyeInfo = useBirdeyeRouteInfo();

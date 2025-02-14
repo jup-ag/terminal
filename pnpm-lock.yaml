@@ -17,10 +17,10 @@ importers:
         version: 4.0.0-beta.21
       '@jup-ag/react-hook':
         specifier: 6.2.0
-        version: 6.2.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)
+        version: 6.2.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.2.2)(utf-8-validate@5.0.10)
       '@jup-ag/wallet-adapter':
         specifier: 0.2.0
-        version: 0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0))
+        version: 0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@types/react@18.0.23)(react@18.3.1))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.3.1(react@18.3.1))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@mercurial-finance/optimist':
         specifier: 0.4.0
         version: 0.4.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10)
@@ -32,7 +32,7 @@ importers:
         version: 0.26.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@radix-ui/react-popover':
         specifier: ^1.1.1
-        version: 1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@solana/spl-token':
         specifier: 0.1.8
         version: 0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -44,13 +44,13 @@ importers:
         version: 0.2.4574
       '@solana/wallet-adapter-wallets':
         specifier: ^0.19.22
-        version: 0.19.22(@babel/runtime@7.24.7)(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(utf-8-validate@5.0.10)
+        version: 0.19.22(@babel/runtime@7.24.7)(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)
       '@solana/web3.js':
         specifier: 1.87.6
         version: 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@tanstack/react-query':
         specifier: ^4.36.1
-        version: 4.36.1(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
+        version: 4.36.1(react-dom@18.3.1(react@18.3.1))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       bn.js:
         specifier: 5.2.1
         version: 5.2.1
@@ -74,7 +74,7 @@ importers:
         version: 1.5.0
       jotai:
         specifier: ^2.8.3
-        version: 2.8.3(@types/react@18.0.23)(react@18.2.0)
+        version: 2.8.3(@types/react@18.0.23)(react@18.3.1)
       jsbi:
         specifier: 4.3.0
         version: 4.3.0
@@ -83,46 +83,49 @@ importers:
         version: 4.0.8
       lucide-react:
         specifier: ^0.428.0
-        version: 0.428.0(react@18.2.0)
+        version: 0.428.0(react@18.3.1)
       next:
         specifier: 13.4.19
-        version: 13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6)
+        version: 13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6)
       next-seo:
         specifier: 5.15.0
-        version: 5.15.0(next@13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 5.15.0(next@13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       next-themes:
         specifier: 0.2.1
-        version: 0.2.1(next@13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 0.2.1(next@13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
         specifier: ^18
-        version: 18.2.0
+        version: 18.3.1
       react-dom:
         specifier: ^18
-        version: 18.2.0(react@18.2.0)
+        version: 18.3.1(react@18.3.1)
       react-hook-form:
         specifier: 7.42.1
-        version: 7.42.1(react@18.2.0)
+        version: 7.42.1(react@18.3.1)
       react-instantsearch:
         specifier: ~7.7.0
-        version: 7.7.3(algoliasearch@4.24.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 7.7.3(algoliasearch@4.24.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-number-format:
         specifier: 5.1.3
-        version: 5.1.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 5.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-popper:
         specifier: ^2.3.0
-        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-syntax-highlighter:
         specifier: ^15.5.0
-        version: 15.5.0(react@18.2.0)
+        version: 15.5.0(react@18.3.1)
       react-use:
         specifier: ^17.5.0
-        version: 17.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 17.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-virtualized-auto-sizer:
         specifier: 1.0.7
-        version: 1.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 1.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-window:
         specifier: 1.8.8
-        version: 1.8.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 1.8.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      superstruct:
+        specifier: 1.0.3
+        version: 1.0.3
       tailwind-merge:
         specifier: ^2.5.2
         version: 2.5.2
@@ -174,10 +177,10 @@ importers:
         version: 10.4.13(postcss@8.4.38)
       css-loader:
         specifier: ^6.11.0
-        version: 6.11.0(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 6.11.0(webpack@5.92.1)
       css-minimizer-webpack-plugin:
         specifier: ^4.2.2
-        version: 4.2.2(esbuild@0.23.1)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 4.2.2(esbuild@0.23.1)(webpack@5.92.1)
       cssnano:
         specifier: ^5.1.15
         version: 5.1.15(postcss@8.4.38)
@@ -195,19 +198,19 @@ importers:
         version: 8.10.0(eslint@8.26.0)
       mini-css-extract-plugin:
         specifier: ^2.9.0
-        version: 2.9.0(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 2.9.0(webpack@5.92.1)
       next-transpile-modules:
         specifier: 10.0.0
         version: 10.0.0
       node-polyfill-webpack-plugin:
         specifier: ^2.0.1
-        version: 2.0.1(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 2.0.1(webpack@5.92.1)
       postcss:
         specifier: ^8.4.38
         version: 8.4.38
       postcss-loader:
         specifier: ^7.3.4
-        version: 7.3.4(postcss@8.4.38)(typescript@5.2.2)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 7.3.4(postcss@8.4.38)(typescript@5.2.2)(webpack@5.92.1)
       postcss-preset-env:
         specifier: ^7.8.3
         version: 7.8.3(postcss@8.4.38)
@@ -216,16 +219,16 @@ importers:
         version: 3.3.2
       react-twitter-embed:
         specifier: ^4.0.4
-        version: 4.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        version: 4.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       sass:
         specifier: ^1.77.6
         version: 1.77.6
       sass-loader:
         specifier: ^13.3.3
-        version: 13.3.3(sass@1.77.6)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 13.3.3(sass@1.77.6)(webpack@5.92.1)
       style-loader:
         specifier: ^3.3.4
-        version: 3.3.4(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 3.3.4(webpack@5.92.1)
       stylus:
         specifier: ^0.59.0
         version: 0.59.0
@@ -237,7 +240,7 @@ importers:
         version: 3.3.3
       ts-loader:
         specifier: ^9.5.1
-        version: 9.5.1(typescript@5.2.2)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+        version: 9.5.1(typescript@5.2.2)(webpack@5.92.1)
       tsup:
         specifier: 8.2.4
         version: 8.2.4(jiti@1.21.6)(postcss@8.4.38)(typescript@5.2.2)(yaml@2.4.5)
@@ -6950,10 +6953,10 @@ packages:
     peerDependencies:
       react: ^16.13.1
 
-  react-dom@18.2.0:
-    resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
+  react-dom@18.3.1:
+    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
     peerDependencies:
-      react: ^18.2.0
+      react: ^18.3.1
 
   react-fast-compare@3.2.2:
     resolution: {integrity: sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==}
@@ -7103,8 +7106,8 @@ packages:
     resolution: {integrity: sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w==}
     engines: {node: '>=0.10.0'}
 
-  react@18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
+  react@18.3.1:
+    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -7332,8 +7335,8 @@ packages:
   scheduler@0.19.1:
     resolution: {integrity: sha512-n/zwRWRYSUj0/3g/otKDRPMh6qv2SYMWNq85IEa8iZyAv8od9zDYpGSnpBEjNgcMNq6Scbu5KfIPxNF72R/2EA==}
 
-  scheduler@0.23.0:
-    resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
+  scheduler@0.23.2:
+    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
   scheduler@0.24.0-canary-efb381bbf-20230505:
     resolution: {integrity: sha512-ABvovCDe/k9IluqSh4/ISoq8tIJnW8euVAWYt5j/bg6dRnqwQwiGO1F/V4AyK96NGF/FB04FhOUDuWj8IKfABA==}
@@ -7678,6 +7681,7 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   superstruct@0.14.2:
     resolution: {integrity: sha512-nPewA6m9mR3d6k7WkZ8N8zpTWfenFH3q9pA2PkuiZxINr9DKB2+40wEQf0ixn8VaGuJ78AB6iWOtStI+/4FKZQ==}
@@ -10565,17 +10569,17 @@ snapshots:
 
   '@emotion/memoize@0.8.1': {}
 
-  '@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0)':
+  '@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.24.7
       '@emotion/babel-plugin': 11.11.0
       '@emotion/cache': 11.11.0
       '@emotion/serialize': 1.1.4
-      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.2.0)
+      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.3.1)
       '@emotion/utils': 1.2.1
       '@emotion/weak-memoize': 0.3.1
       hoist-non-react-statics: 3.3.2
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
     transitivePeerDependencies:
@@ -10591,16 +10595,16 @@ snapshots:
 
   '@emotion/sheet@1.2.2': {}
 
-  '@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0)':
+  '@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
       '@babel/runtime': 7.24.7
       '@emotion/babel-plugin': 11.11.0
       '@emotion/is-prop-valid': 1.2.2
-      '@emotion/react': 11.11.4(@types/react@18.0.23)(react@18.2.0)
+      '@emotion/react': 11.11.4(@types/react@18.0.23)(react@18.3.1)
       '@emotion/serialize': 1.1.4
-      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.2.0)
+      '@emotion/use-insertion-effect-with-fallbacks': 1.0.1(react@18.3.1)
       '@emotion/utils': 1.2.1
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
     transitivePeerDependencies:
@@ -10608,9 +10612,9 @@ snapshots:
 
   '@emotion/unitless@0.8.1': {}
 
-  '@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.2.0)':
+  '@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
   '@emotion/utils@1.2.1': {}
 
@@ -10731,22 +10735,22 @@ snapshots:
       '@floating-ui/core': 1.6.7
       '@floating-ui/utils': 0.2.7
 
-  '@floating-ui/react-dom@2.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@floating-ui/react-dom@2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@floating-ui/dom': 1.6.10
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@floating-ui/utils@0.2.7': {}
 
-  '@fractalwagmi/popup-connection@1.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@fractalwagmi/popup-connection@1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  '@fractalwagmi/solana-wallet-adapter@0.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@fractalwagmi/solana-wallet-adapter@0.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@fractalwagmi/popup-connection': 1.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@fractalwagmi/popup-connection': 1.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       bs58: 5.0.0
     transitivePeerDependencies:
@@ -10830,12 +10834,12 @@ snapshots:
       '@types/yargs': 17.0.24
       chalk: 4.1.2
 
-  '@jnwng/walletconnect-solana@0.2.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@jnwng/walletconnect-solana@0.2.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/qrcode-modal': 1.8.0
-      '@walletconnect/sign-client': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/sign-client': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       bs58: 5.0.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -10919,7 +10923,7 @@ snapshots:
       decimal.js: 10.4.2
       jsbi: 4.3.0
 
-  '@jup-ag/react-hook@6.2.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.2.0)(typescript@5.2.2)(utf-8-validate@5.0.10)':
+  '@jup-ag/react-hook@6.2.0(@coral-xyz/anchor@0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/buffer-layout@4.0.0)(@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react@18.3.1)(typescript@5.2.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@jup-ag/api': 6.0.29
       '@jup-ag/common': 6.1.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -10928,7 +10932,7 @@ snapshots:
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       promise-retry: 2.0.1
-      react: 18.2.0
+      react: 18.3.1
       superstruct: 1.0.3
     transitivePeerDependencies:
       - '@coral-xyz/anchor'
@@ -10941,19 +10945,19 @@ snapshots:
       - typescript
       - utf-8-validate
 
-  '@jup-ag/wallet-adapter@0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)(styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0))':
+  '@jup-ag/wallet-adapter@0.2.0(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@emotion/styled@11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@types/react@18.0.23)(react@18.3.1))(@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(decimal.js@10.4.3)(react-dom@18.3.1(react@18.3.1))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
-      '@emotion/react': 11.11.4(@types/react@18.0.23)(react@18.2.0)
-      '@emotion/styled': 11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.2.0))(@types/react@18.0.23)(react@18.2.0)
-      '@solana-mobile/wallet-adapter-mobile': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@emotion/react': 11.11.4(@types/react@18.0.23)(react@18.3.1)
+      '@emotion/styled': 11.11.5(@emotion/react@11.11.4(@types/react@18.0.23)(react@18.3.1))(@types/react@18.0.23)(react@18.3.1)
+      '@solana-mobile/wallet-adapter-mobile': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
       '@solana/spl-token': 0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)
+      '@solana/wallet-adapter-react': 0.15.35(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       decimal.js: 10.4.3
-      react: 18.2.0
-      react-use: 17.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      styled-components: 6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      react: 18.3.1
+      react-use: 17.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      styled-components: 6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - bs58
       - react-dom
@@ -11317,187 +11321,187 @@ snapshots:
 
   '@radix-ui/primitive@1.1.0': {}
 
-  '@radix-ui/react-arrow@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-arrow@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-compose-refs@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-compose-refs@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-context@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-context@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-dismissable-layer@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-dismissable-layer@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@radix-ui/primitive': 1.1.0
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-escape-keydown': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-escape-keydown': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-focus-guards@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-focus-guards@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-focus-scope@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-focus-scope@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-id@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-id@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-popover@1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-popover@1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@radix-ui/primitive': 1.1.0
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-context': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-dismissable-layer': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-focus-guards': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-focus-scope': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-id': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-popper': 1.2.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-portal': 1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-presence': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-slot': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.0.23)(react@18.2.0)
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-dismissable-layer': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-focus-guards': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-focus-scope': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-id': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-popper': 1.2.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-portal': 1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-presence': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-controllable-state': 1.1.0(@types/react@18.0.23)(react@18.3.1)
       aria-hidden: 1.2.4
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-remove-scroll: 2.5.7(@types/react@18.0.23)(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-remove-scroll: 2.5.7(@types/react@18.0.23)(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-popper@1.2.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-popper@1.2.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@floating-ui/react-dom': 2.1.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-arrow': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-context': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-rect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-size': 1.1.0(@types/react@18.0.23)(react@18.2.0)
+      '@floating-ui/react-dom': 2.1.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-arrow': 1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-context': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-rect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-size': 1.1.0(@types/react@18.0.23)(react@18.3.1)
       '@radix-ui/rect': 1.1.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-portal@1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-portal@1.1.1(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-primitive': 2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-presence@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-presence@1.1.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-primitive@2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@radix-ui/react-primitive@2.0.0(@types/react-dom@18.0.7)(@types/react@18.0.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-slot': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      '@radix-ui/react-slot': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
       '@types/react-dom': 18.0.7
 
-  '@radix-ui/react-slot@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-slot@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
+      '@radix-ui/react-compose-refs': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-callback-ref@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-callback-ref@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-controllable-state@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-controllable-state@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-escape-keydown@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-escape-keydown@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
+      '@radix-ui/react-use-callback-ref': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-layout-effect@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-layout-effect@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-rect@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-rect@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
       '@radix-ui/rect': 1.1.0
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
-  '@radix-ui/react-use-size@1.1.0(@types/react@18.0.23)(react@18.2.0)':
+  '@radix-ui/react-use-size@1.1.0(@types/react@18.0.23)(react@18.3.1)':
     dependencies:
-      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.2.0)
-      react: 18.2.0
+      '@radix-ui/react-use-layout-effect': 1.1.0(@types/react@18.0.23)(react@18.3.1)
+      react: 18.3.1
     optionalDependencies:
       '@types/react': 18.0.23
 
   '@radix-ui/rect@1.1.0': {}
 
-  '@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))':
+  '@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))':
     dependencies:
       merge-options: 3.0.4
-      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)
 
   '@react-native-community/cli-clean@11.4.1':
     dependencies:
@@ -11679,11 +11683,11 @@ snapshots:
 
   '@react-native/normalize-colors@0.72.0': {}
 
-  '@react-native/virtualized-lists@0.72.8(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))':
+  '@react-native/virtualized-lists@0.72.8(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))':
     dependencies:
       invariant: 2.2.4
       nullthrows: 1.1.1
-      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)
 
   '@rollup/rollup-android-arm-eabi@4.21.2':
     optional: true
@@ -11768,23 +11772,23 @@ snapshots:
 
   '@socket.io/component-emitter@3.1.0': {}
 
-  '@solana-mobile/mobile-wallet-adapter-protocol-web3js@2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))':
+  '@solana-mobile/mobile-wallet-adapter-protocol-web3js@2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))':
     dependencies:
-      '@solana-mobile/mobile-wallet-adapter-protocol': 1.0.1(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@solana-mobile/mobile-wallet-adapter-protocol': 1.0.1(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bs58: 5.0.0
       js-base64: 3.7.5
     transitivePeerDependencies:
       - react-native
 
-  '@solana-mobile/mobile-wallet-adapter-protocol@1.0.1(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))':
+  '@solana-mobile/mobile-wallet-adapter-protocol@1.0.1(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))':
     dependencies:
-      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)
 
-  '@solana-mobile/wallet-adapter-mobile@2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))':
+  '@solana-mobile/wallet-adapter-mobile@2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))':
     dependencies:
-      '@react-native-async-storage/async-storage': 1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
-      '@solana-mobile/mobile-wallet-adapter-protocol-web3js': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@react-native-async-storage/async-storage': 1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
+      '@solana-mobile/mobile-wallet-adapter-protocol-web3js': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       js-base64: 3.7.5
@@ -11992,9 +11996,9 @@ snapshots:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@solana/wallet-adapter-fractal@0.1.8(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@solana/wallet-adapter-fractal@0.1.8(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@fractalwagmi/solana-wallet-adapter': 0.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@fractalwagmi/solana-wallet-adapter': 0.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -12073,13 +12077,13 @@ snapshots:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@solana/wallet-adapter-react@0.15.35(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)':
+  '@solana/wallet-adapter-react@0.15.35(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
-      '@solana-mobile/wallet-adapter-mobile': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@solana-mobile/wallet-adapter-mobile': 2.0.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-standard-wallet-adapter-react': 1.1.1(@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react@18.2.0)
+      '@solana/wallet-standard-wallet-adapter-react': 1.1.1(@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react@18.3.1)
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      react: 18.2.0
+      react: 18.3.1
     transitivePeerDependencies:
       - bs58
       - react-native
@@ -12164,9 +12168,9 @@ snapshots:
       '@solana/wallet-standard-util': 1.1.0
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@solana/wallet-adapter-walletconnect@0.1.16(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@solana/wallet-adapter-walletconnect@0.1.16(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@jnwng/walletconnect-solana': 0.2.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@jnwng/walletconnect-solana': 0.2.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -12175,7 +12179,7 @@ snapshots:
       - lokijs
       - utf-8-validate
 
-  '@solana/wallet-adapter-wallets@0.19.22(@babel/runtime@7.24.7)(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(bufferutil@4.0.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(utf-8-validate@5.0.10)':
+  '@solana/wallet-adapter-wallets@0.19.22(@babel/runtime@7.24.7)(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(bufferutil@4.0.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(utf-8-validate@5.0.10)':
     dependencies:
       '@solana/wallet-adapter-alpha': 0.1.10(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-avana': 0.1.13(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
@@ -12186,7 +12190,7 @@ snapshots:
       '@solana/wallet-adapter-coin98': 0.5.20(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-coinbase': 0.1.18(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-coinhub': 0.3.18(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-adapter-fractal': 0.1.8(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@solana/wallet-adapter-fractal': 0.1.8(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@solana/wallet-adapter-huobi': 0.1.15(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-hyperpay': 0.1.14(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-keystone': 0.1.12(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -12211,7 +12215,7 @@ snapshots:
       '@solana/wallet-adapter-torus': 0.11.28(@babel/runtime@7.24.7)(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-trust': 0.1.13(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-adapter-unsafe-burner': 0.1.7(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@solana/wallet-adapter-walletconnect': 0.1.16(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@solana/wallet-adapter-walletconnect': 0.1.16(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@solana/wallet-adapter-xdefi': 0.1.7(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
@@ -12260,13 +12264,13 @@ snapshots:
       '@wallet-standard/wallet': 1.0.1
       bs58: 5.0.0
 
-  '@solana/wallet-standard-wallet-adapter-react@1.1.1(@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react@18.2.0)':
+  '@solana/wallet-standard-wallet-adapter-react@1.1.1(@solana/wallet-adapter-base@0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)(react@18.3.1)':
     dependencies:
       '@solana/wallet-adapter-base': 0.9.23(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/wallet-standard-wallet-adapter-base': 1.1.1(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@5.0.0)
       '@wallet-standard/app': 1.0.1
       '@wallet-standard/base': 1.0.1
-      react: 18.2.0
+      react: 18.3.1
     transitivePeerDependencies:
       - '@solana/web3.js'
       - bs58
@@ -12484,14 +12488,14 @@ snapshots:
 
   '@tanstack/query-core@4.36.1': {}
 
-  '@tanstack/react-query@4.36.1(react-dom@18.2.0(react@18.2.0))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))(react@18.2.0)':
+  '@tanstack/react-query@4.36.1(react-dom@18.3.1(react@18.3.1))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)':
     dependencies:
       '@tanstack/query-core': 4.36.1
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
+      react: 18.3.1
+      use-sync-external-store: 1.2.0(react@18.3.1)
     optionalDependencies:
-      react-dom: 18.2.0(react@18.2.0)
-      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)
+      react-dom: 18.3.1(react@18.3.1)
+      react-native: 0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)
 
   '@toruslabs/base-controllers@2.9.0(@babel/runtime@7.24.7)(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
@@ -12805,21 +12809,21 @@ snapshots:
       '@walletconnect/window-metadata': 1.0.0
       detect-browser: 5.2.0
 
-  '@walletconnect/core@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@walletconnect/core@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-provider': 1.0.13
       '@walletconnect/jsonrpc-types': 1.0.3
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/jsonrpc-ws-connection': 1.0.13(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      '@walletconnect/keyvaluestorage': 1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/keyvaluestorage': 1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       '@walletconnect/logger': 2.0.1
       '@walletconnect/relay-api': 1.0.9
       '@walletconnect/relay-auth': 1.0.4
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
-      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
+      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       events: 3.3.0
       lodash.isequal: 4.5.0
       uint8arrays: 3.1.1
@@ -12872,12 +12876,12 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@walletconnect/keyvaluestorage@1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))':
+  '@walletconnect/keyvaluestorage@1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))':
     dependencies:
       safe-json-utils: 1.1.1
       tslib: 1.14.1
     optionalDependencies:
-      '@react-native-async-storage/async-storage': 1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@react-native-async-storage/async-storage': 1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
 
   '@walletconnect/logger@2.0.1':
     dependencies:
@@ -12915,16 +12919,16 @@ snapshots:
     dependencies:
       tslib: 1.14.1
 
-  '@walletconnect/sign-client@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
+  '@walletconnect/sign-client@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@walletconnect/core': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
+      '@walletconnect/core': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-utils': 1.0.8
       '@walletconnect/logger': 2.0.1
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
-      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
+      '@walletconnect/utils': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
@@ -12938,19 +12942,19 @@ snapshots:
 
   '@walletconnect/types@1.8.0': {}
 
-  '@walletconnect/types@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))':
+  '@walletconnect/types@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))':
     dependencies:
       '@walletconnect/events': 1.0.1
       '@walletconnect/heartbeat': 1.2.1
       '@walletconnect/jsonrpc-types': 1.0.3
-      '@walletconnect/keyvaluestorage': 1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/keyvaluestorage': 1.0.2(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       '@walletconnect/logger': 2.0.1
       events: 3.3.0
     transitivePeerDependencies:
       - '@react-native-async-storage/async-storage'
       - lokijs
 
-  '@walletconnect/utils@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))':
+  '@walletconnect/utils@2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))':
     dependencies:
       '@stablelib/chacha20poly1305': 1.0.1
       '@stablelib/hkdf': 1.0.1
@@ -12960,7 +12964,7 @@ snapshots:
       '@walletconnect/relay-api': 1.0.9
       '@walletconnect/safe-json': 1.0.2
       '@walletconnect/time': 1.0.2
-      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10)))
+      '@walletconnect/types': 2.10.0(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))
       '@walletconnect/window-getters': 1.0.1
       '@walletconnect/window-metadata': 1.0.1
       detect-browser: 5.3.0
@@ -13061,17 +13065,17 @@ snapshots:
       '@webassemblyjs/ast': 1.12.1
       '@xtuc/long': 4.2.2
 
-  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))':
+  '@webpack-cli/configtest@1.2.0(webpack-cli@4.10.0)(webpack@5.92.1)':
     dependencies:
       webpack: 5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1)
 
-  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))':
+  '@webpack-cli/info@1.5.0(webpack-cli@4.10.0)':
     dependencies:
       envinfo: 7.10.0
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1)
 
-  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))':
+  '@webpack-cli/serve@1.7.0(webpack-cli@4.10.0)':
     dependencies:
       webpack-cli: 4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1)
 
@@ -14030,7 +14034,7 @@ snapshots:
     dependencies:
       hyphenate-style-name: 1.1.0
 
-  css-loader@6.11.0(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  css-loader@6.11.0(webpack@5.92.1):
     dependencies:
       icss-utils: 5.1.0(postcss@8.4.38)
       postcss: 8.4.38
@@ -14043,7 +14047,7 @@ snapshots:
     optionalDependencies:
       webpack: 5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)
 
-  css-minimizer-webpack-plugin@4.2.2(esbuild@0.23.1)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  css-minimizer-webpack-plugin@4.2.2(esbuild@0.23.1)(webpack@5.92.1):
     dependencies:
       cssnano: 5.1.15(postcss@8.4.38)
       jest-worker: 29.6.4
@@ -15434,10 +15438,10 @@ snapshots:
       '@sideway/formula': 3.0.1
       '@sideway/pinpoint': 2.0.0
 
-  jotai@2.8.3(@types/react@18.0.23)(react@18.2.0):
+  jotai@2.8.3(@types/react@18.0.23)(react@18.3.1):
     optionalDependencies:
       '@types/react': 18.0.23
-      react: 18.2.0
+      react: 18.3.1
 
   joycon@3.1.1: {}
 
@@ -15657,9 +15661,9 @@ snapshots:
     dependencies:
       yallist: 4.0.0
 
-  lucide-react@0.428.0(react@18.2.0):
+  lucide-react@0.428.0(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
   make-dir@2.1.0:
     dependencies:
@@ -16009,7 +16013,7 @@ snapshots:
 
   mimic-fn@2.1.0: {}
 
-  mini-css-extract-plugin@2.9.0(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  mini-css-extract-plugin@2.9.0(webpack@5.92.1):
     dependencies:
       schema-utils: 4.2.0
       tapable: 2.2.1
@@ -16060,15 +16064,15 @@ snapshots:
       object-assign: 4.1.1
       thenify-all: 1.6.0
 
-  nano-css@5.6.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  nano-css@5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
       css-tree: 1.1.3
       csstype: 3.1.3
       fastest-stable-stringify: 2.0.2
       inline-style-prefixer: 7.0.0
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       rtl-css-js: 1.16.1
       stacktrace-js: 2.0.2
       stylis: 4.3.2
@@ -16081,32 +16085,32 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  next-seo@5.15.0(next@13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next-seo@5.15.0(next@13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      next: 13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      next: 13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  next-themes@0.2.1(next@13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6))(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  next-themes@0.2.1(next@13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      next: 13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      next: 13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   next-transpile-modules@10.0.0:
     dependencies:
       enhanced-resolve: 5.15.0
 
-  next@13.4.19(@babel/core@7.22.11)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(sass@1.77.6):
+  next@13.4.19(@babel/core@7.22.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.77.6):
     dependencies:
       '@next/env': 13.4.19
       '@swc/helpers': 0.5.1
       busboy: 1.6.0
       caniuse-lite: 1.0.30001524
       postcss: 8.4.14
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      styled-jsx: 5.1.1(@babel/core@7.22.11)(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      styled-jsx: 5.1.1(@babel/core@7.22.11)(react@18.3.1)
       watchpack: 2.4.0
       zod: 3.21.4
     optionalDependencies:
@@ -16149,7 +16153,7 @@ snapshots:
 
   node-int64@0.4.0: {}
 
-  node-polyfill-webpack-plugin@2.0.1(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  node-polyfill-webpack-plugin@2.0.1(webpack@5.92.1):
     dependencies:
       assert: 2.0.0
       browserify-zlib: 0.2.0
@@ -16600,7 +16604,7 @@ snapshots:
       postcss: 8.4.38
       yaml: 2.4.5
 
-  postcss-loader@7.3.4(postcss@8.4.38)(typescript@5.2.2)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  postcss-loader@7.3.4(postcss@8.4.38)(typescript@5.2.2)(webpack@5.92.1):
     dependencies:
       cosmiconfig: 8.3.6(typescript@5.2.2)
       jiti: 1.21.6
@@ -17017,36 +17021,36 @@ snapshots:
       react: 16.13.1
       scheduler: 0.19.1
 
-  react-dom@18.2.0(react@18.2.0):
+  react-dom@18.3.1(react@18.3.1):
     dependencies:
       loose-envify: 1.4.0
-      react: 18.2.0
-      scheduler: 0.23.0
+      react: 18.3.1
+      scheduler: 0.23.2
 
   react-fast-compare@3.2.2: {}
 
-  react-hook-form@7.42.1(react@18.2.0):
+  react-hook-form@7.42.1(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
-  react-instantsearch-core@7.7.3(algoliasearch@4.24.0)(react@18.2.0):
+  react-instantsearch-core@7.7.3(algoliasearch@4.24.0)(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.23.4
       algoliasearch: 4.24.0
       algoliasearch-helper: 3.19.0(algoliasearch@4.24.0)
       instantsearch.js: 4.68.0(algoliasearch@4.24.0)
-      react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
+      react: 18.3.1
+      use-sync-external-store: 1.2.0(react@18.3.1)
 
-  react-instantsearch@7.7.3(algoliasearch@4.24.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-instantsearch@7.7.3(algoliasearch@4.24.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.23.4
       algoliasearch: 4.24.0
       instantsearch-ui-components: 0.5.0
       instantsearch.js: 4.68.0(algoliasearch@4.24.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-instantsearch-core: 7.7.3(algoliasearch@4.24.0)(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-instantsearch-core: 7.7.3(algoliasearch@4.24.0)(react@18.3.1)
 
   react-is@16.13.1: {}
 
@@ -17065,7 +17069,7 @@ snapshots:
       react-lifecycles-compat: 3.0.4
       warning: 4.0.3
 
-  react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10):
+  react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10):
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native-community/cli': 11.4.1(@babel/core@7.22.11)(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -17076,7 +17080,7 @@ snapshots:
       '@react-native/gradle-plugin': 0.72.11
       '@react-native/js-polyfills': 0.72.1
       '@react-native/normalize-colors': 0.72.0
-      '@react-native/virtualized-lists': 0.72.8(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.2.0)(utf-8-validate@5.0.10))
+      '@react-native/virtualized-lists': 0.72.8(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))
       abort-controller: 3.0.0
       anser: 1.4.10
       ansi-regex: 5.0.1
@@ -17094,14 +17098,14 @@ snapshots:
       nullthrows: 1.1.1
       pretty-format: 26.6.2
       promise: 8.3.0
-      react: 18.2.0
+      react: 18.3.1
       react-devtools-core: 4.28.5(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       react-refresh: 0.4.3
-      react-shallow-renderer: 16.15.0(react@18.2.0)
+      react-shallow-renderer: 16.15.0(react@18.3.1)
       regenerator-runtime: 0.13.11
       scheduler: 0.24.0-canary-efb381bbf-20230505
       stacktrace-parser: 0.1.10
-      use-sync-external-store: 1.2.2(react@18.2.0)
+      use-sync-external-store: 1.2.2(react@18.3.1)
       whatwg-fetch: 3.6.20
       ws: 6.2.3(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       yargs: 17.7.2
@@ -17113,17 +17117,17 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  react-number-format@5.1.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-number-format@5.1.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       prop-types: 15.8.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react-popper@2.3.0(@popperjs/core@2.11.8)(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-popper@2.3.0(@popperjs/core@2.11.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@popperjs/core': 2.11.8
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       react-fast-compare: 3.2.2
       warning: 4.0.3
 
@@ -17137,61 +17141,61 @@ snapshots:
 
   react-refresh@0.4.3: {}
 
-  react-remove-scroll-bar@2.3.6(@types/react@18.0.23)(react@18.2.0):
+  react-remove-scroll-bar@2.3.6(@types/react@18.0.23)(react@18.3.1):
     dependencies:
-      react: 18.2.0
-      react-style-singleton: 2.2.1(@types/react@18.0.23)(react@18.2.0)
+      react: 18.3.1
+      react-style-singleton: 2.2.1(@types/react@18.0.23)(react@18.3.1)
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.0.23
 
-  react-remove-scroll@2.5.7(@types/react@18.0.23)(react@18.2.0):
+  react-remove-scroll@2.5.7(@types/react@18.0.23)(react@18.3.1):
     dependencies:
-      react: 18.2.0
-      react-remove-scroll-bar: 2.3.6(@types/react@18.0.23)(react@18.2.0)
-      react-style-singleton: 2.2.1(@types/react@18.0.23)(react@18.2.0)
+      react: 18.3.1
+      react-remove-scroll-bar: 2.3.6(@types/react@18.0.23)(react@18.3.1)
+      react-style-singleton: 2.2.1(@types/react@18.0.23)(react@18.3.1)
       tslib: 2.6.3
-      use-callback-ref: 1.3.2(@types/react@18.0.23)(react@18.2.0)
-      use-sidecar: 1.1.2(@types/react@18.0.23)(react@18.2.0)
+      use-callback-ref: 1.3.2(@types/react@18.0.23)(react@18.3.1)
+      use-sidecar: 1.1.2(@types/react@18.0.23)(react@18.3.1)
     optionalDependencies:
       '@types/react': 18.0.23
 
-  react-shallow-renderer@16.15.0(react@18.2.0):
+  react-shallow-renderer@16.15.0(react@18.3.1):
     dependencies:
       object-assign: 4.1.1
-      react: 18.2.0
+      react: 18.3.1
       react-is: 18.3.1
 
-  react-style-singleton@2.2.1(@types/react@18.0.23)(react@18.2.0):
+  react-style-singleton@2.2.1(@types/react@18.0.23)(react@18.3.1):
     dependencies:
       get-nonce: 1.0.1
       invariant: 2.2.4
-      react: 18.2.0
+      react: 18.3.1
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.0.23
 
-  react-syntax-highlighter@15.5.0(react@18.2.0):
+  react-syntax-highlighter@15.5.0(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.22.11
       highlight.js: 10.7.3
       lowlight: 1.20.0
       prismjs: 1.29.0
-      react: 18.2.0
+      react: 18.3.1
       refractor: 3.6.0
 
-  react-twitter-embed@4.0.4(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-twitter-embed@4.0.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       scriptjs: 2.5.9
 
-  react-universal-interface@0.6.2(react@18.2.0)(tslib@2.6.2):
+  react-universal-interface@0.6.2(react@18.3.1)(tslib@2.6.2):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
       tslib: 2.6.2
 
-  react-use@17.5.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-use@17.5.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@types/js-cookie': 2.2.7
       '@xobotyi/scrollbar-width': 1.9.5
@@ -17199,10 +17203,10 @@ snapshots:
       fast-deep-equal: 3.1.3
       fast-shallow-equal: 1.0.0
       js-cookie: 2.2.1
-      nano-css: 5.6.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      react-universal-interface: 0.6.2(react@18.2.0)(tslib@2.6.2)
+      nano-css: 5.6.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-universal-interface: 0.6.2(react@18.3.1)(tslib@2.6.2)
       resize-observer-polyfill: 1.5.1
       screenfull: 5.2.0
       set-harmonic-interval: 1.0.1
@@ -17210,17 +17214,17 @@ snapshots:
       ts-easing: 0.2.0
       tslib: 2.6.2
 
-  react-virtualized-auto-sizer@1.0.7(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-virtualized-auto-sizer@1.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
-  react-window@1.8.8(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  react-window@1.8.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@babel/runtime': 7.22.11
       memoize-one: 5.2.1
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   react@16.13.1:
     dependencies:
@@ -17228,7 +17232,7 @@ snapshots:
       object-assign: 4.1.1
       prop-types: 15.8.1
 
-  react@18.2.0:
+  react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
 
@@ -17468,7 +17472,7 @@ snapshots:
       '@solana/web3.js': 1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       eventemitter3: 4.0.7
 
-  sass-loader@13.3.3(sass@1.77.6)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  sass-loader@13.3.3(sass@1.77.6)(webpack@5.92.1):
     dependencies:
       neo-async: 2.6.2
       webpack: 5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)
@@ -17488,7 +17492,7 @@ snapshots:
       loose-envify: 1.4.0
       object-assign: 4.1.1
 
-  scheduler@0.23.0:
+  scheduler@0.23.2:
     dependencies:
       loose-envify: 1.4.0
 
@@ -17799,11 +17803,11 @@ snapshots:
 
   strnum@1.0.5: {}
 
-  style-loader@3.3.4(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  style-loader@3.3.4(webpack@5.92.1):
     dependencies:
       webpack: 5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)
 
-  styled-components@6.1.11(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+  styled-components@6.1.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@emotion/is-prop-valid': 1.2.2
       '@emotion/unitless': 0.8.1
@@ -17811,16 +17815,16 @@ snapshots:
       css-to-react-native: 3.2.0
       csstype: 3.1.3
       postcss: 8.4.38
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       shallowequal: 1.1.0
       stylis: 4.3.2
       tslib: 2.6.2
 
-  styled-jsx@5.1.1(@babel/core@7.22.11)(react@18.2.0):
+  styled-jsx@5.1.1(@babel/core@7.22.11)(react@18.3.1):
     dependencies:
       client-only: 0.0.1
-      react: 18.2.0
+      react: 18.3.1
     optionalDependencies:
       '@babel/core': 7.22.11
 
@@ -17943,7 +17947,7 @@ snapshots:
     dependencies:
       rimraf: 2.6.3
 
-  terser-webpack-plugin@5.3.10(esbuild@0.23.1)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  terser-webpack-plugin@5.3.10(esbuild@0.23.1)(webpack@5.92.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.25
       jest-worker: 27.5.1
@@ -18022,7 +18026,7 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-loader@9.5.1(typescript@5.2.2)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0)):
+  ts-loader@9.5.1(typescript@5.2.2)(webpack@5.92.1):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.15.0
@@ -18193,28 +18197,28 @@ snapshots:
       punycode: 1.4.1
       qs: 6.11.2
 
-  use-callback-ref@1.3.2(@types/react@18.0.23)(react@18.2.0):
+  use-callback-ref@1.3.2(@types/react@18.0.23)(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.0.23
 
-  use-sidecar@1.1.2(@types/react@18.0.23)(react@18.2.0):
+  use-sidecar@1.1.2(@types/react@18.0.23)(react@18.3.1):
     dependencies:
       detect-node-es: 1.1.0
-      react: 18.2.0
+      react: 18.3.1
       tslib: 2.6.3
     optionalDependencies:
       '@types/react': 18.0.23
 
-  use-sync-external-store@1.2.0(react@18.2.0):
+  use-sync-external-store@1.2.0(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
-  use-sync-external-store@1.2.2(react@18.2.0):
+  use-sync-external-store@1.2.2(react@18.3.1):
     dependencies:
-      react: 18.2.0
+      react: 18.3.1
 
   utf-8-validate@5.0.10:
     dependencies:
@@ -18290,9 +18294,9 @@ snapshots:
   webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1):
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
-      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))
-      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0(webpack-bundle-analyzer@4.10.2(bufferutil@4.0.8)(utf-8-validate@5.0.10))(webpack@5.92.1))
+      '@webpack-cli/configtest': 1.2.0(webpack-cli@4.10.0)(webpack@5.92.1)
+      '@webpack-cli/info': 1.5.0(webpack-cli@4.10.0)
+      '@webpack-cli/serve': 1.7.0(webpack-cli@4.10.0)
       colorette: 2.0.20
       commander: 7.2.0
       cross-spawn: 7.0.3
@@ -18335,7 +18339,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 3.3.0
       tapable: 2.2.1
-      terser-webpack-plugin: 5.3.10(esbuild@0.23.1)(webpack@5.92.1(esbuild@0.23.1)(webpack-cli@4.10.0))
+      terser-webpack-plugin: 5.3.10(esbuild@0.23.1)(webpack@5.92.1)
       watchpack: 2.4.1
       webpack-sources: 3.2.3
     optionalDependencies:

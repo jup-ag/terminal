@@ -1,5 +1,5 @@
 import { fetchSourceAddressAndDestinationAddress, getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
-import { QuoteResponseMeta, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
+import { JupiterError, SwapMode, SwapResult, UseJupiterProps, useJupiter } from '@jup-ag/react-hook';
 import { useConnection, useLocalStorage } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
@@ -19,7 +19,7 @@ import {
   useState,
 } from 'react';
 import { DEFAULT_MAX_DYNAMIC_SLIPPAGE_PCT, DEFAULT_SLIPPAGE_PCT, WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue } from 'src/misc/utils';
+import { fromLamports, getAssociatedTokenAddressSync, hasNumericValue, useDebounce } from 'src/misc/utils';
 import { useReferenceFeesQuery } from 'src/queries/useReferenceFeesQuery';
 import { FormProps, IInit, IOnRequestIxCallback } from 'src/types';
 import { usePrioritizationFee } from './PrioritizationFeeContextProvider';
@@ -28,6 +28,10 @@ import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useAccounts } from './accounts';
 import { useExecuteTransaction } from 'src/hooks/useExecuteTransaction';
+import { useQuoteQuery } from 'src/queries/useQuoteQuery';
+import { UltraQuoteResponse } from 'src/data/UltraSwapService';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
+import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
 
 export type SlippageMode = 'DYNAMIC' | 'FIXED';
 const SLIPPAGE_MODE_DEFAULT: SlippageMode = 'DYNAMIC';
@@ -41,6 +45,11 @@ export interface IForm {
   userSlippageMode: SlippageMode;
   dynamicSlippageBps: number;
 }
+
+export type QuoteResponse = {
+  original: UltraQuoteResponse;
+  quoteResponse: FormattedUltraQuoteResponse;
+};
 
 export type SwappingStatus = 'loading' | 'pending-approval' | 'sending' | 'fail' | 'success' | 'timeout';
 export interface ISwapContext {
@@ -62,11 +71,11 @@ export interface ISwapContext {
   >;
   fromTokenInfo?: TokenInfo | null;
   toTokenInfo?: TokenInfo | null;
-  quoteResponseMeta: QuoteResponseMeta | null;
-  setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponseMeta | null>>;
-  onSubmit: () => Promise<SwapResult | null>;
+  quoteResponseMeta: QuoteResponse | null;
+  setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponse | null>>;
+  onSubmit: VoidFunction;
   onRequestIx: () => Promise<IOnRequestIxCallback>;
-  lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null } | null;
+  lastSwapResult: { swapResult: SwapResult; quoteResponseMeta: QuoteResponse | null } | null;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
@@ -83,11 +92,11 @@ export interface ISwapContext {
   jupiter: {
     asLegacyTransaction: boolean;
     setAsLegacyTransaction: Dispatch<SetStateAction<boolean>>;
-    quoteResponseMeta: QuoteResponseMeta | undefined | null;
+    quoteResponseMeta: QuoteResponse | undefined | null;
     loading: ReturnType<typeof useJupiter>['loading'];
     refresh: ReturnType<typeof useJupiter>['refresh'];
     error: ReturnType<typeof useJupiter>['error'];
-    lastRefreshTimestamp: ReturnType<typeof useJupiter>['lastRefreshTimestamp'];
+    lastRefreshTimestamp: number | undefined;
   };
   setUserSlippage: Dispatch<SetStateAction<number>>;
   setUserSlippageDynamic: Dispatch<SetStateAction<number>>;
@@ -200,7 +209,8 @@ export const SwapContextProvider = (
 
   const isToPairFocused = useRef<boolean>(false);
 
-  const swapMode = isToPairFocused.current ? SwapMode.ExactOut : SwapMode.ExactIn;
+  const swapMode = SwapMode.ExactIn;
+  // isToPairFocused.current ? SwapMode.ExactOut : SwapMode.ExactIn;
 
   // Set value given initial amount
   const setupInitialAmount = useCallback(() => {
@@ -211,19 +221,22 @@ export const SwapContextProvider = (
       if (!tokenInfo) return;
       return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
     };
+    setTimeout(() => {
+      setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+    }, 0);
 
-    if (swapMode === SwapMode.ExactOut) {
-      setTimeout(() => {
-        setForm((prev) => {
-          return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
-        });
-      }, 0);
-    } else {
-      setTimeout(() => {
-        setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
-      }, 0);
-    }
-  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, swapMode, toTokenInfo]);
+    // if (swapMode === SwapMode.ExactOut) {
+    //   setTimeout(() => {
+    //     setForm((prev) => {
+    //       return { ...prev, toValue: toUiAmount(prev.toMint) ?? '' };
+    //     });
+    //   }, 0);
+    // } else {
+    //   setTimeout(() => {
+    //     setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+    //   }, 0);
+    // }
+  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, toTokenInfo]);
 
   useEffect(() => {
     setupInitialAmount();
@@ -231,12 +244,13 @@ export const SwapContextProvider = (
 
   // We dont want to effect to keep trigger for fromValue and toValue
   const userInputChange = useMemo(() => {
-    if (swapMode === SwapMode.ExactOut) {
-      return form.toValue;
-    } else {
-      return form.fromValue;
-    }
-  }, [form.fromValue, form.toValue, swapMode]);
+    // if (swapMode === SwapMode.ExactOut) {
+    //   return form.toValue;
+    // } else {
+    //   return form.fromValue;
+    // }
+    return form.fromValue;
+  }, [form.fromValue]);
   const jupiterParams: UseJupiterProps = useMemo(() => {
     const amount = (() => {
       // ExactIn
@@ -275,20 +289,68 @@ export const SwapContextProvider = (
   ]);
 
   // TODO: FIXME: useJupiter hooks currently calls Quote twice when switching SwapMode
+  // const {
+  //   // quoteResponseMeta: ogQuoteResponseMeta,
+  //   // refresh,
+  //   // loading,
+  //   // error,
+  //   // lastRefreshTimestamp,
+  //   fetchSwapTransaction,
+
+  // } = useJupiter(jupiterParams);
+
+  const debouncedForm = useDebounce(form, 250);
+
+  const amount = useMemo(() => {
+    if (!fromTokenInfo || !debouncedForm.fromValue || !hasNumericValue(debouncedForm.fromValue)) {
+      return JSBI.BigInt(0);
+    }
+    return JSBI.BigInt(
+      new Decimal(debouncedForm.fromValue).mul(Math.pow(10, fromTokenInfo.decimals)).floor().toFixed(),
+    );
+  }, [debouncedForm.fromValue, fromTokenInfo]);
+
   const {
-    quoteResponseMeta: ogQuoteResponseMeta,
-    refresh,
-    loading,
-    error,
-    lastRefreshTimestamp,
-    fetchSwapTransaction,
-  } = useJupiter(jupiterParams);
+    data: ogQuoteResponseMeta,
+    isFetching: loading,
+    error: quoteError,
+    refetch: refresh,
+    errorUpdatedAt,
+    dataUpdatedAt,
+    isSuccess,
+    isError,
+  } = useQuoteQuery({
+    inputMint: debouncedForm.fromMint,
+    outputMint: debouncedForm.toMint,
+    amount: amount.toString(),
+    taker: walletPublicKey,
+  });
+
+  const error: JupiterError | undefined = useMemo(() => {
+    if (quoteError) {
+      return 'COULD_NOT_FIND_ANY_ROUTE' as JupiterError;
+    }
+    return undefined;
+  }, [quoteError]);
+
+  const lastRefreshTimestamp = useMemo(() => {
+    if (loading) {
+      return new Date().getTime();
+    }
+    if (isError) {
+      return new Date(errorUpdatedAt).getTime();
+    }
+    if (isSuccess) {
+      return new Date(dataUpdatedAt).getTime();
+    }
+    return undefined;
+  }, [loading, errorUpdatedAt, dataUpdatedAt, isError, isSuccess]);
 
   const { data: referenceFees } = useReferenceFeesQuery();
   const { priorityLevel, modifyComputeUnitPriceAndLimit } = usePrioritizationFee();
   const { connection } = useConnection();
 
-  const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponseMeta | null>(null);
+  const [quoteResponseMeta, setQuoteResponseMeta] = useState<QuoteResponse | null>(null);
   useEffect(() => {
     if (!ogQuoteResponseMeta) {
       setQuoteResponseMeta(null);
@@ -296,7 +358,7 @@ export const SwapContextProvider = (
     }
     // the UI sorts the best route depending on ExactIn or ExactOut
     setQuoteResponseMeta(ogQuoteResponseMeta);
-  }, [swapMode, ogQuoteResponseMeta]);
+  }, [ogQuoteResponseMeta]);
 
   useEffect(() => {
     if (!form.fromValue && !quoteResponseMeta) {
@@ -310,19 +372,22 @@ export const SwapContextProvider = (
       if (!fromTokenInfo || !toTokenInfo) return prev;
 
       let { inAmount, outAmount } = quoteResponseMeta?.quoteResponse || {};
-      if (swapMode === SwapMode.ExactIn) {
-        newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
-      } else {
-        newValue.fromValue = inAmount
-          ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
-          : '';
-      }
+      newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
+      // if (swapMode === SwapMode.ExactIn) {
+      //   newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
+      // } else {
+      //   newValue.fromValue = inAmount
+      //     ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
+      //     : '';
+      // }
       return newValue;
     });
   }, [form.fromValue, fromTokenInfo, quoteResponseMeta, swapMode, toTokenInfo]);
 
   const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
+
+  const { mutate: ultraSwapMutation } = useUltraSwapMutation();
 
   const onSubmitWithIx = useCallback(
     (swapResult: SwapResult) => {
@@ -396,7 +461,7 @@ export const SwapContextProvider = (
     };
   }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, onSubmitWithIx]);
 
-  const executeTransaction = useExecuteTransaction();
+  // const executeTransaction = useExecuteTransaction();
   const onSubmit = useCallback(async () => {
     if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
       return null;
@@ -404,160 +469,170 @@ export const SwapContextProvider = (
 
     let intervalId: NodeJS.Timer | undefined;
 
-    const swapResult = new Promise<SwapResult | null>(async (res, rej) => {
-      if (!wallet.adapter.publicKey) return null;
+    setTxStatus({
+      txid: '',
+      status: 'loading',
+      quotedDynamicSlippageBps: '',
+    });
 
-      setTxStatus({
-        txid: '',
-        status: 'loading',
-        quotedDynamicSlippageBps: '',
-      });
-
-      const swapTransactionResponse = await fetchSwapTransaction({
+    try {
+      if (!fromTokenInfo) throw new Error('Missing fromTokenInfo');
+      if (!toTokenInfo) throw new Error('Missing toTokenInfo');
+      await ultraSwapMutation({
         quoteResponseMeta,
-        userPublicKey: wallet.adapter.publicKey,
-        prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
-        wrapUnwrapSOL: true,
-        allowOptimizedWrappedSolTokenAccount: false,
-        dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
+        fromTokenInfo,
+        toTokenInfo,
+        setTxStatus,
+        setLastSwapResult,
       });
+    } catch (error) {
+      console.log('Swap error', error);
+    }
 
-      if ('error' in swapTransactionResponse) {
-        console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
-      } else {
-        modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
-          referenceFee: (() => {
-            if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
-              return referenceFees?.swapFee;
-            }
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+    // const swapResult = new Promise<SwapResult | null>(async (res, rej) => {
+    //   if (!wallet.adapter.publicKey) return null;
 
-            if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
-            if (priorityLevel === 'HIGH') return referenceFees.jup.h;
-            if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
-          })(),
-        });
+    //   setTxStatus({
+    //     txid: '',
+    //     status: 'loading',
+    //     quotedDynamicSlippageBps: '',
+    //   });
 
-        const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
-        const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
-          connection,
-          inputMint,
-          outputMint,
-          userPublicKey: wallet.adapter.publicKey!,
-        });
+    //   const swapTransactionResponse = await fetchSwapTransaction({
+    //     quoteResponseMeta,
+    //     userPublicKey: wallet.adapter.publicKey,
+    //     prioritizationFeeLamports: 1, // 1 is meaningless, since we append the fees ourself in executeTransaction
+    //     wrapUnwrapSOL: true,
+    //     allowOptimizedWrappedSolTokenAccount: false,
+    //     dynamicSlippage: form.userSlippageMode === 'DYNAMIC' ? { maxBps: form.dynamicSlippageBps } : undefined,
+    //   });
 
-        const result = await executeTransaction(
-          swapTransactionResponse.swapTransaction,
-          {
-            blockhash: swapTransactionResponse.blockhash,
-            lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
-            skipPreflight: true,
-          },
-          {
-            onPending: () => {
-              setTxStatus({
-                txid: '',
-                status: 'pending-approval',
-                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
-              });
-            },
-            onSending: () => {
-              setTxStatus({
-                txid: '',
-                status: 'sending',
-                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
-              });
-            },
-            onProcessed: () => {
-              // Not using processed for now
-            },
-            onSuccess: (txid, transactionResponse) => {
-              setTxStatus({
-                txid,
-                status: 'success',
-                quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
-              });
+    //   if ('error' in swapTransactionResponse) {
+    //     console.error('Error in swapTransactionResponse', swapTransactionResponse.error);
+    //   } else {
+    //     modifyComputeUnitPriceAndLimit(swapTransactionResponse.swapTransaction, {
+    //       referenceFee: (() => {
+    //         if (!referenceFees?.jup.m || !referenceFees?.jup.h || !referenceFees?.jup.vh) {
+    //           return referenceFees?.swapFee;
+    //         }
 
-              const [sourceTokenBalanceChange, destinationTokenBalanceChange] =
-                getTokenBalanceChangesFromTransactionResponse({
-                  txid,
-                  inputMint,
-                  outputMint,
-                  user: wallet.adapter.publicKey!,
-                  sourceAddress,
-                  destinationAddress,
-                  transactionResponse,
-                  hasWrappedSOL: false,
-                });
+    //         if (priorityLevel === 'MEDIUM') return referenceFees.jup.m;
+    //         if (priorityLevel === 'HIGH') return referenceFees.jup.h;
+    //         if (priorityLevel === 'VERY_HIGH') return referenceFees.jup.vh;
+    //       })(),
+    //     });
 
-              setLastSwapResult({
-                swapResult: {
-                  txid,
-                  inputAddress: inputMint,
-                  outputAddress: outputMint,
-                  inputAmount: sourceTokenBalanceChange,
-                  outputAmount: destinationTokenBalanceChange,
-                },
-                quoteResponseMeta: quoteResponseMeta,
-              });
+    //     const { inputMint, outputMint } = quoteResponseMeta.quoteResponse;
+    //     const { destinationAddress, sourceAddress } = await fetchSourceAddressAndDestinationAddress({
+    //       connection,
+    //       inputMint,
+    //       outputMint,
+    //       userPublicKey: wallet.adapter.publicKey!,
+    //     });
 
-              return res({
-                txid,
-                inputAddress: inputMint,
-                outputAddress: outputMint,
-                inputAmount: sourceTokenBalanceChange,
-                outputAmount: destinationTokenBalanceChange,
-              });
-            },
-          },
-        );
+    //     const result = await executeTransaction(
+    //       swapTransactionResponse.swapTransaction,
+    //       {
+    //         blockhash: swapTransactionResponse.blockhash,
+    //         lastValidBlockHeight: swapTransactionResponse.lastValidBlockHeight,
+    //         skipPreflight: true,
+    //       },
+    //       {
+    //         onPending: () => {
+    //           setTxStatus({
+    //             txid: '',
+    //             status: 'pending-approval',
+    //             quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+    //           });
+    //         },
+    //         onSending: () => {
+    //           setTxStatus({
+    //             txid: '',
+    //             status: 'sending',
+    //             quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+    //           });
+    //         },
+    //         onProcessed: () => {
+    //           // Not using processed for now
+    //         },
+    //         onSuccess: (txid, transactionResponse) => {
+    //           setTxStatus({
+    //             txid,
+    //             status: 'success',
+    //             quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+    //           });
 
-        if ('transactionResponse' in result === false) {
-          console.log(result);
+    //           const [sourceTokenBalanceChange, destinationTokenBalanceChange] =
+    //             getTokenBalanceChangesFromTransactionResponse({
+    //               txid,
+    //               inputMint,
+    //               outputMint,
+    //               user: wallet.adapter.publicKey!,
+    //               sourceAddress,
+    //               destinationAddress,
+    //               transactionResponse,
+    //               hasWrappedSOL: false,
+    //             });
 
-          setLastSwapResult({
-            swapResult: {
-              error: 'error' in result ? result.error : undefined,
-            },
-            quoteResponseMeta: quoteResponseMeta,
-          });
+    //           setLastSwapResult({
+    //             swapResult: {
+    //               txid,
+    //               inputAddress: inputMint,
+    //               outputAddress: outputMint,
+    //               inputAmount: sourceTokenBalanceChange,
+    //               outputAmount: destinationTokenBalanceChange,
+    //             },
+    //             quoteResponseMeta: quoteResponseMeta,
+    //           });
 
-          setTxStatus({
-            txid: result.txid || '',
-            status: 'error' in result && result.error?.message.includes('expired') ? 'timeout' : 'fail',
-            quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
-          });
+    //           return res({
+    //             txid,
+    //             inputAddress: inputMint,
+    //             outputAddress: outputMint,
+    //             inputAmount: sourceTokenBalanceChange,
+    //             outputAmount: destinationTokenBalanceChange,
+    //           });
+    //         },
+    //       },
+    //     );
 
-          return rej(null);
-        }
-      }
-    })
-      .catch((result: SwapResult) => {
-        console.log(result);
-        return null;
-      })
-      .finally(() => {
-        if (intervalId) {
-          clearInterval(intervalId);
-        }
-      });
+    //     if ('transactionResponse' in result === false) {
+    //       console.log(result);
 
-    return swapResult;
-  }, [
-    walletPublicKey,
-    wallet?.adapter,
-    quoteResponseMeta,
-    fetchSwapTransaction,
-    form.userSlippageMode,
-    form.dynamicSlippageBps,
-    modifyComputeUnitPriceAndLimit,
-    connection,
-    executeTransaction,
-    referenceFees?.jup.m,
-    referenceFees?.jup.h,
-    referenceFees?.jup.vh,
-    referenceFees?.swapFee,
-    priorityLevel,
-  ]);
+    //       setLastSwapResult({
+    //         swapResult: {
+    //           error: 'error' in result ? result.error : undefined,
+    //         },
+    //         quoteResponseMeta: quoteResponseMeta,
+    //       });
+
+    //       setTxStatus({
+    //         txid: result.txid || '',
+    //         status: 'error' in result && result.error?.message.includes('expired') ? 'timeout' : 'fail',
+    //         quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
+    //       });
+
+    //       return rej(null);
+    //     }
+    //   }
+    // })
+    //   .catch((result: SwapResult) => {
+    //     console.log(result);
+    //     return null;
+    //   })
+    //   .finally(() => {
+    //     if (intervalId) {
+    //       clearInterval(intervalId);
+    //     }
+    //   });
+
+    // return swapResult;
+    clearInterval(intervalId);
+    return;
+  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, ultraSwapMutation, fromTokenInfo, toTokenInfo]);
 
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
