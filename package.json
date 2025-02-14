@@ -1,6 +1,6 @@
 {
   "name": "@jup-ag/terminal",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "private": false,
   "license": "MIT",
   "scripts": {
