@@ -132,12 +132,6 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.3.3)
-      typesense:
-        specifier: 1.7.2
-        version: 1.7.2(@babel/runtime@7.24.7)
-      typesense-instantsearch-adapter:
-        specifier: ~2.8.0
-        version: 2.8.0(@babel/runtime@7.24.7)
     devDependencies:
       '@jup-ag/common':
         specifier: 6.0.0-beta.9
@@ -3816,9 +3810,6 @@ packages:
     resolution: {integrity: sha512-zIURGIS1E1Q4pcrMjp+nnEh+16G56eG/MUllJH8yEvw7asDo7Ac9uhC9KIH5jzpITueEZolfYglnCGIuSBz39g==}
     engines: {node: '>=4'}
 
-  axios@0.26.1:
-    resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
-
   axobject-query@3.2.1:
     resolution: {integrity: sha512-jsyHu61e6N4Vbz/v18DHwWYKK0bSWLqn47eeDSKPB7m8tqMHF9YJ+mhIk2lVteyZrY8tnSj/jHOv4YiTCuCJgg==}
 
@@ -5044,15 +5035,6 @@ packages:
   flow-parser@0.206.0:
     resolution: {integrity: sha512-HVzoK3r6Vsg+lKvlIZzaWNBVai+FXTX1wdYhz/wVlH13tb/gOdLXmlTqy6odmTBhT5UoWUbq0k8263Qhr9d88w==}
     engines: {node: '>=0.4.0'}
-
-  follow-redirects@1.15.6:
-    resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
-    engines: {node: '>=4.0'}
-    peerDependencies:
-      debug: '*'
-    peerDependenciesMeta:
-      debug:
-        optional: true
 
   for-each@0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -7930,18 +7912,6 @@ packages:
     resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
     engines: {node: '>=14.17'}
     hasBin: true
-
-  typesense-instantsearch-adapter@2.8.0:
-    resolution: {integrity: sha512-2q4QVpHoUV0ncf1XOqIC0dufOTkFRxQ0mHzg//H3WK02ZYqdNNPCAacZODhQlltl1cNJdTI8Y4uuGVd6fJuGzw==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@babel/runtime': ^7.17.2
-
-  typesense@1.7.2:
-    resolution: {integrity: sha512-hgQESOiyNJq+w2mpRJa/a1UMhWtJ/+sb0p7NoeCDSkikm9sasisJdnc7uhQchM6vTWKw2sMLWUBNbAhItR6zUQ==}
-    engines: {node: '>=14'}
-    peerDependencies:
-      '@babel/runtime': ^7.17.2
 
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
@@ -13328,12 +13298,6 @@ snapshots:
 
   axe-core@4.7.2: {}
 
-  axios@0.26.1:
-    dependencies:
-      follow-redirects: 1.15.6
-    transitivePeerDependencies:
-      - debug
-
   axobject-query@3.2.1:
     dependencies:
       dequal: 2.0.3
@@ -14846,8 +14810,6 @@ snapshots:
   flow-enums-runtime@0.0.5: {}
 
   flow-parser@0.206.0: {}
-
-  follow-redirects@1.15.6: {}
 
   for-each@0.3.3:
     dependencies:
@@ -18125,21 +18087,6 @@ snapshots:
   typescript@4.8.4: {}
 
   typescript@5.2.2: {}
-
-  typesense-instantsearch-adapter@2.8.0(@babel/runtime@7.24.7):
-    dependencies:
-      '@babel/runtime': 7.24.7
-      typesense: 1.7.2(@babel/runtime@7.24.7)
-    transitivePeerDependencies:
-      - debug
-
-  typesense@1.7.2(@babel/runtime@7.24.7):
-    dependencies:
-      '@babel/runtime': 7.24.7
-      axios: 0.26.1
-      loglevel: 1.8.1
-    transitivePeerDependencies:
-      - debug
 
   ufo@1.5.4: {}
 
