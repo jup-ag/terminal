@@ -70,7 +70,7 @@ const CodeBlocks = ({
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
 
   const headTag = `<!-- Attach the loading script in your <head /> -->
-<script src='${origin}/main-v3.js'></script>
+<script src='${origin}/main-v4.js'></script>
 `;
 
   const bodyTag = useMemo(() => {

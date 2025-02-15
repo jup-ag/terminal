@@ -40,7 +40,7 @@ We're deprecating Terminal V1/V2 in favor for V3. Please update to enjoy new rou
 
 ## Core features
 
-- `main-v3.js` bundle (~70Kb gzipped)
+- `main-v4.js` bundle (~70Kb gzipped)
 
   - app bundle (~1.1Mb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
@@ -89,10 +89,10 @@ Terminal is designed to work anywhere the web runs, including React, Plain HTML/
 
 ```html
 <!-- Attach the loading script in your <head /> -->
-<script src="https://terminal.jup.ag/main-v3.js"></script>
+<script src="https://terminal.jup.ag/main-v4.js"></script>
 
 <!-- Optionally, preload for better experience, or integrated mode -->
-<script src="https://terminal.jup.ag/main-v3.js" data-preload></script>
+<script src="https://terminal.jup.ag/main-v4.js" data-preload></script>
 ```
 
 ### 2. Initialize Jupiter Terminal
@@ -208,9 +208,9 @@ Callbacks that may be useful for your dApp, from form updates, to swap success/e
 window.Jupiter.init({
   /** Callbacks */
   /** When an error has occured during swap */
-  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponse | null }) {}
   /** When a swap has been successful */
-  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponsea | null }) {}
   /** Callback when there's changes to the form */
   onFormUpdate (form: IForm) {}
   /** Callback when there's changes to the screen */
