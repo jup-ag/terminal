@@ -25,7 +25,7 @@ const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
     return formatNumber.format(balance, accBalanceObj.decimals);
   }, [accounts, nativeAccount, props.mintAddress]);
 
-  if (props.hideZeroBalance && !formattedBalance) return null;
+  if (props.hideZeroBalance && (formattedBalance === '0' || !formattedBalance)) return null;
 
   if (!connected) return null;
   return <span translate="no">{formattedBalance}</span>;

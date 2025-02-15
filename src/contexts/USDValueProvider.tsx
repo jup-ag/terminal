@@ -6,6 +6,7 @@ import { useAccounts } from './accounts';
 import { useSwapContext } from './SwapContext';
 import { useTokenContext } from './TokenContextProvider';
 import { IInit } from 'src/types';
+import { WRAPPED_SOL_MINT } from 'src/constants';
 
 const MAXIMUM_PARAM_SUPPORT = 100;
 const CACHE_EXPIRE_TIME = 1000 * 60 * 1; // 1 min
@@ -169,7 +170,7 @@ export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => 
   // Make sure form token always have USD values
   useEffect(() => {
     setAddresses((prev) => {
-      const newSet = new Set([...prev]);
+      const newSet = new Set([...prev, WRAPPED_SOL_MINT.toString()]);
       if (fromTokenInfo?.address) newSet.add(fromTokenInfo?.address);
       if (toTokenInfo?.address) newSet.add(toTokenInfo?.address);
       return newSet;
