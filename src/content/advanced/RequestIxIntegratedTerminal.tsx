@@ -1,17 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { DEFAULT_EXPLORER, FormProps, IInit, IOnRequestIxCallback } from 'src/types';
-import { SignerWalletAdapterProps, useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
-import {
-  AddressLookupTableAccount,
-  Connection,
-  PublicKey,
-  TransactionInstruction,
-  TransactionMessage,
-  VersionedTransaction,
-} from '@solana/web3.js';
-
-// @jup-ag/common are devDeps, you're required to install or come up with a variant of it.
-import { executeTransaction, Owner } from '@jup-ag/common';
+import { DEFAULT_EXPLORER, FormProps } from 'src/types';
+import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
   rpcUrl: string;
@@ -25,108 +14,7 @@ const IntegratedTerminal = (props: {
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
-  const walletPublicKey = React.useMemo(
-    () => passthroughWalletContextState?.publicKey?.toString(),
-    [passthroughWalletContextState?.publicKey],
-  );
-
-  const onRequestIxCallback: IInit['onRequestIxCallback'] = useCallback(
-    async (ixAndCb: IOnRequestIxCallback) => {
-      const { meta, instructions, onSubmitWithIx } = ixAndCb;
-      const connection = new Connection(rpcUrl);
-
-      if (
-        !walletPublicKey ||
-        !passthroughWalletContextState.wallet ||
-        !passthroughWalletContextState ||
-        !passthroughWalletContextState.signTransaction
-      )
-        return;
-
-      const {
-        tokenLedgerInstruction, // If you are using `useTokenLedger = true`.
-        computeBudgetInstructions, // The necessary instructions to setup the compute budget.
-        setupInstructions, // Setup missing ATA for the users.
-        swapInstruction: swapInstructionPayload, // The actual swap instruction.
-        cleanupInstruction, // Unwrap the SOL if `wrapAndUnwrapSol = true`.
-        addressLookupTableAddresses, // The lookup table addresses that you can use if you are using versioned transaction.
-      } = instructions;
-
-      const deserializeInstruction = (instruction: (typeof instructions)['swapInstruction']) => {
-        return new TransactionInstruction({
-          programId: new PublicKey(instruction.programId),
-          keys: instruction.accounts.map((key) => ({
-            pubkey: new PublicKey(key.pubkey),
-            isSigner: key.isSigner,
-            isWritable: key.isWritable,
-          })),
-          data: Buffer.from(instruction.data, 'base64'),
-        });
-      };
-
-      const getAddressLookupTableAccounts = async (keys: string[]): Promise<AddressLookupTableAccount[]> => {
-        const addressLookupTableAccountInfos = await connection.getMultipleAccountsInfo(
-          keys.map((key) => new PublicKey(key)),
-        );
-
-        return addressLookupTableAccountInfos.reduce((acc, accountInfo, index) => {
-          const addressLookupTableAddress = keys[index];
-          if (accountInfo) {
-            const addressLookupTableAccount = new AddressLookupTableAccount({
-              key: new PublicKey(addressLookupTableAddress),
-              state: AddressLookupTableAccount.deserialize(accountInfo.data),
-            });
-            acc.push(addressLookupTableAccount);
-          }
-
-          return acc;
-        }, new Array<AddressLookupTableAccount>());
-      };
-
-      /** TODO: Manipulate your IX here. */
-      const addressLookupTableAccounts: AddressLookupTableAccount[] = [];
-      addressLookupTableAccounts.push(...(await getAddressLookupTableAccounts(addressLookupTableAddresses)));
-
-      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
-      const messageV0 = new TransactionMessage({
-        payerKey: new PublicKey(walletPublicKey),
-        recentBlockhash: blockhash,
-        instructions: [
-          ...setupInstructions.map(deserializeInstruction),
-          deserializeInstruction(swapInstructionPayload),
-          cleanupInstruction ? deserializeInstruction(cleanupInstruction) : null,
-        ].filter(Boolean) as TransactionInstruction[],
-      }).compileToV0Message(addressLookupTableAccounts);
-      /** End of Manipulate IX */
-
-      const transaction = new VersionedTransaction(messageV0);
-
-      const swapResult = await executeTransaction({
-        connection,
-        wallet: {
-          signAllTransactions:
-            passthroughWalletContextState.signAllTransactions as SignerWalletAdapterProps['signAllTransactions'],
-          signTransaction: passthroughWalletContextState.signTransaction as SignerWalletAdapterProps['signTransaction'],
-        },
-        onTransaction: undefined,
-        inputMint: meta.quoteResponseMeta.quoteResponse.inputMint,
-        outputMint: meta.quoteResponseMeta.quoteResponse.outputMint,
-        sourceAddress: meta.sourceAddress,
-        destinationAddress: meta.destinationAddress,
-        swapTransaction: transaction,
-        blockhashWithExpiryBlockHeight: {
-          blockhash,
-          lastValidBlockHeight,
-        },
-        owner: new Owner(new PublicKey(walletPublicKey)),
-        wrapUnwrapSOL: Boolean(cleanupInstruction),
-      });
-
-      onSubmitWithIx(swapResult);
-    },
-    [passthroughWalletContextState, rpcUrl, walletPublicKey],
-  );
-
+  
   const launchTerminal = useCallback(async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
@@ -138,14 +26,10 @@ const IntegratedTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
-
-      onRequestIxCallback,
-      maxAccounts: 45,
     });
   }, [
     defaultExplorer,
     formProps,
-    onRequestIxCallback,
     passthroughWalletContextState,
     rpcUrl,
     setShowModal,

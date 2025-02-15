@@ -9,7 +9,6 @@ import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { useRouter } from 'next/router';
 import { base64ToJson } from 'src/misc/utils';
-import { SwapMode } from 'src/types/enums';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -18,50 +17,6 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     values: {
       ...INITIAL_FORM_CONFIG,
       formProps: { ...INITIAL_FORM_CONFIG.formProps },
-    },
-  },
-  {
-    name: 'For payments',
-    description: `
-    Purchase a specified amount of specific token.
-    e.g. Imagine paying for 1 NFT at the price of 1 SOL.
-    e.g. Paying for RPC service at the price of 100 USDC.
-    `,
-    values: {
-      ...INITIAL_FORM_CONFIG,
-      formProps: {
-        ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: SwapMode.ExactOut,
-        initialAmount: '1000000000',
-        fixedAmount: true,
-        fixedOutputMint: true,
-      },
-    },
-  },
-  {
-    name: 'Buy a project token',
-    description: `To purchase a specific token.`,
-    values: {
-      ...INITIAL_FORM_CONFIG,
-      formProps: {
-        ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: SwapMode.ExactIn,
-        initialOutputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-        fixedOutputMint: true,
-      },
-    },
-  },
-  {
-    name: 'Exact Out',
-    description: `
-    On Exact Out mode, user specify the amount of token to receive instead.
-    `,
-    values: {
-      ...INITIAL_FORM_CONFIG,
-      formProps: {
-        ...INITIAL_FORM_CONFIG.formProps,
-        swapMode: SwapMode.ExactOut,
-      },
     },
   },
   {
@@ -87,7 +42,6 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 
 const FormConfigurator = ({
   simulateWalletPassthrough,
-  useUserSlippage,
   strictTokenList,
   defaultExplorer,
   formProps,
@@ -167,7 +121,6 @@ const FormConfigurator = ({
   const [isOpen, setIsOpen] = React.useState(false);
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
-  const [isSwapModeOpen, setIsSwapModeOpen] = React.useState(false);
 
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
@@ -262,63 +215,6 @@ const FormConfigurator = ({
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
-      {/* Exact out */}
-      <div className="relative inline-block text-left text-white w-full mt-5">
-        <p className="text-white text-sm font-semibold">Exact output mode</p>
-        <div className="text-xs text-white/30">
-          {formProps.swapMode === 'ExactInOrOut' && (
-            <span>User can freely switch between ExactIn or ExactOut mode.</span>
-          )}
-          {formProps.swapMode === 'ExactIn' && <span>User can only edit input.</span>}
-          {formProps.swapMode === 'ExactOut' && <span>User can only edit exact amount received.</span>}
-        </div>
-
-        <div className="mt-2">
-          <button
-            onClick={() => setIsSwapModeOpen((prev) => !prev)}
-            type="button"
-            className="w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-            id="menu-button"
-            aria-expanded="true"
-            aria-haspopup="true"
-          >
-            <div className="flex items-center justify-center space-x-2.5">
-              <p>{formProps.swapMode}</p>
-            </div>
-
-            <ChevronDownIcon />
-          </button>
-
-          {isSwapModeOpen ? (
-            <div
-              className="absolute left-0 top-15 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-zinc-700 w-full border border-white/20"
-              role="menu"
-              aria-orientation="vertical"
-              aria-labelledby="menu-button"
-            >
-              {Object.values(SwapMode).map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setValue('formProps.swapMode', item);
-                    setIsSwapModeOpen(false);
-                  }}
-                  type="button"
-                  className={classNames(
-                    'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
-                    active === index ? '' : '',
-                    'last:border-b last:border-white/10',
-                  )}
-                >
-                  <span>{item}</span>
-                </button>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </div>
-      <div className="w-full border-b border-white/10 py-3" />
-
       {/* Fixed amount */}
       <div className="flex justify-between mt-5">
         <div>
@@ -331,43 +227,6 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
-
-      {/* Use user slippage */}
-      <div className="flex justify-between mt-5">
-        <div>
-          <p className="text-sm text-white/75">Use user slippage</p>
-          <p className="text-xs text-white/30">{`Prevent Initial slippage from overriding user's last saved slippage`}</p>
-        </div>
-        <Toggle
-          className="min-w-[40px]"
-          active={useUserSlippage}
-          onClick={() => setValue('useUserSlippage', !useUserSlippage)}
-        />
-      </div>
-      <div className="w-full border-b border-white/10 py-3" />
-
-      {/* Initial Slippage */}
-      <div className="flex justify-between mt-5">
-        <div>
-          <p className="text-sm text-white/75">Initial slippage</p>
-          <p className="text-xs text-white/30">Slippage to be prefilled on first load</p>
-          {useUserSlippage && <p className="text-xs text-warning">Use user slippage is true</p>}
-        </div>
-      </div>
-      <input
-        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-        value={formProps.initialSlippageBps}
-        inputMode="numeric"
-        maxLength={4}
-        onChange={(e) => {
-          const regex = /^[0-9\b]+$/;
-          const value = e.target.value;
-          if (value === '' || regex.test(value)) {
-            setValue('formProps.initialSlippageBps', Number(value));
-          }
-        }}
-      />
       <div className="w-full border-b border-white/10 py-3" />
 
       {/* Initial Amount */}
@@ -402,20 +261,6 @@ const FormConfigurator = ({
           className="min-w-[40px]"
           active={simulateWalletPassthrough}
           onClick={() => setValue('simulateWalletPassthrough', !simulateWalletPassthrough)}
-        />
-      </div>
-      <div className="w-full border-b border-white/10 py-3" />
-
-      {/* Strict Token List  */}
-      <div className="flex justify-between mt-5">
-        <div>
-          <p className="text-sm text-white/75">Strict Token List</p>
-          <p className="text-xs text-white/30">{`The strict list contains a smaller set of validated tokens. To see all tokens, toggle "off".`}</p>
-        </div>
-        <Toggle
-          className="min-w-[40px]"
-          active={strictTokenList}
-          onClick={() => setValue('strictTokenList', !strictTokenList)}
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TransactionFeeInfo } from '@jup-ag/react-hook';
 import Tooltip from 'src/components/Tooltip';
-import { formatNumber, fromLamports } from 'src/misc/utils';
+import { formatNumber } from 'src/misc/utils';
 import Decimal from 'decimal.js';
 
 const Deposits = ({

@@ -9,7 +9,6 @@ const IntegratedTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
-  useUserSlippage: boolean;
 }) => {
   const {
     rpcUrl,
@@ -17,7 +16,6 @@ const IntegratedTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   } = props;
   const [isLoaded, setIsLoaded] = useState(false);
@@ -37,7 +35,6 @@ const IntegratedTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
-      useUserSlippage,
     });
   }, [
     defaultExplorer,
@@ -47,7 +44,6 @@ const IntegratedTerminal = (props: {
     setShowModal,
     simulateWalletPassthrough,
     strictTokenList,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   ]);
 

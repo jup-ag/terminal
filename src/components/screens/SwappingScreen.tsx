@@ -10,7 +10,6 @@ import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import JupiterLogo from 'src/icons/JupiterLogo';
-import Decimal from 'decimal.js';
 
 const ErrorIcon = () => {
   return (
@@ -40,11 +39,10 @@ const SwappingScreen = () => {
     displayMode,
     lastSwapResult,
     reset,
-    scriptDomain,
     swapping: { txStatus },
     fromTokenInfo,
     toTokenInfo,
-    jupiter: { refresh },
+    refresh,
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
@@ -73,7 +71,7 @@ const SwappingScreen = () => {
       if (window.Jupiter.onSwapError) {
         window.Jupiter.onSwapError({
           error: lastSwapResult?.swapResult?.error,
-          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+          quoteResponseMeta: lastSwapResult?.quoteReponse,
         });
       }
       return;
@@ -82,7 +80,7 @@ const SwappingScreen = () => {
         window.Jupiter.onSuccess({
           txid: lastSwapResult?.swapResult?.txid,
           swapResult: lastSwapResult?.swapResult,
-          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+          quoteResponseMeta: lastSwapResult?.quoteReponse,
         });
       }
       return;
@@ -126,11 +124,6 @@ const SwappingScreen = () => {
                   {txStatus.status === 'pending-approval' && 'Pending Approval'}
                   {txStatus.status === 'sending' && 'Swapping'}
                 </span>
-                {txStatus?.quotedDynamicSlippageBps ? (
-                  <span className="text-xs text-v2-lily/50">
-                    Slippage: {new Decimal(txStatus?.quotedDynamicSlippageBps).div(100).toFixed(2)}%
-                  </span>
-                ) : null}
               </div>
             </div>
           )}
@@ -157,7 +150,7 @@ const SwappingScreen = () => {
       };
     }, []);
 
-    if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteResponseMeta) {
+    if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteReponse) {
       return null;
     }
 
@@ -185,7 +178,7 @@ const SwappingScreen = () => {
             </div>
 
             <PriceInfo
-              quoteResponse={lastSwapResult?.quoteResponseMeta.quoteResponse}
+              quoteResponse={lastSwapResult?.quoteReponse}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
               loading={false}

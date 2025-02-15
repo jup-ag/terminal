@@ -1,4 +1,3 @@
-import { JupiterError } from '@jup-ag/react-hook';
 import { useQuery } from '@tanstack/react-query';
 import { UltraSwapQuoteParams, ultraSwapService } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';

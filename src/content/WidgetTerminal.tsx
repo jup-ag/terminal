@@ -12,7 +12,6 @@ const WidgetTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
-  useUserSlippage: boolean;
 }) => {
   const {
     rpcUrl,
@@ -20,7 +19,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   } = props;
   const [isLoaded, setIsLoaded] = useState(false);
@@ -45,7 +43,6 @@ const WidgetTerminal = (props: {
       refetchIntervalForTokenAccounts,
       strictTokenList,
       defaultExplorer,
-      useUserSlippage,
     });
   }, [
     defaultExplorer,
@@ -57,7 +54,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     size,
     strictTokenList,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   ]);
 

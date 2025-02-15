@@ -3,15 +3,17 @@ import { useSwapContext } from 'src/contexts/SwapContext';
 import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 
 const useTimeDiff = (): [boolean, number] => {
-  const {
-    jupiter: { lastRefreshTimestamp },
-  } = useSwapContext();
+  const { lastRefreshTimestamp } = useSwapContext();
 
   const [hasExpired, setHasExpired] = React.useState(false);
   const [timeDiff, setTimeDiff] = useState(0);
 
   useEffect(() => {
     const intervalId = setInterval(() => {
+      if (!lastRefreshTimestamp) {
+        return;
+      }
+      
       const value = Date.now() > lastRefreshTimestamp + ROUTE_CACHE_DURATION;
 
       const elapsedSeconds = (Date.now() - (lastRefreshTimestamp + ROUTE_CACHE_DURATION)) / 1_000;

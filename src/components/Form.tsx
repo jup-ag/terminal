@@ -40,15 +40,17 @@ const Form: React.FC<{
   const {
     form,
     setForm,
-    isToPairFocused,
     errors,
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
-    formProps: { swapMode, fixedAmount, fixedInputMint, fixedOutputMint },
-    jupiter: { quoteResponseMeta: route, loading, error, refresh },
+    formProps: { fixedAmount, fixedInputMint, fixedOutputMint },
+    loading,
+    refresh,
+    quoteError,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
+
   useEffect(() => {
     if (hasExpired) {
       refresh();
@@ -61,7 +63,7 @@ const Form: React.FC<{
   const listOfSuggestions = useSuggestionTags({
     fromTokenInfo,
     toTokenInfo,
-    quoteResponse: route?.quoteResponse,
+    quoteResponse: quoteResponseMeta?.quoteResponse,
   });
 
   const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
@@ -102,8 +104,7 @@ const Form: React.FC<{
     (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
-      if (!balance || swapMode === 'ExactOut') return;
-
+      if (!balance) return;
       if (fromTokenInfo?.address === WRAPPED_SOL_MINT.toBase58()) {
         setForm((prev) => ({
           ...prev,
@@ -118,7 +119,7 @@ const Form: React.FC<{
         }));
       }
     },
-    [balance, fromTokenInfo?.address, setForm, swapMode],
+    [balance, fromTokenInfo?.address, setForm],
   );
 
   const onClickSwitchPair = () => {
@@ -135,18 +136,10 @@ const Form: React.FC<{
   const { inputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
-      if (swapMode === 'ExactOut') {
-        result.outputAmountDisabled = false;
-      } else {
-        result.inputAmountDisabled = false;
-      }
+      result.inputAmountDisabled = false;
     }
     return result;
-  }, [fixedAmount, swapMode]);
-
-  const marketRoutes = quoteResponseMeta
-    ? quoteResponseMeta.quoteResponse.routePlan.map(({ swapInfo }) => swapInfo.label).join(', ')
-    : '';
+  }, [fixedAmount]);
 
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
@@ -157,11 +150,6 @@ const Form: React.FC<{
     if (fixedOutputMint) return;
     setSelectPairSelector('toMint');
   }, [fixedOutputMint, setSelectPairSelector]);
-
-  const fixedOutputFomMintClass = useMemo(() => {
-    if (swapMode === 'ExactOut' && !form.toValue) return 'opacity-20 hover:opacity-100';
-    return '';
-  }, [form.toValue, swapMode]);
 
   const thousandSeparator = useMemo(() => (detectedSeparator === ',' ? '.' : ','), []);
   // Allow empty input, and input lower than max limit
@@ -185,13 +173,8 @@ const Form: React.FC<{
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div
-            className={classNames(
-              'border-b border-transparent bg-[#212128] rounded-xl transition-all',
-              fixedOutputFomMintClass,
-            )}
-          >
-            <div className={classNames('px-x border-transparent rounded-xl ')}>
+          <div className={classNames('border-b border-transparent bg-[#212128] rounded-xl transition-all')}>
+            <div className={classNames('px-x border-transparent rounded-xl')}>
               <div>
                 <div
                   className={classNames(
@@ -222,7 +205,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {fromTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={fixedAmount || swapMode === 'ExactOut'}
+                          disabled={fixedAmount}
                           value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
                           decimalScale={fromTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
@@ -236,9 +219,6 @@ const Form: React.FC<{
                           )}
                           decimalSeparator={detectedSeparator}
                           isAllowed={withValueLimit}
-                          onKeyDown={(e) => {
-                            isToPairFocused.current = false;
-                          }}
                         />
                       )}
                     </div>
@@ -247,11 +227,8 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current', {
-                          'cursor-pointer': swapMode !== 'ExactOut',
-                        })}
+                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current')}
                         onClick={(e) => {
-                          isToPairFocused.current = false;
                           onClickMax(e);
                         }}
                       >
@@ -274,10 +251,7 @@ const Form: React.FC<{
 
           <div className={'my-2'}>
             {hasFixedMint ? null : (
-              <SwitchPairButton
-                onClick={onClickSwitchPair}
-                className={classNames('transition-all', fixedOutputFomMintClass)}
-              />
+              <SwitchPairButton onClick={onClickSwitchPair} className={classNames('transition-all')} />
             )}
           </div>
 
@@ -314,7 +288,6 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
-                          // disabled={!swapMode || swapMode === 'ExactIn'}
                           disabled={true}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
@@ -322,7 +295,6 @@ const Form: React.FC<{
                           allowNegative={false}
                           valueIsNumericString
                           onValueChange={onChangeToValue}
-                          placeholder={swapMode === 'ExactIn' ? '' : 'Enter desired amount'}
                           className={classNames(
                             'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
                           )}
@@ -338,7 +310,6 @@ const Form: React.FC<{
                               e.key === 'Shift'
                             )
                               return;
-                            isToPairFocused.current = true;
                           }}
                         />
                       )}
@@ -365,15 +336,12 @@ const Form: React.FC<{
             </div>
           </div>
 
-          {route?.quoteResponse ? (
+          {quoteResponseMeta ? (
             <div className="flex items-center mt-2 text-xs space-x-1">
               <div className="bg-black/20 rounded-xl px-2 py-1 text-white/50 flex items-center space-x-1">
                 <RoutesSVG width={7} height={9} />
               </div>
-              <span className="text-white/30">using</span>
-              <span className="text-white/50 overflow-hidden whitespace-nowrap text-ellipsis max-w-[70%]">
-                {marketRoutes}
-              </span>
+              <span className="text-white/30">Ultra Swap</span>
             </div>
           ) : null}
         </div>
@@ -403,7 +371,7 @@ const Form: React.FC<{
           >
             {loading ? (
               <span className="text-sm">Loading...</span>
-            ) : error ? (
+            ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : (
               <V2SexyChameleonText>Swap</V2SexyChameleonText>
@@ -411,9 +379,9 @@ const Form: React.FC<{
           </JupButton>
         )}
 
-        {route && quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
+        {quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            quoteResponse={quoteResponseMeta.quoteResponse}
+            quoteResponse={quoteResponseMeta}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}

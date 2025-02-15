@@ -12,9 +12,9 @@ const ConfirmationScreen = () => {
     fromTokenInfo,
     toTokenInfo,
     onSubmit: onSubmitJupiter,
-    onRequestIx,
     quoteResponseMeta,
-    jupiter: { loading, refresh },
+    loading,
+    refresh,
   } = useSwapContext();
 
   const [hasExpired] = useTimeDiff();
@@ -27,18 +27,8 @@ const ConfirmationScreen = () => {
   };
   const onSubmit = useCallback(async () => {
     setScreen('Swapping');
-
-    if (window.Jupiter.onRequestIxCallback) {
-      const ixAndCb = await onRequestIx()
-      if (ixAndCb) {
-        window.Jupiter.onRequestIxCallback(ixAndCb)
-      } else {
-        setScreen('Error')
-      }
-    } else {
-      onSubmitJupiter();
-    }
-  }, [onRequestIx, onSubmitJupiter, setScreen]);
+    onSubmitJupiter();
+  }, [onSubmitJupiter, setScreen]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
@@ -55,7 +45,7 @@ const ConfirmationScreen = () => {
       <div>
         {quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            quoteResponse={quoteResponseMeta.quoteResponse}
+            quoteResponse={quoteResponseMeta}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}

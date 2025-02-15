@@ -245,13 +245,8 @@ const appProps = atom<IInit | undefined>(undefined);
 
 async function init(passedProps: IInit) {
   if (typeof window === 'undefined' || typeof document === 'undefined') return null;
-
-  // Prechecks
-  if (passedProps.maxAccounts && passedProps.maxAccounts > 64) throw new Error('Max accounts must not be more than 64');
-
   const props: IInit = {
     ...passedProps,
-    maxAccounts: passedProps.maxAccounts || 64,
   };
 
   const {
@@ -262,7 +257,6 @@ async function init(passedProps: IInit) {
     onSuccess,
     onFormUpdate,
     onScreenUpdate,
-    onRequestIxCallback,
     integratedTargetId,
     ...restProps
   } = props;
@@ -319,7 +313,6 @@ async function init(passedProps: IInit) {
   window.Jupiter.onSuccess = onSuccess;
   window.Jupiter.onFormUpdate = onFormUpdate;
   window.Jupiter.onScreenUpdate = onScreenUpdate;
-  window.Jupiter.onRequestIxCallback = onRequestIxCallback;
 
   // Special props
   window.Jupiter.localStoragePrefix = passedProps.localStoragePrefix || 'jupiter-terminal';

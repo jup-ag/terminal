@@ -8,7 +8,6 @@ export interface UltraQuoteResponse {
     outAmount: string;
     otherAmountThreshold: string;
     priceImpactPct: string;
-    swapMode: 'ExactIn' | 'ExactOut';
     routePlan: {
         swapInfo: {
             inputMint: string;
@@ -22,9 +21,7 @@ export interface UltraQuoteResponse {
         };
         percent: number;
     }[];
-    slippageBps: number;
     contextSlot: number;
-    computedAutoSlippage?: number;
     transaction: string | null;
     swapType: 'ultra';
     gasless: boolean;

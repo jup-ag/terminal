@@ -1,9 +1,7 @@
 import { useMemo } from 'react';
 import Decimal from 'decimal.js';
-import { QuoteResponse } from '@jup-ag/react-hook';
 import { useSwapRouteInfo } from './useSwapInfo';
 import { formatNumber } from 'src/misc/utils';
-import { UltraQuoteResponse } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 const PRICE_IMPACT_COLOR = {

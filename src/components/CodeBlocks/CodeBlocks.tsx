@@ -52,7 +52,6 @@ const CodeBlocks = ({
       : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
     ...(formConfigurator.simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
-    ...(formConfigurator.useUserSlippage === false ? { useUserSlippage: false } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';

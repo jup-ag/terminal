@@ -11,7 +11,6 @@ import Link from 'next/link';
 
 import RightArrowIcon from 'src/icons/RightArrowIcon';
 
-import { QuoteResponse } from '@jup-ag/react-hook';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
 import { useSwapRouteInfo } from '../hooks/useSwapInfo';
 import { useMobile } from 'src/hooks/useMobile';

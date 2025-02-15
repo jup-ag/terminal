@@ -10,13 +10,9 @@
     <script>
       document.addEventListener('readystatechange', (e) => {
         if (document.readyState === 'complete') {
-          console.log(window.Jupiter.init)
+          console.log(window.Jupiter.init);
           window.Jupiter.init({
             endpoint: 'https://api.mainnet-beta.solana.com',
-            formProps: {
-              initialSlippageBps: 1234,
-            },
-            useUserSlippage: false,
           });
         }
       });

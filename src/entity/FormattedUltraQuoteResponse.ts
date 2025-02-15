@@ -48,7 +48,6 @@ export const FormattedUltraQuoteResponse = type({
   outAmount: AmountFromString,
   otherAmountThreshold: AmountFromString,
   priceImpactPct: NumberFromString,
-  swapMode: enums(['ExactIn', 'ExactOut']),
   routePlan: RoutePlanWithMetadata,
   slippageBps: number(),
   contextSlot: defaulted(number(), 0),

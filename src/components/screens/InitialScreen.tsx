@@ -26,7 +26,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     setErrors,
     quoteResponseMeta,
     formProps: { initialOutputMint, fixedOutputMint },
-    jupiter: { loading },
+    loading,
   } = useSwapContext();
   const { setScreen } = useScreenState();
 

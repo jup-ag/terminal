@@ -6,12 +6,13 @@ import { ultraSwapService } from 'src/data/UltraSwapService';
 import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
+import { TransactionError } from '@mercurial-finance/optimist';
 
 interface UltraSwapMutationProps {
-//   tx: string;
+  //   tx: string;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
-//   requestId: string;
+  //   requestId: string;
   setTxStatus: (status: ISwapContext['swapping']['txStatus']) => void;
   setLastSwapResult: (result: ISwapContext['lastSwapResult']) => void;
   quoteResponseMeta: QuoteResponse;
@@ -37,7 +38,13 @@ export function useUltraSwapMutation() {
   const { wallet, signTransaction } = useWallet();
   const { connection } = useConnection();
   return useMutation({
-    mutationFn: async ({ setTxStatus, setLastSwapResult, fromTokenInfo, toTokenInfo, quoteResponseMeta }: UltraSwapMutationProps) => {
+    mutationFn: async ({
+      setTxStatus,
+      setLastSwapResult,
+      fromTokenInfo,
+      toTokenInfo,
+      quoteResponseMeta,
+    }: UltraSwapMutationProps) => {
       const publicKey = wallet?.adapter.publicKey;
       if (!signTransaction || !publicKey) {
         throw new UltraSwapError(
@@ -49,12 +56,9 @@ export function useUltraSwapMutation() {
       setTxStatus({
         txid: '',
         status: 'pending-approval',
-        quotedDynamicSlippageBps: '',
-        // quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
       });
 
       const selectedQuote = quoteResponseMeta.original;
-
 
       const { transaction, requestId } = selectedQuote;
 
@@ -66,24 +70,17 @@ export function useUltraSwapMutation() {
       const signedTransaction = await signTransaction(versionedTransaction);
       const serializedTransaction = Buffer.from(signedTransaction.serialize()).toString('base64');
 
-
       setTxStatus({
         txid: '',
         status: 'sending',
-        quotedDynamicSlippageBps: '',
-        // quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
       });
 
-
-      
       const response = await ultraSwapService.submitSwap(serializedTransaction, requestId);
 
       const { signature, status } = response;
       if (status !== 'Success') {
         throw new UltraSwapError('Failed to submit transaction', UltraSwapErrorType.FAILED, signature);
-        // TODO: handle error
       }
-
 
       const transactionResponse = await connection.getTransaction(signature, {
         commitment: 'confirmed',
@@ -101,13 +98,9 @@ export function useUltraSwapMutation() {
         destinationAddress: new PublicKey(toTokenInfo.address),
       });
 
-
-
-
       setTxStatus({
         txid: signature,
         status: 'success',
-        quotedDynamicSlippageBps: '',
       });
       setLastSwapResult({
         swapResult: {
@@ -117,35 +110,42 @@ export function useUltraSwapMutation() {
           inputAmount: sourceTokenBalanceChange,
           outputAmount: destinationTokenBalanceChange,
         },
-        quoteResponseMeta: quoteResponseMeta,
+        quoteReponse: quoteResponseMeta,
       });
       return signature;
     },
-    onError: async(error, variables) => {
-        const {setTxStatus, setLastSwapResult, quoteResponseMeta} = variables;
+    onError: async (error, variables) => {
+      const { setTxStatus, setLastSwapResult, quoteResponseMeta } = variables;
+
+      if (error instanceof Error) {
+        setLastSwapResult({
+          swapResult: {
+            error: new TransactionError(error.message),
+          },
+          quoteReponse: quoteResponseMeta,
+        });
+      }
+
+      if ('json' in (error as any)) {
+        const json = (await (error as any).json()) as {
+          txid: string;
+          signature: string;
+          error: string;
+          status: string;
+        };
 
         setLastSwapResult({
-            swapResult: {
-            //   error: error.toString(),
-            },
-            quoteResponseMeta: quoteResponseMeta,
-          });
-        if(error instanceof UltraSwapError) {
-            
+          swapResult: {
+            error: new TransactionError(json.error || 'Unknown error'),
+          },
+          quoteReponse: quoteResponseMeta,
+        });
 
-            setTxStatus({
-                txid: error.txid || '',
-                status: 'fail',
-                quotedDynamicSlippageBps: '',
-              });
-        }
-
-        //           setTxStatus({
-        //     txid: result.txid || '',
-        //     status: 'error' in result && result.error?.message.includes('expired') ? 'timeout' : 'fail',
-        //     quotedDynamicSlippageBps: swapTransactionResponse.dynamicSlippageReport?.slippageBps?.toString(),
-        //   });
-
+        setTxStatus({
+          txid: json.txid || '',
+          status: 'fail',
+        });
+      }
     },
   });
 }

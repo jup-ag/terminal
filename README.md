@@ -1,5 +1,19 @@
 # Jupiter Terminal
 
+
+### V4 Ultra is here
+
+### V4 Deprecations
+- Fee supports coming in v4.1
+- onRequestIx
+- onRequestIxCallback
+- onSubmitWithIx
+- maxAccounts
+- useUserSlippage
+- initialSlippageBps
+- ExactOut
+- Strict token list
+
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
 Visit our Demo / Playground over at https://terminal.jup.ag
@@ -159,49 +173,6 @@ declare global {
 
 ---
 
-### Fee supports
-
-Similar to Jupiter, Jupiter Terminal supports fee for integrators.
-
-There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
-
-Refer to [Adding your own fees](https://docs.jup.ag/docs/apis/adding-fees) docs for more details.
-
-_Note: You will need to create the Token fee accounts to collect the platform fee._
-
-#### By referral key `referralAccount` (easiest)
-
-```tsx
-const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
-  referralAccount: '2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy',
-  feeBps: 100,
-};
-
-window.Jupiter.init({
-  // ...
-  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-});
-```
-
-#### By defined fee accounts
-
-Alternatively, you can derive yourself the fee accounts via
-[Set your fee token account](https://docs.jup.ag/docs/apis/adding-fees#3-set-your-fee-token-account) and declare them like so:
-
-```tsx
-const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
-  feeBps: 100,
-  feeAccounts,
-};
-
-window.Jupiter.init({
-  // ...
-  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-});
-```
-
----
-
 ### Resuming / Closing activity
 
 - Everytime `init()` is called, it will create a new activity.
@@ -217,18 +188,6 @@ if (window.Jupiter._instance) {
 
 window.Jupiter.close();
 ```
-
-### Strict Token List
-
-- `strictTokenList?: boolean;`
-- Default: `true`
-
-The Jupiter Token List API is an open, collaborative, and dynamic token list to make trading on Solana more transparent and safer for users and developers.
-It is true by default to ensure that only validated tokens are shown.
-
-Learn more at: https://station.jup.ag/docs/token-list/token-list-api
-
----
 
 ### Default Explorer
 
@@ -256,9 +215,6 @@ window.Jupiter.init({
   onFormUpdate (form: IForm) {}
   /** Callback when there's changes to the screen */
   onScreenUpdate (screen: IScreen) {}
-
-  /** Advanced usage */
-  /** onRequestIxCallback(), refer to dedicated section below */
 });
 ```
 
@@ -300,26 +256,6 @@ window.Jupiter.init({
   containerClassName: 'max-h-[90vh] lg:max-h-[600px]',
 });
 ```
-
-### onRequestIxCallback
-
-Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned.
-
-Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/state transitioning.
-
-- [Station Guide](https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction)
-- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
-
-```tsx
-const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {};
-```
-
-### maxAccounts
-
-Limit the number of accounts to be used by the Swap Instructions.
-
-- [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
-- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
 
 ### refetchIntervalForTokenAccounts: number
 Specify the interval for getTokenAccountsByOwner calls, defaults to 10_000 (10s)
