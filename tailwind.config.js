@@ -41,6 +41,9 @@ module.exports = {
         'utility-warning-50': '#4E1D09',
         'utility-warning-300': '#B54708',
         'utility-warning-600': '#FDB022',
+
+        'uiv2-text': '#07090F',
+        'v3-input-background': '#10171F',
       },
       fontSize: {
         xxs: ['0.625rem', '1rem'],

@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import * as React from 'react';
+import { cn } from 'src/misc/cn';
 
 interface TooltipProps {
   className?: string;
@@ -20,7 +20,7 @@ const Tooltip: React.FC<React.PropsWithChildren<TooltipProps>> = ({
   return (
     <div className="group cursor-pointer" onClick={onClick}>
       <div
-        className={classNames(
+        className={cn(
           'invisible absolute rounded shadow-lg py-1 px-2 right-0 w-full -mt-8 flex justify-center items-center text-center',
           className,
           {

@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React, { HTMLAttributes, PropsWithChildren, useEffect, useState } from 'react';
+import { cn } from 'src/misc/cn';
 
 const Collapse: React.FC<
   PropsWithChildren<{
@@ -20,7 +20,7 @@ const Collapse: React.FC<
 
   return (
     <div
-      className={classNames('transition-all duration-200 overflow-hidden', animationClass, className)}
+      className={cn('transition-all duration-200 overflow-hidden', animationClass, className)}
       style={{ height: localHeight, maxHeight }}
     >
       {children}

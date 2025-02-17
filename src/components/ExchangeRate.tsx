@@ -1,12 +1,12 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 
-import classnames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import * as React from 'react';
 
 import { formatNumber, fromLamports } from '../misc/utils';
 import PrecisionTickSize from './PrecisionTickSize';
+import { cn } from 'src/misc/cn';
 
 export interface IRateParams {
   inAmount: JSBI;
@@ -72,17 +72,17 @@ const ExchangeRate = ({
 
   return (
     <div
-      className={classnames(className, 'flex cursor-pointer text-white/30 text-xs align-center')}
+      className={cn(className, 'flex cursor-pointer text-white/50 text-xs align-center')}
       onClick={onReverse}
     >
-      <span className={classnames(textClassName, 'max-w-full flex whitespace-nowrap')}>
+      <span className={cn(textClassName, 'max-w-full flex whitespace-nowrap')}>
         {reverse ? (
           <>
             1 {fromTokenInfo.symbol} ≈
             <div className='flex ml-0.5'>
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate)} ${toTokenInfo.symbol}`
+                  `${formatNumber.format(rate, 6)} ${toTokenInfo.symbol}`
                 )
                 : (
                   <>
@@ -98,7 +98,7 @@ const ExchangeRate = ({
 
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate)} ${fromTokenInfo.symbol}`
+                  `${formatNumber.format(rate, 6)} ${fromTokenInfo.symbol}`
                 )
                 : (
                   <>

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import Decimal from 'decimal.js';
-import { QuoteResponse } from '@jup-ag/react-hook';
 import { useSwapRouteInfo } from './useSwapInfo';
 import { formatNumber } from 'src/misc/utils';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 const PRICE_IMPACT_COLOR = {
   OK: 'text-white-50',
@@ -10,7 +10,7 @@ const PRICE_IMPACT_COLOR = {
   DANGER: 'text-perps-red',
 };
 
-export const usePriceImpact = (route?: QuoteResponse) => {
+export const usePriceImpact = (route?: FormattedUltraQuoteResponse) => {
   const swapRouteInfo = useSwapRouteInfo();
 
   const priceImpactPct = useMemo(() => new Decimal(route?.priceImpactPct || 0).mul(100), [route?.priceImpactPct]);

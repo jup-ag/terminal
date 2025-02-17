@@ -1,6 +1,4 @@
-import { JupiterProvider } from '@jup-ag/react-hook';
 import { useConnection } from '@jup-ag/wallet-adapter';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
@@ -11,7 +9,6 @@ import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { IInit } from 'src/types';
 
 import { PublicKey } from '@solana/web3.js';
-import { PrioritizationFeeContextProvider } from 'src/contexts/PrioritizationFeeContextProvider';
 import CloseIcon from 'src/icons/CloseIcon';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
@@ -55,58 +52,16 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const { platformFeeAndAccounts: ogPlatformFeeAndAccounts, refetchIntervalForTokenAccounts } = props;
-  const { connection } = useConnection();
+  const { refetchIntervalForTokenAccounts } = props;
   const { wallet } = useWalletPassThrough();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey, [wallet?.adapter.publicKey]);
-
-  const [asLegacyTransaction, setAsLegacyTransaction] = useState(false);
-  // Auto detech if wallet supports it, and enable it if it does
-  useEffect(() => {
-    // So our user can preview the quote before connecting
-    if (!wallet?.adapter) {
-      return;
-    }
-
-    if (wallet?.adapter?.supportedTransactionVersions?.has(0)) {
-      setAsLegacyTransaction(false);
-      return;
-    }
-    setAsLegacyTransaction(true);
-  }, [wallet?.adapter]);
-
-  const platformFeeAndAccounts = useMemo(() => {
-    if (!ogPlatformFeeAndAccounts?.referralAccount || !ogPlatformFeeAndAccounts?.feeBps) return undefined;
-
-    return {
-      referralAccount: new PublicKey(ogPlatformFeeAndAccounts.referralAccount),
-      feeBps: ogPlatformFeeAndAccounts?.feeBps,
-      feeAccounts: ogPlatformFeeAndAccounts?.feeAccounts || new Map(),
-    };
-  }, [ogPlatformFeeAndAccounts]);
 
   return (
     <AccountsProvider refetchIntervalForTokenAccounts={refetchIntervalForTokenAccounts}>
-      <JupiterProvider
-        connection={connection}
-        routeCacheDuration={ROUTE_CACHE_DURATION}
-        wrapUnwrapSOL={true}
-        userPublicKey={walletPublicKey || undefined}
-        platformFeeAndAccounts={platformFeeAndAccounts}
-        asLegacyTransaction={asLegacyTransaction}
-      >
-        <PrioritizationFeeContextProvider {...props}>
-          <SwapContextProvider
-            {...props}
-            asLegacyTransaction={asLegacyTransaction}
-            setAsLegacyTransaction={setAsLegacyTransaction}
-          >
-            <USDValueProvider {...props}>
-              <Content />
-            </USDValueProvider>
-          </SwapContextProvider>
-        </PrioritizationFeeContextProvider>
-      </JupiterProvider>
+      <SwapContextProvider {...props}>
+        <USDValueProvider {...props}>
+          <Content />
+        </USDValueProvider>
+      </SwapContextProvider>
     </AccountsProvider>
   );
 };

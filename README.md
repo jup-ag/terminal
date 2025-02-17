@@ -10,25 +10,36 @@ With several templates to get you started, and auto generated code snippets.
 
 ---
 
-## Terminal V1 & V2 is now deprecated, please update to V3!
+### Terminal V4 - Ultra mode is here
+Ultra mode will automatically come with major innovations - such as 
+- real-time slippage estimation
+- dynamic priority fees
+- optimised transaction landing
+- new Jupiter Shield (coming soon)
 
-We're deprecating Terminal V1/V2 in favor for V3. Please update to enjoy new routing upgrades. 
+[Announcements on X](https://x.com/JupiterExchange/status/1883073621389685128)
 
-### V3 Features:
+### V4 Deprecations
+Ultra mode streamlines the codebase, automates many annoyances like fees estimation, slippage estimation, and more. Therefore, many "features/manual toggles" are deprecated.
+- Fee supports coming in v4.1
+- onRequestIx
+- onRequestIxCallback
+- onSubmitWithIx
+- maxAccounts
+- useUserSlippage
+- initialSlippageBps
+- ExactOut
+- Strict token list
 
-- Instant Routing: Support new tokens and markets instantly.
-- Smart Token Filtering: Reduce scam tokens when searching by CA or Token Mint. Intelligent Sorting based on Volume and Balance.
-- Ecosystem Token List: New Token List with Labels labeled (here)[https://www.jupresear.ch/t/ecosystem-master-token-list/19786].
-
-
+*Existing features and manual mode from V3 can still be accessed via `main-v3.js`.
 
 ---
 
 ## Core features
 
-- `main-v3.js` bundle (~70Kb gzipped)
+- `main-v4.js` bundle (~78Kb gzipped)
 
-  - app bundle (~1.1Mb gzipped) are loaded on-demand when `init()` is called
+  - app bundle (~425KB gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 
 - Agnostic
@@ -75,10 +86,10 @@ Terminal is designed to work anywhere the web runs, including React, Plain HTML/
 
 ```html
 <!-- Attach the loading script in your <head /> -->
-<script src="https://terminal.jup.ag/main-v3.js"></script>
+<script src="https://terminal.jup.ag/main-v4.js"></script>
 
 <!-- Optionally, preload for better experience, or integrated mode -->
-<script src="https://terminal.jup.ag/main-v3.js" data-preload></script>
+<script src="https://terminal.jup.ag/main-v4.js" data-preload></script>
 ```
 
 ### 2. Initialize Jupiter Terminal
@@ -159,49 +170,6 @@ declare global {
 
 ---
 
-### Fee supports
-
-Similar to Jupiter, Jupiter Terminal supports fee for integrators.
-
-There are no protocol fees on Jupiter, but integrators can introduce a platform fee on swaps. The platform fee is provided in basis points, e.g. 20 bps for 0.2% of the token output.
-
-Refer to [Adding your own fees](https://docs.jup.ag/docs/apis/adding-fees) docs for more details.
-
-_Note: You will need to create the Token fee accounts to collect the platform fee._
-
-#### By referral key `referralAccount` (easiest)
-
-```tsx
-const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
-  referralAccount: '2XEYFwLBkLUxkQx5ZpFAAMzWhQxS4A9QzjhcPhUwhfwy',
-  feeBps: 100,
-};
-
-window.Jupiter.init({
-  // ...
-  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-});
-```
-
-#### By defined fee accounts
-
-Alternatively, you can derive yourself the fee accounts via
-[Set your fee token account](https://docs.jup.ag/docs/apis/adding-fees#3-set-your-fee-token-account) and declare them like so:
-
-```tsx
-const TEST_PLATFORM_FEE_AND_ACCOUNTS = {
-  feeBps: 100,
-  feeAccounts,
-};
-
-window.Jupiter.init({
-  // ...
-  platformFeeAndAccounts: TEST_PLATFORM_FEE_AND_ACCOUNTS,
-});
-```
-
----
-
 ### Resuming / Closing activity
 
 - Everytime `init()` is called, it will create a new activity.
@@ -217,18 +185,6 @@ if (window.Jupiter._instance) {
 
 window.Jupiter.close();
 ```
-
-### Strict Token List
-
-- `strictTokenList?: boolean;`
-- Default: `true`
-
-The Jupiter Token List API is an open, collaborative, and dynamic token list to make trading on Solana more transparent and safer for users and developers.
-It is true by default to ensure that only validated tokens are shown.
-
-Learn more at: https://station.jup.ag/docs/token-list/token-list-api
-
----
 
 ### Default Explorer
 
@@ -249,16 +205,13 @@ Callbacks that may be useful for your dApp, from form updates, to swap success/e
 window.Jupiter.init({
   /** Callbacks */
   /** When an error has occured during swap */
-  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  onSwapError ({ error, quoteResponseMeta }: { error TransactionError; quoteResponseMeta: QuoteResponse | null }) {}
   /** When a swap has been successful */
-  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponseMeta | null }) {}
+  onSuccess ({ txid, swapResult, quoteResponseMeta }: { txid: string; swapResult: SwapResult; quoteResponseMeta: QuoteResponsea | null }) {}
   /** Callback when there's changes to the form */
   onFormUpdate (form: IForm) {}
   /** Callback when there's changes to the screen */
   onScreenUpdate (screen: IScreen) {}
-
-  /** Advanced usage */
-  /** onRequestIxCallback(), refer to dedicated section below */
 });
 ```
 
@@ -300,26 +253,6 @@ window.Jupiter.init({
   containerClassName: 'max-h-[90vh] lg:max-h-[600px]',
 });
 ```
-
-### onRequestIxCallback
-
-Request Terminal to return instructions instead of transaction, so you can compose using the instructions returned.
-
-Be sure to return `SwapResult` back to Terminal, so Terminal can handle screen/state transitioning.
-
-- [Station Guide](https://station.jup.ag/docs/apis/swap-api#instructions-instead-of-transaction)
-- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
-
-```tsx
-const onRequestIxCallback: IInit['onRequestIxCallback'] = async (ixAndCb) => {};
-```
-
-### maxAccounts
-
-Limit the number of accounts to be used by the Swap Instructions.
-
-- [Station Guide](https://station.jup.ag/docs/apis/swap-api#using-maxaccounts)
-- [Code example](https://github.com/jup-ag/terminal/blob/main/src/content/advanced/RequestIxIntegratedTerminal.tsx)
 
 ### refetchIntervalForTokenAccounts: number
 Specify the interval for getTokenAccountsByOwner calls, defaults to 10_000 (10s)

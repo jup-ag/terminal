@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import { useEffect, useMemo, useState } from 'react';
 import { vs2015 } from 'react-syntax-highlighter/dist/cjs/styles/hljs';
 
@@ -15,6 +14,7 @@ import prettierPluginTypescript from 'prettier/plugins/typescript';
 import prettier from 'prettier/standalone';
 import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
+import { cn } from 'src/misc/cn';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
@@ -52,7 +52,6 @@ const CodeBlocks = ({
       : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
     ...(formConfigurator.simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
-    ...(formConfigurator.useUserSlippage === false ? { useUserSlippage: false } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
@@ -71,7 +70,7 @@ const CodeBlocks = ({
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
 
   const headTag = `<!-- Attach the loading script in your <head /> -->
-<script src='${origin}/main-v3.js'></script>
+<script src='${origin}/main-v4.js'></script>
 `;
 
   const bodyTag = useMemo(() => {
@@ -184,7 +183,7 @@ const CodeBlocks = ({
 
         <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
           <button
-            className={classNames(
+            className={cn(
               'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
               isCopied ? 'opacity-100 cursor-wait' : '',
             )}
@@ -194,7 +193,7 @@ const CodeBlocks = ({
           </button>
 
           <button
-            className={classNames(
+            className={cn(
               'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
               isCopiedShareLink ? 'opacity-100 cursor-wait' : '',
             )}

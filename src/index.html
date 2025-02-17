@@ -3,20 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <title>Jupiter Terminal</title>
-    <script src="http://localhost:3000/main-v3.js" data-preload></script>
+    <script src="http://localhost:3000/main-v4.js" data-preload></script>
   </head>
 
   <body>
     <script>
       document.addEventListener('readystatechange', (e) => {
         if (document.readyState === 'complete') {
-          console.log(window.Jupiter.init)
+          console.log(window.Jupiter.init);
           window.Jupiter.init({
             endpoint: 'https://api.mainnet-beta.solana.com',
-            formProps: {
-              initialSlippageBps: 1234,
-            },
-            useUserSlippage: false,
           });
         }
       });

@@ -3,14 +3,10 @@ import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
 import { Connection, PublicKey, TransactionError } from '@solana/web3.js';
-import { QuoteResponseMeta, SwapResult } from '@jup-ag/react-hook';
+import { SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
-import { PlatformFeeAndAccounts } from '@jup-ag/common';
-import { SwapMode } from './enums';
-import { PriorityLevel, PriorityMode } from 'src/contexts/PrioritizationFeeContextProvider';
-import { SlippageMode } from 'src/contexts/SwapContext';
-
+import { QuoteResponse } from 'src/contexts/SwapContext';
 declare global {
   interface Window {
     Jupiter: JupiterTerminal;
@@ -24,8 +20,6 @@ export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-
 export type WidgetSize = 'sm' | 'default';
 
 export interface FormProps {
-  /** Default to `ExactInOrOut`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
-  swapMode?: SwapMode;
   /** Initial amount to swap */
   initialAmount?: string;
   /** When true, user cannot change the amount (e.g. for Payments) */
@@ -38,8 +32,6 @@ export interface FormProps {
   initialOutputMint?: string;
   /** When true, user cannot change the output token (e.g. to buy your project's token) */
   fixedOutputMint?: boolean;
-  /** Initial slippage to swap */
-  initialSlippageBps?: number;
 }
 
 /** Built in support for these explorers */
@@ -55,24 +47,6 @@ export interface TransactionInstruction {
   programId: string;
 }
 
-export interface IOnRequestIxCallback {
-  meta: {
-    sourceAddress: PublicKey;
-    destinationAddress: PublicKey;
-    quoteResponseMeta: QuoteResponseMeta;
-  };
-  instructions: {
-    tokenLedgerInstruction: TransactionInstruction;
-    computeBudgetInstructions: ComputeBudgetInstruction;
-    setupInstructions: TransactionInstruction[];
-    swapInstruction: TransactionInstruction;
-    cleanupInstruction: TransactionInstruction;
-    addressLookupTableAddresses: AddressLookupTableAccount;
-    error: string;
-  };
-  onSubmitWithIx: (swapResult: SwapResult) => void;
-}
-
 export interface IInit {
   /** Settings saved in local storage will be prefixed with this
    * You can reset your user's local storage by changing this value
@@ -85,8 +59,6 @@ export interface IInit {
   /** Solana RPC Connection object */
   connectionObj?: Connection;
 
-  /** TODO: Update to use the new platform fee and accounts */
-  platformFeeAndAccounts?: PlatformFeeAndAccounts;
   /** Configure Terminal's behaviour and allowed actions for your user */
   formProps?: FormProps;
   /** Only allow strict token by [Jupiter Token List API](https://station.jup.ag/docs/token-list/token-list-api) */
@@ -95,22 +67,8 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
-  /** TODO: NOT Supported yet, presets of slippages, defaults to [0.1, 0.5, 1.0] */
-  slippagePresets?: number[];
   /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
   refetchIntervalForTokenAccounts?: number;
-
-  /** Use user's slippage instead of initialSlippageBps, defaults to true */
-  useUserSlippage?: boolean;
-  /** Default Slippage options */
-  defaultFixedSlippage?: number;
-  defaultDynamicSlippage?: number;
-  defaultSlippageMode?: SlippageMode;
-
-  /** Default Priority fees */
-  defaultPriorityFee?: number;
-  defaultPriorityMode?: PriorityMode;
-  defaultPriorityLevel?: PriorityLevel;
 
   /** Display & Styling */
   /** Display mode */
@@ -141,7 +99,7 @@ export interface IInit {
     quoteResponseMeta,
   }: {
     error?: TransactionError;
-    quoteResponseMeta: QuoteResponseMeta | null;
+    quoteResponseMeta: QuoteResponse | null;
   }) => void;
   /** When a swap has been successful */
   onSuccess?: ({
@@ -151,17 +109,12 @@ export interface IInit {
   }: {
     txid: string;
     swapResult: SwapResult;
-    quoteResponseMeta: QuoteResponseMeta | null;
+    quoteResponseMeta: QuoteResponse | null;
   }) => void;
   /** Callback when there's changes to the form */
   onFormUpdate?: (form: IForm) => void;
   /** Callback when there's changes to the screen */
   onScreenUpdate?: (screen: IScreen) => void;
-
-  /** Ask jupiter to quote with a maximum number of accounts, essential for composing with Jupiter Swap instruction */
-  maxAccounts?: number;
-  /** Request Ix instead of direct swap */
-  onRequestIxCallback?: (ixAndCb: IOnRequestIxCallback) => Promise<void>;
 
   /** Internal resolves */
 
@@ -187,9 +140,6 @@ export interface JupiterTerminal {
   onSuccess: IInit['onSuccess'];
   onFormUpdate: IInit['onFormUpdate'];
   onScreenUpdate: IInit['onScreenUpdate'];
-
-  /** Request Ix instead of direct swap */
-  onRequestIxCallback: IInit['onRequestIxCallback'];
 
   /** Special props */
   localStoragePrefix: string;
