@@ -1,6 +1,5 @@
 import JSBI from "jsbi";
 
-// import { UltraQuoteResponse } from '../entity/UltraQuoteResponse';
 export interface UltraQuoteResponse {
     inputMint: string;
     inAmount: string;
@@ -44,7 +43,6 @@ export interface UltraSwapResponse {
 }
 
 interface UltraSwapService {
-  // getQuote(params: UltraSwapQuoteParams): Promise<UltraSwapQuoteResponse>;
   getQuote(params: UltraSwapQuoteParams): Promise<UltraQuoteResponse>;
   submitSwap(signedTransaction: string, requestId: string): Promise<UltraSwapResponse>;
 }
@@ -52,7 +50,6 @@ interface UltraSwapService {
 class UltraSwapService implements UltraSwapService {
   private BASE_URL ='https://ultra-api.jup.ag';
   private ROUTE = {
-    QUOTE: `${this.BASE_URL}/quote`,
     SWAP: `${this.BASE_URL}/swap`,
     ORDER: `${this.BASE_URL}/order`,
   };
