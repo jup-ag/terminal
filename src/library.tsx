@@ -126,7 +126,7 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-v3-modal rounded-lg webkit-scrollbar ${
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
@@ -154,7 +154,7 @@ const RenderShell = (props: IInit) => {
       </div>
 
       {!displayMode || displayMode === 'modal' ? (
-        <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0" />
+        <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0 backdrop-blur-sm" />
       ) : null}
     </div>
   );
@@ -230,7 +230,7 @@ const RenderWidgetShell = (props: IInit) => {
         id="integrated-terminal"
         className={`absolute overflow-hidden ${
           classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-v3-modal transition-opacity duration-300 shadow-2xl ${
+        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >

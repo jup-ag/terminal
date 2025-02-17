@@ -79,7 +79,7 @@ export const LSTSuggestion = ({
                     </span>
                   }
                 >
-                  <div className="flex items-center fill-current text-white/30">
+                  <div className="flex items-center fill-current text-white/50">
                     <InfoIconSVG height={12} width={12} />
                   </div>
                 </Tooltip>

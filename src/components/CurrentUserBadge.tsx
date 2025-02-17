@@ -11,9 +11,9 @@ export const CurrentUserBadge: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center bg-[#191B1F] py-2 px-3 rounded-2xl h-7">
+    <div className="flex items-center bg-[#1A2633] py-2 px-3 rounded-2xl h-7">
       <div
-        className="w-4 h-4 rounded-full bg-[#191B1F] dark:bg-white-10 flex justify-center items-center"
+        className="w-4 h-4 rounded-full bg-[#1A2633] dark:bg-white-10 flex justify-center items-center"
         style={{ position: 'relative' }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}

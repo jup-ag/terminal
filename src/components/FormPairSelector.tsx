@@ -112,7 +112,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
   }, [triggerSearch, isInitialLoading]);
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2 bg-v3-modal">
+    <div className="flex flex-col h-full w-full py-4 px-2 bg-black">
       <div className="flex w-full justify-between">
         <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onClose}>
           <LeftArrowIcon width={24} height={24} />

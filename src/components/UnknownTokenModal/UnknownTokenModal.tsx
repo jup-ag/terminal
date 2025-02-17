@@ -15,7 +15,7 @@ const UnknownTokenModal: React.FC<{
   const { getTokenExplorer } = usePreferredExplorer();
 
   return (
-    <div className="p-6 rounded-lg bg-v3-modal text-white max-h-[80vh] overflow-auto">
+    <div className="p-6 rounded-lg bg-black text-white max-h-[80vh] overflow-auto">
       {/* Token */}
       <div className="flex justify-between">
         <div />

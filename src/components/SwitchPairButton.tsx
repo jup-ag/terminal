@@ -23,7 +23,7 @@ const SwitchPairButton = ({
     <div className="flex justify-center">
       <div
         onClick={onClick}
-        className={`border border-black/50 fill-current text-black bg-black/10 dark:text-white-35 dark:hover:text-white/50 dark:border dark:border-white-35 dark:hover:border-white/50 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
+        className={`border border-black/50 fill-current text-black bg-v3-input-background dark:text-white-35 dark:hover:text-white/50 dark:border dark:border-white-35 dark:hover:border-white/50 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
           disabled ? 'opacity-50 cursor-not-allowed' : ''
         } ${className}`}
       >

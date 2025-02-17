@@ -31,7 +31,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
         <div className="flex space-x-1 items-center">
           <button
             type="button"
-            className="p-2 h-7 w-7 flex items-center justify-center border rounded-full border-white/10 bg-black/10 text-white/30 fill-current"
+            className="p-2 h-7 w-7 flex items-center justify-center border rounded-full border-white/10 bg-black/10 text-white/50 fill-current"
             onClick={onRefresh}
           >
             <RefreshSVG />

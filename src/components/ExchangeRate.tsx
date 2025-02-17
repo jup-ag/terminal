@@ -72,7 +72,7 @@ const ExchangeRate = ({
 
   return (
     <div
-      className={classnames(className, 'flex cursor-pointer text-white/30 text-xs align-center')}
+      className={classnames(className, 'flex cursor-pointer text-white/50 text-xs align-center')}
       onClick={onReverse}
     >
       <span className={classnames(textClassName, 'max-w-full flex whitespace-nowrap')}>
@@ -82,7 +82,7 @@ const ExchangeRate = ({
             <div className='flex ml-0.5'>
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate)} ${toTokenInfo.symbol}`
+                  `${formatNumber.format(rate, 6)} ${toTokenInfo.symbol}`
                 )
                 : (
                   <>
@@ -98,7 +98,7 @@ const ExchangeRate = ({
 
               {rate.gt(0.000_01) ?
                 (
-                  `${formatNumber.format(rate)} ${fromTokenInfo.symbol}`
+                  `${formatNumber.format(rate, 6)} ${fromTokenInfo.symbol}`
                 )
                 : (
                   <>

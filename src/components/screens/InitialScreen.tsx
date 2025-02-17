@@ -122,7 +122,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       </form>
 
       {selectPairSelector !== null ? (
-        <div className="absolute top-0 left-0 h-full w-full bg-v3-modal rounded-lg overflow-hidden">
+        <div className="absolute top-0 left-0 h-full w-full bg-black rounded-lg overflow-hidden">
           <FormPairSelector
             onSubmit={onSelectMint}
             tokenInfos={availableMints}

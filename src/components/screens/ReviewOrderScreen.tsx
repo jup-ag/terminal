@@ -6,6 +6,7 @@ import useTimeDiff from '../useTimeDiff/useTimeDiff';
 import PriceInfo from '../PriceInfo/index';
 import JupButton from '../JupButton';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
+import { cn } from 'src/misc/cn';
 
 const ConfirmationScreen = () => {
   const {
@@ -50,7 +51,7 @@ const ConfirmationScreen = () => {
             toTokenInfo={toTokenInfo}
             loading={loading}
             showFullDetails
-            containerClassName="bg-[#25252D] border-none"
+            containerClassName="bg-v3-input-background border-none"
           />
         ) : null}
       </div>
@@ -60,8 +61,15 @@ const ConfirmationScreen = () => {
           <span className="text-sm">Refresh</span>
         </JupButton>
       ) : (
-        <JupButton size="lg" className="w-full mt-4 disabled:opacity-50" type="button" onClick={onSubmit}>
-          <V2SexyChameleonText>Confirm</V2SexyChameleonText>
+        <JupButton
+          size="lg"
+          className={cn(
+            'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
+          )}
+          type="button"
+          onClick={onSubmit}
+        >
+          <span>Confirm</span>
         </JupButton>
       )}
     </div>

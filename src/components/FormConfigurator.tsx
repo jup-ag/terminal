@@ -191,7 +191,7 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Fixed input mint</p>
-          <p className="text-xs text-white/30">Input mint cannot be changed</p>
+          <p className="text-xs text-white/50">Input mint cannot be changed</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -205,7 +205,7 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Fixed output mint</p>
-          <p className="text-xs text-white/30">Output mint cannot be changed</p>
+          <p className="text-xs text-white/50">Output mint cannot be changed</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -219,7 +219,7 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Fixed amount</p>
-          <p className="text-xs text-white/30">Depending on Exact In / Exact Out, the amount cannot be changed</p>
+          <p className="text-xs text-white/50">Depending on Exact In / Exact Out, the amount cannot be changed</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -233,7 +233,7 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Initial amount</p>
-          <p className="text-xs text-white/30">Amount to be prefilled on first load</p>
+          <p className="text-xs text-white/50">Amount to be prefilled on first load</p>
         </div>
       </div>
       <input
@@ -254,8 +254,8 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Simulate wallet passthrough</p>
-          <p className="text-xs text-white/30">Simulate Terminal with a fake wallet passthrough</p>
-          <p className="text-xs text-white/30">(Testing available on Desktop only)</p>
+          <p className="text-xs text-white/50">Simulate Terminal with a fake wallet passthrough</p>
+          <p className="text-xs text-white/50">(Testing available on Desktop only)</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -269,7 +269,7 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Refetch interval for token accounts</p>
-          <p className="text-xs text-white/30">{`Set the interval in milliseconds to refetch getTokenAccountsByOwner.`}</p>
+          <p className="text-xs text-white/50">{`Set the interval in milliseconds to refetch getTokenAccountsByOwner.`}</p>
         </div>
       </div>
 

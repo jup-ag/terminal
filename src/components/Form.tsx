@@ -28,6 +28,7 @@ import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
 import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
 import SuggestionTags from './SuggestionTags';
+import { cn } from 'src/misc/cn';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -173,7 +174,7 @@ const Form: React.FC<{
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div className={classNames('border-b border-transparent bg-[#212128] rounded-xl transition-all')}>
+          <div className={classNames('border-b border-transparent bg-v3-input-background rounded-xl transition-all')}>
             <div className={classNames('px-x border-transparent rounded-xl')}>
               <div>
                 <div
@@ -185,7 +186,7 @@ const Form: React.FC<{
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
+                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 text-white"
                       disabled={fixedInputMint}
                       onClick={onClickSelectFromMint}
                     >
@@ -227,7 +228,7 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current')}
+                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current')}
                         onClick={(e) => {
                           onClickMax(e);
                         }}
@@ -238,7 +239,7 @@ const Form: React.FC<{
                       </div>
 
                       {form.fromValue ? (
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-white/50">
                           <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={form.fromValue} />
                         </span>
                       ) : null}
@@ -255,7 +256,7 @@ const Form: React.FC<{
             )}
           </div>
 
-          <div className="border-b border-transparent bg-[#212128] rounded-xl">
+          <div className="border-b border-transparent bg-v3-input-background rounded-xl">
             <div className="px-x border-transparent rounded-xl">
               <div>
                 <div
@@ -267,7 +268,7 @@ const Form: React.FC<{
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
+                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 disabled:hover:bg-[#1A2633] text-white"
                       disabled={fixedOutputMint}
                       onClick={onClickSelectToMint}
                     >
@@ -318,14 +319,14 @@ const Form: React.FC<{
 
                   {toTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
-                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current">
+                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current">
                         <WalletIcon width={10} height={10} />
                         <CoinBalance mintAddress={toTokenInfo.address} />
                         <span>{toTokenInfo.symbol}</span>
                       </div>
 
                       {form.toValue ? (
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-white/50">
                           <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
                         </span>
                       ) : null}
@@ -341,7 +342,7 @@ const Form: React.FC<{
               <div className="bg-black/20 rounded-xl px-2 py-1 text-white/50 flex items-center space-x-1">
                 <RoutesSVG width={7} height={9} />
               </div>
-              <span className="text-white/30">Ultra Swap</span>
+              <span className="text-white/50">Ultra Swap</span>
             </div>
           ) : null}
         </div>
@@ -364,7 +365,7 @@ const Form: React.FC<{
         ) : (
           <JupButton
             size="lg"
-            className="w-full mt-4 disabled:opacity-50"
+            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]')}
             type="button"
             onClick={onSubmit}
             disabled={isDisabled || loading}
@@ -374,7 +375,7 @@ const Form: React.FC<{
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : (
-              <V2SexyChameleonText>Swap</V2SexyChameleonText>
+              <span>Swap</span>
             )}
           </JupButton>
         )}

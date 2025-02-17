@@ -9,9 +9,7 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker }: UltraSwa
     queryFn: async () => {
       try {
         const response = await ultraSwapService.getQuote({ inputMint, outputMint, amount, taker });
-        console.log({ response });
         const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error');
-        console.log({ quoteResponse });
         return {
           quoteResponse,
           original: response,
