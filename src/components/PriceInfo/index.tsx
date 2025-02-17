@@ -67,7 +67,7 @@ const Index = ({
   useEffect(() => {
     if (quoteResponse) {
       const fee = calculateFeeForSwap(
-        quoteResponse as any,
+        quoteResponse.quoteResponse as any,
         mintToAccountMap,
         new Map(), // we can ignore this as we are using shared accounts
         true,
