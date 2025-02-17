@@ -7,19 +7,14 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker }: UltraSwa
   return useQuery({
     queryKey: ['quote', inputMint, outputMint, amount, taker],
     queryFn: async () => {
-      try {
-        const response = await ultraSwapService.getQuote({ inputMint, outputMint, amount, taker });
-        const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error');
-        return {
-          quoteResponse,
-          original: response,
-        };
-      } catch (e) {
-        console.log(e);
-        return null;
-        // throw e;
-      }
+      const response = await ultraSwapService.getQuote({ inputMint, outputMint, amount, taker });
+      const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error');
+      return {
+        quoteResponse,
+        original: response,
+      };
     },
+    retryDelay: 2_000,
     enabled: !!inputMint && !!outputMint && Number(amount) > 0,
   });
 };
