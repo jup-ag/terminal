@@ -12,7 +12,6 @@ import JupButton from './JupButton';
 import TokenIcon from './TokenIcon';
 
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
-import classNames from 'classnames';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
@@ -22,7 +21,6 @@ import { detectedSeparator } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
-import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
@@ -174,11 +172,11 @@ const Form: React.FC<{
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div className={classNames('border-b border-transparent bg-v3-input-background rounded-xl transition-all')}>
-            <div className={classNames('px-x border-transparent rounded-xl')}>
+          <div className={cn('border-b border-transparent bg-v3-input-background rounded-xl transition-all')}>
+            <div className={cn('px-x border-transparent rounded-xl')}>
               <div>
                 <div
-                  className={classNames(
+                  className={cn(
                     'py-5 px-4 flex flex-col dark:text-white border border-transparent',
                     'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
                   )}
@@ -214,7 +212,7 @@ const Form: React.FC<{
                           valueIsNumericString
                           onValueChange={onChangeFromValue}
                           placeholder={'0.00'}
-                          className={classNames(
+                          className={cn(
                             'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
                             { 'cursor-not-allowed': inputAmountDisabled },
                           )}
@@ -228,7 +226,7 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current')}
+                        className={cn('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current')}
                         onClick={(e) => {
                           onClickMax(e);
                         }}
@@ -252,7 +250,7 @@ const Form: React.FC<{
 
           <div className={'my-2'}>
             {hasFixedMint ? null : (
-              <SwitchPairButton onClick={onClickSwitchPair} className={classNames('transition-all')} />
+              <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
             )}
           </div>
 
@@ -260,7 +258,7 @@ const Form: React.FC<{
             <div className="px-x border-transparent rounded-xl">
               <div>
                 <div
-                  className={classNames(
+                  className={cn(
                     'py-5 px-4 flex flex-col dark:text-white border border-transparent',
                     'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
                   )}
@@ -296,7 +294,7 @@ const Form: React.FC<{
                           allowNegative={false}
                           valueIsNumericString
                           onValueChange={onChangeToValue}
-                          className={classNames(
+                          className={cn(
                             'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
                           )}
                           decimalSeparator={detectedSeparator}

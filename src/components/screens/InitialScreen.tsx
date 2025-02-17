@@ -9,8 +9,8 @@ import { useTokenContext } from '../../contexts/TokenContextProvider';
 import { useAccounts } from '../../contexts/accounts';
 import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import classNames from 'classnames';
 import Decimal from 'decimal.js';
+import { cn } from 'src/misc/cn';
 
 interface Props {
   isWalletModalOpen: boolean;
@@ -109,7 +109,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       {/* Body */}
       <form
         onSubmit={onSubmitToConfirmation}
-        className={classNames({
+        className={cn({
           hidden: Boolean(selectPairSelector),
         })}
       >

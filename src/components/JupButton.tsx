@@ -1,5 +1,5 @@
-import classNames from 'classnames';
 import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import { cn } from 'src/misc/cn';
 
 interface IJupButton {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
@@ -35,7 +35,7 @@ const JupButton = React.forwardRef(
       <button
         type={type}
         ref={ref}
-        className={classNames({
+        className={cn({
           relative: true,
           'jup-gradient': highlighted,
           'opacity-50 cursor-not-allowed': disabled,

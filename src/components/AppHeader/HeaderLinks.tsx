@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import classNames from 'classnames';
 import SwapIcon from 'src/icons/SwapIcon';
 import RepoLogo from 'src/icons/RepoLogo';
 import DiscordIcon from 'src/icons/DiscordIcon';
+import { cn } from 'src/misc/cn';
 
 const HeaderLink = ({
   href,
@@ -23,7 +23,7 @@ const HeaderLink = ({
     <Link
       href={href}
       shallow
-      className={classNames(
+      className={cn(
         'flex items-center font-semibold text-white/50 hover:text-white fill-current h-[60px] px-4',
         {
           'bg-v3-bg !text-v3-primary': isActive,

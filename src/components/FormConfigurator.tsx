@@ -1,4 +1,3 @@
-import classNames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
@@ -9,6 +8,7 @@ import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { useRouter } from 'next/router';
 import { base64ToJson } from 'src/misc/utils';
+import { cn } from 'src/misc/cn';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -171,7 +171,7 @@ const FormConfigurator = ({
                     key={index}
                     onClick={() => onSelect(index)}
                     type="button"
-                    className={classNames(
+                    className={cn(
                       'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
                       active === index ? '' : '',
                       index !== templateOptions.length - 1 ? 'border-b border-white/10' : '',
@@ -323,7 +323,7 @@ const FormConfigurator = ({
                     setIsExplorerDropdownOpen(false);
                   }}
                   type="button"
-                  className={classNames(
+                  className={cn(
                     'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
                     active === index ? '' : '',
                     index !== AVAILABLE_EXPLORER.length - 1 ? 'border-b border-white/10' : '',

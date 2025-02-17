@@ -1,5 +1,4 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import classNames from 'classnames';
 import React, { createRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps, areEqual } from 'react-window';
@@ -16,6 +15,7 @@ import { useSortByValue } from './useSortByValue';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { searchService } from 'src/contexts/SearchService';
 import { useAccounts } from 'src/contexts/accounts';
+import { cn } from 'src/misc/cn';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -154,7 +154,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
                     onSubmit,
                     mintToUsdValue,
                   }}
-                  className={classNames('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
+                  className={cn('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
                 >
                   {rowRenderer}
                 </FixedSizeList>

@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { atom, createStore } from 'jotai';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
 
 import { IInit } from './types';
 
@@ -10,6 +9,7 @@ import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
 import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
+import { cn } from './misc/cn';
 
 const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
@@ -215,7 +215,7 @@ const RenderWidgetShell = (props: IInit) => {
       >
         {isOpen ? (
           <div
-            className={classNames('text-white fill-current pt-1', {
+            className={cn('text-white fill-current pt-1', {
               'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
             })}
           >

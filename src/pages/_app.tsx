@@ -10,7 +10,6 @@ import AppHeader from 'src/components/AppHeader/AppHeader';
 import Footer from 'src/components/Footer/Footer';
 
 import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import classNames from 'classnames';
 import { useForm } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 import FormConfigurator from 'src/components/FormConfigurator';
@@ -22,6 +21,7 @@ import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { cn } from 'src/misc/cn';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -48,7 +48,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App() {
   const [tab, setTab] = useState<IInit['displayMode']>('integrated');
 
   // Cleanup on tab change
@@ -164,7 +164,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('modal');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
                         )}
@@ -185,7 +185,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('integrated');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
                         )}
@@ -205,7 +205,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('widget');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
                         )}

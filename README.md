@@ -1,19 +1,5 @@
 # Jupiter Terminal
 
-
-### V4 Ultra is here
-
-### V4 Deprecations
-- Fee supports coming in v4.1
-- onRequestIx
-- onRequestIxCallback
-- onSubmitWithIx
-- maxAccounts
-- useUserSlippage
-- initialSlippageBps
-- ExactOut
-- Strict token list
-
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
 
 Visit our Demo / Playground over at https://terminal.jup.ag
@@ -24,17 +10,28 @@ With several templates to get you started, and auto generated code snippets.
 
 ---
 
-## Terminal V1 & V2 is now deprecated, please update to V3!
+### Terminal V4 - Ultra mode is here
+Ultra mode will automatically come with major innovations - such as 
+- real-time slippage estimation
+- dynamic priority fees
+- optimised transaction landing
+- new Jupiter Shield (coming soon)
 
-We're deprecating Terminal V1/V2 in favor for V3. Please update to enjoy new routing upgrades. 
+[Announcements on X](https://x.com/JupiterExchange/status/1883073621389685128)
 
-### V3 Features:
+### V4 Deprecations
+Ultra mode streamlines the codebase, automates many annoyances like fees estimation, slippage estimation, and more. Therefore, many "features/manual toggles" are deprecated.
+- Fee supports coming in v4.1
+- onRequestIx
+- onRequestIxCallback
+- onSubmitWithIx
+- maxAccounts
+- useUserSlippage
+- initialSlippageBps
+- ExactOut
+- Strict token list
 
-- Instant Routing: Support new tokens and markets instantly.
-- Smart Token Filtering: Reduce scam tokens when searching by CA or Token Mint. Intelligent Sorting based on Volume and Balance.
-- Ecosystem Token List: New Token List with Labels labeled (here)[https://www.jupresear.ch/t/ecosystem-master-token-list/19786].
-
-
+*Existing features and manual mode from V3 can still be accessed via `main-v3.js`.
 
 ---
 
@@ -42,7 +39,7 @@ We're deprecating Terminal V1/V2 in favor for V3. Please update to enjoy new rou
 
 - `main-v4.js` bundle (~70Kb gzipped)
 
-  - app bundle (~1.1Mb gzipped) are loaded on-demand when `init()` is called
+  - app bundle (~1.0Mb gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 
 - Agnostic

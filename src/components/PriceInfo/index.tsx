@@ -1,7 +1,5 @@
-import { ZERO } from '@jup-ag/math';
 import { TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
-import classNames from 'classnames';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,6 +11,7 @@ import Deposits from './Deposits';
 import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
+import { cn } from 'src/misc/cn';
 
 const Index = ({
   quoteResponse,
@@ -30,9 +29,9 @@ const Index = ({
   containerClassName?: string;
 }) => {
   const rateParams = {
-    inAmount: quoteResponse?.quoteResponse.inAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
+    inAmount: quoteResponse?.quoteResponse.inAmount || JSBI.BigInt(0), // If there's no selectedRoute, we will use first route value to temporarily calculate
     inputDecimal: fromTokenInfo.decimals,
-    outAmount: quoteResponse?.quoteResponse.outAmount || ZERO, // If there's no selectedRoute, we will use first route value to temporarily calculate
+    outAmount: quoteResponse?.quoteResponse.outAmount || JSBI.BigInt(0), // If there's no selectedRoute, we will use first route value to temporarily calculate
     outputDecimal: toTokenInfo.decimals,
   };
 
@@ -83,10 +82,10 @@ const Index = ({
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
   return (
-    <div className={classNames('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
+    <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/50">{<span>Rate</span>}</div>
-        {JSBI.greaterThan(rateParams.inAmount, ZERO) && JSBI.greaterThan(rateParams.outAmount, ZERO) ? (
+        {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) && JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
           <ExchangeRate
             loading={loading}
             rateParams={rateParams}

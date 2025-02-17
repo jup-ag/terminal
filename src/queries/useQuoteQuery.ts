@@ -20,6 +20,6 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker }: UltraSwa
         // throw e;
       }
     },
-    enabled: !!inputMint && !!outputMint && !!amount,
+    enabled: !!inputMint && !!outputMint && Number(amount) > 0,
   });
 };
