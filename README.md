@@ -37,9 +37,9 @@ Ultra mode streamlines the codebase, automates many annoyances like fees estimat
 
 ## Core features
 
-- `main-v4.js` bundle (~70Kb gzipped)
+- `main-v4.js` bundle (~78Kb gzipped)
 
-  - app bundle (~1.0Mb gzipped) are loaded on-demand when `init()` is called
+  - app bundle (~425KB gzipped) are loaded on-demand when `init()` is called
   - alternatively, preload app bundle with `data-preload` attributes
 
 - Agnostic
