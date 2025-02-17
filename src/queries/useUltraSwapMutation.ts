@@ -9,10 +9,8 @@ import { getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
 import { TransactionError } from '@mercurial-finance/optimist';
 
 interface UltraSwapMutationProps {
-  //   tx: string;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
-  //   requestId: string;
   setTxStatus: (status: ISwapContext['swapping']['txStatus']) => void;
   setLastSwapResult: (result: ISwapContext['lastSwapResult']) => void;
   quoteResponseMeta: QuoteResponse;
