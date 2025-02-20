@@ -1,8 +1,8 @@
 import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
-import classNames from 'classnames';
 import React, { useCallback, useEffect, useState } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
+import { cn } from 'src/misc/cn';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
 const WidgetTerminal = (props: {
@@ -12,7 +12,6 @@ const WidgetTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
-  useUserSlippage: boolean;
 }) => {
   const {
     rpcUrl,
@@ -20,7 +19,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   } = props;
   const [isLoaded, setIsLoaded] = useState(false);
@@ -45,7 +43,6 @@ const WidgetTerminal = (props: {
       refetchIntervalForTokenAccounts,
       strictTokenList,
       defaultExplorer,
-      useUserSlippage,
     });
   }, [
     defaultExplorer,
@@ -57,7 +54,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     size,
     strictTokenList,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   ]);
 
@@ -102,7 +98,7 @@ const WidgetTerminal = (props: {
 
               {/* Top left  */}
               <div
-                className={classNames('absolute left-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                className={cn('absolute left-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
                   'ring-1 ring-white/50': position === 'top-left',
                 })}
                 onClick={() => setPosition('top-left')}
@@ -114,7 +110,7 @@ const WidgetTerminal = (props: {
 
               {/* Top right  */}
               <div
-                className={classNames('absolute right-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                className={cn('absolute right-1 top-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
                   'ring-1 ring-white/50': position === 'top-right',
                 })}
                 onClick={() => setPosition('top-right')}
@@ -126,7 +122,7 @@ const WidgetTerminal = (props: {
 
               {/* Bottom left  */}
               <div
-                className={classNames('absolute left-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                className={cn('absolute left-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
                   'ring-1 ring-white/50': position === 'bottom-left',
                 })}
                 onClick={() => setPosition('bottom-left')}
@@ -138,7 +134,7 @@ const WidgetTerminal = (props: {
 
               {/* Bottom right  */}
               <div
-                className={classNames('absolute right-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
+                className={cn('absolute right-1 bottom-1 cursor-pointer hover:bg-black/20 rounded-full p-1', {
                   'ring-1 ring-white/50': position === 'bottom-right',
                 })}
                 onClick={() => setPosition('bottom-right')}

@@ -1,7 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { atom, createStore } from 'jotai';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
-import classNames from 'classnames';
 
 import { IInit } from './types';
 
@@ -10,6 +9,7 @@ import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
 import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
+import { cn } from './misc/cn';
 
 const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
@@ -126,7 +126,7 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-v3-modal rounded-lg webkit-scrollbar ${
+      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
@@ -154,7 +154,7 @@ const RenderShell = (props: IInit) => {
       </div>
 
       {!displayMode || displayMode === 'modal' ? (
-        <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0" />
+        <div onClick={onClose} className="absolute w-screen h-screen top-0 left-0 backdrop-blur-sm" />
       ) : null}
     </div>
   );
@@ -215,7 +215,7 @@ const RenderWidgetShell = (props: IInit) => {
       >
         {isOpen ? (
           <div
-            className={classNames('text-white fill-current pt-1', {
+            className={cn('text-white fill-current pt-1', {
               'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
             })}
           >
@@ -230,7 +230,7 @@ const RenderWidgetShell = (props: IInit) => {
         id="integrated-terminal"
         className={`absolute overflow-hidden ${
           classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-v3-modal transition-opacity duration-300 shadow-2xl ${
+        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >
@@ -245,13 +245,8 @@ const appProps = atom<IInit | undefined>(undefined);
 
 async function init(passedProps: IInit) {
   if (typeof window === 'undefined' || typeof document === 'undefined') return null;
-
-  // Prechecks
-  if (passedProps.maxAccounts && passedProps.maxAccounts > 64) throw new Error('Max accounts must not be more than 64');
-
   const props: IInit = {
     ...passedProps,
-    maxAccounts: passedProps.maxAccounts || 64,
   };
 
   const {
@@ -262,7 +257,6 @@ async function init(passedProps: IInit) {
     onSuccess,
     onFormUpdate,
     onScreenUpdate,
-    onRequestIxCallback,
     integratedTargetId,
     ...restProps
   } = props;
@@ -319,7 +313,6 @@ async function init(passedProps: IInit) {
   window.Jupiter.onSuccess = onSuccess;
   window.Jupiter.onFormUpdate = onFormUpdate;
   window.Jupiter.onScreenUpdate = onScreenUpdate;
-  window.Jupiter.onRequestIxCallback = onRequestIxCallback;
 
   // Special props
   window.Jupiter.localStoragePrefix = passedProps.localStoragePrefix || 'jupiter-terminal';

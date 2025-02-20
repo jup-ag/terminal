@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import CloseIcon from 'src/icons/CloseIcon';
@@ -6,7 +5,6 @@ import JupiterLogo from 'src/icons/JupiterLogo';
 import MenuIcon from 'src/icons/MenuIcon';
 import HeaderLinks from './HeaderLinks';
 import HeaderLinksMobile from './HeaderLinksMobile';
-import TopBanner from './TopBanner';
 
 const AppHeader: React.FC<{}> = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -23,8 +21,6 @@ const AppHeader: React.FC<{}> = () => {
 
   return (
     <>
-      <TopBanner />
-      
       <div className="flex items-center justify-between w-full bg-black/[.35]">
         <div className="flex items-center flex-1 p-4">
           <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-white">

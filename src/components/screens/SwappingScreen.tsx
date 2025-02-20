@@ -10,7 +10,6 @@ import { fromLamports } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import JupiterLogo from 'src/icons/JupiterLogo';
-import Decimal from 'decimal.js';
 
 const ErrorIcon = () => {
   return (
@@ -40,11 +39,10 @@ const SwappingScreen = () => {
     displayMode,
     lastSwapResult,
     reset,
-    scriptDomain,
     swapping: { txStatus },
     fromTokenInfo,
     toTokenInfo,
-    jupiter: { refresh },
+    refresh,
   } = useSwapContext();
   const { screen, setScreen } = useScreenState();
 
@@ -73,7 +71,7 @@ const SwappingScreen = () => {
       if (window.Jupiter.onSwapError) {
         window.Jupiter.onSwapError({
           error: lastSwapResult?.swapResult?.error,
-          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+          quoteResponseMeta: lastSwapResult?.quoteReponse,
         });
       }
       return;
@@ -82,7 +80,7 @@ const SwappingScreen = () => {
         window.Jupiter.onSuccess({
           txid: lastSwapResult?.swapResult?.txid,
           swapResult: lastSwapResult?.swapResult,
-          quoteResponseMeta: lastSwapResult?.quoteResponseMeta,
+          quoteResponseMeta: lastSwapResult?.quoteReponse,
         });
       }
       return;
@@ -117,7 +115,7 @@ const SwappingScreen = () => {
 
         <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
           {isLoading && (
-            <div className="flex items-center w-full rounded-xl p-4 bg-[#25252D] mb-2">
+            <div className="flex items-center w-full rounded-xl p-4 bg-v3-input-background mb-2">
               <Spinner spinnerColor={'white'} />
 
               <div className="ml-4 flex w-full justify-between">
@@ -126,11 +124,6 @@ const SwappingScreen = () => {
                   {txStatus.status === 'pending-approval' && 'Pending Approval'}
                   {txStatus.status === 'sending' && 'Swapping'}
                 </span>
-                {txStatus?.quotedDynamicSlippageBps ? (
-                  <span className="text-xs text-v2-lily/50">
-                    Slippage: {new Decimal(txStatus?.quotedDynamicSlippageBps).div(100).toFixed(2)}%
-                  </span>
-                ) : null}
               </div>
             </div>
           )}
@@ -157,7 +150,7 @@ const SwappingScreen = () => {
       };
     }, []);
 
-    if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteResponseMeta) {
+    if (!fromTokenInfo || !toTokenInfo || !lastSwapResult?.quoteReponse) {
       return null;
     }
 
@@ -174,7 +167,7 @@ const SwappingScreen = () => {
         <div className="flex flex-col justify-center items-center">
           <p className="mt-5 text-white text-xl font-semibold">Swap successful</p>
 
-          <div className="mt-4 bg-[#25252D] rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
+          <div className="mt-4 bg-v3-input-background rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
               <p className="text-xs font-semibold text-white/75">
                 Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
@@ -185,12 +178,12 @@ const SwappingScreen = () => {
             </div>
 
             <PriceInfo
-              quoteResponse={lastSwapResult?.quoteResponseMeta.quoteResponse}
+              quoteResponse={lastSwapResult?.quoteReponse}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
               loading={false}
               showFullDetails
-              containerClassName="bg-[#25252D] border-none mt-0"
+              containerClassName="bg-v3-input-background border-none mt-0"
             />
           </div>
         </div>
@@ -207,14 +200,24 @@ const SwappingScreen = () => {
         ) : null}
 
         <div className="mt-auto px-5 pb-4 flex space-x-2">
-          <JupButton size="lg" className="w-full mt-4" type="button" onClick={onSwapMore}>
-            <V2SexyChameleonText>
+          <JupButton
+            size="lg"
+            className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
+            type="button"
+            onClick={onSwapMore}
+          >
+            <span>
               <span className="text-sm">Swap More</span>
-            </V2SexyChameleonText>
+            </span>
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton size="lg" className="w-full mt-4" type="button" onClick={onClose}>
+            <JupButton
+              size="lg"
+              className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14"
+              type="button"
+              onClick={onClose}
+            >
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}
@@ -234,8 +237,13 @@ const SwappingScreen = () => {
             <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
             {errorMessage ? <p className="text-white/50 text-xs mt-2 break-all">{errorMessage}</p> : ''}
 
-            <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
-              <V2SexyChameleonText>Retry</V2SexyChameleonText>
+            <JupButton
+              size="lg"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
+              type="button"
+              onClick={onGoBack}
+            >
+              <span>Retry</span>
             </JupButton>
           </div>
         </div>
@@ -250,8 +258,13 @@ const SwappingScreen = () => {
             <p className="text-white/50 text-xs mt-2">We were unable to complete the swap, please try again.</p>
             {errorMessage ? <p className="text-white/50 text-xs mt-2">{errorMessage}</p> : ''}
 
-            <JupButton size="lg" className="w-full mt-6 disabled:opacity-50" type="button" onClick={onGoBack}>
-              <V2SexyChameleonText>Retry</V2SexyChameleonText>
+            <JupButton
+              size="lg"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
+              type="button"
+              onClick={onGoBack}
+            >
+              <span>Retry</span>
             </JupButton>
           </div>
         </div>

@@ -20,8 +20,6 @@ const TokenContext = React.createContext<{
   unknownTokenMap: Map<string, TokenInfo>;
   isLoaded: boolean;
   getTokenInfo: (mint: string) => TokenInfo | undefined;
-  addOnchainTokenInfo: (tokenInfo: TokenInfo) => void;
-  addUnknownTokenInfo: (tokenInfo: TokenInfo) => void;
 } | null>(null);
 
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
@@ -36,7 +34,6 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
     })(),
   );
   const unknownTokenMap = useRef<Map<string, TokenInfo>>(new Map());
-  const onChainTokenMap = useRef<Map<string, TokenInfo>>(new Map());
 
   // Make sure initialTokenList are only fetched once
   const [localTokenList, setLocalTokenList] = useLocalStorage<{ timestamp: number | null; data: TokenInfo[] }>(
@@ -138,15 +135,6 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
     [tokenMap],
   );
 
-  const addOnchainTokenInfo = useCallback((tokenInfo: TokenInfo) => {
-    unknownTokenMap.current.set(tokenInfo.address, tokenInfo);
-    onChainTokenMap.current.set(tokenInfo.address, tokenInfo);
-  }, []);
-
-  const addUnknownTokenInfo = useCallback((tokenInfo: TokenInfo) => {
-    unknownTokenMap.current.set(tokenInfo.address, tokenInfo);
-  }, []);
-
   return (
     <TokenContext.Provider
       value={{
@@ -154,8 +142,6 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
         unknownTokenMap: unknownTokenMap.current,
         isLoaded,
         getTokenInfo,
-        addOnchainTokenInfo,
-        addUnknownTokenInfo,
       }}
     >
       {children}

@@ -12,7 +12,6 @@ import JupButton from './JupButton';
 import TokenIcon from './TokenIcon';
 
 import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
-import classNames from 'classnames';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
@@ -22,12 +21,12 @@ import { detectedSeparator } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
-import V2SexyChameleonText from './SexyChameleonText/V2SexyChameleonText';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
 import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
 import SuggestionTags from './SuggestionTags';
+import { cn } from 'src/misc/cn';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -40,15 +39,17 @@ const Form: React.FC<{
   const {
     form,
     setForm,
-    isToPairFocused,
     errors,
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
-    formProps: { swapMode, fixedAmount, fixedInputMint, fixedOutputMint },
-    jupiter: { quoteResponseMeta: route, loading, error, refresh },
+    formProps: { fixedAmount, fixedInputMint, fixedOutputMint },
+    loading,
+    refresh,
+    quoteError,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
+
   useEffect(() => {
     if (hasExpired) {
       refresh();
@@ -61,7 +62,7 @@ const Form: React.FC<{
   const listOfSuggestions = useSuggestionTags({
     fromTokenInfo,
     toTokenInfo,
-    quoteResponse: route?.quoteResponse,
+    quoteResponse: quoteResponseMeta?.quoteResponse,
   });
 
   const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
@@ -102,8 +103,7 @@ const Form: React.FC<{
     (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
-      if (!balance || swapMode === 'ExactOut') return;
-
+      if (!balance) return;
       if (fromTokenInfo?.address === WRAPPED_SOL_MINT.toBase58()) {
         setForm((prev) => ({
           ...prev,
@@ -118,7 +118,7 @@ const Form: React.FC<{
         }));
       }
     },
-    [balance, fromTokenInfo?.address, setForm, swapMode],
+    [balance, fromTokenInfo?.address, setForm],
   );
 
   const onClickSwitchPair = () => {
@@ -135,18 +135,10 @@ const Form: React.FC<{
   const { inputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
-      if (swapMode === 'ExactOut') {
-        result.outputAmountDisabled = false;
-      } else {
-        result.inputAmountDisabled = false;
-      }
+      result.inputAmountDisabled = false;
     }
     return result;
-  }, [fixedAmount, swapMode]);
-
-  const marketRoutes = quoteResponseMeta
-    ? quoteResponseMeta.quoteResponse.routePlan.map(({ swapInfo }) => swapInfo.label).join(', ')
-    : '';
+  }, [fixedAmount]);
 
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
@@ -157,11 +149,6 @@ const Form: React.FC<{
     if (fixedOutputMint) return;
     setSelectPairSelector('toMint');
   }, [fixedOutputMint, setSelectPairSelector]);
-
-  const fixedOutputFomMintClass = useMemo(() => {
-    if (swapMode === 'ExactOut' && !form.toValue) return 'opacity-20 hover:opacity-100';
-    return '';
-  }, [form.toValue, swapMode]);
 
   const thousandSeparator = useMemo(() => (detectedSeparator === ',' ? '.' : ','), []);
   // Allow empty input, and input lower than max limit
@@ -185,16 +172,11 @@ const Form: React.FC<{
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div
-            className={classNames(
-              'border-b border-transparent bg-[#212128] rounded-xl transition-all',
-              fixedOutputFomMintClass,
-            )}
-          >
-            <div className={classNames('px-x border-transparent rounded-xl ')}>
+          <div className={cn('border-b border-transparent bg-v3-input-background rounded-xl transition-all')}>
+            <div className={cn('px-x border-transparent rounded-xl')}>
               <div>
                 <div
-                  className={classNames(
+                  className={cn(
                     'py-5 px-4 flex flex-col dark:text-white border border-transparent',
                     'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
                   )}
@@ -202,7 +184,7 @@ const Form: React.FC<{
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 text-white"
+                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 text-white"
                       disabled={fixedInputMint}
                       onClick={onClickSelectFromMint}
                     >
@@ -222,7 +204,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {fromTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={fixedAmount || swapMode === 'ExactOut'}
+                          disabled={fixedAmount}
                           value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
                           decimalScale={fromTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
@@ -230,15 +212,12 @@ const Form: React.FC<{
                           valueIsNumericString
                           onValueChange={onChangeFromValue}
                           placeholder={'0.00'}
-                          className={classNames(
+                          className={cn(
                             'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
                             { 'cursor-not-allowed': inputAmountDisabled },
                           )}
                           decimalSeparator={detectedSeparator}
                           isAllowed={withValueLimit}
-                          onKeyDown={(e) => {
-                            isToPairFocused.current = false;
-                          }}
                         />
                       )}
                     </div>
@@ -247,11 +226,8 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={classNames('flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current', {
-                          'cursor-pointer': swapMode !== 'ExactOut',
-                        })}
+                        className={cn('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer')}
                         onClick={(e) => {
-                          isToPairFocused.current = false;
                           onClickMax(e);
                         }}
                       >
@@ -261,7 +237,7 @@ const Form: React.FC<{
                       </div>
 
                       {form.fromValue ? (
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-white/50">
                           <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={form.fromValue} />
                         </span>
                       ) : null}
@@ -274,18 +250,15 @@ const Form: React.FC<{
 
           <div className={'my-2'}>
             {hasFixedMint ? null : (
-              <SwitchPairButton
-                onClick={onClickSwitchPair}
-                className={classNames('transition-all', fixedOutputFomMintClass)}
-              />
+              <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
             )}
           </div>
 
-          <div className="border-b border-transparent bg-[#212128] rounded-xl">
+          <div className="border-b border-transparent bg-v3-input-background rounded-xl">
             <div className="px-x border-transparent rounded-xl">
               <div>
                 <div
-                  className={classNames(
+                  className={cn(
                     'py-5 px-4 flex flex-col dark:text-white border border-transparent',
                     'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
                   )}
@@ -293,7 +266,7 @@ const Form: React.FC<{
                   <div className="flex justify-between items-center">
                     <button
                       type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#36373E] hover:bg-white/20 disabled:hover:bg-[#36373E] text-white"
+                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 disabled:hover:bg-[#1A2633] text-white"
                       disabled={fixedOutputMint}
                       onClick={onClickSelectToMint}
                     >
@@ -314,15 +287,14 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={!swapMode || swapMode === 'ExactIn'}
+                          disabled={true}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
                           allowNegative={false}
                           valueIsNumericString
                           onValueChange={onChangeToValue}
-                          placeholder={swapMode === 'ExactIn' ? '' : 'Enter desired amount'}
-                          className={classNames(
+                          className={cn(
                             'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
                           )}
                           decimalSeparator={detectedSeparator}
@@ -337,7 +309,6 @@ const Form: React.FC<{
                               e.key === 'Shift'
                             )
                               return;
-                            isToPairFocused.current = true;
                           }}
                         />
                       )}
@@ -346,14 +317,14 @@ const Form: React.FC<{
 
                   {toTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
-                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/30 fill-current">
+                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current">
                         <WalletIcon width={10} height={10} />
                         <CoinBalance mintAddress={toTokenInfo.address} />
                         <span>{toTokenInfo.symbol}</span>
                       </div>
 
                       {form.toValue ? (
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-white/50">
                           <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
                         </span>
                       ) : null}
@@ -364,15 +335,12 @@ const Form: React.FC<{
             </div>
           </div>
 
-          {route?.quoteResponse ? (
+          {quoteResponseMeta ? (
             <div className="flex items-center mt-2 text-xs space-x-1">
               <div className="bg-black/20 rounded-xl px-2 py-1 text-white/50 flex items-center space-x-1">
                 <RoutesSVG width={7} height={9} />
               </div>
-              <span className="text-white/30">using</span>
-              <span className="text-white/50 overflow-hidden whitespace-nowrap text-ellipsis max-w-[70%]">
-                {marketRoutes}
-              </span>
+              <span className="text-white/50">Ultra Swap</span>
             </div>
           ) : null}
         </div>
@@ -395,24 +363,24 @@ const Form: React.FC<{
         ) : (
           <JupButton
             size="lg"
-            className="w-full mt-4 disabled:opacity-50"
+            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]')}
             type="button"
             onClick={onSubmit}
             disabled={isDisabled || loading}
           >
             {loading ? (
               <span className="text-sm">Loading...</span>
-            ) : error ? (
+            ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : (
-              <V2SexyChameleonText>Swap</V2SexyChameleonText>
+              <span>Swap</span>
             )}
           </JupButton>
         )}
 
-        {route && quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
+        {quoteResponseMeta && fromTokenInfo && toTokenInfo ? (
           <PriceInfo
-            quoteResponse={quoteResponseMeta.quoteResponse}
+            quoteResponse={quoteResponseMeta}
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}

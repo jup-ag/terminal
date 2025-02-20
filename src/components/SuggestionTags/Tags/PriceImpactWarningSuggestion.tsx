@@ -11,13 +11,14 @@ import Link from 'next/link';
 
 import RightArrowIcon from 'src/icons/RightArrowIcon';
 
-import { QuoteResponse } from '@jup-ag/react-hook';
 import { useUSDValue } from 'src/contexts/USDValueProvider';
 import { useSwapRouteInfo } from '../hooks/useSwapInfo';
 import { useMobile } from 'src/hooks/useMobile';
 import JupButton from 'src/components/JupButton';
 import { cn } from 'src/misc/cn';
 import PopoverTooltip from 'src/components/Tooltip/PopoverTooltip';
+import { UltraQuoteResponse } from 'src/data/UltraSwapService';
+import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 
 interface Props {
   isWarning: boolean;
@@ -27,7 +28,7 @@ interface Props {
   priceDifferencePct: number;
   fromTokenInfo: TokenInfo;
   toTokenInfo: TokenInfo;
-  quoteResponse: QuoteResponse;
+  quoteResponse: FormattedUltraQuoteResponse;
 }
 
 const PriceImpactWarningSuggestion = ({

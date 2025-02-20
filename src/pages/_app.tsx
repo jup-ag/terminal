@@ -10,7 +10,6 @@ import AppHeader from 'src/components/AppHeader/AppHeader';
 import Footer from 'src/components/Footer/Footer';
 
 import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import classNames from 'classnames';
 import { useForm } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 import FormConfigurator from 'src/components/FormConfigurator';
@@ -20,9 +19,9 @@ import ModalTerminal from 'src/content/ModalTerminal';
 import WidgetTerminal from 'src/content/WidgetTerminal';
 import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
-import FeatureShowcaseButton from 'src/components/FeatureShowcaseButton';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { cn } from 'src/misc/cn';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -49,7 +48,7 @@ const queryClient = new QueryClient({
   },
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App() {
   const [tab, setTab] = useState<IInit['displayMode']>('integrated');
 
   // Cleanup on tab change
@@ -133,7 +132,7 @@ export default function App({ Component, pageProps }: AppProps) {
                   </V2SexyChameleonText>
 
                   <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
-                    v3
+                    v4
                   </div>
                 </div>
                 <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
@@ -141,8 +140,6 @@ export default function App({ Component, pageProps }: AppProps) {
                   HTML. Check out the visual demo for the various integration modes below.
                 </p>
               </div>
-
-              <FeatureShowcaseButton />
             </div>
 
             <div className="flex justify-center">
@@ -167,7 +164,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('modal');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
                         )}
@@ -188,7 +185,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('integrated');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
                         )}
@@ -208,7 +205,7 @@ export default function App({ Component, pageProps }: AppProps) {
                           setTab('widget');
                         }}
                         type="button"
-                        className={classNames(
+                        className={cn(
                           '!bg-none relative px-4 justify-center',
                           tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
                         )}
@@ -242,7 +239,6 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
-                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                       {tab === 'integrated' ? (
@@ -253,7 +249,6 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
-                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                       {tab === 'widget' ? (
@@ -264,7 +259,6 @@ export default function App({ Component, pageProps }: AppProps) {
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
                           defaultExplorer={watchAllFields.defaultExplorer}
-                          useUserSlippage={watchAllFields.useUserSlippage}
                         />
                       ) : null}
                     </div>

@@ -10,7 +10,6 @@ const ModalTerminal = (props: {
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
-  useUserSlippage: boolean;
 }) => {
   const {
     rpcUrl,
@@ -18,7 +17,6 @@ const ModalTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    useUserSlippage,
     refetchIntervalForTokenAccounts,
   } = props;
 
@@ -35,7 +33,6 @@ const ModalTerminal = (props: {
       onRequestConnectWallet: () => setShowModal(true),
       strictTokenList,
       defaultExplorer,
-      useUserSlippage,
     });
   };
 

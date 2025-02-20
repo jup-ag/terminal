@@ -140,7 +140,7 @@ const FormPairRow = (props: IPairRow) => {
 
   return (
     <li
-      className={`rounded cursor-pointer px-5 my-1 list-none flex w-full items-center bg-v2-lily/5 hover:bg-v2-lily/10`}
+      className={`rounded cursor-pointer px-5 my-1 list-none flex w-full items-center bg-v3-input-background hover:bg-[#1A2633]`}
       style={{ maxHeight: PAIR_ROW_HEIGHT - 4, height: PAIR_ROW_HEIGHT - 4, ...style }}
       onClick={onClick}
       translate="no"
@@ -169,7 +169,7 @@ const FormPairRow = (props: IPairRow) => {
 
             {/* Intentionally higher z to be clickable */}
             {showExplorer ? (
-              <div className="z-10 w-fit" onClick={(e) => e.stopPropagation()}>
+              <div className="-ml-1 z-10 w-fit" onClick={(e) => e.stopPropagation()}>
                 <TokenLink tokenInfo={item} />
               </div>
             ) : null}

@@ -1,5 +1,4 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-import classNames from 'classnames';
 import React, { createRef, memo, useCallback, useEffect, useRef, useState } from 'react';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps, areEqual } from 'react-window';
@@ -16,6 +15,7 @@ import { useSortByValue } from './useSortByValue';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { searchService } from 'src/contexts/SearchService';
 import { useAccounts } from 'src/contexts/accounts';
+import { cn } from 'src/misc/cn';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -42,7 +42,7 @@ interface IFormPairSelector {
   tokenInfos: TokenInfo[];
 }
 const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) => {
-  const { addUnknownTokenInfo } = useTokenContext();
+  const { tokenMap } = useTokenContext();
   const { mutateAsync: performSearch, isLoading } = useMutation(async (value: string) => {
     const response = await searchService.search(value);
     return response;
@@ -79,8 +79,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
 
         const searchResult = await performSearch(value);
         setSearchResult(searchResult);
-
-        searchResult.forEach((item) => checkIsUnknownToken(item) && addUnknownTokenInfo(item));
+        searchResult.forEach((item) => tokenMap.set(item.address, item));
       } catch (error) {
         console.error(error);
       }
@@ -112,7 +111,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
   }, [triggerSearch, isInitialLoading]);
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2 bg-v3-modal">
+    <div className="flex flex-col h-full w-full py-4 px-2 bg-black">
       <div className="flex w-full justify-between">
         <div className="text-white fill-current w-6 h-6 cursor-pointer" onClick={onClose}>
           <LeftArrowIcon width={24} height={24} />
@@ -154,7 +153,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
                     onSubmit,
                     mintToUsdValue,
                   }}
-                  className={classNames('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
+                  className={cn('overflow-y-scroll mr-1 min-h-[12rem] px-5 webkit-scrollbar')}
                 >
                   {rowRenderer}
                 </FixedSizeList>
