@@ -42,7 +42,7 @@ interface IFormPairSelector {
   tokenInfos: TokenInfo[];
 }
 const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) => {
-  const { addUnknownTokenInfo } = useTokenContext();
+  const { tokenMap } = useTokenContext();
   const { mutateAsync: performSearch, isLoading } = useMutation(async (value: string) => {
     const response = await searchService.search(value);
     return response;
@@ -79,8 +79,7 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
 
         const searchResult = await performSearch(value);
         setSearchResult(searchResult);
-
-        searchResult.forEach((item) => checkIsUnknownToken(item) && addUnknownTokenInfo(item));
+        searchResult.forEach((item) => tokenMap.set(item.address, item));
       } catch (error) {
         console.error(error);
       }

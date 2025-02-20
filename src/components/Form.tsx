@@ -226,7 +226,7 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={cn('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current')}
+                        className={cn('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer')}
                         onClick={(e) => {
                           onClickMax(e);
                         }}
