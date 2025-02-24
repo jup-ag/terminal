@@ -1,4 +1,4 @@
-import { useConnection, useWallet } from '@jup-ag/wallet-adapter';
+import { useWallet } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { useMutation } from '@tanstack/react-query';
 import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
@@ -33,7 +33,6 @@ class UltraSwapError extends Error {
 
 export function useUltraSwapMutation() {
   const { wallet, signTransaction } = useWallet();
-  const { connection } = useConnection();
   return useMutation({
     mutationFn: async ({
       setTxStatus,
