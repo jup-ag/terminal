@@ -5,7 +5,6 @@ import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
 import { ultraSwapService } from 'src/data/UltraSwapService';
 import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
-import { getTokenBalanceChangesFromTransactionResponse } from '@jup-ag/common';
 import { TransactionError } from '@mercurial-finance/optimist';
 
 interface UltraSwapMutationProps {
@@ -76,25 +75,12 @@ export function useUltraSwapMutation() {
       const response = await ultraSwapService.submitSwap(serializedTransaction, requestId);
 
       const { signature, status } = response;
-      if (status !== 'Success') {
-        throw new UltraSwapError('Failed to submit transaction', UltraSwapErrorType.FAILED, signature);
+
+      if (status === 'Failed') {
+        throw new UltraSwapError(response.error, UltraSwapErrorType.FAILED, signature);
       }
 
-      const transactionResponse = await connection.getTransaction(signature, {
-        commitment: 'confirmed',
-        maxSupportedTransactionVersion: 0,
-      });
-
-      const [sourceTokenBalanceChange, destinationTokenBalanceChange] = getTokenBalanceChangesFromTransactionResponse({
-        txid: signature,
-        inputMint: new PublicKey(fromTokenInfo.address),
-        outputMint: new PublicKey(toTokenInfo.address),
-        hasWrappedSOL: false,
-        transactionResponse,
-        user: publicKey,
-        sourceAddress: new PublicKey(fromTokenInfo.address),
-        destinationAddress: new PublicKey(toTokenInfo.address),
-      });
+      const { inputAmountResult, outputAmountResult } = response;
 
       setTxStatus({
         txid: signature,
@@ -105,8 +91,8 @@ export function useUltraSwapMutation() {
           txid: signature,
           inputAddress: new PublicKey(fromTokenInfo.address),
           outputAddress: new PublicKey(toTokenInfo.address),
-          inputAmount: sourceTokenBalanceChange,
-          outputAmount: destinationTokenBalanceChange,
+          inputAmount: Number(inputAmountResult),
+          outputAmount: Number(outputAmountResult),
         },
         quoteReponse: quoteResponseMeta,
       });
