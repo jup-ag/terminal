@@ -50,7 +50,7 @@ interface UltraSwapService {
 class UltraSwapService implements UltraSwapService {
   private BASE_URL ='https://ultra-api.jup.ag';
   private ROUTE = {
-    SWAP: `${this.BASE_URL}/swap`,
+    SWAP: `${this.BASE_URL}/execute`,
     ORDER: `${this.BASE_URL}/order`,
   };
 
