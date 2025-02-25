@@ -36,11 +36,26 @@ export interface UltraSwapQuoteParams {
   amount: string;
   taker?: string;
 }
-
-export interface UltraSwapResponse {
+interface UltraSwapResponseBase {
   signature: string;
-  status: string;
+  code: number;
+  status: 'Success' | 'Failed';
+  slot: string;
 }
+
+interface UltraSwapResponseSuccess extends UltraSwapResponseBase {
+  status: 'Success';
+  inputAmountResult: string;
+  outputAmountResult: string;
+}
+
+interface UltraSwapResponseFailed extends UltraSwapResponseBase {
+  status: 'Failed';
+  message: string;
+  error: string;
+}
+
+export type UltraSwapResponse = UltraSwapResponseSuccess | UltraSwapResponseFailed;
 
 interface UltraSwapService {
   getQuote(params: UltraSwapQuoteParams): Promise<UltraQuoteResponse>;
