@@ -55,7 +55,7 @@ const HeaderLinks = () => {
         icon={<RepoLogo width="20" height="20" />}
       />
       <HeaderLink
-        href="https://station.jup.ag/docs/jup-terminal"
+        href="https://station.jup.ag/docs/tool-kits/terminal-walkthrough"
         isActive={false}
         external
         title={'Docs'}
