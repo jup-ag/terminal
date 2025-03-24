@@ -1,6 +1,6 @@
 {
   "name": "@jup-ag/terminal",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -36,13 +36,13 @@
   },
   "dependencies": {
     "@jup-ag/react-hook": "6.2.0",
-    "@jup-ag/wallet-adapter": "0.2.0",
+    "@jup-ag/wallet-adapter": "0.2.3",
     "@mercurial-finance/optimist": "0.4.0",
     "@popperjs/core": "^2.11.8",
     "@solana/spl-token": "0.1.8",
     "@solana/spl-token-0.4": "npm:@solana/spl-token@0.4.0",
     "@solana/spl-token-registry": "~0.2.4574",
-    "@solana/wallet-adapter-wallets": "^0.19.22",
+    "@solana/wallet-adapter-wallets": "0.19.33",
     "@tanstack/react-query": "^4.36.1",
     "bn.js": "5.2.1",
     "clsx": "^2.1.1",
