@@ -28,11 +28,9 @@ export const SOL_TOKEN_INFO: TokenInfo = {
   decimals: 9,
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-  tags: ['old-registry'],
+  tags: [],
   extensions: {
     website: 'https://solana.com/',
-    serumV3Usdc: '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT',
-    serumV3Usdt: 'HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1',
     coingeckoId: 'solana',
   },
 };
