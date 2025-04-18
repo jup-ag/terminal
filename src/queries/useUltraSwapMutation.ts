@@ -6,6 +6,7 @@ import { ultraSwapService } from 'src/data/UltraSwapService';
 import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { TransactionError } from '@mercurial-finance/optimist';
+import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 interface UltraSwapMutationProps {
   fromTokenInfo: TokenInfo;
@@ -32,7 +33,7 @@ class UltraSwapError extends Error {
 }
 
 export function useUltraSwapMutation() {
-  const { wallet, signTransaction } = useWallet();
+  const { wallet, signTransaction } = useWalletPassThrough();
   return useMutation({
     mutationFn: async ({
       setTxStatus,
