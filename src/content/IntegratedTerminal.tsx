@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
-import { useUnifiedWalletContext, useWallet } from '@jup-ag/wallet-adapter';
+import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
   rpcUrl: string;
@@ -20,7 +20,7 @@ const IntegratedTerminal = (props: {
   } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
-  const passthroughWalletContextState = useWallet();
+  const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = useCallback(async () => {

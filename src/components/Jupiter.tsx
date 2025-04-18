@@ -53,7 +53,6 @@ const Content = () => {
 
 const JupiterApp = (props: IInit) => {
   const { refetchIntervalForTokenAccounts } = props;
-  const { wallet } = useWalletPassThrough();
 
   return (
     <AccountsProvider refetchIntervalForTokenAccounts={refetchIntervalForTokenAccounts}>
