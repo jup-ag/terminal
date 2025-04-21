@@ -35,6 +35,7 @@ export interface UltraSwapQuoteParams {
   outputMint: string;
   amount: string;
   taker?: string;
+  swapMode?: 'ExactIn' | 'ExactOut';
 }
 interface UltraSwapResponseBase {
   signature: string;

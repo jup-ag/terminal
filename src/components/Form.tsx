@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo, useRef } from 'react';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
 import { useAccounts } from '../contexts/accounts';
@@ -47,6 +47,7 @@ const Form: React.FC<{
     loading,
     refresh,
     quoteError,
+    isToPairFocused,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
 
@@ -216,6 +217,9 @@ const Form: React.FC<{
                             'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
                             { 'cursor-not-allowed': inputAmountDisabled },
                           )}
+                          onKeyDown={() => {
+                            isToPairFocused.current = false;
+                          }}
                           decimalSeparator={detectedSeparator}
                           isAllowed={withValueLimit}
                         />
@@ -287,7 +291,6 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={true}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
@@ -307,8 +310,10 @@ const Form: React.FC<{
                               e.key === 'Control' ||
                               e.key === 'Alt' ||
                               e.key === 'Shift'
-                            )
+                            ){
                               return;
+                            }
+                              isToPairFocused.current = true;
                           }}
                         />
                       )}
