@@ -148,8 +148,7 @@ const Form: React.FC<{
     }
     return result;
   }, [fixedAmount, swapMode]);
-  console.log(swapMode);
-
+  
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
     setSelectPairSelector('fromMint');
