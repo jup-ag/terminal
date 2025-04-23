@@ -15,7 +15,7 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker, swapMode }
       };
     },
     retryDelay: 2_000,
-    enabled: !!inputMint && !!outputMint && Number(amount) > 0,
-    keepPreviousData: !!amount,
+    enabled:  Number(amount) > 0,
+    keepPreviousData: Number(amount) > 0,
   });
 };
