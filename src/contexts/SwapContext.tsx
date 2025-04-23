@@ -227,7 +227,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   }, [ogQuoteResponseMeta]);
 
   useEffect(() => {
-    if (!form.fromValue && !quoteResponseMeta) {
+    if (!form.fromValue && !form.toValue && !quoteResponseMeta) {
       setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       return;
     }
@@ -245,7 +245,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       }
       return newValue;
     });
-  }, [form.fromValue, fromTokenInfo, quoteResponseMeta, toTokenInfo]);
+  }, [form.fromValue, form.toValue, fromTokenInfo, quoteResponseMeta, toTokenInfo]);
 
   const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);

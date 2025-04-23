@@ -27,6 +27,7 @@ import Decimal from 'decimal.js';
 import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
 import SuggestionTags from './SuggestionTags';
 import { cn } from 'src/misc/cn';
+import { SwapMode } from 'src/types/constants';
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -43,7 +44,7 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
-    formProps: { fixedAmount, fixedInputMint, fixedOutputMint },
+    formProps: { fixedAmount, fixedInputMint, fixedOutputMint, swapMode },
     loading,
     refresh,
     quoteError,
@@ -133,13 +134,21 @@ const Form: React.FC<{
   };
 
   const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
-  const { inputAmountDisabled } = useMemo(() => {
+  const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
-      result.inputAmountDisabled = false;
+      if (swapMode === SwapMode.ExactIn) {
+        result.inputAmountDisabled = false;
+      } else if (swapMode === SwapMode.ExactOut) {
+        result.outputAmountDisabled = false;
+      } else {
+        result.inputAmountDisabled = false;
+        result.outputAmountDisabled = false;
+      }
     }
     return result;
-  }, [fixedAmount]);
+  }, [fixedAmount, swapMode]);
+  console.log(swapMode);
 
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
@@ -205,7 +214,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {fromTokenInfo?.decimals && (
                         <NumericFormat
-                          disabled={fixedAmount}
+                          disabled={fixedAmount || swapMode === SwapMode.ExactOut}
                           value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
                           decimalScale={fromTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
@@ -213,10 +222,9 @@ const Form: React.FC<{
                           valueIsNumericString
                           onValueChange={onChangeFromValue}
                           placeholder={'0.00'}
-                          className={cn(
-                            'h-full w-full bg-transparent text-white text-right font-semibold text-lg',
-                            { 'cursor-not-allowed': inputAmountDisabled },
-                          )}
+                          className={cn('h-full w-full bg-transparent text-white text-right font-semibold text-lg', {
+                            'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
+                          })}
                           onKeyDown={() => {
                             isToPairFocused.current = false;
                           }}
@@ -230,7 +238,9 @@ const Form: React.FC<{
                   {fromTokenInfo?.address ? (
                     <div className="flex justify-between items-center">
                       <div
-                        className={cn('flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer')}
+                        className={cn(
+                          'flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer',
+                        )}
                         onClick={(e) => {
                           onClickMax(e);
                         }}
@@ -253,9 +263,7 @@ const Form: React.FC<{
           </div>
 
           <div className={'my-2'}>
-            {hasFixedMint ? null : (
-              <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
-            )}
+            {hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />}
           </div>
 
           <div className="border-b border-transparent bg-v3-input-background rounded-xl">
@@ -291,6 +299,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
+                          disabled={outputAmountDisabled || swapMode === SwapMode.ExactIn}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
                           thousandSeparator={thousandSeparator}
@@ -298,8 +307,14 @@ const Form: React.FC<{
                           valueIsNumericString
                           onValueChange={onChangeToValue}
                           className={cn(
-                            'h-full w-full bg-transparent text-white text-right font-semibold  placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20 text-lg',
+                            'h-full w-full bg-transparent text-white text-right font-semibold   text-lg',
+                            {
+                              'placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20':
+                                swapMode === SwapMode.ExactOut,
+                              'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
+                            },
                           )}
+                          placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
                           decimalSeparator={detectedSeparator}
                           isAllowed={withValueLimit}
                           onKeyDown={(e) => {
@@ -310,10 +325,10 @@ const Form: React.FC<{
                               e.key === 'Control' ||
                               e.key === 'Alt' ||
                               e.key === 'Shift'
-                            ){
+                            ) {
                               return;
                             }
-                              isToPairFocused.current = true;
+                            isToPairFocused.current = true;
                           }}
                         />
                       )}
@@ -368,7 +383,9 @@ const Form: React.FC<{
         ) : (
           <JupButton
             size="lg"
-            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]')}
+            className={cn(
+              'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
+            )}
             type="button"
             onClick={onSubmit}
             disabled={isDisabled || loading}
