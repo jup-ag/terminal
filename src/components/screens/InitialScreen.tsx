@@ -104,7 +104,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   }, [tokenMap, fixedOutputMint, initialOutputMint]);
 
   const onSubmitToConfirmation = useCallback(() => {
-    setScreen('Confirmation');
+    setScreen('Swapping');
   }, [setScreen]);
 
   return (

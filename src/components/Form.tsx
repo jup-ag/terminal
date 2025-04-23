@@ -49,6 +49,7 @@ const Form: React.FC<{
     refresh,
     quoteError,
     isToPairFocused,
+    onSubmit: onSubmitUltra,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
 
@@ -376,11 +377,14 @@ const Form: React.FC<{
               'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
             )}
             type="button"
-            onClick={onSubmit}
+            onClick={()=>{
+              onSubmit();
+              onSubmitUltra();
+            }}
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span className="text-sm">Loading...</span>
+              <span >Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (

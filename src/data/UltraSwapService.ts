@@ -67,6 +67,14 @@ interface UltraSwapResponseFailed extends UltraSwapResponseBase {
 
 export type UltraSwapResponse = UltraSwapResponseSuccess | UltraSwapResponseFailed;
 
+
+export interface Router {
+  icon: string;
+  id: AggregatorSources;
+  name: string;
+}
+
+export type RouterResponse = Router[];
 interface UltraSwapService {
   getQuote(params: UltraSwapQuoteParams): Promise<UltraQuoteResponse>;
   submitSwap(signedTransaction: string, requestId: string): Promise<UltraSwapResponse>;
@@ -77,6 +85,7 @@ class UltraSwapService implements UltraSwapService {
   private ROUTE = {
     SWAP: `${this.BASE_URL}/execute`,
     ORDER: `${this.BASE_URL}/order`,
+    ROUTERS: `${this.BASE_URL}/order/routers`,
   };
 
   async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<UltraQuoteResponse> {
@@ -106,6 +115,14 @@ class UltraSwapService implements UltraSwapService {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ signedTransaction, requestId }),
     });
+    if (!response.ok) {
+      throw response;
+    }
+    const result = await response.json();
+    return result;
+  }
+  async getRouters(): Promise<RouterResponse> {
+    const response = await fetch(this.ROUTE.ROUTERS)
     if (!response.ok) {
       throw response;
     }

@@ -12,6 +12,7 @@ import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
+import { useUltraRouters } from 'src/queries/useUltraRouter';
 
 const Index = ({
   quoteResponse,
@@ -36,6 +37,13 @@ const Index = ({
   };
 
   const { accounts } = useAccounts();
+  const { data: routers } = useUltraRouters();
+  const routerIconUrl = useMemo(() => {
+    if (!quoteResponse || !routers) {
+      return null;
+    }
+    return routers.find((router) => router.id === quoteResponse.quoteResponse.router.toLowerCase())?.icon;
+  }, [quoteResponse, routers]);
 
   const { wallet } = useWalletPassThrough();
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
@@ -117,10 +125,16 @@ const Index = ({
       {router && (
         <div className="flex items-center justify-between text-xs">
           <div className="text-white/50">
-            <span>Aggregator</span>
+            <span>Router</span>
           </div>
-          {/* show Logo of the router when BE API is ready */}
-          <div className="text-white/50">{router}</div>
+
+          <div className="flex items-center gap-1">
+            {/* eslint-disable @next/next/no-img-element */}
+            {routerIconUrl && (
+              <img src={routerIconUrl} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+            )}
+            <div className="text-white/50">{router}</div>
+          </div>
         </div>
       )}
       <div className="flex items-center justify-between text-xs">
@@ -132,7 +146,6 @@ const Index = ({
 
       {showFullDetails ? (
         <>
-          <Fees routePlan={quoteResponse?.quoteResponse.routePlan} />
           <TransactionFee gasFee={gasFee} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
           <div className="flex items-center justify-between text-xs">
