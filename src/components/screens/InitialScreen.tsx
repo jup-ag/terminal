@@ -19,7 +19,8 @@ interface Props {
 
 const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { accounts, nativeAccount } = useAccounts();
-  const { tokenMap } = useTokenContext();
+
+  const { tokenMap,getTokenInfo } = useTokenContext();
   const {
     form,
     setForm,
@@ -43,9 +44,11 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       return;
     }
 
+    const tokenInfo = getTokenInfo(form.fromMint);
+
     if (new Decimal(form.fromValue).gt(balance)) {
       setErrors({
-        fromValue: { title: 'Insufficient balance', message: '' },
+        fromValue: { title: `Insufficient ${tokenInfo?.symbol}`, message: '' },
       });
       setIsDisabled(true);
       return;
@@ -53,7 +56,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
     setErrors({});
     setIsDisabled(false);
-  }, [form, balance, quoteResponseMeta, loading, setErrors]);
+  }, [form, balance, quoteResponseMeta, loading, setErrors, getTokenInfo]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
   const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);

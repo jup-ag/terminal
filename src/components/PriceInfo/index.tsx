@@ -44,6 +44,12 @@ const Index = ({
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(4),
   );
   const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format('0.1')}%` : `~ ${priceImpact}%`;
+  const fee = useMemo(() => {
+    if (!quoteResponse) {
+      return 0;
+    }
+    return quoteResponse.quoteResponse.feeBps / 100;
+  }, [quoteResponse]);
 
   const otherAmountThresholdText = useMemo(() => {
     if (quoteResponse?.quoteResponse.otherAmountThreshold) {
@@ -57,26 +63,28 @@ const Index = ({
     return '-';
   }, [quoteResponse.quoteResponse.otherAmountThreshold, toTokenInfo.decimals, toTokenInfo.symbol]);
 
+  const router = useMemo(() => {
+    if (!quoteResponse) {
+      return;
+    }
+    return quoteResponse.quoteResponse.router;
+  }, [quoteResponse]);
+
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 
   const mintToAccountMap = useMemo(() => {
     return new Map(Object.entries(accounts).map((acc) => [acc[0], acc[1].pubkey.toString()]));
   }, [accounts]);
 
-  useEffect(() => {
+  const gasFee = useMemo(() => {
     if (quoteResponse) {
-      const fee = calculateFeeForSwap(
-        quoteResponse.quoteResponse as any,
-        mintToAccountMap,
-        new Map(), // we can ignore this as we are using shared accounts
-        true,
-        true,
-      );
-      setFeeInformation(fee);
-    } else {
-      setFeeInformation(undefined);
+      const { prioritizationFeeLamports } = quoteResponse.quoteResponse;
+      if (prioritizationFeeLamports) {
+        return prioritizationFeeLamports / 1e9; // Convert lamports to SOL
+      }
     }
-  }, [quoteResponse, walletPublicKey, mintToAccountMap]);
+    return 0;
+  }, [quoteResponse]);
 
   const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
   const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
@@ -85,7 +93,8 @@ const Index = ({
     <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/50">{<span>Rate</span>}</div>
-        {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) && JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
+        {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) &&
+        JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
           <ExchangeRate
             loading={loading}
             rateParams={rateParams}
@@ -105,18 +114,33 @@ const Index = ({
         <div>{priceImpactText}</div>
       </div>
 
+      {router && (
+        <div className="flex items-center justify-between text-xs">
+          <div className="text-white/50">
+            <span>Aggregator</span>
+          </div>
+          {/* show Logo of the router when BE API is ready */}
+          <div className="text-white/50">{router}</div>
+        </div>
+      )}
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/50">
-          <span>Minimum Received</span>
+          <span>Fee</span>
         </div>
-        <div className="text-white/50">{otherAmountThresholdText}</div>
+        <div className="text-white/50">{fee}%</div>
       </div>
 
       {showFullDetails ? (
         <>
           <Fees routePlan={quoteResponse?.quoteResponse.routePlan} />
-          <TransactionFee feeInformation={feeInformation} />
+          <TransactionFee gasFee={gasFee} />
           <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
+          <div className="flex items-center justify-between text-xs">
+            <div className="text-white/50">
+              <span>Minimum Received</span>
+            </div>
+            <div className="text-white/50">{otherAmountThresholdText}</div>
+          </div>
         </>
       ) : null}
     </div>

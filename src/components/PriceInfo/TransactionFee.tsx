@@ -4,13 +4,7 @@ import Tooltip from 'src/components/Tooltip';
 import { formatNumber } from 'src/misc/utils';
 import Decimal from 'decimal.js';
 
-const TransactionFee = ({ feeInformation }: { feeInformation: TransactionFeeInfo | undefined }) => {
-  const feeText = useMemo(() => {
-    if (feeInformation) {
-      return formatNumber.format(new Decimal(feeInformation.signatureFee).div(10 ** 9));
-    }
-    return '-';
-  }, [feeInformation]);
+const TransactionFee = ({ gasFee }: { gasFee: number | undefined }) => {
 
   return (
     <div className="flex items-center justify-between text-xs">
@@ -20,7 +14,7 @@ const TransactionFee = ({ feeInformation }: { feeInformation: TransactionFeeInfo
           <span className="ml-1 cursor-pointer">[?]</span>
         </Tooltip>
       </div>
-      <div className="text-white/50">{feeText} SOL</div>
+      <div className="text-white/50">{gasFee} SOL</div>
     </div>
   );
 };

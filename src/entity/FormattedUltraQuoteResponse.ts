@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import JSBI from 'jsbi';
+import { AGGREGATOR_SOURCES } from 'src/data/UltraSwapService';
 import {
   array,
   boolean,
@@ -58,6 +59,7 @@ export const FormattedUltraQuoteResponse = type({
   requestId: string(),
   prioritizationFeeLamports: optional(number()),
   feeBps: number(),
+  router: enums(Object.values(AGGREGATOR_SOURCES)),
 });
 
 export type FormattedUltraQuoteResponse = Infer<typeof FormattedUltraQuoteResponse>;

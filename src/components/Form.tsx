@@ -353,20 +353,10 @@ const Form: React.FC<{
               </div>
             </div>
           </div>
-
-          {quoteResponseMeta ? (
-            <div className="flex items-center mt-2 text-xs space-x-1">
-              <div className="bg-black/20 rounded-xl px-2 py-1 text-white/50 flex items-center space-x-1">
-                <RoutesSVG width={7} height={9} />
-              </div>
-              <span className="text-white/50">Ultra Swap</span>
-            </div>
-          ) : null}
         </div>
 
         <SuggestionTags loading={loading} listOfSuggestions={listOfSuggestions} />
 
-        {walletPublicKey ? <FormError errors={errors} /> : null}
       </div>
 
       <div className="w-full px-2">
@@ -393,6 +383,8 @@ const Form: React.FC<{
               <span className="text-sm">Loading...</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
+            ) : errors.fromValue ? (
+              <span className="text-sm">{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}
