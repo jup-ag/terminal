@@ -4,6 +4,7 @@ import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
   Dispatch,
+  MutableRefObject,
   PropsWithChildren,
   SetStateAction,
   createContext,
@@ -11,6 +12,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
@@ -76,6 +78,7 @@ export interface ISwapContext {
   loading: boolean;
   quoteError?: unknown;
   lastRefreshTimestamp: number | undefined;
+  isToPairFocused: MutableRefObject<boolean>;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -110,7 +113,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refresh: refreshAccount } = useAccounts();
-
+  const isToPairFocused = useRef<boolean>(false);
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
 
@@ -156,13 +159,25 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const debouncedForm = useDebounce(form, 250);
 
   const amount = useMemo(() => {
-    if (!fromTokenInfo || !debouncedForm.fromValue || !hasNumericValue(debouncedForm.fromValue)) {
+    if (!fromTokenInfo || !toTokenInfo) {
       return JSBI.BigInt(0);
     }
-    return JSBI.BigInt(
-      new Decimal(debouncedForm.fromValue).mul(Math.pow(10, fromTokenInfo.decimals)).floor().toFixed(),
-    );
-  }, [debouncedForm.fromValue, fromTokenInfo]);
+    if (isToPairFocused.current  === true) {
+      if (!debouncedForm.toValue || !hasNumericValue(debouncedForm.toValue)) {
+        return JSBI.BigInt(0);
+      }
+      return JSBI.BigInt(
+        new Decimal(debouncedForm.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed(),
+      );
+    }else {
+      if (!debouncedForm.fromValue || !hasNumericValue(debouncedForm.fromValue)) {
+        return JSBI.BigInt(0);
+      }
+      return JSBI.BigInt(
+        new Decimal(debouncedForm.fromValue).mul(Math.pow(10, fromTokenInfo.decimals)).floor().toFixed(),
+      );
+    }
+  }, [debouncedForm.fromValue, debouncedForm.toValue, fromTokenInfo, toTokenInfo]);
 
   const {
     data: ogQuoteResponseMeta,
@@ -178,6 +193,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     outputMint: debouncedForm.toMint,
     amount: amount.toString(),
     taker: walletPublicKey,
+    swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
   });
 
   const error: JupiterError | undefined = useMemo(() => {
@@ -211,7 +227,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   }, [ogQuoteResponseMeta]);
 
   useEffect(() => {
-    if (!form.fromValue && !quoteResponseMeta) {
+    if (!form.fromValue && !form.toValue && !quoteResponseMeta) {
       setForm((prev) => ({ ...prev, fromValue: '', toValue: '' }));
       return;
     }
@@ -221,11 +237,15 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
       if (!fromTokenInfo || !toTokenInfo) return prev;
 
-      const { outAmount } = quoteResponseMeta?.quoteResponse || {};
-      newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
+      const { outAmount, inAmount } = quoteResponseMeta?.quoteResponse || {};
+      if (!isToPairFocused.current) {
+        newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
+      }else {
+        newValue.fromValue = inAmount ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed() : '';
+      }
       return newValue;
     });
-  }, [form.fromValue, fromTokenInfo, quoteResponseMeta, toTokenInfo]);
+  }, [form.fromValue, form.toValue, fromTokenInfo, quoteResponseMeta, toTokenInfo]);
 
   const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
@@ -308,7 +328,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         loading,
         quoteError,
         lastRefreshTimestamp,
-
+        isToPairFocused,
         displayMode,
         formProps,
         scriptDomain,
