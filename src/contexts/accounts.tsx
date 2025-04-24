@@ -3,12 +3,16 @@ import { AccountLayout, TOKEN_PROGRAM_ID, AccountInfo as TokenAccountInfo, u64 }
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
 import BN from 'bn.js';
-import React, { PropsWithChildren, useCallback, useContext } from 'react';
+import React, { PropsWithChildren, useCallback, useContext, useMemo } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import Decimal from 'decimal.js';
 import { getTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { ultraSwapService } from 'src/data/UltraSwapService';
+import { useTokenContext } from './TokenContextProvider';
+import { SOL_TOKEN_INFO } from 'src/misc/constants';
+import { checkIsToken2022 } from 'src/misc/tokenTags';
 
 const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
 
@@ -147,78 +151,80 @@ type AccountsProviderProps = PropsWithChildren<{
 const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIntervalForTokenAccounts = 10_000 }) => {
   const { publicKey, connected } = useWalletPassThrough();
   const { connection } = useConnection();
+  const { requestTokenInfo, getTokenInfo } = useTokenContext();
 
-  const fetchNative = useCallback(async () => {
-    if (!publicKey || !connected) return null;
+  const {
+    data: balanceResponse,
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: ['fetchAllAccounts', publicKey],
+    queryFn: async () => {
+      if (!publicKey) {
+        return new Map<string, TokenAccount>();
+      }
+      const result = await ultraSwapService.getBalance(publicKey.toString());
 
-    const response = await connection.getAccountInfo(publicKey);
-    if (response) {
-      return {
-        pubkey: publicKey,
-        balance: new Decimal(fromLamports(response?.lamports || 0, 9)).toString(),
-        balanceLamports: new BN(response?.lamports || 0),
-        decimals: 9,
-        isFrozen: false,
-      };
-    }
-  }, [publicKey, connected, connection]);
+      const tokenAccountsWithoutNativeSol = Object.keys(result).filter((key) => key !== SOL_TOKEN_INFO.symbol);
 
-  const fetchAllTokens = useCallback(async () => {
-    if (!publicKey || !connected) return {};
-
-    const [tokenAccounts, token2022Accounts] = await Promise.all(
-      [TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID].map((tokenProgramId) =>
-        connection.getParsedTokenAccountsByOwner(publicKey, { programId: tokenProgramId }, 'confirmed'),
-      ),
-    );
-
-    const reducedResult = [...tokenAccounts.value, ...token2022Accounts.value].reduce(
-      (acc, item: ParsedTokenData) => {
-        // Only allow standard TOKEN_PROGRAM_ID ATA
-        const expectedAta = getAssociatedTokenAddressSync(new PublicKey(item.account.data.parsed.info.mint), publicKey);
-        if (!expectedAta.equals(item.pubkey)) return acc;
-
-        acc[item.account.data.parsed.info.mint] = {
-          balance: item.account.data.parsed.info.tokenAmount.uiAmountString,
-          balanceLamports: new BN(item.account.data.parsed.info.tokenAmount.amount),
-          pubkey: item.pubkey,
-          decimals: item.account.data.parsed.info.tokenAmount.decimals,
-          isFrozen: item.account.data.parsed.info.state === 2, // 2 is frozen
+      await requestTokenInfo(tokenAccountsWithoutNativeSol);
+      return result;
+    },
+    enabled: !!publicKey,
+    cacheTime: 20_000,
+    staleTime: 20_000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+  });
+  const nativeAccount: IAccountsBalance | null = useMemo(() => {
+    if (balanceResponse && publicKey) {
+      const entries = Object.entries(balanceResponse);
+      const nativeAccount = entries.find(([mint, balance]) => mint === SOL_TOKEN_INFO.symbol);
+      const tokenAta = getAssociatedTokenAddressSync(WRAPPED_SOL_MINT, publicKey, TOKEN_PROGRAM_ID);
+      if (nativeAccount) {
+        const [key, value] = nativeAccount;
+        const acc: IAccountsBalance = {
+          balance: value.amount,
+          balanceLamports: new BN(value.amount),
+          pubkey: tokenAta,
+          decimals: SOL_TOKEN_INFO.decimals,
+          isFrozen: value.isFrozen,
         };
         return acc;
-      },
-      {} as Record<string, IAccountsBalance>,
-    );
+      }
+    }
+    return null;
+  }, [balanceResponse, publicKey]);
 
-    return reducedResult;
-  }, [publicKey, connected, connection]);
+  const accounts = useMemo(() => {
+    const accounts: Record<string, IAccountsBalance> = {};
+    if (balanceResponse && publicKey) {
+      const entries = Object.entries(balanceResponse);
+      entries.forEach(([mint, mintInfo]) => {
+        const tokenInfo = getTokenInfo(mint);
+        if (!tokenInfo) return;
+        const tokenMint = new PublicKey(mint);
+        const isToken2022 = checkIsToken2022(tokenInfo);
+        const programID = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
+        const tokenAta = getAssociatedTokenAddressSync(tokenMint, publicKey, programID);
 
-  const { data, isLoading, refetch } = useQuery<{
-    nativeAccount: IAccountsBalance | null | undefined;
-    accounts: Record<string, IAccountsBalance>;
-  }>(
-    ['accounts', publicKey?.toString()],
-    async () => {
-      // Fetch all tokens balance
-      const [nativeAccount, accounts] = await Promise.all([fetchNative(), fetchAllTokens()]);
-
-      return {
-        nativeAccount,
-        accounts,
-      };
-    },
-    {
-      enabled: Boolean(publicKey?.toString() && connected && getTerminalInView()),
-      refetchInterval: refetchIntervalForTokenAccounts,
-      refetchIntervalInBackground: false,
-    },
-  );
+        accounts[mint] = {
+          balance: mintInfo.amount,
+          balanceLamports: new BN(mintInfo.amount),
+          pubkey: tokenAta,
+          decimals: tokenInfo.decimals,
+          isFrozen: mintInfo.isFrozen,
+        };
+      });
+    }
+    return accounts;
+  }, [balanceResponse, getTokenInfo, publicKey]);
 
   return (
     <AccountContext.Provider
       value={{
-        accounts: data?.accounts || {},
-        nativeAccount: data?.nativeAccount,
+        accounts: accounts || {},
+        nativeAccount: nativeAccount,
         loading: isLoading,
         refresh: refetch,
       }}

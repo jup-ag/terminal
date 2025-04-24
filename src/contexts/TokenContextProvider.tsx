@@ -20,6 +20,7 @@ const TokenContext = React.createContext<{
   unknownTokenMap: Map<string, TokenInfo>;
   isLoaded: boolean;
   getTokenInfo: (mint: string) => TokenInfo | undefined;
+  requestTokenInfo: (mintAddresses: string[]) =>void;
 } | null>(null);
 
 const isAddress = (str: string) => str.length >= 32 && str.length <= 48 && !str.includes('_');
@@ -142,6 +143,7 @@ export function TokenContextProvider({ formProps, children }: IInit & { children
         unknownTokenMap: unknownTokenMap.current,
         isLoaded,
         getTokenInfo,
+        requestTokenInfo
       }}
     >
       {children}
