@@ -220,6 +220,7 @@ const Form: React.FC<{
                           thousandSeparator={thousandSeparator}
                           allowNegative={false}
                           valueIsNumericString
+                          inputMode='decimal'
                           onValueChange={onChangeFromValue}
                           placeholder={'0.00'}
                           className={cn('h-full w-full bg-transparent text-white text-right font-semibold text-lg', {
@@ -299,6 +300,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
+                          inputMode='decimal'
                           disabled={outputAmountDisabled || swapMode === SwapMode.ExactIn}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
