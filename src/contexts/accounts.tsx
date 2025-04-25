@@ -184,7 +184,7 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
       if (nativeAccount) {
         const [key, value] = nativeAccount;
         const acc: IAccountsBalance = {
-          balance: value.amount,
+          balance: new Decimal(value.amount).div(10 ** SOL_TOKEN_INFO.decimals).toFixed(),
           balanceLamports: new BN(value.amount),
           pubkey: tokenAta,
           decimals: SOL_TOKEN_INFO.decimals,
@@ -207,9 +207,9 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
         const isToken2022 = checkIsToken2022(tokenInfo);
         const programID = isToken2022 ? TOKEN_2022_PROGRAM_ID : TOKEN_PROGRAM_ID;
         const tokenAta = getAssociatedTokenAddressSync(tokenMint, publicKey, programID);
-
+        
         accounts[mint] = {
-          balance: mintInfo.amount,
+          balance: new Decimal(mintInfo.amount).div(10 ** tokenInfo.decimals).toFixed(),
           balanceLamports: new BN(mintInfo.amount),
           pubkey: tokenAta,
           decimals: tokenInfo.decimals,
