@@ -128,6 +128,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
   const fromTokenInfo = useMemo(() => {
     if (!isLoaded) return null;
+    console.log('form.fromMint', form.fromMint);
     const tokenInfo = form.fromMint ? getTokenInfo(form.fromMint) : null;
     return tokenInfo;
   }, [form.fromMint, isLoaded, getTokenInfo]);

@@ -49,7 +49,7 @@ const Index = ({
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
   );
 
-  const priceImpactText = Number(priceImpact) < 0.01? undefined: `-${priceImpact}%`;
+  const priceImpactText = Number(priceImpact) < 0.01 ? undefined : `-${priceImpact}%`;
   const fee = useMemo(() => {
     if (!quoteResponse) {
       return 0;
@@ -65,7 +65,6 @@ const Index = ({
   }, [quoteResponse]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
-
 
   const gasFee = useMemo(() => {
     if (quoteResponse) {
@@ -97,14 +96,14 @@ const Index = ({
         )}
       </div>
 
-     {priceImpactText && (
-       <div className="flex items-center justify-between text-xs text-white/50">
-       <div>
-         <span>Price Impact</span>
-       </div>
-       <div className="text-white">{priceImpactText}</div>
-     </div>
-     )}
+      {priceImpactText && (
+        <div className="flex items-center justify-between text-xs text-white/50">
+          <div>
+            <span>Price Impact</span>
+          </div>
+          <div className="text-white">{priceImpactText}</div>
+        </div>
+      )}
 
       {router && (
         <div className="flex items-center justify-between text-xs">
@@ -128,10 +127,7 @@ const Index = ({
         <div className="text-white">{fee}%</div>
       </div>
       <TransactionFee gasFee={gasFee} gasless={quoteResponse?.quoteResponse.gasless} />
-      {showFullDetails ? (
-
-          <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
-      ) : null}
+      {showFullDetails ? <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} /> : null}
     </div>
   );
 };
