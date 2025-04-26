@@ -166,7 +166,6 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
       const result = await ultraSwapService.getBalance(publicKey.toString(), signal);
 
       const tokenAccountsWithoutNativeSol = Object.keys(result).filter((key) => key !== SOL_TOKEN_INFO.symbol);
-      console.log('tokenAccountsWithoutNativeSol', tokenAccountsWithoutNativeSol);
       await requestTokenInfo(tokenAccountsWithoutNativeSol);
       return result;
     },

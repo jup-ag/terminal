@@ -75,7 +75,7 @@ const FormInputContainer: React.FC<{
               <TokenIcon info={tokenInfo} width={20} height={20} />
             </div>
             <div className="ml-4 mr-2 font-semibold" translate="no">
-              {tokenInfo?.symbol}
+              <div className="truncate">{tokenInfo?.symbol}</div>
             </div>
             {pairSelectDisabled ? null : (
               <span className="text-white/25 fill-current">
