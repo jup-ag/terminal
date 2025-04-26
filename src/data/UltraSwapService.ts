@@ -80,12 +80,21 @@ interface UltraSwapService {
   submitSwap(signedTransaction: string, requestId: string): Promise<UltraSwapResponse>;
 }
 
+interface TokenBalance {
+  amount: string; // Raw token amount as string
+  uiAmount: number; // Formatted amount with decimals
+  slot: number; // Solana slot number
+  isFrozen: boolean; // Whether the token account is frozen
+}
+
+export type BalanceResponse = Record<string, TokenBalance>;
 class UltraSwapService implements UltraSwapService {
   private BASE_URL ='https://ultra-api.jup.ag';
   private ROUTE = {
     SWAP: `${this.BASE_URL}/execute`,
     ORDER: `${this.BASE_URL}/order`,
     ROUTERS: `${this.BASE_URL}/order/routers`,
+    BALANCES: `${this.BASE_URL}/balances`,
   };
 
   async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<UltraQuoteResponse> {
@@ -123,6 +132,15 @@ class UltraSwapService implements UltraSwapService {
   }
   async getRouters(): Promise<RouterResponse> {
     const response = await fetch(this.ROUTE.ROUTERS)
+    if (!response.ok) {
+      throw response;
+    }
+    const result = await response.json();
+    return result;
+  }
+
+  async getBalance(address: string): Promise<BalanceResponse> {
+    const response = await fetch(`${this.ROUTE.BALANCES}/${address}`);
     if (!response.ok) {
       throw response;
     }
