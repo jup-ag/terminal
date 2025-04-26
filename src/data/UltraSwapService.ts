@@ -1,5 +1,13 @@
 import JSBI from "jsbi";
 
+export const AGGREGATOR_SOURCES = {
+  METIS: 'Metis',
+  JUPITERZ: 'JupiterZ',
+  HASHFLOW: 'Hashflow',
+  DFLOW: 'DFlow',
+} as const;
+
+export type AggregatorSources = (typeof AGGREGATOR_SOURCES)[keyof typeof AGGREGATOR_SOURCES];
 export interface UltraQuoteResponse {
     inputMint: string;
     inAmount: string;
@@ -27,6 +35,7 @@ export interface UltraQuoteResponse {
     requestId: string;
     prioritizationFeeLamports?: number;
     feeBps: number;
+    router: AggregatorSources;
   }
 
 
@@ -58,6 +67,14 @@ interface UltraSwapResponseFailed extends UltraSwapResponseBase {
 
 export type UltraSwapResponse = UltraSwapResponseSuccess | UltraSwapResponseFailed;
 
+
+export interface Router {
+  icon: string;
+  id: AggregatorSources;
+  name: string;
+}
+
+export type RouterResponse = Router[];
 interface UltraSwapService {
   getQuote(params: UltraSwapQuoteParams): Promise<UltraQuoteResponse>;
   submitSwap(signedTransaction: string, requestId: string): Promise<UltraSwapResponse>;
@@ -113,6 +130,14 @@ class UltraSwapService implements UltraSwapService {
     const result = await response.json();
     return result;
   }
+  async getRouters(): Promise<RouterResponse> {
+    const response = await fetch(this.ROUTE.ROUTERS)
+    if (!response.ok) {
+      throw response;
+    }
+    const result = await response.json();
+    return result;
+  }
 
   async getBalance(address: string): Promise<BalanceResponse> {
     const response = await fetch(`${this.ROUTE.BALANCES}/${address}`);
@@ -121,7 +146,7 @@ class UltraSwapService implements UltraSwapService {
     }
     const result = await response.json();
     return result;
-  } 
+  }
 }
 
 export const ultraSwapService = new UltraSwapService();

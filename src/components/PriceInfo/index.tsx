@@ -12,6 +12,7 @@ import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
+import { useUltraRouters } from 'src/queries/useUltraRouter';
 
 const Index = ({
   quoteResponse,
@@ -36,56 +37,54 @@ const Index = ({
   };
 
   const { accounts } = useAccounts();
-
-  const { wallet } = useWalletPassThrough();
-  const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
+  const { data: routers } = useUltraRouters();
+  const routerIconUrl = useMemo(() => {
+    if (!quoteResponse || !routers) {
+      return null;
+    }
+    return routers.find((router) => router.id === quoteResponse.quoteResponse.router.toLowerCase())?.icon;
+  }, [quoteResponse, routers]);
 
   const priceImpact = formatNumber.format(
-    new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(4),
+    new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
   );
-  const priceImpactText = Number(priceImpact) < 0.1 ? `< ${formatNumber.format('0.1')}%` : `~ ${priceImpact}%`;
 
-  const otherAmountThresholdText = useMemo(() => {
-    if (quoteResponse?.quoteResponse.otherAmountThreshold) {
-      const amount = new Decimal(quoteResponse.quoteResponse.otherAmountThreshold.toString()).div(
-        Math.pow(10, toTokenInfo.decimals),
-      );
-
-      const amountText = formatNumber.format(amount);
-      return `${amountText} ${toTokenInfo.symbol}`;
+  const priceImpactText = Number(priceImpact) < 0.01? undefined: `-${priceImpact}%`;
+  const fee = useMemo(() => {
+    if (!quoteResponse) {
+      return 0;
     }
-    return '-';
-  }, [quoteResponse.quoteResponse.otherAmountThreshold, toTokenInfo.decimals, toTokenInfo.symbol]);
+    return quoteResponse.quoteResponse.feeBps / 100;
+  }, [quoteResponse]);
+
+  const router = useMemo(() => {
+    if (!quoteResponse) {
+      return;
+    }
+    return quoteResponse.quoteResponse.router;
+  }, [quoteResponse]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 
-  const mintToAccountMap = useMemo(() => {
-    return new Map(Object.entries(accounts).map((acc) => [acc[0], acc[1].pubkey.toString()]));
-  }, [accounts]);
 
-  useEffect(() => {
+  const gasFee = useMemo(() => {
     if (quoteResponse) {
-      const fee = calculateFeeForSwap(
-        quoteResponse.quoteResponse as any,
-        mintToAccountMap,
-        new Map(), // we can ignore this as we are using shared accounts
-        true,
-        true,
-      );
-      setFeeInformation(fee);
-    } else {
-      setFeeInformation(undefined);
+      const { prioritizationFeeLamports } = quoteResponse.quoteResponse;
+      if (prioritizationFeeLamports) {
+        return prioritizationFeeLamports / 1e9; // Convert lamports to SOL
+      }
     }
-  }, [quoteResponse, walletPublicKey, mintToAccountMap]);
+    return 0;
+  }, [quoteResponse]);
 
   const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
-  const hasSerumDeposit = (feeInformation?.openOrdersDeposits.length ?? 0) > 0;
 
   return (
     <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/50">{<span>Rate</span>}</div>
-        {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) && JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
+        {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) &&
+        JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
           <ExchangeRate
             loading={loading}
             rateParams={rateParams}
@@ -98,26 +97,40 @@ const Index = ({
         )}
       </div>
 
-      <div className="flex items-center justify-between text-xs text-white/50">
-        <div>
-          <span>Price Impact</span>
-        </div>
-        <div>{priceImpactText}</div>
-      </div>
+     {priceImpactText && (
+       <div className="flex items-center justify-between text-xs text-white/50">
+       <div>
+         <span>Price Impact</span>
+       </div>
+       <div className="text-white">{priceImpactText}</div>
+     </div>
+     )}
 
+      {router && (
+        <div className="flex items-center justify-between text-xs">
+          <div className="text-white/50">
+            <span>Router</span>
+          </div>
+
+          <div className="flex items-center gap-1">
+            {/* eslint-disable @next/next/no-img-element */}
+            {routerIconUrl && (
+              <img src={routerIconUrl} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+            )}
+            <div className="text-white">{router}</div>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between text-xs">
         <div className="text-white/50">
-          <span>Minimum Received</span>
+          <span>Fee</span>
         </div>
-        <div className="text-white/50">{otherAmountThresholdText}</div>
+        <div className="text-white">{fee}%</div>
       </div>
-
+      <TransactionFee gasFee={gasFee} gasless={quoteResponse?.quoteResponse.gasless} />
       {showFullDetails ? (
-        <>
-          <Fees routePlan={quoteResponse?.quoteResponse.routePlan} />
-          <TransactionFee feeInformation={feeInformation} />
-          <Deposits hasSerumDeposit={hasSerumDeposit} hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
-        </>
+
+          <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
       ) : null}
     </div>
   );

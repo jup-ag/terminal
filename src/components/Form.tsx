@@ -49,6 +49,7 @@ const Form: React.FC<{
     refresh,
     quoteError,
     isToPairFocused,
+    onSubmit: onSubmitUltra,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
 
@@ -219,6 +220,7 @@ const Form: React.FC<{
                           thousandSeparator={thousandSeparator}
                           allowNegative={false}
                           valueIsNumericString
+                          inputMode='decimal'
                           onValueChange={onChangeFromValue}
                           placeholder={'0.00'}
                           className={cn('h-full w-full bg-transparent text-white text-right font-semibold text-lg', {
@@ -298,6 +300,7 @@ const Form: React.FC<{
                     <div className="text-right">
                       {toTokenInfo?.decimals && (
                         <NumericFormat
+                          inputMode='decimal'
                           disabled={outputAmountDisabled || swapMode === SwapMode.ExactIn}
                           value={typeof form.toValue === 'undefined' ? '' : form.toValue}
                           decimalScale={toTokenInfo.decimals}
@@ -353,20 +356,10 @@ const Form: React.FC<{
               </div>
             </div>
           </div>
-
-          {quoteResponseMeta ? (
-            <div className="flex items-center mt-2 text-xs space-x-1">
-              <div className="bg-black/20 rounded-xl px-2 py-1 text-white/50 flex items-center space-x-1">
-                <RoutesSVG width={7} height={9} />
-              </div>
-              <span className="text-white/50">Ultra Swap</span>
-            </div>
-          ) : null}
         </div>
 
         <SuggestionTags loading={loading} listOfSuggestions={listOfSuggestions} />
 
-        {walletPublicKey ? <FormError errors={errors} /> : null}
       </div>
 
       <div className="w-full px-2">
@@ -386,13 +379,18 @@ const Form: React.FC<{
               'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
             )}
             type="button"
-            onClick={onSubmit}
+            onClick={()=>{
+              onSubmit();
+              onSubmitUltra();
+            }}
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span className="text-sm">Loading...</span>
+              <span >Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
+            ) : errors.fromValue ? (
+              <span className="text-sm">{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}
