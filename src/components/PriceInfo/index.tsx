@@ -36,14 +36,14 @@ const Index = ({
     outputDecimal: toTokenInfo.decimals,
   };
 
-  const { accounts } = useAccounts();
-  const { data: routers } = useUltraRouters();
-  const routerIconUrl = useMemo(() => {
-    if (!quoteResponse || !routers) {
-      return null;
-    }
-    return routers.find((router) => router.id === quoteResponse.quoteResponse.router.toLowerCase())?.icon;
-  }, [quoteResponse, routers]);
+  const { data: routerInfo } = useUltraRouters({
+    select: (data) => {
+      if (!quoteResponse) {
+        return null;
+      }
+      return data.find((router) => router.id === quoteResponse.quoteResponse.router);
+    },
+  });
 
   const priceImpact = formatNumber.format(
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
@@ -113,10 +113,12 @@ const Index = ({
 
           <div className="flex items-center gap-1">
             {/* eslint-disable @next/next/no-img-element */}
-            {routerIconUrl && (
-              <img src={routerIconUrl} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+            {routerInfo && (
+              <>
+                <img src={routerInfo.icon} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+                <div className="text-white">{routerInfo.name}</div>
+              </>
             )}
-            <div className="text-white">{router}</div>
           </div>
         </div>
       )}

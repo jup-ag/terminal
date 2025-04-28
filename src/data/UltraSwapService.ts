@@ -1,10 +1,10 @@
 import JSBI from "jsbi";
 
 export const AGGREGATOR_SOURCES = {
-  METIS: 'Metis',
-  JUPITERZ: 'JupiterZ',
-  HASHFLOW: 'Hashflow',
-  DFLOW: 'DFlow',
+  METIS: 'metis',
+  JUPITERZ: 'jupiterz',
+  HASHFLOW: 'hashflow',
+  DFLOW: 'dflow',
 } as const;
 
 export type AggregatorSources = (typeof AGGREGATOR_SOURCES)[keyof typeof AGGREGATOR_SOURCES];
