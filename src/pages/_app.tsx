@@ -107,7 +107,7 @@ export default function App() {
           site_name: 'Jupiter Terminal',
           images: [
             {
-              url: `https://og.jup.ag/api/jupiter`,
+              url: `https://static.jup.ag/static/jupiter-meta-main.jpg`,
               alt: 'Jupiter Aggregator',
             },
           ],
