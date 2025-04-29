@@ -19,7 +19,7 @@ const CoinBalance: React.FunctionComponent<ICoinBalanceProps> = (props) => {
   const formattedBalance: string | null = React.useMemo(() => {
     const accBalanceObj =
       props.mintAddress === WRAPPED_SOL_MINT.toString() ? nativeAccount : accounts[props.mintAddress];
-      if (!accBalanceObj) return '';
+      if (!accBalanceObj) return '0';
 
     const balance = new Decimal(accBalanceObj.balanceLamports.toString()).div(10 ** accBalanceObj.decimals);
     return formatNumber.format(balance, accBalanceObj.decimals);

@@ -58,7 +58,7 @@ const FormInputContainer: React.FC<{
             }}
           >
             <WalletIcon width={10} height={10} />
-            <CoinBalance mintAddress={tokenInfo.address} />
+            <CoinBalance mintAddress={tokenInfo.address} hideZeroBalance={false} />
             <span>{tokenInfo.symbol}</span>
           </div>
         )}
@@ -132,8 +132,9 @@ const Form: React.FC<{
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
-  const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
-    if (value === '' || !floatValue) {
+  const onChangeFromValue = ({ value}: NumberFormatValues) => {
+ 
+    if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
@@ -144,8 +145,8 @@ const Form: React.FC<{
     setForm((form) => ({ ...form, fromValue: value }));
   };
 
-  const onChangeToValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
-    if (value === '' || !floatValue) {
+  const onChangeToValue = ({ value}: NumberFormatValues) => {
+    if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
