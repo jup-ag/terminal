@@ -62,6 +62,7 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
       placement="bottom"
       drawShades
       buttonContentClassName="!cursor-help"
+      offset={[140, 5]}
       content={
         <div className="flex flex-col gap-y-2 p-0">
           <div className="text-sm font-semibold text-amber-400">
@@ -72,7 +73,7 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
             <div className="flex flex-col gap-y-2 rounded-md bg-amber-400/[8%] p-2">
               {highRiskWarnings.map((warning) => (
                 <Warnings key={warning.type} warning={warning} isHighRisk={true}>
-                  <InfoIcon width={10} height={10} className="text-amber-400" />
+                  <InfoIcon width={15} height={15} className="text-amber-400" />
                 </Warnings>
               ))}
             </div>
@@ -82,7 +83,7 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
             <div className={cn('flex flex-col gap-y-2', highRiskWarnings.length > 0 && 'p-2')}>
               {otherWarnings.map((warning) => (
                 <Warnings key={warning.type} warning={warning} isHighRisk={false}>
-                  <InfoIcon width={10} height={10} />
+                  <InfoIcon width={15} height={15} />
                 </Warnings>
               ))}
             </div>
@@ -91,7 +92,7 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
       }
     >
       <div className={cn('mt-1 flex items-center gap-x-1', isFetching && 'blur-sm')}>
-        <InfoIcon width={10} height={10} className="text-amber-400" />
+        <InfoIcon width={15} height={15} className="text-amber-400" />
         <span
           className={cn(
             '!text-xxs font-semibold text-amber-400 underline decoration-amber-400 decoration-dashed underline-offset-4',
