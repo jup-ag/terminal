@@ -7,12 +7,10 @@ import { useCallback } from 'react';
 import Plural from './Plural';
 import WarningIcon from 'src/icons/WarningIcon';
 import InfoIcon from 'src/icons/InfoIcon';
-const parseShieldWarningTitle = (warning: { type: string }) => {
-  return warning.type
-    .replace(/_/g, ' ')
-    .split('_')
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+
+const parseShieldWarningtoSentenceCase = (warning: { type: string }) => {
+  const str = warning.type.replace(/_/g, ' ');
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
 
 const Warnings = ({
@@ -25,7 +23,7 @@ const Warnings = ({
   isHighRisk: boolean;
 }) => {
   const warningTitle = useCallback((warning: Warning) => {
-    return parseShieldWarningTitle(warning);
+    return parseShieldWarningtoSentenceCase(warning);
   }, []);
 
   return (
