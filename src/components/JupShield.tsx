@@ -41,8 +41,8 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
   const { data, isFetching } = useQuery({
     queryKey: ['shield', tokenAddress],
     queryFn: () => ultraSwapService.getShield([tokenAddress]),
-    cacheTime: 10_000,
-    staleTime: 10_000,
+    cacheTime: 5 * 60_000,
+    staleTime: 5 * 60_000,
     keepPreviousData: true,
     select: (data) => data.warnings[tokenAddress],
   });
