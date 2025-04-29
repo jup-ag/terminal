@@ -60,18 +60,24 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
     cacheTime: 5 * 60_000,
     staleTime: 5 * 60_000,
     keepPreviousData: true,
-    select: (data) => data.warnings[tokenAddress],
+    select: (data) => {
+      const warnings = data.warnings[tokenAddress];
+      return {
+        isNotVerified: warnings.find((warning) => warning.type === 'NOT_VERIFIED'),
+        totalWarnings: warnings.length,
+        highRiskWarnings: warnings.filter(
+          (warning) => warning.severity === Severity.CRITICAL || warning.severity === Severity.WARNING,
+        ),
+        otherWarnings: warnings.filter((warning) => warning.severity === Severity.INFO),
+      };
+    },
   });
 
-  const isNotVerified = data?.find((warning) => warning.type === 'NOT_VERIFIED');
+  if (!data || data.totalWarnings === 0) return null;
 
-  if (!data || data?.length === 0 || !isNotVerified) return null;
+  const { isNotVerified, totalWarnings, highRiskWarnings, otherWarnings } = data;
+  if (!isNotVerified) return null;
 
-  const totalWarnings = data.length;
-  const highRiskWarnings = data.filter(
-    (warning) => warning.severity === Severity.CRITICAL || warning.severity === Severity.WARNING,
-  );
-  const otherWarnings = data.filter((warning) => warning.severity === Severity.INFO);
   return (
     <PopoverTooltip
       persistOnClick={isMobile}
