@@ -1,7 +1,7 @@
 import { TokenInfo } from '@solana/spl-token-registry';
 import { PublicKey } from '@solana/web3.js';
 
-export const MINIMUM_SOL_BALANCE = 0.05;
+export const MINIMUM_SOL_BALANCE = 0.01;
 
 export const ROUTE_CACHE_DURATION = 20_000;
 

@@ -57,7 +57,7 @@ const ConfirmationScreen = () => {
       </div>
 
       {hasExpired ? (
-        <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 !p-0" type="button" onClick={onGoBack}>
+        <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 !p-0" onClick={onGoBack}>
           <span className="text-sm">Refresh</span>
         </JupButton>
       ) : (
@@ -66,7 +66,6 @@ const ConfirmationScreen = () => {
           className={cn(
             'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
           )}
-          type="button"
           onClick={onSubmit}
         >
           <span>Confirm</span>

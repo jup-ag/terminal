@@ -288,7 +288,7 @@ const FormConfigurator = ({
       {/* Initial Amount */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-white/75">Initial amount</p>
+          <p className="text-sm text-white/75">Initial amount (Lamport)</p>
           <p className="text-xs text-white/50">Amount to be prefilled on first load</p>
         </div>
       </div>

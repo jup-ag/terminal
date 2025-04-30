@@ -155,7 +155,6 @@ const WidgetTerminal = (props: {
                 onClick={() => {
                   setSize('sm');
                 }}
-                type="button"
                 className={size === 'sm' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
@@ -167,7 +166,6 @@ const WidgetTerminal = (props: {
                 onClick={() => {
                   setSize('default');
                 }}
-                type="button"
                 className={size === 'default' ? 'bg-white/10' : 'opacity-20 hover:opacity-70'}
               >
                 <div className="flex items-center space-x-2 text-xs">
