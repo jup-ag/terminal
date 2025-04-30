@@ -20,7 +20,7 @@ interface Props {
 const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const { accounts, nativeAccount } = useAccounts();
 
-  const { tokenMap,getTokenInfo } = useTokenContext();
+  const { tokenMap,getTokenInfo, requestTokenInfo } = useTokenContext();
   const {
     form,
     setForm,
@@ -62,7 +62,8 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);
 
   const onSelectMint = useCallback(
-    (tokenInfo: TokenInfo, approved: boolean = false) => {
+    async (tokenInfo: TokenInfo, approved: boolean = false) => {
+      await requestTokenInfo([tokenInfo.address]);
       const isUnknown = tokenInfo.tags?.length === 0;
       if (isUnknown && approved === false) {
         setShowUnknownToken(tokenInfo);
@@ -90,7 +91,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       }
       setSelectPairSelector(null);
     },
-    [selectPairSelector, setForm],
+    [selectPairSelector, setForm, requestTokenInfo],
   );
 
   const availableMints: TokenInfo[] = useMemo(() => {

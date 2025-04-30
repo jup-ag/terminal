@@ -28,6 +28,76 @@ import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
 import SuggestionTags from './SuggestionTags';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
+import JupShield from './JupShield';
+import { TokenInfo } from '@solana/spl-token-registry';
+
+const FormInputContainer: React.FC<{
+  tokenInfo?: TokenInfo;
+  onBalanceClick: (e: React.MouseEvent<HTMLElement>) => void;
+  title: string;
+  pairSelectDisabled: boolean;
+  onClickSelectPair: () => void;
+  value: string;
+  children: React.ReactNode;
+}> = ({ tokenInfo, onBalanceClick, title, pairSelectDisabled, onClickSelectPair, children, value }) => {
+  return (
+    <div
+      className={cn(
+        'border border-transparent bg-v3-input-background rounded-xl transition-all',
+        'py-3 px-4 flex flex-col dark:text-white  gap-y-2',
+        'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
+      )}
+    >
+      <div className="flex justify-between items-center text-xs text-white">
+        <div>{title}</div>
+        {tokenInfo && (
+          <div
+            className={cn('flex  space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer')}
+            onClick={(e) => {
+              onBalanceClick(e);
+            }}
+          >
+            <WalletIcon width={10} height={10} />
+            <CoinBalance mintAddress={tokenInfo.address} hideZeroBalance={false} />
+            <span>{tokenInfo.symbol}</span>
+          </div>
+        )}
+      </div>
+      <div className="flex">
+        <div>
+          <button
+            type="button"
+            className="py-2 px-3 rounded-lg flex items-center bg-[#1A2633] hover:bg-white/20 text-white"
+            disabled={pairSelectDisabled}
+            onClick={onClickSelectPair}
+          >
+            <div className="h-5 w-5">
+              <TokenIcon info={tokenInfo} width={20} height={20} />
+            </div>
+            <div className="ml-4 mr-2 font-semibold" translate="no">
+              <div className="truncate">{tokenInfo?.symbol}</div>
+            </div>
+            {pairSelectDisabled ? null : (
+              <span className="text-white/25 fill-current">
+                <ChevronDownIcon />
+              </span>
+            )}
+          </button>
+        
+          <div className="flex justify-between items-center h-[20px]">
+            {tokenInfo?.address && <JupShield tokenAddress={tokenInfo.address} />}
+          </div>
+        </div>
+        <div className="flex flex-col items-end justify-between w-full">
+          {children}
+          <span className="text-xs text-white/50">
+            {tokenInfo && <CoinBalanceUSD tokenInfo={tokenInfo} amount={value} />}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Form: React.FC<{
   onSubmit: () => void;
@@ -62,14 +132,9 @@ const Form: React.FC<{
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
-  const listOfSuggestions = useSuggestionTags({
-    fromTokenInfo,
-    toTokenInfo,
-    quoteResponse: quoteResponseMeta?.quoteResponse,
-  });
-
-  const onChangeFromValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
-    if (value === '' || !floatValue) {
+  const onChangeFromValue = ({ value}: NumberFormatValues) => {
+ 
+    if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
@@ -80,8 +145,8 @@ const Form: React.FC<{
     setForm((form) => ({ ...form, fromValue: value }));
   };
 
-  const onChangeToValue = ({ value, floatValue, formattedValue }: NumberFormatValues) => {
-    if (value === '' || !floatValue) {
+  const onChangeToValue = ({ value}: NumberFormatValues) => {
+    if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
@@ -149,7 +214,7 @@ const Form: React.FC<{
     }
     return result;
   }, [fixedAmount, swapMode]);
-  
+
   const onClickSelectFromMint = useCallback(() => {
     if (fixedInputMint) return;
     setSelectPairSelector('fromMint');
@@ -182,183 +247,82 @@ const Form: React.FC<{
     <div className="h-full flex flex-col items-center justify-center pb-4">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
         <div className="flex-col">
-          <div className={cn('border-b border-transparent bg-v3-input-background rounded-xl transition-all')}>
-            <div className={cn('px-x border-transparent rounded-xl')}>
-              <div>
-                <div
-                  className={cn(
-                    'py-5 px-4 flex flex-col dark:text-white border border-transparent',
-                    'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
-                  )}
-                >
-                  <div className="flex justify-between items-center">
-                    <button
-                      type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 text-white"
-                      disabled={fixedInputMint}
-                      onClick={onClickSelectFromMint}
-                    >
-                      <div className="h-5 w-5">
-                        <TokenIcon info={fromTokenInfo} width={20} height={20} />
-                      </div>
-                      <div className="ml-4 mr-2 font-semibold" translate="no">
-                        {fromTokenInfo?.symbol}
-                      </div>
-                      {fixedInputMint ? null : (
-                        <span className="text-white/25 fill-current">
-                          <ChevronDownIcon />
-                        </span>
-                      )}
-                    </button>
-
-                    <div className="text-right">
-                      {fromTokenInfo?.decimals && (
-                        <NumericFormat
-                          disabled={fixedAmount || swapMode === SwapMode.ExactOut}
-                          value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
-                          decimalScale={fromTokenInfo.decimals}
-                          thousandSeparator={thousandSeparator}
-                          allowNegative={false}
-                          valueIsNumericString
-                          inputMode='decimal'
-                          onValueChange={onChangeFromValue}
-                          placeholder={'0.00'}
-                          className={cn('h-full w-full bg-transparent text-white text-right font-semibold text-lg', {
-                            'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
-                          })}
-                          onKeyDown={() => {
-                            isToPairFocused.current = false;
-                          }}
-                          decimalSeparator={detectedSeparator}
-                          isAllowed={withValueLimit}
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {fromTokenInfo?.address ? (
-                    <div className="flex justify-between items-center">
-                      <div
-                        className={cn(
-                          'flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer',
-                        )}
-                        onClick={(e) => {
-                          onClickMax(e);
-                        }}
-                      >
-                        <WalletIcon width={10} height={10} />
-                        <CoinBalance mintAddress={fromTokenInfo.address} />
-                        <span>{fromTokenInfo.symbol}</span>
-                      </div>
-
-                      {form.fromValue ? (
-                        <span className="text-xs text-white/50">
-                          <CoinBalanceUSD tokenInfo={fromTokenInfo} amount={form.fromValue} />
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className={'my-2'}>
+          <FormInputContainer
+            tokenInfo={fromTokenInfo!}
+            onBalanceClick={onClickMax}
+            title="Selling"
+            pairSelectDisabled={!!fixedInputMint}
+            onClickSelectPair={onClickSelectFromMint}
+            value={form.fromValue}
+          >
+            {fromTokenInfo?.decimals && (
+              <NumericFormat
+                disabled={fixedAmount || swapMode === SwapMode.ExactOut}
+                value={typeof form.fromValue === 'undefined' ? '' : form.fromValue}
+                decimalScale={fromTokenInfo.decimals}
+                thousandSeparator={thousandSeparator}
+                allowNegative={false}
+                valueIsNumericString
+                inputMode="decimal"
+                onValueChange={onChangeFromValue}
+                placeholder={'0.00'}
+                className={cn('w-full h-[40px] bg-transparent text-white text-right font-semibold text-xl', {
+                  'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
+                })}
+                onKeyDown={() => {
+                  isToPairFocused.current = false;
+                }}
+                decimalSeparator={detectedSeparator}
+                isAllowed={withValueLimit}
+              />
+            )}
+          </FormInputContainer>
+          <div className="relative z-10 -my-3 flex justify-center">
             {hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />}
           </div>
-
-          <div className="border-b border-transparent bg-v3-input-background rounded-xl">
-            <div className="px-x border-transparent rounded-xl">
-              <div>
-                <div
-                  className={cn(
-                    'py-5 px-4 flex flex-col dark:text-white border border-transparent',
-                    'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
-                  )}
-                >
-                  <div className="flex justify-between items-center">
-                    <button
-                      type="button"
-                      className="py-2 px-3 rounded-2xl flex items-center bg-[#1A2633] hover:bg-white/20 disabled:hover:bg-[#1A2633] text-white"
-                      disabled={fixedOutputMint}
-                      onClick={onClickSelectToMint}
-                    >
-                      <div className="h-5 w-5">
-                        <TokenIcon info={toTokenInfo} width={20} height={20} />
-                      </div>
-                      <div className="ml-4 mr-2 font-semibold" translate="no">
-                        {toTokenInfo?.symbol}
-                      </div>
-
-                      {fixedOutputMint ? null : (
-                        <span className="text-white/25 fill-current">
-                          <ChevronDownIcon />
-                        </span>
-                      )}
-                    </button>
-
-                    <div className="text-right">
-                      {toTokenInfo?.decimals && (
-                        <NumericFormat
-                          inputMode='decimal'
-                          disabled={outputAmountDisabled || swapMode === SwapMode.ExactIn}
-                          value={typeof form.toValue === 'undefined' ? '' : form.toValue}
-                          decimalScale={toTokenInfo.decimals}
-                          thousandSeparator={thousandSeparator}
-                          allowNegative={false}
-                          valueIsNumericString
-                          onValueChange={onChangeToValue}
-                          className={cn(
-                            'h-full w-full bg-transparent text-white text-right font-semibold   text-lg',
-                            {
-                              'placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20':
-                                swapMode === SwapMode.ExactOut,
-                              'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
-                            },
-                          )}
-                          placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
-                          decimalSeparator={detectedSeparator}
-                          isAllowed={withValueLimit}
-                          onKeyDown={(e) => {
-                            if (
-                              e.metaKey ||
-                              e.ctrlKey ||
-                              e.key === 'Meta' ||
-                              e.key === 'Control' ||
-                              e.key === 'Alt' ||
-                              e.key === 'Shift'
-                            ) {
-                              return;
-                            }
-                            isToPairFocused.current = true;
-                          }}
-                        />
-                      )}
-                    </div>
-                  </div>
-
-                  {toTokenInfo?.address ? (
-                    <div className="flex justify-between items-center">
-                      <div className="flex mt-3 space-x-1 text-xs items-center text-white/50 fill-current">
-                        <WalletIcon width={10} height={10} />
-                        <CoinBalance mintAddress={toTokenInfo.address} />
-                        <span>{toTokenInfo.symbol}</span>
-                      </div>
-
-                      {form.toValue ? (
-                        <span className="text-xs text-white/50">
-                          <CoinBalanceUSD tokenInfo={toTokenInfo} amount={form.toValue} />
-                        </span>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
+          <FormInputContainer
+            tokenInfo={toTokenInfo!}
+            onBalanceClick={onClickMax}
+            title="Buying"
+            pairSelectDisabled={!!fixedOutputMint}
+            onClickSelectPair={onClickSelectToMint}
+            value={form.toValue}
+          >
+            {toTokenInfo?.decimals && (
+              <NumericFormat
+                inputMode="decimal"
+                disabled={outputAmountDisabled || swapMode === SwapMode.ExactIn}
+                value={typeof form.toValue === 'undefined' ? '' : form.toValue}
+                decimalScale={toTokenInfo.decimals}
+                thousandSeparator={thousandSeparator}
+                allowNegative={false}
+                valueIsNumericString
+                onValueChange={onChangeToValue}
+                className={cn('h-[40px] w-full bg-transparent text-white text-right font-semibold text-lg', {
+                  'placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20':
+                    swapMode === SwapMode.ExactOut,
+                  'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
+                })}
+                placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
+                decimalSeparator={detectedSeparator}
+                isAllowed={withValueLimit}
+                onKeyDown={(e) => {
+                  if (
+                    e.metaKey ||
+                    e.ctrlKey ||
+                    e.key === 'Meta' ||
+                    e.key === 'Control' ||
+                    e.key === 'Alt' ||
+                    e.key === 'Shift'
+                  ) {
+                    return;
+                  }
+                  isToPairFocused.current = true;
+                }}
+              />
+            )}
+          </FormInputContainer>
         </div>
-
-        <SuggestionTags loading={loading} listOfSuggestions={listOfSuggestions} />
 
       </div>
 
@@ -379,14 +343,14 @@ const Form: React.FC<{
               'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
             )}
             type="button"
-            onClick={()=>{
+            onClick={() => {
               onSubmit();
               onSubmitUltra();
             }}
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span >Loading</span>
+              <span>Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (

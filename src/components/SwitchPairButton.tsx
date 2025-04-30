@@ -1,11 +1,15 @@
 import React from 'react';
+import { cn } from 'src/misc/cn';
 
 const IconSwitchPairDark = () => (
-  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width={20} height={20} viewBox="0 0 21 22" fill="white" fillOpacity={0.5} xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M9.04393 5.74021L12 3.3701L9.04393 1V2.68839H1.0228V4.05189H9.04393V5.74021ZM2.95607 5.34607L0 7.71617L2.95607 10.0863V8.39789H10.9772V7.03439H2.95607V5.34607Z"
+      d="M6.51043 7.47998V14.99H7.77043V7.47998L9.66043 9.36998L10.5505 8.47994L7.5859 5.51453C7.3398 5.26925 6.94114 5.26925 6.69504 5.51453L3.73047 8.47994L4.62051 9.36998L6.51043 7.47998Z"
       fill="white"
-      fillOpacity="0.5"
+    />
+    <path
+      d="M14.4902 14.52V7.01001H13.2302V14.52L11.3402 12.63L10.4502 13.5201L13.4148 16.4855C13.6609 16.7308 14.0595 16.7308 14.3056 16.4855L17.2702 13.5201L16.3802 12.63L14.4902 14.52Z"
+      fill="white"
     />
   </svg>
 );
@@ -23,13 +27,15 @@ const SwitchPairButton = ({
     <div className="flex justify-center">
       <div
         onClick={onClick}
-        className={`border border-black/50 fill-current text-black bg-v3-input-background dark:text-white-35 dark:hover:text-white/50 dark:border dark:border-white-35 dark:hover:border-white/50 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer ${
-          disabled ? 'opacity-50 cursor-not-allowed' : ''
-        } ${className}`}
+        className={cn(
+          'border-[3px] border-black fill-current text-black bg-v3-input-background dark:text-white-35  dark:hover:border-v3-primary dark:border dark:border-white-35 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer',
+          className,
+          {
+            'opacity-50 cursor-not-allowed': disabled,
+          },
+        )}
       >
-        <div className="block -rotate-45">
-          <IconSwitchPairDark />
-        </div>
+        <IconSwitchPairDark />
       </div>
     </div>
   );

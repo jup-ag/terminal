@@ -1,10 +1,10 @@
 import JSBI from "jsbi";
 
 export const AGGREGATOR_SOURCES = {
-  METIS: 'Metis',
-  JUPITERZ: 'JupiterZ',
-  HASHFLOW: 'Hashflow',
-  DFLOW: 'DFlow',
+  METIS: 'metis',
+  JUPITERZ: 'jupiterz',
+  HASHFLOW: 'hashflow',
+  DFLOW: 'dflow',
 } as const;
 
 export type AggregatorSources = (typeof AGGREGATOR_SOURCES)[keyof typeof AGGREGATOR_SOURCES];
@@ -88,6 +88,24 @@ interface TokenBalance {
 }
 
 export type BalanceResponse = Record<string, TokenBalance>;
+
+export enum Severity {
+  INFO = 'info',
+  WARNING = 'warning',
+  CRITICAL = 'critical',
+}
+
+export type Warning = {
+  type: string;
+  message: string;
+  severity: Severity;
+};
+
+export interface ShieldResponse {
+  warnings: {
+    [mintAddress: string]: Warning[];
+  };
+}
 class UltraSwapService implements UltraSwapService {
   private BASE_URL ='https://ultra-api.jup.ag';
   private ROUTE = {
@@ -95,6 +113,7 @@ class UltraSwapService implements UltraSwapService {
     ORDER: `${this.BASE_URL}/order`,
     ROUTERS: `${this.BASE_URL}/order/routers`,
     BALANCES: `${this.BASE_URL}/balances`,
+    SHIELD: `${this.BASE_URL}/shield`,
   };
 
   async getQuote(params: UltraSwapQuoteParams, signal?: AbortSignal): Promise<UltraQuoteResponse> {
@@ -139,8 +158,16 @@ class UltraSwapService implements UltraSwapService {
     return result;
   }
 
-  async getBalance(address: string): Promise<BalanceResponse> {
-    const response = await fetch(`${this.ROUTE.BALANCES}/${address}`);
+  async getBalance(address: string, signal?: AbortSignal): Promise<BalanceResponse> {
+    const response = await fetch(`${this.ROUTE.BALANCES}/${address}`, { signal });
+    if (!response.ok) {
+      throw response;
+    }
+    const result = await response.json();
+    return result;
+  }
+  async getShield(mintAddress: string[]): Promise<ShieldResponse> {
+    const response = await fetch(`${this.ROUTE.SHIELD}?mints=${mintAddress.join(',')}`);
     if (!response.ok) {
       throw response;
     }

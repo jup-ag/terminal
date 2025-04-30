@@ -7,6 +7,10 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker, swapMode }
   return useQuery({
     queryKey: ['quote', inputMint, outputMint, amount, taker],
     queryFn: async ({ signal }) => {
+      if (Number(amount) ===0){
+        return null;
+
+      }
       const response = await ultraSwapService.getQuote({ inputMint, outputMint, amount, taker, swapMode }, signal);
       const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error');
       return {

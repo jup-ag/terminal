@@ -12,7 +12,6 @@ import { PublicKey } from '@solana/web3.js';
 import CloseIcon from 'src/icons/CloseIcon';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
-import useTPSMonitor from './RPCBenchmark/useTPSMonitor';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
@@ -21,8 +20,8 @@ const Content = () => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-  const { message } = useTPSMonitor();
-  const [isMessageClosed, setIsMessageClosed] = useState(false);
+  // const { message } = useTPSMonitor();
+  // const [isMessageClosed, setIsMessageClosed] = useState(false);
 
   // ID is required for scoped preflight by tailwind to work
   return (
@@ -37,7 +36,8 @@ const Content = () => {
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
 
-      {!isMessageClosed && message ? (
+      {/* Hide TPS message for now, will reuse this component for swap notification */}
+      {/* {!isMessageClosed && message ? (
         <div className="absolute bottom-1 px-3 py-2 w-full">
           <div className=" bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
             <div className="pr-2">{message}</div>
@@ -46,7 +46,7 @@ const Content = () => {
             </div>
           </div>
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 };

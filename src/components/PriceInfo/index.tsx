@@ -36,20 +36,20 @@ const Index = ({
     outputDecimal: toTokenInfo.decimals,
   };
 
-  const { accounts } = useAccounts();
-  const { data: routers } = useUltraRouters();
-  const routerIconUrl = useMemo(() => {
-    if (!quoteResponse || !routers) {
-      return null;
-    }
-    return routers.find((router) => router.id === quoteResponse.quoteResponse.router.toLowerCase())?.icon;
-  }, [quoteResponse, routers]);
+  const { data: routerInfo } = useUltraRouters({
+    select: (data) => {
+      if (!quoteResponse) {
+        return null;
+      }
+      return data.find((router) => router.id === quoteResponse.quoteResponse.router);
+    },
+  });
 
   const priceImpact = formatNumber.format(
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
   );
 
-  const priceImpactText = Number(priceImpact) < 0.01? undefined: `-${priceImpact}%`;
+  const priceImpactText = Number(priceImpact) < 0.01 ? undefined : `-${priceImpact}%`;
   const fee = useMemo(() => {
     if (!quoteResponse) {
       return 0;
@@ -65,7 +65,6 @@ const Index = ({
   }, [quoteResponse]);
 
   const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
-
 
   const gasFee = useMemo(() => {
     if (quoteResponse) {
@@ -97,14 +96,14 @@ const Index = ({
         )}
       </div>
 
-     {priceImpactText && (
-       <div className="flex items-center justify-between text-xs text-white/50">
-       <div>
-         <span>Price Impact</span>
-       </div>
-       <div className="text-white">{priceImpactText}</div>
-     </div>
-     )}
+      {priceImpactText && (
+        <div className="flex items-center justify-between text-xs text-white/50">
+          <div>
+            <span>Price Impact</span>
+          </div>
+          <div className="text-white">{priceImpactText}</div>
+        </div>
+      )}
 
       {router && (
         <div className="flex items-center justify-between text-xs">
@@ -114,10 +113,12 @@ const Index = ({
 
           <div className="flex items-center gap-1">
             {/* eslint-disable @next/next/no-img-element */}
-            {routerIconUrl && (
-              <img src={routerIconUrl} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+            {routerInfo && (
+              <>
+                <img src={routerInfo.icon} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
+                <div className="text-white">{routerInfo.name}</div>
+              </>
             )}
-            <div className="text-white">{router}</div>
           </div>
         </div>
       )}
@@ -128,10 +129,7 @@ const Index = ({
         <div className="text-white">{fee}%</div>
       </div>
       <TransactionFee gasFee={gasFee} gasless={quoteResponse?.quoteResponse.gasless} />
-      {showFullDetails ? (
-
-          <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} />
-      ) : null}
+      {showFullDetails ? <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} /> : null}
     </div>
   );
 };

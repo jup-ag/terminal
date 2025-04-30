@@ -159,14 +159,13 @@ const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIn
     isLoading,
   } = useQuery({
     queryKey: ['fetchAllAccounts', publicKey],
-    queryFn: async () => {
+    queryFn: async ({signal}) => {
       if (!publicKey) {
         return new Map<string, TokenAccount>();
       }
-      const result = await ultraSwapService.getBalance(publicKey.toString());
+      const result = await ultraSwapService.getBalance(publicKey.toString(), signal);
 
       const tokenAccountsWithoutNativeSol = Object.keys(result).filter((key) => key !== SOL_TOKEN_INFO.symbol);
-
       await requestTokenInfo(tokenAccountsWithoutNativeSol);
       return result;
     },
