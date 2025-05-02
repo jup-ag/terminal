@@ -52,10 +52,8 @@ const Content = () => {
 };
 
 const JupiterApp = (props: IInit) => {
-  const { refetchIntervalForTokenAccounts } = props;
-
   return (
-    <AccountsProvider refetchIntervalForTokenAccounts={refetchIntervalForTokenAccounts}>
+    <AccountsProvider>
       <SwapContextProvider {...props}>
         <USDValueProvider {...props}>
           <Content />

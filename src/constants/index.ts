@@ -32,7 +32,6 @@ export interface IFormConfigurator {
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
-  refetchIntervalForTokenAccounts?: number;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({

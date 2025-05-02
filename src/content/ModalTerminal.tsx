@@ -5,7 +5,6 @@ import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 
 const ModalTerminal = (props: {
   rpcUrl: string;
-  refetchIntervalForTokenAccounts?: number;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
@@ -17,7 +16,6 @@ const ModalTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    refetchIntervalForTokenAccounts,
   } = props;
 
   const passthroughWalletContextState = useUnifiedWallet();
@@ -26,7 +24,6 @@ const ModalTerminal = (props: {
   const launchTerminal = () => {
     window.Jupiter.init({
       endpoint: rpcUrl,
-      refetchIntervalForTokenAccounts,
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,

@@ -234,7 +234,6 @@ export default function App() {
                       {tab === 'modal' ? (
                         <ModalTerminal
                           rpcUrl={rpcUrl}
-                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -244,7 +243,6 @@ export default function App() {
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
                           rpcUrl={rpcUrl}
-                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -254,7 +252,6 @@ export default function App() {
                       {tab === 'widget' ? (
                         <WidgetTerminal
                           rpcUrl={rpcUrl}
-                          refetchIntervalForTokenAccounts={watchAllFields.refetchIntervalForTokenAccounts}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}

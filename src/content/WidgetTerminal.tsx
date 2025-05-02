@@ -7,7 +7,6 @@ import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/typ
 
 const WidgetTerminal = (props: {
   rpcUrl: string;
-  refetchIntervalForTokenAccounts?: number;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
@@ -19,7 +18,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     strictTokenList,
     defaultExplorer,
-    refetchIntervalForTokenAccounts,
   } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
@@ -40,7 +38,6 @@ const WidgetTerminal = (props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       endpoint: rpcUrl,
-      refetchIntervalForTokenAccounts,
       strictTokenList,
       defaultExplorer,
     });
@@ -54,7 +51,6 @@ const WidgetTerminal = (props: {
     simulateWalletPassthrough,
     size,
     strictTokenList,
-    refetchIntervalForTokenAccounts,
   ]);
 
   useEffect(() => {

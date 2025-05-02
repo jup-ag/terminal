@@ -254,9 +254,6 @@ window.Jupiter.init({
 });
 ```
 
-### refetchIntervalForTokenAccounts: number
-Specify the interval for getTokenAccountsByOwner calls, defaults to 10_000 (10s)
-
 ### NPM support
 
 ```
