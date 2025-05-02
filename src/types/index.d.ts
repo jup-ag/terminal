@@ -7,7 +7,7 @@ import { SwapResult } from '@jup-ag/react-hook';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
 import { QuoteResponse } from 'src/contexts/SwapContext';
-import { SwapMode } from './constants';
+
 declare global {
   interface Window {
     Jupiter: JupiterTerminal;
@@ -20,7 +20,8 @@ export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
 
-export type SwapMode = (typeof SwapMode)[keyof typeof SwapMode];
+export type SwapMode = "ExactInOrOut" | "ExactIn" | "ExactOut";
+
 export interface FormProps {
   /** Default to `ExactInOrOut`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
   swapMode?: SwapMode;
