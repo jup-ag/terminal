@@ -20,9 +20,6 @@ const Content = () => {
   const { screen } = useScreenState();
   const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
-  // const { message } = useTPSMonitor();
-  // const [isMessageClosed, setIsMessageClosed] = useState(false);
-
   // ID is required for scoped preflight by tailwind to work
   return (
     <div id="jupiter-terminal" className="relative h-full">
@@ -35,18 +32,6 @@ const Content = () => {
 
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
-
-      {/* Hide TPS message for now, will reuse this component for swap notification */}
-      {/* {!isMessageClosed && message ? (
-        <div className="absolute bottom-1 px-3 py-2 w-full">
-          <div className=" bg-[#FBA43A] rounded-xl flex items-center justify-between px-3 py-2">
-            <div className="pr-2">{message}</div>
-            <div className="cursor-pointer" onClick={() => setIsMessageClosed(true)}>
-              <CloseIcon width={12} height={12} />
-            </div>
-          </div>
-        </div>
-      ) : null} */}
     </div>
   );
 };
