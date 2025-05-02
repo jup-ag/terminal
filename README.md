@@ -21,7 +21,7 @@ Ultra mode will automatically come with major innovations - such as
 
 ### V4 Deprecations
 Ultra mode streamlines the codebase, automates many annoyances like fees estimation, slippage estimation, and more. Therefore, many "features/manual toggles" are deprecated.
-- Fee supports coming in v4.1
+- Fee supports coming to Ultra soon.
 - onRequestIx
 - onRequestIxCallback
 - onSubmitWithIx
