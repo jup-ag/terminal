@@ -148,7 +148,6 @@ type AccountsProviderProps = { children: React.ReactNode };
 
 const AccountsProvider: React.FC<AccountsProviderProps> = ({ children }) => {
   const { publicKey, connected } = useWalletPassThrough();
-  const { connection } = useConnection();
   const { requestTokenInfo, getTokenInfo } = useTokenContext();
 
   const address = useMemo(() => {
