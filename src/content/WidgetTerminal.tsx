@@ -6,19 +6,12 @@ import { cn } from 'src/misc/cn';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
 const WidgetTerminal = (props: {
-  rpcUrl: string;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const {
-    rpcUrl,
-    formProps,
-    simulateWalletPassthrough,
-    strictTokenList,
-    defaultExplorer,
-  } = props;
+  const { formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -37,7 +30,7 @@ const WidgetTerminal = (props: {
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-      endpoint: rpcUrl,
+
       strictTokenList,
       defaultExplorer,
     });
@@ -46,7 +39,7 @@ const WidgetTerminal = (props: {
     formProps,
     passthroughWalletContextState,
     position,
-    rpcUrl,
+
     setShowModal,
     simulateWalletPassthrough,
     size,

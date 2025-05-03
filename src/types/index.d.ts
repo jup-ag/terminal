@@ -58,9 +58,6 @@ export interface IInit {
    */
   localStoragePrefix?: string;
 
-  /** Solana RPC, declare either endpoint, or Connection object */
-  /** Solana RPC endpoint */
-  endpoint?: string;
   /** Solana RPC Connection object */
   connectionObj?: Connection;
 

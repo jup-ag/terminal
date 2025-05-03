@@ -233,7 +233,6 @@ export default function App() {
                     <div className="flex flex-grow items-center justify-center text-white/75">
                       {tab === 'modal' ? (
                         <ModalTerminal
-                          rpcUrl={rpcUrl}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -242,7 +241,6 @@ export default function App() {
                       ) : null}
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
-                          rpcUrl={rpcUrl}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}
@@ -251,7 +249,6 @@ export default function App() {
                       ) : null}
                       {tab === 'widget' ? (
                         <WidgetTerminal
-                          rpcUrl={rpcUrl}
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
                           strictTokenList={watchAllFields.strictTokenList}

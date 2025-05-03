@@ -11,7 +11,7 @@ import { IWalletNotification } from '@jup-ag/wallet-adapter/dist/types/contexts/
 const noop = () => {};
 const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
   autoConnect,
-  endpoint,
+
   connectionObj,
   children,
 }) => {
@@ -97,7 +97,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
 
   const connection = useMemo(() => {
     const unpatchedConnection = (() => {
-      if (endpoint) return new Connection(endpoint);
+
       if (connectionObj) return connectionObj;
     })();
 
@@ -145,8 +145,8 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
       });
     }
 
-    throw new Error('No connection object or endpoint provided');
-  }, [connectionObj, endpoint]);
+    throw new Error('No connection object');
+  }, [connectionObj]);
 
   return (
     <>

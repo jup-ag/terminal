@@ -126,11 +126,6 @@ window.Jupiter.init({});
 
 ```tsx
 window.Jupiter.init({
-  /** Required
-   * Solana RPC endpoint
-   * We do not recommend using the public RPC endpoint for production dApp, you will get severely rate-limited
-   */
-  endpoint: 'https://api.mainnet-beta.solana.com',
   // ...other props
 });
 ```
@@ -273,7 +268,6 @@ useEffect(() => {
   init({
     displayMode: 'integrated',
     integratedTargetId: 'integrated-terminal',
-    endpoint: 'https://api.mainnet-beta.solana.com',
   });
 }, []);
 
