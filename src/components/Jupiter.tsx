@@ -1,4 +1,4 @@
-import { useConnection } from '@jup-ag/wallet-adapter';
+
 import { useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';

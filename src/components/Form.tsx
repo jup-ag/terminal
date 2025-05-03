@@ -24,8 +24,6 @@ import PriceInfo from './PriceInfo/index';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
-import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
-import SuggestionTags from './SuggestionTags';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';

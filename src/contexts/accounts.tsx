@@ -1,4 +1,4 @@
-import { useConnection } from '@jup-ag/wallet-adapter';
+
 import { AccountLayout, TOKEN_PROGRAM_ID, AccountInfo as TokenAccountInfo, u64 } from '@solana/spl-token';
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
