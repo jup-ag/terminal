@@ -179,6 +179,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     }
   }, [debouncedForm.fromValue, debouncedForm.toValue, fromTokenInfo, toTokenInfo]);
 
+  const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const {
     data: ogQuoteResponseMeta,
     isFetching: loading,
@@ -194,14 +195,10 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     amount: amount.toString(),
     taker: walletPublicKey,
     swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
-  });
+  }, 
+  // Stop refetching when transaction is in progress
+  !txStatus);
 
-  const error: JupiterError | undefined = useMemo(() => {
-    if (quoteError) {
-      return 'COULD_NOT_FIND_ANY_ROUTE' as JupiterError;
-    }
-    return undefined;
-  }, [quoteError]);
 
   const lastRefreshTimestamp = useMemo(() => {
     if (loading) {
@@ -247,7 +244,6 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     });
   }, [form.fromValue, form.toValue, fromTokenInfo, quoteResponseMeta, toTokenInfo]);
 
-  const [txStatus, setTxStatus] = useState<ISwapContext['swapping']['txStatus']>(undefined);
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
 
   const { mutateAsync: ultraSwapMutation } = useUltraSwapMutation();

@@ -347,11 +347,11 @@ const Form: React.FC<{
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span>Loading</span>
+              <span >Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (
-              <span className="text-sm">{errors.fromValue.title}</span>
+              <span >{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}

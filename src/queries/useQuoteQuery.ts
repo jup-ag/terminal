@@ -3,13 +3,13 @@ import { UltraSwapQuoteParams, ultraSwapService } from 'src/data/UltraSwapServic
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 import { create } from 'superstruct';
 
-export const useQuoteQuery = ({ inputMint, outputMint, amount, taker, swapMode }: UltraSwapQuoteParams) => {
+export const useQuoteQuery = (params: UltraSwapQuoteParams, shouldRefetch: boolean = true) => {
+  const { inputMint, outputMint, amount, taker, swapMode } = params;
   return useQuery({
     queryKey: ['quote', inputMint, outputMint, amount, taker],
     queryFn: async ({ signal }) => {
-      if (Number(amount) ===0){
+      if (Number(amount) === 0) {
         return null;
-
       }
       const response = await ultraSwapService.getQuote({ inputMint, outputMint, amount, taker, swapMode }, signal);
       const quoteResponse = create(response, FormattedUltraQuoteResponse, 'conver FormattedUltraQuoteResponse Error');
@@ -18,8 +18,12 @@ export const useQuoteQuery = ({ inputMint, outputMint, amount, taker, swapMode }
         original: response,
       };
     },
-    retryDelay: 2_000,
+    refetchInterval: shouldRefetch ? 5_000 : false,
+    retry: 0,
     enabled: Number(amount) > 0,
     keepPreviousData: Number(amount) > 0,
+    onError: (error) => {
+      console.error('useQuoteQuery', error);
+    },
   });
 };
