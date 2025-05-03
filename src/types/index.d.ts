@@ -58,9 +58,6 @@ export interface IInit {
    */
   localStoragePrefix?: string;
 
-  /** Solana RPC Connection object */
-  connectionObj?: Connection;
-
   /** Configure Terminal's behaviour and allowed actions for your user */
   formProps?: FormProps;
   /** Only allow strict token by [Jupiter Token List API](https://station.jup.ag/docs/token-list/token-list-api) */

@@ -11,8 +11,6 @@ import { IWalletNotification } from '@jup-ag/wallet-adapter/dist/types/contexts/
 const noop = () => {};
 const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
   autoConnect,
-
-  connectionObj,
   children,
 }) => {
   const enableWalletPassthrough = (() => {
