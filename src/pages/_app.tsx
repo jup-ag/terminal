@@ -13,7 +13,7 @@ import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet
 import { useForm } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 import FormConfigurator from 'src/components/FormConfigurator';
-import { IFormConfigurator, INITIAL_FORM_CONFIG, JUPITER_DEFAULT_RPC } from 'src/constants';
+import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import IntegratedTerminal from 'src/content/IntegratedTerminal';
 import ModalTerminal from 'src/content/ModalTerminal';
 import WidgetTerminal from 'src/content/WidgetTerminal';
@@ -60,7 +60,6 @@ export default function App() {
     setTerminalInView(false);
   }, [tab]);
 
-  const rpcUrl = useMemo(() => JUPITER_DEFAULT_RPC, []);
 
   const { watch, reset, setValue, formState } = useForm<IFormConfigurator>({
     defaultValues: INITIAL_FORM_CONFIG,
