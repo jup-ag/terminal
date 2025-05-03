@@ -5,10 +5,9 @@ import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapte
 const IntegratedTerminal = (props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const { formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useUnifiedWallet();
@@ -23,17 +22,14 @@ const IntegratedTerminal = (props: {
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-      strictTokenList,
       defaultExplorer,
     });
   }, [
     defaultExplorer,
     formProps,
     passthroughWalletContextState,
-
     setShowModal,
     simulateWalletPassthrough,
-    strictTokenList,
   ]);
 
   useEffect(() => {

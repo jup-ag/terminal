@@ -60,8 +60,6 @@ export interface IInit {
 
   /** Configure Terminal's behaviour and allowed actions for your user */
   formProps?: FormProps;
-  /** Only allow strict token by [Jupiter Token List API](https://station.jup.ag/docs/token-list/token-list-api) */
-  strictTokenList?: boolean;
   /** Default explorer for your user */
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */

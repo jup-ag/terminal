@@ -42,8 +42,6 @@ const CodeBlocks = ({
 
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
-
-    ...(formConfigurator.strictTokenList === false ? { strictTokenList: formConfigurator.strictTokenList } : undefined),
     ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
       ? { defaultExplorer: formConfigurator.defaultExplorer }
       : undefined),

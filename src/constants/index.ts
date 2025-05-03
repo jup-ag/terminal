@@ -25,14 +25,12 @@ export const SOL_MINT_TOKEN_INFO = {
 
 export interface IFormConfigurator {
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   simulateWalletPassthrough: false,
-  strictTokenList: true,
   defaultExplorer: 'Solana Explorer',
   formProps: {
     fixedInputMint: false,

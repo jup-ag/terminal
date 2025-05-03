@@ -8,10 +8,10 @@ import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/typ
 const WidgetTerminal = (props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
+
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const { formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -31,7 +31,6 @@ const WidgetTerminal = (props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
 
-      strictTokenList,
       defaultExplorer,
     });
   }, [
@@ -39,11 +38,9 @@ const WidgetTerminal = (props: {
     formProps,
     passthroughWalletContextState,
     position,
-
     setShowModal,
     simulateWalletPassthrough,
     size,
-    strictTokenList,
   ]);
 
   useEffect(() => {

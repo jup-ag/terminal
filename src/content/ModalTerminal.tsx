@@ -6,10 +6,9 @@ import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 const ModalTerminal = (props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const { formProps, simulateWalletPassthrough, strictTokenList, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
@@ -20,7 +19,6 @@ const ModalTerminal = (props: {
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-      strictTokenList,
       defaultExplorer,
     });
   };

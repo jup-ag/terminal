@@ -234,7 +234,7 @@ export default function App() {
                         <ModalTerminal
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
-                          strictTokenList={watchAllFields.strictTokenList}
+  
                           defaultExplorer={watchAllFields.defaultExplorer}
                         />
                       ) : null}
@@ -242,7 +242,7 @@ export default function App() {
                         <IntegratedTerminal
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
-                          strictTokenList={watchAllFields.strictTokenList}
+
                           defaultExplorer={watchAllFields.defaultExplorer}
                         />
                       ) : null}
@@ -250,7 +250,7 @@ export default function App() {
                         <WidgetTerminal
                           formProps={watchAllFields.formProps}
                           simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
-                          strictTokenList={watchAllFields.strictTokenList}
+
                           defaultExplorer={watchAllFields.defaultExplorer}
                         />
                       ) : null}
