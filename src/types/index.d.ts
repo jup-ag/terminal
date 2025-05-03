@@ -72,8 +72,6 @@ export interface IInit {
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */
   autoConnect?: boolean;
-  /** RPC refetch interval for getTABO in milliseconds, defaults to 10000 */
-  refetchIntervalForTokenAccounts?: number;
 
   /** Display & Styling */
   /** Display mode */

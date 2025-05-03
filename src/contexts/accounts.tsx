@@ -144,35 +144,38 @@ export const TokenAccountParser = (
   };
 };
 
-type AccountsProviderProps = PropsWithChildren<{
-  refetchIntervalForTokenAccounts?: number;
-}>;
+type AccountsProviderProps = { children: React.ReactNode };
 
-const AccountsProvider: React.FC<AccountsProviderProps> = ({ children, refetchIntervalForTokenAccounts = 10_000 }) => {
+const AccountsProvider: React.FC<AccountsProviderProps> = ({ children }) => {
   const { publicKey, connected } = useWalletPassThrough();
-  const { connection } = useConnection();
   const { requestTokenInfo, getTokenInfo } = useTokenContext();
+
+  const address = useMemo(() => {
+    if (!publicKey) return null;
+    return publicKey.toString();
+  }, [publicKey]);
 
   const {
     data: balanceResponse,
     refetch,
     isLoading,
   } = useQuery({
-    queryKey: ['fetchAllAccounts', publicKey],
+    queryKey: ['fetchAllAccounts', address],
     queryFn: async ({signal}) => {
-      if (!publicKey) {
+      if (!address) {
         return new Map<string, TokenAccount>();
       }
-      const result = await ultraSwapService.getBalance(publicKey.toString(), signal);
+      const result = await ultraSwapService.getBalance(address, signal);
 
       const tokenAccountsWithoutNativeSol = Object.keys(result).filter((key) => key !== SOL_TOKEN_INFO.symbol);
       await requestTokenInfo(tokenAccountsWithoutNativeSol);
       return result;
     },
-    enabled: !!publicKey,
+    enabled: !!address && connected && getTerminalInView(),
     cacheTime: 20_000,
     staleTime: 20_000,
     refetchOnWindowFocus: false,
+    refetchIntervalInBackground: false,
     refetchOnMount: false,
   });
   const nativeAccount: IAccountsBalance | null = useMemo(() => {

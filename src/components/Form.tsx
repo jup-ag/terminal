@@ -83,7 +83,7 @@ const FormInputContainer: React.FC<{
               </span>
             )}
           </button>
-        
+
           <div className="flex justify-between items-center h-[20px]">
             {tokenInfo?.address && <JupShield tokenAddress={tokenInfo.address} />}
           </div>
@@ -132,8 +132,7 @@ const Form: React.FC<{
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
-  const onChangeFromValue = ({ value}: NumberFormatValues) => {
- 
+  const onChangeFromValue = ({ value }: NumberFormatValues) => {
     if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
@@ -145,7 +144,7 @@ const Form: React.FC<{
     setForm((form) => ({ ...form, fromValue: value }));
   };
 
-  const onChangeToValue = ({ value}: NumberFormatValues) => {
+  const onChangeToValue = ({ value }: NumberFormatValues) => {
     if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
@@ -278,7 +277,11 @@ const Form: React.FC<{
             )}
           </FormInputContainer>
           <div className="relative z-10 -my-3 flex justify-center">
-            {hasFixedMint ? null : <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />}
+            {hasFixedMint ? (
+              <span className="h-8" />
+            ) : (
+              <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
+            )}
           </div>
           <FormInputContainer
             tokenInfo={toTokenInfo!}
@@ -323,7 +326,6 @@ const Form: React.FC<{
             )}
           </FormInputContainer>
         </div>
-
       </div>
 
       <div className="w-full px-2">
@@ -331,7 +333,7 @@ const Form: React.FC<{
           <UnifiedWalletButton
             buttonClassName="!bg-transparent"
             overrideContent={
-              <JupButton size="lg" className="w-full mt-4" type="button" onClick={handleClick}>
+              <JupButton size="lg" className="w-full mt-4" onClick={handleClick}>
                 Connect Wallet
               </JupButton>
             }
@@ -339,10 +341,7 @@ const Form: React.FC<{
         ) : (
           <JupButton
             size="lg"
-            className={cn(
-              'w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]',
-            )}
-            type="button"
+            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 bg-v2-primary ')}
             onClick={() => {
               onSubmit();
               onSubmitUltra();

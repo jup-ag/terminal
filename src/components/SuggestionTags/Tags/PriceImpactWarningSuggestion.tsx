@@ -92,7 +92,7 @@ const PriceImpactWarningSuggestion = ({
             }).toString()}`}
             className="text-xs cursor-pointer flex items-center justify-center mb-2"
           >
-            <JupButton size="sm" type="button" className="!w-[120px]">
+            <JupButton size="sm" className="!w-[120px]">
               <div className="flex gap-x-2 items-center justify-center">
                 <span>{`Go to DCA`}</span>
                 <RightArrowIcon />

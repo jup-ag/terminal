@@ -203,7 +203,7 @@ const SwappingScreen = () => {
           <JupButton
             size="lg"
             className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
-            type="button"
+
             onClick={onSwapMore}
           >
             <span>
@@ -215,7 +215,7 @@ const SwappingScreen = () => {
             <JupButton
               size="lg"
               className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14"
-              type="button"
+
               onClick={onClose}
             >
               <span className="text-sm">Close</span>
@@ -229,7 +229,7 @@ const SwappingScreen = () => {
   return (
     <div className="flex flex-col h-full w-full py-4 px-2">
       {errorMessage || txStatus?.status === 'fail' ? (
-        <div className="flex justify-center">
+        <div className="">
           <div className="flex flex-col items-center justify-center text-center mt-12">
             <ErrorIcon />
 
@@ -239,8 +239,7 @@ const SwappingScreen = () => {
 
             <JupButton
               size="lg"
-              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
-              type="button"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
               onClick={onGoBack}
             >
               <span>Retry</span>
@@ -260,8 +259,7 @@ const SwappingScreen = () => {
 
             <JupButton
               size="lg"
-              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
-              type="button"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
               onClick={onGoBack}
             >
               <span>Retry</span>

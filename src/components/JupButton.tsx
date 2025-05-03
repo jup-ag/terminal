@@ -5,20 +5,12 @@ interface IJupButton {
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   disabled?: boolean;
   children: ReactNode;
-  className?: string;
-  // JupButton border gradient, globals.css
-  highlighted?: boolean;
+  className?:  ButtonHTMLAttributes<HTMLButtonElement>['className'];
   size?: 'sm' | 'md' | 'lg';
-  type?: ButtonHTMLAttributes<HTMLButtonElement>['type'];
-  bgClass?: string;
-  rounded?: string;
 }
 
 const JupButton = React.forwardRef(
-  (
-    { onClick, disabled, children, highlighted, className = '', size = 'md', type, bgClass, rounded }: IJupButton,
-    ref: React.ForwardedRef<any>,
-  ) => {
+  ({ onClick, disabled, children, className = '', size = 'md' }: IJupButton, ref: React.ForwardedRef<any>) => {
     const contentClass = (() => {
       if (size === 'sm') {
         return 'px-4 py-2.5 text-xs';
@@ -30,18 +22,15 @@ const JupButton = React.forwardRef(
         return 'p-5 text-md font-semibold';
       }
     })();
-    const background = bgClass || 'text-white bg-[#1A2633] dark:bg-black/50';
+    // const background = bgClass || 'text-white bg-[#1A2633] dark:bg-black/50';
     return (
       <button
-        type={type}
+        type={'button'}
         ref={ref}
-        className={cn({
+        className={cn("rounded-xl",{
           relative: true,
-          'jup-gradient': highlighted,
           'opacity-50 cursor-not-allowed': disabled,
-          [background]: true,
           [className]: true,
-          [rounded || 'rounded-xl']: true,
         })}
         disabled={disabled}
         onClick={onClick}
