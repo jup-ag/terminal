@@ -331,7 +331,7 @@ const Form: React.FC<{
           <UnifiedWalletButton
             buttonClassName="!bg-transparent"
             overrideContent={
-              <JupButton size="lg" className="w-full mt-4" onClick={handleClick}>
+              <JupButton size="lg" className="w-full mt-4 bg-v2-primary !text-uiv2-text/75" onClick={handleClick}>
                 Connect Wallet
               </JupButton>
             }
