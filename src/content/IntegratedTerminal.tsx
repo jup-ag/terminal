@@ -3,19 +3,11 @@ import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 
 const IntegratedTerminal = (props: {
-  rpcUrl: string;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const {
-    rpcUrl,
-    formProps,
-    simulateWalletPassthrough,
-    strictTokenList,
-    defaultExplorer,
-  } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useUnifiedWallet();
@@ -25,22 +17,19 @@ const IntegratedTerminal = (props: {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'integrated-terminal',
-      endpoint: rpcUrl,
+
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-      strictTokenList,
       defaultExplorer,
     });
   }, [
     defaultExplorer,
     formProps,
     passthroughWalletContextState,
-    rpcUrl,
     setShowModal,
     simulateWalletPassthrough,
-    strictTokenList,
   ]);
 
   useEffect(() => {

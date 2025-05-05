@@ -24,8 +24,6 @@ import PriceInfo from './PriceInfo/index';
 import SwitchPairButton from './SwitchPairButton';
 import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
-import { useSuggestionTags } from './SuggestionTags/hooks/useSuggestionTags';
-import SuggestionTags from './SuggestionTags';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';
@@ -333,7 +331,7 @@ const Form: React.FC<{
           <UnifiedWalletButton
             buttonClassName="!bg-transparent"
             overrideContent={
-              <JupButton size="lg" className="w-full mt-4" onClick={handleClick}>
+              <JupButton size="lg" className="w-full mt-4 bg-v2-primary !text-uiv2-text/75" onClick={handleClick}>
                 Connect Wallet
               </JupButton>
             }
@@ -349,11 +347,11 @@ const Form: React.FC<{
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span>Loading</span>
+              <span >Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (
-              <span className="text-sm">{errors.fromValue.title}</span>
+              <span >{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}

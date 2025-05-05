@@ -1,18 +1,14 @@
-import { ConnectionContext, UnifiedWalletProvider, WalletAdapterNetwork, WalletName } from '@jup-ag/wallet-adapter';
+import {  UnifiedWalletProvider } from '@jup-ag/wallet-adapter';
 import React, { PropsWithChildren, useState } from 'react';
 
-import { Connection } from '@solana/web3.js';
 import { ReactNode, useMemo } from 'react';
 import { IInit } from 'src/types';
-import { NetworkConfigurationProvider } from './NetworkConfigurationProvider';
 import { PreferredExplorerProvider } from './preferredExplorer';
 import { IWalletNotification } from '@jup-ag/wallet-adapter/dist/types/contexts/WalletConnectionProvider';
 
 const noop = () => {};
 const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
   autoConnect,
-  endpoint,
-  connectionObj,
   children,
 }) => {
   const enableWalletPassthrough = (() => {
@@ -95,64 +91,9 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
         );
   }, [autoConnect, enableWalletPassthrough, wallets]);
 
-  const connection = useMemo(() => {
-    const unpatchedConnection = (() => {
-      if (endpoint) return new Connection(endpoint);
-      if (connectionObj) return connectionObj;
-    })();
-
-    // Patch pre-2.0 and 2.0 RPC getLatestBlockhash being invalid
-    if (unpatchedConnection) {
-      return new Proxy(unpatchedConnection, {
-        get: (target, prop, receiver) => {
-          switch (prop) {
-            case '_rpcRequest': {
-              return async (...args: any[]) => {
-                const [rpcMethod] = args;
-
-                if (rpcMethod === 'getLatestBlockhash') {
-                  // @ts-expect-error
-                  const response: GetLatestBlockhashResponse = await target[prop](...args);
-
-                  const apiVersion = response?.result?.context?.apiVersion;
-                  const lastValidBlockHeight = response?.result?.value?.lastValidBlockHeight;
-                  const modifiedLastValidBlockHeight = apiVersion.startsWith('2')
-                    ? lastValidBlockHeight
-                    : lastValidBlockHeight - 150;
-
-                  return Promise.resolve({
-                    ...response,
-                    // Note: Function expecting string, but after parse we get number
-                    id: response.id.toString(),
-                    result: {
-                      ...response.result,
-                      value: {
-                        ...response.result.value,
-                        lastValidBlockHeight: Number(modifiedLastValidBlockHeight),
-                      },
-                    },
-                  });
-                }
-
-                // @ts-expect-error
-                return target[prop](...args);
-              };
-            }
-          }
-
-          return Reflect.get(target, prop, receiver);
-        },
-      });
-    }
-
-    throw new Error('No connection object or endpoint provided');
-  }, [connectionObj, endpoint]);
-
   return (
     <>
-      <ConnectionContext.Provider value={{ connection }}>
-        <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
-      </ConnectionContext.Provider>
+      <ShouldWrapWalletProvider>{children}</ShouldWrapWalletProvider>
       {showWalletStatus.show && showWalletStatus.message ? (
         <div className="absolute bottom-2 w-full px-2">
           <div className="w-full h-full bg-white/10 rounded-lg p-2 text-warning text-xs">
@@ -167,13 +108,12 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
 export const ContextProvider: React.FC<PropsWithChildren<IInit>> = (props) => {
   return (
     <>
-      <NetworkConfigurationProvider>
         <WalletContextProvider {...props}>
           <PreferredExplorerProvider defaultExplorer={props.defaultExplorer}>
             {props.children}
           </PreferredExplorerProvider>
         </WalletContextProvider>
-      </NetworkConfigurationProvider>
+
     </>
   );
 };

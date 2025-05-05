@@ -58,16 +58,8 @@ export interface IInit {
    */
   localStoragePrefix?: string;
 
-  /** Solana RPC, declare either endpoint, or Connection object */
-  /** Solana RPC endpoint */
-  endpoint?: string;
-  /** Solana RPC Connection object */
-  connectionObj?: Connection;
-
   /** Configure Terminal's behaviour and allowed actions for your user */
   formProps?: FormProps;
-  /** Only allow strict token by [Jupiter Token List API](https://station.jup.ag/docs/token-list/token-list-api) */
-  strictTokenList?: boolean;
   /** Default explorer for your user */
   defaultExplorer?: DEFAULT_EXPLORER;
   /** Auto connect to wallet on subsequent visits */

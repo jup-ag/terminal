@@ -4,8 +4,6 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { FixedSizeList, ListChildComponentProps, areEqual } from 'react-window';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import SearchIcon from 'src/icons/SearchIcon';
-
-import { useConnection } from '@jup-ag/wallet-adapter';
 import debounce from 'lodash.debounce';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
 import { useUSDValueProvider } from 'src/contexts/USDValueProvider';

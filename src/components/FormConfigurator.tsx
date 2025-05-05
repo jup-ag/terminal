@@ -27,7 +27,6 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     `,
     values: {
       ...INITIAL_FORM_CONFIG,
-      strictTokenList: false,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
         initialAmount: '8888888800000',
@@ -43,7 +42,6 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 
 const FormConfigurator = ({
   simulateWalletPassthrough,
-  strictTokenList,
   defaultExplorer,
   formProps,
   // Hook form

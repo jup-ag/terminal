@@ -202,7 +202,7 @@ const SwappingScreen = () => {
         <div className="mt-auto px-5 pb-4 flex space-x-2">
           <JupButton
             size="lg"
-            className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-gradient-to-r from-[#00BEF0] to-[#C7F284]"
+            className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
 
             onClick={onSwapMore}
           >

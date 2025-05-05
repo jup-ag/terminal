@@ -4,31 +4,21 @@ import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 
 const ModalTerminal = (props: {
-  rpcUrl: string;
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-  strictTokenList: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
 }) => {
-  const {
-    rpcUrl,
-    formProps,
-    simulateWalletPassthrough,
-    strictTokenList,
-    defaultExplorer,
-  } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
   const launchTerminal = () => {
     window.Jupiter.init({
-      endpoint: rpcUrl,
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-      strictTokenList,
       defaultExplorer,
     });
   };
