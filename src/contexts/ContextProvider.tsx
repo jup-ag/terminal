@@ -1,10 +1,8 @@
-import { ConnectionContext, UnifiedWalletProvider, WalletAdapterNetwork, WalletName } from '@jup-ag/wallet-adapter';
+import {  UnifiedWalletProvider } from '@jup-ag/wallet-adapter';
 import React, { PropsWithChildren, useState } from 'react';
 
-import { Connection } from '@solana/web3.js';
 import { ReactNode, useMemo } from 'react';
 import { IInit } from 'src/types';
-import { NetworkConfigurationProvider } from './NetworkConfigurationProvider';
 import { PreferredExplorerProvider } from './preferredExplorer';
 import { IWalletNotification } from '@jup-ag/wallet-adapter/dist/types/contexts/WalletConnectionProvider';
 
@@ -110,13 +108,13 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
 export const ContextProvider: React.FC<PropsWithChildren<IInit>> = (props) => {
   return (
     <>
-      <NetworkConfigurationProvider>
+
         <WalletContextProvider {...props}>
           <PreferredExplorerProvider defaultExplorer={props.defaultExplorer}>
             {props.children}
           </PreferredExplorerProvider>
         </WalletContextProvider>
-      </NetworkConfigurationProvider>
+
     </>
   );
 };
