@@ -108,7 +108,6 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
 export const ContextProvider: React.FC<PropsWithChildren<IInit>> = (props) => {
   return (
     <>
-
         <WalletContextProvider {...props}>
           <PreferredExplorerProvider defaultExplorer={props.defaultExplorer}>
             {props.children}
