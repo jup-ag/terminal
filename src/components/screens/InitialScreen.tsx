@@ -26,7 +26,7 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
     setForm,
     setErrors,
     quoteResponseMeta,
-    formProps: { initialOutputMint, fixedOutputMint },
+    formProps: { initialOutputMint,fixedMint },
     loading,
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -97,12 +97,12 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   const availableMints: TokenInfo[] = useMemo(() => {
     let result = [...tokenMap.values()];
     // On fixedOutputMint, prevent user from selecting the same token as output
-    if (fixedOutputMint) {
+    if (fixedMint) {
       result = result.filter((item) => item.address !== initialOutputMint);
     }
 
     return result;
-  }, [tokenMap, fixedOutputMint, initialOutputMint]);
+  }, [tokenMap, fixedMint, initialOutputMint]);
 
   const onSubmitToConfirmation = useCallback(() => {
     setScreen('Swapping');
