@@ -31,12 +31,10 @@ export interface FormProps {
   fixedAmount?: boolean;
   /** Initial input token to swap */
   initialInputMint?: string;
-  /** When true, user cannot change the input token */
-  fixedInputMint?: boolean;
   /** Initial output token to swap */
   initialOutputMint?: string;
-  /** When true, user cannot change the output token (e.g. to buy your project's token) */
-  fixedOutputMint?: boolean;
+  /** Based token that can never changed  */
+  fixedMint?: string;
 }
 
 /** Built in support for these explorers */

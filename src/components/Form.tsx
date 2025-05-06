@@ -65,7 +65,9 @@ const FormInputContainer: React.FC<{
         <div>
           <button
             type="button"
-            className="py-2 px-3 rounded-lg flex items-center bg-[#1A2633] hover:bg-white/20 text-white"
+            className={cn('py-2 px-3 rounded-lg flex items-center bg-[#1A2633] text-white', {
+              'hover:bg-white/20': !pairSelectDisabled,
+            })}
             disabled={pairSelectDisabled}
             onClick={onClickSelectPair}
           >
@@ -112,7 +114,7 @@ const Form: React.FC<{
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
-    formProps: { fixedAmount, fixedInputMint, fixedOutputMint, swapMode },
+    formProps: { fixedAmount, swapMode, fixedMint },
     loading,
     refresh,
     quoteError,
@@ -127,6 +129,20 @@ const Form: React.FC<{
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasExpired]);
+
+  const shouldDisabledFromSelector = useMemo(() => {
+    if (fromTokenInfo?.address === fixedMint) {
+      return true;
+    }
+    return false;
+  }, [fixedMint, fromTokenInfo?.address]);
+
+  const shouldDisabledToSelector = useMemo(() => {
+    if (toTokenInfo?.address === fixedMint) {
+      return true;
+    }
+    return false;
+  }, [fixedMint, toTokenInfo?.address]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
@@ -196,7 +212,7 @@ const Form: React.FC<{
     }));
   };
 
-  const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
+  // const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
   const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
@@ -213,14 +229,14 @@ const Form: React.FC<{
   }, [fixedAmount, swapMode]);
 
   const onClickSelectFromMint = useCallback(() => {
-    if (fixedInputMint) return;
+    if (shouldDisabledFromSelector) return;
     setSelectPairSelector('fromMint');
-  }, [fixedInputMint, setSelectPairSelector]);
+  }, [shouldDisabledFromSelector, setSelectPairSelector]);
 
   const onClickSelectToMint = useCallback(() => {
-    if (fixedOutputMint) return;
+    if (shouldDisabledToSelector) return;
     setSelectPairSelector('toMint');
-  }, [fixedOutputMint, setSelectPairSelector]);
+  }, [shouldDisabledToSelector, setSelectPairSelector]);
 
   const thousandSeparator = useMemo(() => (detectedSeparator === ',' ? '.' : ','), []);
   // Allow empty input, and input lower than max limit
@@ -248,7 +264,7 @@ const Form: React.FC<{
             tokenInfo={fromTokenInfo!}
             onBalanceClick={onClickMax}
             title="Selling"
-            pairSelectDisabled={!!fixedInputMint}
+            pairSelectDisabled={shouldDisabledFromSelector}
             onClickSelectPair={onClickSelectFromMint}
             value={form.fromValue}
           >
@@ -275,17 +291,13 @@ const Form: React.FC<{
             )}
           </FormInputContainer>
           <div className="relative z-10 -my-3 flex justify-center">
-            {hasFixedMint ? (
-              <span className="h-8" />
-            ) : (
-              <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
-            )}
+            <SwitchPairButton onClick={onClickSwitchPair} className={cn('transition-all')} />
           </div>
           <FormInputContainer
             tokenInfo={toTokenInfo!}
             onBalanceClick={onClickMax}
             title="Buying"
-            pairSelectDisabled={!!fixedOutputMint}
+            pairSelectDisabled={shouldDisabledToSelector}
             onClickSelectPair={onClickSelectToMint}
             value={form.toValue}
           >
@@ -339,7 +351,7 @@ const Form: React.FC<{
         ) : (
           <JupButton
             size="lg"
-            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 bg-v2-primary ')}
+            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 !bg-v2-primary ')}
             onClick={() => {
               onSubmit();
               onSubmitUltra();
@@ -347,11 +359,11 @@ const Form: React.FC<{
             disabled={isDisabled || loading}
           >
             {loading ? (
-              <span >Loading</span>
+              <span>Loading</span>
             ) : quoteError ? (
               <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (
-              <span >{errors.fromValue.title}</span>
+              <span>{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}
