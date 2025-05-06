@@ -22,7 +22,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     },
   },
   {
-    name: 'APE',
+    name: 'Pro',
     description: `
     APE. Just APE.
     `,
@@ -30,11 +30,8 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       ...INITIAL_FORM_CONFIG,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
-        initialAmount: '1000000000',
         fixedAmount: false,
-        initialInputMint: WRAPPED_SOL_MINT.toString(),
-        initialOutputMint: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
-        fixedMint: 'JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN',
+        fixedMint: WRAPPED_SOL_MINT.toString(),
       },
     },
   },
@@ -190,7 +187,6 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Initial input mint</p>
-          <p className="text-xs text-white/50">Based mint cannot be changed</p>
         </div>
       </div>
       <input
@@ -205,7 +201,6 @@ const FormConfigurator = ({
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Initial output mint</p>
-          <p className="text-xs text-white/50">Based mint cannot be changed</p>
         </div>
       </div>
       <input
