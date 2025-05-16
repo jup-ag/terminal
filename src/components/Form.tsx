@@ -6,7 +6,6 @@ import { useAccounts } from '../contexts/accounts';
 import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE } from '../misc/constants';
 
 import CoinBalance from './Coinbalance';
-import FormError from './FormError';
 import JupButton from './JupButton';
 
 import TokenIcon from './TokenIcon';
@@ -110,7 +109,6 @@ const Form: React.FC<{
   const {
     form,
     setForm,
-    errors,
     fromTokenInfo,
     toTokenInfo,
     quoteResponseMeta,
@@ -118,6 +116,7 @@ const Form: React.FC<{
     loading,
     refresh,
     quoteError,
+    errors,
     isToPairFocused,
     onSubmit: onSubmitUltra,
   } = useSwapContext();
@@ -212,7 +211,6 @@ const Form: React.FC<{
     }));
   };
 
-  // const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
   const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
@@ -255,6 +253,14 @@ const Form: React.FC<{
     },
     [setIsWalletModalOpen],
   );
+
+  const shouldButtonDisabled = useMemo(() => {
+    if (isDisabled || loading || !!errors.fromValue) {
+      return true;
+    }
+    return false;
+  }, [isDisabled, loading, errors.fromValue]);
+
 
   return (
     <div className="h-full flex flex-col items-center justify-center pb-4">
@@ -356,14 +362,12 @@ const Form: React.FC<{
               onSubmit();
               onSubmitUltra();
             }}
-            disabled={isDisabled || loading}
+            disabled={shouldButtonDisabled}
           >
             {loading ? (
               <span>Loading</span>
-            ) : quoteError ? (
-              <span className="text-sm">Error fetching route. Try changing your input</span>
             ) : errors.fromValue ? (
-              <span>{errors.fromValue.title}</span>
+              <span className="text-sm">{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}

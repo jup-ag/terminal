@@ -35,6 +35,10 @@ export interface FormProps {
   initialOutputMint?: string;
   /** Based token that can never changed  */
   fixedMint?: string;
+  /** Referral account to use for the swap */
+  referralAccount?: string;
+  /** Referral fee to use for the swap */
+  referralFee?: number;
 }
 
 /** Built in support for these explorers */
