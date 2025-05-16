@@ -38,13 +38,15 @@ export interface UltraQuoteResponse {
     router: AggregatorSources;
   }
 
-
+// Refer docs here https://dev.jup.ag/docs/api/ultra-api/order
 export interface UltraSwapQuoteParams {
   inputMint: string;
   outputMint: string;
   amount: string;
   taker?: string;
   swapMode?: 'ExactIn' | 'ExactOut';
+  referralAccount?: string;
+  referralFee?: number;
 }
 interface UltraSwapResponseBase {
   signature: string;

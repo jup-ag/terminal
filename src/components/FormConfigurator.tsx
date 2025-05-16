@@ -183,9 +183,8 @@ const FormConfigurator = ({
           </div>
         </div>
       </div>
-      <p className="text-white mt-8 text-sm font-semibold">Things you can configure</p>
-
       <div className="w-full border-b border-white/10 py-3" />
+      <p className="text-white mt-6 text-sm font-semibold">Things you can configure</p>
 
       <div className="flex justify-between mt-5">
         <div>
@@ -235,10 +234,9 @@ const FormConfigurator = ({
         </p>
       )}
 
-      <div className="w-full border-b border-white/10 py-3" />
       {/* Exact out */}
       <div className="relative inline-block text-left text-white w-full mt-5">
-        <p className="text-white text-sm font-semibold">Exact output mode</p>
+        <p className="text-white/75 text-sm font-semibold">Exact output mode</p>
         <div className="text-xs text-white/30">
           {formProps.swapMode === 'ExactInOrOut' && (
             <span>User can freely switch between ExactIn or ExactOut mode.</span>
@@ -291,7 +289,6 @@ const FormConfigurator = ({
           ) : null}
         </div>
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
       {/* Fixed amount */}
       <div className="flex justify-between mt-5">
         <div>
@@ -304,7 +301,6 @@ const FormConfigurator = ({
           onClick={() => setValue('formProps.fixedAmount', !formProps.fixedAmount, { shouldDirty: true })}
         />
       </div>
-      <div className="w-full border-b border-white/10 py-3" />
 
       {/* Initial Amount */}
       <div className="flex justify-between mt-5">
@@ -327,6 +323,41 @@ const FormConfigurator = ({
       />
       <div className="w-full border-b border-white/10 py-3" />
 
+      {/* Referral  */}
+      <div className="flex justify-between flex-col gap-y-2">
+        <p className="text-white text-sm font-semibold mt-5 ">Referral</p>
+        <a href="https://dev.jup.ag/docs/ultra-api/add-fees-to-ultra" target="_blank" rel="noopener noreferrer" className="text-xs text-white/40 underline hover:text-white/50">
+Guide to create Referral Account
+        </a>
+
+        <div className="flex justify-between flex-col">
+          <p className="text-sm text-white/75">Referral account</p>
+          <input
+            className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            value={formProps.referralAccount}
+            inputMode="numeric"
+            onChange={(e) => {
+              setValue('formProps.referralAccount', e.target.value);
+            }}
+          />
+        </div>
+        <div className="flex justify-between flex-col">
+          <p className="text-sm text-white/75">Referral fee (bps)</p>
+          <input
+            className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            value={formProps.referralFee}
+            inputMode="numeric"
+            onChange={(e) => {
+              const regex = /^[0-9\b]+$/;
+              const value = e.target.value;
+              if (value === '' || regex.test(value)) {
+                setValue('formProps.referralFee', Number(value));
+              }
+            }}
+          />
+        </div>
+      </div>
+      <div className="w-full border-b border-white/10 py-3" />
       {/* Wallet passthrough */}
       <div className="flex justify-between mt-5">
         <div>

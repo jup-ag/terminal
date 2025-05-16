@@ -35,11 +35,11 @@ const SwapInfo = type({
   feeMint: PublicKeyFromString,
 });
 
- const RoutePlanStep = type({
+const RoutePlanStep = type({
   swapInfo: SwapInfo,
   percent: integer(),
 });
- const RoutePlanWithMetadata = array(RoutePlanStep);
+const RoutePlanWithMetadata = array(RoutePlanStep);
 
 export const FormattedUltraQuoteResponse = type({
   inputMint: PublicKeyFromString,
@@ -53,7 +53,7 @@ export const FormattedUltraQuoteResponse = type({
   contextSlot: defaulted(number(), 0),
   computedAutoSlippage: optional(number()),
   transaction: nullable(string()),
-  swapType: enums(['aggregator', 'rfq']),
+  swapType: string(),
   gasless: boolean(),
   requestId: string(),
   prioritizationFeeLamports: optional(number()),
