@@ -231,7 +231,7 @@ const FormConfigurator = ({
       />
       {formProps.fixedMint && !isFixedMintIsInAndOut && (
         <p className="text-xs text-utility-warning-300 mt-2">
-          Fixed mint must be the same as the initial input or output mint
+          Fixed mint must match either initial input or output mint
         </p>
       )}
 
