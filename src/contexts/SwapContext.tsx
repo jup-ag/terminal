@@ -124,6 +124,14 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     toValue: '',
   });
 
+  useEffect(() => {
+    if (formProps.fixedMint) {
+      if (formProps.fixedMint !== formProps.initialInputMint&& formProps.fixedMint !== formProps.initialOutputMint) {
+        console.error('fixedMint is not the same as the initial input or output mint');
+      }
+    }
+  }, [formProps.fixedMint, formProps.initialInputMint, formProps.initialOutputMint]);
+
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
 
   const fromTokenInfo = useMemo(() => {

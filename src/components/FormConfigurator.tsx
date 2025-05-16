@@ -117,6 +117,9 @@ const FormConfigurator = ({
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
   const [isSwapModeOpen, setIsSwapModeOpen] = React.useState(false);
+
+  const isFixedMintIsInAndOut =
+    formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
       <div className="w-full">
@@ -226,6 +229,11 @@ const FormConfigurator = ({
           setValue('formProps.fixedMint', e.target.value);
         }}
       />
+      {formProps.fixedMint && !isFixedMintIsInAndOut && (
+        <p className="text-xs text-utility-warning-300 mt-2">
+          Fixed mint must be the same as the initial input or output mint
+        </p>
+      )}
 
       <div className="w-full border-b border-white/10 py-3" />
       {/* Exact out */}
@@ -243,12 +251,12 @@ const FormConfigurator = ({
           <button
             onClick={() => setIsSwapModeOpen((prev) => !prev)}
             type="button"
-            className="w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            className=" w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
             id="menu-button"
             aria-expanded="true"
             aria-haspopup="true"
           >
-            <div className="flex items-center justify-center space-x-2.5">
+            <div className="flex items-center justify-center space-x-2.5  h-5">
               <p>{formProps.swapMode}</p>
             </div>
 
