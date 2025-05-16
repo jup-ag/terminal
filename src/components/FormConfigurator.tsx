@@ -346,6 +346,7 @@ Guide to create Referral Account
           <input
             className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
             value={formProps.referralFee}
+            placeholder="Between 50 and 255"
             inputMode="numeric"
             onChange={(e) => {
               const regex = /^[0-9\b]+$/;
