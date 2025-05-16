@@ -211,7 +211,6 @@ const Form: React.FC<{
     }));
   };
 
-  // const hasFixedMint = useMemo(() => fixedInputMint || fixedOutputMint, [fixedInputMint, fixedOutputMint]);
   const { inputAmountDisabled, outputAmountDisabled } = useMemo(() => {
     const result = { inputAmountDisabled: true, outputAmountDisabled: true };
     if (!fixedAmount) {
