@@ -5,11 +5,12 @@ import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
-import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
+import { IFormConfigurator, INITIAL_FORM_CONFIG, WRAPPED_SOL_MINT } from 'src/constants';
 import { useRouter } from 'next/router';
 import { base64ToJson } from 'src/misc/utils';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
+import { SOL_TOKEN_INFO } from 'src/misc/constants';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -21,7 +22,7 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
     },
   },
   {
-    name: 'APE',
+    name: 'Pro',
     description: `
     APE. Just APE.
     `,
@@ -29,12 +30,8 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
       ...INITIAL_FORM_CONFIG,
       formProps: {
         ...INITIAL_FORM_CONFIG.formProps,
-        initialAmount: '8888888800000',
         fixedAmount: false,
-        initialInputMint: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263',
-        fixedInputMint: false,
-        initialOutputMint: 'AZsHEMXd36Bj1EMNXhowJajpUXzrKcK57wW4ZGXVa7yR',
-        fixedOutputMint: true,
+        fixedMint: WRAPPED_SOL_MINT.toString(),
       },
     },
   },
@@ -120,6 +117,9 @@ const FormConfigurator = ({
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
   const [isSwapModeOpen, setIsSwapModeOpen] = React.useState(false);
+
+  const isFixedMintIsInAndOut =
+    formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
       <div className="w-full">
@@ -185,32 +185,56 @@ const FormConfigurator = ({
       </div>
       <p className="text-white mt-8 text-sm font-semibold">Things you can configure</p>
 
-      {/* Fixed input */}
-      <div className="flex justify-between mt-5">
-        <div>
-          <p className="text-sm text-white/75">Fixed input mint</p>
-          <p className="text-xs text-white/50">Input mint cannot be changed</p>
-        </div>
-        <Toggle
-          className="min-w-[40px]"
-          active={!!formProps.fixedInputMint}
-          onClick={() => setValue('formProps.fixedInputMint', !formProps.fixedInputMint, { shouldDirty: true })}
-        />
-      </div>
       <div className="w-full border-b border-white/10 py-3" />
 
-      {/* Fixed output */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-white/75">Fixed output mint</p>
-          <p className="text-xs text-white/50">Output mint cannot be changed</p>
+          <p className="text-sm text-white/75">Initial input mint</p>
         </div>
-        <Toggle
-          className="min-w-[40px]"
-          active={!!formProps.fixedOutputMint}
-          onClick={() => setValue('formProps.fixedOutputMint', !formProps.fixedOutputMint, { shouldDirty: true })}
-        />
       </div>
+      <input
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        value={formProps.initialInputMint}
+        inputMode="text"
+        onChange={(e) => {
+          setValue('formProps.initialInputMint', e.target.value);
+        }}
+      />
+
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Initial output mint</p>
+        </div>
+      </div>
+      <input
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        value={formProps.initialOutputMint}
+        inputMode="text"
+        onChange={(e) => {
+          setValue('formProps.initialOutputMint', e.target.value);
+        }}
+      />
+
+      <div className="flex justify-between mt-5">
+        <div>
+          <p className="text-sm text-white/75">Fixed Mint</p>
+          <p className="text-xs text-white/50">Mint that fixed is fixed and cannot be changed</p>
+        </div>
+      </div>
+      <input
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        value={formProps.fixedMint}
+        inputMode="text"
+        onChange={(e) => {
+          setValue('formProps.fixedMint', e.target.value);
+        }}
+      />
+      {formProps.fixedMint && !isFixedMintIsInAndOut && (
+        <p className="text-xs text-utility-warning-300 mt-2">
+          Fixed mint must match either initial input or output mint
+        </p>
+      )}
+
       <div className="w-full border-b border-white/10 py-3" />
       {/* Exact out */}
       <div className="relative inline-block text-left text-white w-full mt-5">
@@ -227,12 +251,12 @@ const FormConfigurator = ({
           <button
             onClick={() => setIsSwapModeOpen((prev) => !prev)}
             type="button"
-            className="w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            className=" w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
             id="menu-button"
             aria-expanded="true"
             aria-haspopup="true"
           >
-            <div className="flex items-center justify-center space-x-2.5">
+            <div className="flex items-center justify-center space-x-2.5  h-5">
               <p>{formProps.swapMode}</p>
             </div>
 
@@ -317,7 +341,6 @@ const FormConfigurator = ({
         />
       </div>
       <div className="w-full border-b border-white/10 py-3" />
-
 
       {/* Preferred Explorer  */}
       <div className="relative inline-block text-left text-white w-full mt-5">

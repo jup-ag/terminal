@@ -124,6 +124,14 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     toValue: '',
   });
 
+  useEffect(() => {
+    if (formProps.fixedMint) {
+      if (formProps.fixedMint !== formProps.initialInputMint&& formProps.fixedMint !== formProps.initialOutputMint) {
+        console.error('fixedMint is not the same as the initial input or output mint');
+      }
+    }
+  }, [formProps.fixedMint, formProps.initialInputMint, formProps.initialOutputMint]);
+
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
 
   const fromTokenInfo = useMemo(() => {
@@ -144,8 +152,13 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
     const toUiAmount = (mint: string) => {
       const tokenInfo = mint ? getTokenInfo(mint) : undefined;
+
       if (!tokenInfo) return;
-      return String(fromLamports(JSBI.BigInt(formProps.initialAmount ?? 0), tokenInfo.decimals));
+      if (!formProps.initialAmount) {
+        return;
+      }
+      const value =new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
+      return value
     };
     setTimeout(() => {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
