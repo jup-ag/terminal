@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 import { base64ToJson, isValidSolanaAddress } from 'src/misc/utils';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
+import Link from 'next/link';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -117,11 +118,10 @@ const FormConfigurator = ({
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
   const [isSwapModeOpen, setIsSwapModeOpen] = React.useState(false);
 
-  const isValidReferralAccount = useMemo(()=>{
+  const isValidReferralAccount = useMemo(() => {
     if (!formProps.referralAccount) return false;
-    return isValidSolanaAddress(formProps.referralAccount)
-  },[formProps.referralAccount])
-
+    return isValidSolanaAddress(formProps.referralAccount);
+  }, [formProps.referralAccount]);
 
   const isFixedMintIsInAndOut =
     formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
@@ -331,9 +331,14 @@ const FormConfigurator = ({
       {/* Referral  */}
       <div className="flex justify-between flex-col gap-y-2">
         <p className="text-white text-sm font-semibold mt-5 ">Referral</p>
-        <a href="https://dev.jup.ag/docs/ultra-api/add-fees-to-ultra" target="_blank" rel="noopener noreferrer" className="text-xs text-white/40 underline hover:text-white/50">
-Guide to create Referral Account
-        </a>
+        <Link   
+        target="_blank"
+        shallow
+          href="https://dev.jup.ag/docs/ultra-api/add-fees-to-ultra"
+          className="text-xs text-white/40 underline hover:text-white/50"
+        >
+          Guide to create Referral Account
+        </Link>
 
         <div className="flex justify-between flex-col">
           <p className="text-sm text-white/75">Referral account</p>
@@ -345,7 +350,9 @@ Guide to create Referral Account
               setValue('formProps.referralAccount', e.target.value);
             }}
           />
-          {formProps.referralAccount&&!isValidReferralAccount && <p className="text-xs text-utility-warning-300 mt-2">Invalid referral account</p>}
+          {formProps.referralAccount && !isValidReferralAccount && (
+            <p className="text-xs text-utility-warning-300 mt-2">Invalid referral account</p>
+          )}
         </div>
         <div className="flex justify-between flex-col">
           <p className="text-sm text-white/75">Referral fee (bps)</p>
