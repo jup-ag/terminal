@@ -1,4 +1,4 @@
-import { useWallet, WalletSignTransactionError } from '@jup-ag/wallet-adapter';
+import { WalletSignTransactionError } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { useMutation } from '@tanstack/react-query';
 import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
@@ -65,7 +65,6 @@ export function useUltraSwapMutation() {
       const versionedTransaction = VersionedTransaction.deserialize(new Uint8Array(based64tx));
 
       const signedTransaction = await signTransaction(versionedTransaction);
-      console.log('signedTransaction', signedTransaction);
       const serializedTransaction = Buffer.from(signedTransaction.serialize()).toString('base64');
 
       setTxStatus({

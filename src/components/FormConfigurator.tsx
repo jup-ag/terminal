@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
@@ -7,10 +7,9 @@ import Tooltip from './Tooltip';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG, WRAPPED_SOL_MINT } from 'src/constants';
 import { useRouter } from 'next/router';
-import { base64ToJson } from 'src/misc/utils';
+import { base64ToJson, isValidSolanaAddress } from 'src/misc/utils';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
-import { SOL_TOKEN_INFO } from 'src/misc/constants';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -117,6 +116,12 @@ const FormConfigurator = ({
   const [active, setActive] = React.useState(0);
   const [isExplorerDropdownOpen, setIsExplorerDropdownOpen] = React.useState(false);
   const [isSwapModeOpen, setIsSwapModeOpen] = React.useState(false);
+
+  const isValidReferralAccount = useMemo(()=>{
+    if (!formProps.referralAccount) return false;
+    return isValidSolanaAddress(formProps.referralAccount)
+  },[formProps.referralAccount])
+
 
   const isFixedMintIsInAndOut =
     formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
@@ -340,6 +345,7 @@ Guide to create Referral Account
               setValue('formProps.referralAccount', e.target.value);
             }}
           />
+          {formProps.referralAccount&&!isValidReferralAccount && <p className="text-xs text-utility-warning-300 mt-2">Invalid referral account</p>}
         </div>
         <div className="flex justify-between flex-col">
           <p className="text-sm text-white/75">Referral fee (bps)</p>
