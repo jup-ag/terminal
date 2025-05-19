@@ -8,7 +8,7 @@ import { WalletButton } from './WalletComponents';
 import { useAccounts } from 'src/contexts/accounts';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { form, refresh } = useSwapContext();
+  const { form, refresh, enableWalletPassthrough } = useSwapContext();
   const { refresh: refreshAccounts } = useAccounts();
 
   const onRefresh = useCallback(() => {
@@ -36,7 +36,7 @@ const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ set
           >
             <RefreshSVG />
           </button>
-          {!window.Jupiter.enableWalletPassthrough && <WalletButton setIsWalletModalOpen={setIsWalletModalOpen} />}
+          {!enableWalletPassthrough && <WalletButton setIsWalletModalOpen={setIsWalletModalOpen} />}
         </div>
       </div>
     </div>

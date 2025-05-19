@@ -79,6 +79,7 @@ export interface ISwapContext {
   quoteError?: unknown;
   lastRefreshTimestamp: number | undefined;
   isToPairFocused: MutableRefObject<boolean>;
+  enableWalletPassthrough?: boolean;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -108,7 +109,7 @@ const INITIAL_FORM = {
 };
 
 export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
-  const { displayMode, scriptDomain, formProps: originalFormProps, children } = props;
+  const { displayMode, scriptDomain, formProps: originalFormProps, children, enableWalletPassthrough } = props;
   const { screen } = useScreenState();
   const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
@@ -126,7 +127,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
   useEffect(() => {
     if (formProps.fixedMint) {
-      if (formProps.fixedMint !== formProps.initialInputMint&& formProps.fixedMint !== formProps.initialOutputMint) {
+      if (formProps.fixedMint !== formProps.initialInputMint && formProps.fixedMint !== formProps.initialOutputMint) {
         console.error('fixedMint is not the same as the initial input or output mint');
       }
     }
@@ -157,8 +158,8 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       if (!formProps.initialAmount) {
         return;
       }
-      const value =new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
-      return value
+      const value = new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
+      return value;
     };
     setTimeout(() => {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
@@ -175,14 +176,12 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     if (!fromTokenInfo || !toTokenInfo) {
       return JSBI.BigInt(0);
     }
-    if (isToPairFocused.current  === true) {
+    if (isToPairFocused.current === true) {
       if (!debouncedForm.toValue || !hasNumericValue(debouncedForm.toValue)) {
         return JSBI.BigInt(0);
       }
-      return JSBI.BigInt(
-        new Decimal(debouncedForm.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed(),
-      );
-    }else {
+      return JSBI.BigInt(new Decimal(debouncedForm.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed());
+    } else {
       if (!debouncedForm.fromValue || !hasNumericValue(debouncedForm.fromValue)) {
         return JSBI.BigInt(0);
       }
@@ -202,16 +201,17 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     dataUpdatedAt,
     isSuccess,
     isError,
-  } = useQuoteQuery({
-    inputMint: debouncedForm.fromMint,
-    outputMint: debouncedForm.toMint,
-    amount: amount.toString(),
-    taker: walletPublicKey,
-    swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
-  }, 
-  // Stop refetching when transaction is in progress
-  !txStatus);
-
+  } = useQuoteQuery(
+    {
+      inputMint: debouncedForm.fromMint,
+      outputMint: debouncedForm.toMint,
+      amount: amount.toString(),
+      taker: walletPublicKey,
+      swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
+    },
+    // Stop refetching when transaction is in progress
+    !txStatus,
+  );
 
   const lastRefreshTimestamp = useMemo(() => {
     if (loading) {
@@ -250,8 +250,10 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       const { outAmount, inAmount } = quoteResponseMeta?.quoteResponse || {};
       if (!isToPairFocused.current) {
         newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
-      }else {
-        newValue.fromValue = inAmount ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed() : '';
+      } else {
+        newValue.fromValue = inAmount
+          ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
+          : '';
       }
       return newValue;
     });
@@ -344,6 +346,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         swapping: {
           txStatus,
         },
+        enableWalletPassthrough,
       }}
     >
       {children}
