@@ -33,8 +33,6 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
   simulateWalletPassthrough: false,
   defaultExplorer: 'Solana Explorer',
   formProps: {
-    fixedInputMint: false,
-    fixedOutputMint: false,
     fixedAmount: false,
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',

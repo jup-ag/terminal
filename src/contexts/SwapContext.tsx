@@ -1,4 +1,4 @@
-import { JupiterError, SwapResult } from '@jup-ag/react-hook';
+import { SwapResult } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
@@ -16,7 +16,7 @@ import {
   useState,
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, hasNumericValue, useDebounce } from 'src/misc/utils';
+import {  hasNumericValue, useDebounce } from 'src/misc/utils';
 import { FormProps, IInit } from 'src/types';
 import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -208,10 +208,29 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       amount: amount.toString(),
       taker: walletPublicKey,
       swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
+      referralAccount: formProps.referralAccount,
+      referralFee: formProps.referralFee,
     },
     // Stop refetching when transaction is in progress
     !txStatus,
   );
+
+  useEffect(() => {
+    if (quoteError) {
+      if (typeof quoteError === 'string') {
+        setErrors({
+          fromValue: { title: quoteError, message: '' },
+        });
+        return ;
+      }
+
+      setErrors({
+        fromValue: { title: 'Error fetching route. Try changing your input', message: '' },
+      });
+      return ;
+    }
+    setErrors({});
+  }, [quoteError]);
 
   const lastRefreshTimestamp = useMemo(() => {
     if (loading) {
