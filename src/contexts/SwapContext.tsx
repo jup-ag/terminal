@@ -79,6 +79,7 @@ export interface ISwapContext {
   quoteError?: unknown;
   lastRefreshTimestamp: number | undefined;
   isToPairFocused: MutableRefObject<boolean>;
+  enableWalletPassthrough?: boolean;
 }
 
 export const SwapContext = createContext<ISwapContext | null>(null);
@@ -108,7 +109,7 @@ const INITIAL_FORM = {
 };
 
 export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
-  const { displayMode, scriptDomain, formProps: originalFormProps, children } = props;
+  const { displayMode, scriptDomain, formProps: originalFormProps, children, enableWalletPassthrough } = props;
   const { screen } = useScreenState();
   const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
@@ -364,6 +365,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         swapping: {
           txStatus,
         },
+        enableWalletPassthrough,
       }}
     >
       {children}
