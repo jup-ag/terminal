@@ -4,6 +4,7 @@
 - pnpm build-widget
 - BUNDLE_NAME=main-$(node -e "console.log(require('./package.json').version);") && cp ./public/$BUNDLE_NAME.js ./public/main-v4.js
 - Publish by merging
+- Reminder to clear cloudflare cache
 
 ## Publishing to NPM
 - pnpm tsup
