@@ -170,10 +170,10 @@ const SwappingScreen = () => {
           <div className="mt-4 bg-v3-input-background rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
             <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
               <p className="text-xs font-semibold text-white/75">
-                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
+                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals).toFixed(fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
               </p>
               <p className="text-2xl font-semibold text-white/75">
-                {fromLamports(outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
+                {fromLamports(outputAmount, toTokenInfo.decimals).toFixed(toTokenInfo.decimals)} {toTokenInfo.symbol}
               </p>
             </div>
 
@@ -203,7 +203,6 @@ const SwappingScreen = () => {
           <JupButton
             size="lg"
             className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
-
             onClick={onSwapMore}
           >
             <span>
@@ -212,12 +211,7 @@ const SwappingScreen = () => {
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton
-              size="lg"
-              className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14"
-
-              onClick={onClose}
-            >
+            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14" onClick={onClose}>
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}

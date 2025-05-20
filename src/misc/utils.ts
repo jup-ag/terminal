@@ -171,3 +171,13 @@ export function getAssociatedTokenAddressSync(mint: PublicKey, owner: PublicKey,
   );
   return ata;
 }
+
+export function isValidSolanaAddress(address: string) {
+  try {
+    new PublicKey(address);
+    return true;
+  } catch (error) {
+    console.error('Invalid Solana address:', error);
+    return false;
+  }
+}

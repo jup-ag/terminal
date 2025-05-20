@@ -1,4 +1,4 @@
-import { JupiterError, SwapResult } from '@jup-ag/react-hook';
+import { SwapResult } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
@@ -16,7 +16,7 @@ import {
   useState,
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, hasNumericValue, useDebounce } from 'src/misc/utils';
+import {  hasNumericValue, useDebounce } from 'src/misc/utils';
 import { FormProps, IInit } from 'src/types';
 import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
@@ -126,7 +126,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
   useEffect(() => {
     if (formProps.fixedMint) {
-      if (formProps.fixedMint !== formProps.initialInputMint&& formProps.fixedMint !== formProps.initialOutputMint) {
+      if (formProps.fixedMint !== formProps.initialInputMint && formProps.fixedMint !== formProps.initialOutputMint) {
         console.error('fixedMint is not the same as the initial input or output mint');
       }
     }
@@ -157,8 +157,8 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       if (!formProps.initialAmount) {
         return;
       }
-      const value =new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
-      return value
+      const value = new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
+      return value;
     };
     setTimeout(() => {
       setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
@@ -175,14 +175,12 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     if (!fromTokenInfo || !toTokenInfo) {
       return JSBI.BigInt(0);
     }
-    if (isToPairFocused.current  === true) {
+    if (isToPairFocused.current === true) {
       if (!debouncedForm.toValue || !hasNumericValue(debouncedForm.toValue)) {
         return JSBI.BigInt(0);
       }
-      return JSBI.BigInt(
-        new Decimal(debouncedForm.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed(),
-      );
-    }else {
+      return JSBI.BigInt(new Decimal(debouncedForm.toValue).mul(Math.pow(10, toTokenInfo.decimals)).floor().toFixed());
+    } else {
       if (!debouncedForm.fromValue || !hasNumericValue(debouncedForm.fromValue)) {
         return JSBI.BigInt(0);
       }
@@ -202,16 +200,36 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     dataUpdatedAt,
     isSuccess,
     isError,
-  } = useQuoteQuery({
-    inputMint: debouncedForm.fromMint,
-    outputMint: debouncedForm.toMint,
-    amount: amount.toString(),
-    taker: walletPublicKey,
-    swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
-  }, 
-  // Stop refetching when transaction is in progress
-  !txStatus);
+  } = useQuoteQuery(
+    {
+      inputMint: debouncedForm.fromMint,
+      outputMint: debouncedForm.toMint,
+      amount: amount.toString(),
+      taker: walletPublicKey,
+      swapMode: isToPairFocused.current ? 'ExactOut' : 'ExactIn',
+      referralAccount: formProps.referralAccount,
+      referralFee: formProps.referralFee,
+    },
+    // Stop refetching when transaction is in progress
+    !txStatus,
+  );
 
+  useEffect(() => {
+    if (quoteError) {
+      if (typeof quoteError === 'string') {
+        setErrors({
+          fromValue: { title: quoteError, message: '' },
+        });
+        return ;
+      }
+
+      setErrors({
+        fromValue: { title: 'Error fetching route. Try changing your input', message: '' },
+      });
+      return ;
+    }
+    setErrors({});
+  }, [quoteError]);
 
   const lastRefreshTimestamp = useMemo(() => {
     if (loading) {
@@ -250,8 +268,10 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       const { outAmount, inAmount } = quoteResponseMeta?.quoteResponse || {};
       if (!isToPairFocused.current) {
         newValue.toValue = outAmount ? new Decimal(outAmount.toString()).div(10 ** toTokenInfo.decimals).toFixed() : '';
-      }else {
-        newValue.fromValue = inAmount ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed() : '';
+      } else {
+        newValue.fromValue = inAmount
+          ? new Decimal(inAmount.toString()).div(10 ** fromTokenInfo.decimals).toFixed()
+          : '';
       }
       return newValue;
     });

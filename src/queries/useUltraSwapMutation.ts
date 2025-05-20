@@ -1,4 +1,4 @@
-import { useWallet } from '@jup-ag/wallet-adapter';
+import { WalletSignTransactionError } from '@jup-ag/wallet-adapter';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { useMutation } from '@tanstack/react-query';
 import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
@@ -100,6 +100,16 @@ export function useUltraSwapMutation() {
     },
     onError: async (error, variables) => {
       const { setTxStatus, setLastSwapResult, quoteResponseMeta } = variables;
+      if (error instanceof WalletSignTransactionError) {
+        const message = error.message || error.error || 'Transaction cancelled';
+        setLastSwapResult({
+          swapResult: {
+            error: new TransactionError(message),
+          },
+          quoteReponse: quoteResponseMeta,
+        });
+        return;
+      }
 
       if (error instanceof Error) {
         setLastSwapResult({
@@ -108,6 +118,7 @@ export function useUltraSwapMutation() {
           },
           quoteReponse: quoteResponseMeta,
         });
+        return;
       }
 
       if ('json' in (error as any)) {
