@@ -211,7 +211,7 @@ const SwappingScreen = () => {
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14" onClick={onClose}>
+            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14 !text-white/75 bg-v2-background-dark" onClick={onClose}>
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}
