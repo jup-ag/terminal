@@ -19,21 +19,20 @@ const WalletScreen = () => {
       setScreen('Initial');
     }
   };
-
   return (
     <div className="text-white p-2">
       <div className="flex justify-between items-center mb-2 h-[28px] ">
         <h1 className="text-sm font-bold">Available Wallets</h1>
-        <button onClick={() => setScreen('Initial')} className="text-gray-400 hover:text-white transition-colors bg-gray-800 rounded-full p-1">
+        <button onClick={() => setScreen('Initial')} className="text-gray-400 hover:text-white transition-colors bg-[#1A2633]rounded-full p-1">
             <CloseIcon  width={15} height={15}/>
         </button>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-2">
         {wallets?.map((wallet) => (
           <button
             key={wallet.adapter.name}
             onClick={(e) => handleConnect(e, wallet)}
-            className={`w-full text-left bg-gray-800 p-4 rounded-lg transition-colors ${'hover:bg-gray-700 cursor-pointer'}`}
+            className={`w-full text-left bg-[#1A2633] p-4 rounded-lg transition-colors ${'hover:bg-[#1A2633]/80 cursor-pointer'}`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
