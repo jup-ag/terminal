@@ -1,11 +1,4 @@
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=zh">中文</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=es">Español</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=pt">Português</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=fr">français</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=de">Deutsch</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=ko">한국어</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=ru">Русский</a> | 
-<a href="https://www.readme-i18n.com/jup-ag/terminal?lang=ja">日本語</a>
+<a href="https://www.readme-i18n.com/jup-ag/terminal">🌍 Available Translations</a>
 ---
 
 # Jupiter Terminal
