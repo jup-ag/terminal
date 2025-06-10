@@ -15,6 +15,7 @@ import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
+import WalletScreen from './screens/WalletScreen';
 
 const Content = () => {
   const { screen } = useScreenState();
@@ -32,6 +33,7 @@ const Content = () => {
 
       {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
       {screen === 'Swapping' ? <SwappingScreen /> : null}
+      {screen === 'Wallet' ? <WalletScreen /> : null}
     </div>
   );
 };

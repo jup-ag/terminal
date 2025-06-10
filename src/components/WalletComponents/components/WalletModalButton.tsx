@@ -1,16 +1,17 @@
 import React, { FC, MouseEvent, useCallback } from 'react';
+import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
 export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { connecting } = useWalletPassThrough();
-
+  const { setScreen } = useScreenState();
   const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
     if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
       window.Jupiter.onRequestConnectWallet();
     } else { 
-      setIsWalletModalOpen(true);
+      setScreen('Wallet');
     }
-  }, [setIsWalletModalOpen]);
+  }, [setScreen]);
 
   return (
     <button
