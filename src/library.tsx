@@ -98,9 +98,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return (
-    <RenderJupiter {...props} />   
-  );
+  return <RenderJupiter {...props} />;
 };
 
 const EmptyJSX = () => <></>;
@@ -191,8 +189,15 @@ const RenderWidgetShell = (props: IInit) => {
     };
   }, [props.widgetStyle?.position, props.widgetStyle?.size]);
 
+  const offsetStyle: CSSProperties = {
+    ...(props.widgetStyle?.offset?.top !== undefined && { marginTop: props.widgetStyle.offset.top }),
+    ...(props.widgetStyle?.offset?.right !== undefined && { marginRight: props.widgetStyle.offset.right }),
+    ...(props.widgetStyle?.offset?.bottom !== undefined && { marginBottom: props.widgetStyle.offset.bottom }),
+    ...(props.widgetStyle?.offset?.left !== undefined && { marginLeft: props.widgetStyle.offset.left }),
+  };
+
   return (
-    <div className={`fixed ${classes.containerClassName}`}>
+    <div style={offsetStyle} className={`fixed ${classes.containerClassName}`}>
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
