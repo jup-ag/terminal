@@ -1,16 +1,16 @@
-#jupiter-terminal *,
-#jupiter-terminal ::before,
-#jupiter-terminal ::after {
+ *,
+ ::before,
+ ::after {
   box-sizing: border-box; /* 1 */
   border-width: 0; /* 2 */
   border-style: solid; /* 2 */
   border-color: theme('borderColor.DEFAULT', currentColor); /* 2 */
 }
-#jupiter-terminal ::before,
-#jupiter-terminal ::after {
+ ::before,
+ ::after {
   --tw-content: '';
 }
-#jupiter-terminal html {
+ html {
   line-height: 1.5; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
   -moz-tab-size: 4; /* 3 */
@@ -18,68 +18,68 @@
   font-family: theme('fontFamily.sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"); /* 4 */
   font-feature-settings: theme('fontFamily.sans[1].fontFeatureSettings', normal); /* 5 */
 }
-#jupiter-terminal body {
+ body {
   margin: 0; /* 1 */
   line-height: inherit; /* 2 */
 }
-#jupiter-terminal hr {
+ hr {
   height: 0; /* 1 */
   color: inherit; /* 2 */
   border-top-width: 1px; /* 3 */
 }
-#jupiter-terminal abbr:where([title]) {
+ abbr:where([title]) {
   text-decoration: underline dotted;
 }
-#jupiter-terminal h1,
-#jupiter-terminal h2,
-#jupiter-terminal h3,
-#jupiter-terminal h4,
-#jupiter-terminal h5,
-#jupiter-terminal h6 {
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6 {
   font-size: inherit;
   font-weight: inherit;
 }
-#jupiter-terminal a {
+ a {
   color: inherit;
   text-decoration: inherit;
 }
-#jupiter-terminal b,
-#jupiter-terminal strong {
+ b,
+ strong {
   font-weight: bolder;
 }
-#jupiter-terminal code,
-#jupiter-terminal kbd,
-#jupiter-terminal samp,
-#jupiter-terminal pre {
+ code,
+ kbd,
+ samp,
+ pre {
   font-family: theme('fontFamily.mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace); /* 1 */
   font-size: 1em; /* 2 */
 }
-#jupiter-terminal small {
+ small {
   font-size: 80%;
 }
-#jupiter-terminal sub,
-#jupiter-terminal sup {
+ sub,
+ sup {
   font-size: 75%;
   line-height: 0;
   position: relative;
   vertical-align: baseline;
 }
-#jupiter-terminal sub {
+ sub {
   bottom: -0.25em;
 }
-#jupiter-terminal sup {
+ sup {
   top: -0.5em;
 }
-#jupiter-terminal table {
+ table {
   text-indent: 0; /* 1 */
   border-color: inherit; /* 2 */
   border-collapse: collapse; /* 3 */
 }
-#jupiter-terminal button,
-#jupiter-terminal input,
-#jupiter-terminal optgroup,
-#jupiter-terminal select,
-#jupiter-terminal textarea {
+ button,
+ input,
+ optgroup,
+ select,
+ textarea {
   font-family: inherit; /* 1 */
   font-size: 100%; /* 1 */
   font-weight: inherit; /* 1 */
@@ -88,105 +88,105 @@
   margin: 0; /* 2 */
   padding: 0; /* 3 */
 }
-#jupiter-terminal button,
-#jupiter-terminal select {
+ button,
+ select {
   text-transform: none;
 }
-#jupiter-terminal button,
-#jupiter-terminal [type='button'],
-#jupiter-terminal [type='reset'],
-#jupiter-terminal [type='submit'] {
+ button,
+ [type='button'],
+ [type='reset'],
+ [type='submit'] {
   -webkit-appearance: button; /* 1 */
   background-color: transparent; /* 2 */
   background-image: none; /* 2 */
 }
-#jupiter-terminal :-moz-focusring {
+ :-moz-focusring {
   outline: auto;
 }
-#jupiter-terminal :-moz-ui-invalid {
+ :-moz-ui-invalid {
   box-shadow: none;
 }
-#jupiter-terminal progress {
+ progress {
   vertical-align: baseline;
 }
-#jupiter-terminal ::-webkit-inner-spin-button,
-#jupiter-terminal ::-webkit-outer-spin-button {
+ ::-webkit-inner-spin-button,
+ ::-webkit-outer-spin-button {
   height: auto;
 }
-#jupiter-terminal [type='search'] {
+ [type='search'] {
   -webkit-appearance: textfield; /* 1 */
   outline-offset: -2px; /* 2 */
 }
-#jupiter-terminal ::-webkit-search-decoration {
+ ::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-#jupiter-terminal ::-webkit-file-upload-button {
+ ::-webkit-file-upload-button {
   -webkit-appearance: button; /* 1 */
   font: inherit; /* 2 */
 }
-#jupiter-terminal summary {
+ summary {
   display: list-item;
 }
-#jupiter-terminal blockquote,
-#jupiter-terminal dl,
-#jupiter-terminal dd,
-#jupiter-terminal h1,
-#jupiter-terminal h2,
-#jupiter-terminal h3,
-#jupiter-terminal h4,
-#jupiter-terminal h5,
-#jupiter-terminal h6,
-#jupiter-terminal hr,
-#jupiter-terminal figure,
-#jupiter-terminal p,
-#jupiter-terminal pre {
+ blockquote,
+ dl,
+ dd,
+ h1,
+ h2,
+ h3,
+ h4,
+ h5,
+ h6,
+ hr,
+ figure,
+ p,
+ pre {
   margin: 0;
 }
-#jupiter-terminal fieldset {
+ fieldset {
   margin: 0;
   padding: 0;
 }
-#jupiter-terminal legend {
+ legend {
   padding: 0;
 }
-#jupiter-terminal ol,
-#jupiter-terminal ul,
-#jupiter-terminal menu {
+ ol,
+ ul,
+ menu {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-#jupiter-terminal textarea {
+ textarea {
   resize: vertical;
 }
-#jupiter-terminal input::placeholder,
-#jupiter-terminal textarea::placeholder {
+ input::placeholder,
+ textarea::placeholder {
   opacity: 1; /* 1 */
   color: theme('colors.gray.400', #9ca3af); /* 2 */
 }
-#jupiter-terminal button,
-#jupiter-terminal [role="button"] {
+ button,
+ [role="button"] {
   cursor: pointer;
 }
-#jupiter-terminal :disabled {
+ :disabled {
   cursor: default;
 }
-#jupiter-terminal img,
-#jupiter-terminal svg,
-#jupiter-terminal video,
-#jupiter-terminal canvas,
-#jupiter-terminal audio,
-#jupiter-terminal iframe,
-#jupiter-terminal embed,
-#jupiter-terminal object {
+ img,
+ svg,
+ video,
+ canvas,
+ audio,
+ iframe,
+ embed,
+ object {
   display: block; /* 1 */
   vertical-align: middle; /* 2 */
 }
-#jupiter-terminal img,
-#jupiter-terminal video {
+ img,
+ video {
   max-width: 100%;
   height: auto;
 }
-#jupiter-terminal [hidden] {
+ [hidden] {
   display: none;
 }

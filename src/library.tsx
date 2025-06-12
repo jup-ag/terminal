@@ -10,6 +10,7 @@ import ChevronDownIcon from './icons/ChevronDownIcon';
 import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
 import { cn } from './misc/cn';
+import { ShadowDomContainer } from './components/ShadowDomContainer';
 
 const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
@@ -58,14 +59,8 @@ async function loadJupiter() {
   }
 
   try {
-    // Load all the scripts and styles
-    await Promise.all([
-      loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript'),
-      loadRemote('jupiter-load-styles-tailwind', `${scriptDomain}/${bundleName}-Tailwind.css`, 'stylesheet'),
-      loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
-    ]);
-    // The sequence matters! the last imported Jupiter.css takes precendent
-    loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet');
+    // Load all the scripts
+    await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`);
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
@@ -117,9 +112,9 @@ const RenderShell = (props: IInit) => {
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50  z-10';
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
-      return 'flex items-center justify-center w-full h-full';
+      return 'flex items-center justify-center w-full h-full  z-10';
     }
   }, [displayMode]);
 
@@ -144,11 +139,6 @@ const RenderShell = (props: IInit) => {
   return (
     <div className={displayClassName}>
       {/* eslint-disable @next/next/no-page-custom-font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap"
-        rel="stylesheet"
-      ></link>
-
       <div style={{ ...defaultStyles, ...containerStyles }} className={contentClassName}>
         <RenderLoadableJupiter {...props} />
       </div>
@@ -199,8 +189,15 @@ const RenderWidgetShell = (props: IInit) => {
     };
   }, [props.widgetStyle?.position, props.widgetStyle?.size]);
 
+  const offsetStyle: CSSProperties = {
+    ...(props.widgetStyle?.offset?.top !== undefined && { marginTop: props.widgetStyle.offset.top }),
+    ...(props.widgetStyle?.offset?.right !== undefined && { marginRight: props.widgetStyle.offset.right }),
+    ...(props.widgetStyle?.offset?.bottom !== undefined && { marginBottom: props.widgetStyle.offset.bottom }),
+    ...(props.widgetStyle?.offset?.left !== undefined && { marginLeft: props.widgetStyle.offset.left }),
+  };
+
   return (
-    <div className={`fixed ${classes.containerClassName}`}>
+    <div style={offsetStyle} className={`fixed ${classes.containerClassName}`}>
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
@@ -302,9 +299,15 @@ async function init(passedProps: IInit) {
   } else {
     element = <RenderShell {...props} />;
   }
+  const stylesheetUrls = [
+    `${scriptDomain}/${bundleName}-Tailwind.css`,
+    `${scriptDomain}/scoped-preflight.css`,
+    `${scriptDomain}/${bundleName}-Jupiter.css`,
+    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
+  ];
 
   const root = createRoot(targetDiv);
-  root.render(element);
+  root.render(<ShadowDomContainer stylesheetUrls={stylesheetUrls}>{element}</ShadowDomContainer>);
   window.Jupiter.root = root;
   window.Jupiter._instance = element;
 
