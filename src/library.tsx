@@ -142,16 +142,20 @@ const RenderShell = (props: IInit) => {
       window.Jupiter.close();
     }
   };
-  const stylesheetUrls = useMemo(() => [
-    `${scriptDomain}/${bundleName}-Tailwind.css`,
-    `${scriptDomain}/scoped-preflight.css`,
-    `${scriptDomain}/${bundleName}-Jupiter.css`,
-    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap'
-  ], []);
+  const stylesheetUrls = useMemo(
+    () => [
+      `${scriptDomain}/${bundleName}-Tailwind.css`,
+      `${scriptDomain}/scoped-preflight.css`,
+      `${scriptDomain}/${bundleName}-Jupiter.css`,
+      'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
+    ],
+    [],
+  );
   console.log({
-    stylesheetUrls
-  })
-  const googleFontHref = "https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap";
+    stylesheetUrls,
+  });
+  const googleFontHref =
+    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap';
 
   return (
     <div className={displayClassName}>
@@ -162,8 +166,7 @@ const RenderShell = (props: IInit) => {
       ></link> */}
 
       <div style={{ ...defaultStyles, ...containerStyles }} className={contentClassName}>
-        {/* <RenderLoadableJupiter {...props} /> */}
-        <ShadowDomContainer stylesheetUrls={stylesheetUrls} fontHref={googleFontHref}>  
+        <ShadowDomContainer stylesheetUrls={stylesheetUrls} fontHref={googleFontHref}>
           <RenderLoadableJupiter {...props} />
         </ShadowDomContainer>
       </div>

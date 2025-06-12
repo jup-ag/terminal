@@ -37,7 +37,7 @@ const SwapInfo = type({
 
 const RoutePlanStep = type({
   swapInfo: SwapInfo,
-  percent: integer(),
+  percent: number(),
 });
 const RoutePlanWithMetadata = array(RoutePlanStep);
 
