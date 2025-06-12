@@ -89,15 +89,7 @@ const RenderLoadableJupiter = (props: IInit) => {
       clearInterval(intervalId);
     };
   }, [loaded]);
-  const stylesheetUrls = useMemo(
-    () => [
-      `${scriptDomain}/${bundleName}-Tailwind.css`,
-      `${scriptDomain}/scoped-preflight.css`,
-      `${scriptDomain}/${bundleName}-Jupiter.css`,
-      'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
-    ],
-    [],
-  );
+
   const RenderJupiter: (props: any) => JSX.Element = useMemo(() => {
     if (loaded) {
       return (window as any).JupiterRenderer.RenderJupiter;
@@ -107,9 +99,8 @@ const RenderLoadableJupiter = (props: IInit) => {
   }, [loaded]);
 
   return (
-    <ShadowDomContainer stylesheetUrls={stylesheetUrls}>
-      <RenderJupiter {...props} />
-    </ShadowDomContainer>
+    <RenderJupiter {...props} />
+    // </ShadowDomContainer>
   );
 };
 
@@ -304,9 +295,15 @@ async function init(passedProps: IInit) {
   } else {
     element = <RenderShell {...props} />;
   }
+  const stylesheetUrls = [
+    `${scriptDomain}/${bundleName}-Tailwind.css`,
+    `${scriptDomain}/scoped-preflight.css`,
+    `${scriptDomain}/${bundleName}-Jupiter.css`,
+    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
+  ];
 
   const root = createRoot(targetDiv);
-  root.render(element);
+  root.render(<ShadowDomContainer stylesheetUrls={stylesheetUrls}>{element}</ShadowDomContainer>);
   window.Jupiter.root = root;
   window.Jupiter._instance = element;
 
