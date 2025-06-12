@@ -106,9 +106,11 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <ShadowDomContainer stylesheetUrls={stylesheetUrls} >
-    <RenderJupiter {...props} />
-  </ShadowDomContainer>;
+  return (
+    <ShadowDomContainer stylesheetUrls={stylesheetUrls}>
+      <RenderJupiter {...props} />
+    </ShadowDomContainer>
+  );
 };
 
 const EmptyJSX = () => <></>;
@@ -149,15 +151,8 @@ const RenderShell = (props: IInit) => {
   return (
     <div className={displayClassName}>
       {/* eslint-disable @next/next/no-page-custom-font */}
-      {/* <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap"
-        rel="stylesheet"
-      ></link> */}
-
       <div style={{ ...defaultStyles, ...containerStyles }} className={contentClassName}>
-        {/* <ShadowDomContainer stylesheetUrls={stylesheetUrls} fontHref={googleFontHref}> */}
-          <RenderLoadableJupiter {...props} />
-        {/* </ShadowDomContainer> */}
+        <RenderLoadableJupiter {...props} />
       </div>
 
       {!displayMode || displayMode === 'modal' ? (
