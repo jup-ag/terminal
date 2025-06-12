@@ -114,9 +114,9 @@ const RenderShell = (props: IInit) => {
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50  z-10';
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
-      return 'flex items-center justify-center w-full h-full';
+      return 'flex items-center justify-center w-full h-full  z-10';
     }
   }, [displayMode]);
 
