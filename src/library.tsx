@@ -99,8 +99,7 @@ const RenderLoadableJupiter = (props: IInit) => {
   }, [loaded]);
 
   return (
-    <RenderJupiter {...props} />
-    // </ShadowDomContainer>
+    <RenderJupiter {...props} />   
   );
 };
 
