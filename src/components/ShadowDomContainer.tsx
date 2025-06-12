@@ -58,7 +58,7 @@ export const ShadowDomContainer: React.FC<Props> = ({ children, stylesheetUrls }
   const portalTarget = shadowRoot?.getElementById('portal-container');
 
   return (
-    <div ref={hostRef} style={{ width: '100%', height: '100%' }}>
+    <div ref={hostRef} >
       {portalTarget && stylesLoaded ? createPortal(children, portalTarget) : null}
     </div>
   );
