@@ -59,15 +59,8 @@ async function loadJupiter() {
   }
 
   try {
-    // Load all the scripts and styles
-    await Promise.all([
-      loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript'),
-      loadRemote('jupiter-load-styles-tailwind', `${scriptDomain}/${bundleName}-Tailwind.css`, 'stylesheet'),
-      // loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
-    ]);
-    // // The sequence matters! the last imported Jupiter.css takes precendent
-    // loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet');
-    // await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
+    // Load all the scripts
+    await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`);
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
@@ -96,7 +89,15 @@ const RenderLoadableJupiter = (props: IInit) => {
       clearInterval(intervalId);
     };
   }, [loaded]);
-
+  const stylesheetUrls = useMemo(
+    () => [
+      `${scriptDomain}/${bundleName}-Tailwind.css`,
+      `${scriptDomain}/scoped-preflight.css`,
+      `${scriptDomain}/${bundleName}-Jupiter.css`,
+      'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
+    ],
+    [],
+  );
   const RenderJupiter: (props: any) => JSX.Element = useMemo(() => {
     if (loaded) {
       return (window as any).JupiterRenderer.RenderJupiter;
@@ -105,7 +106,9 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} />;
+  return <ShadowDomContainer stylesheetUrls={stylesheetUrls} >
+    <RenderJupiter {...props} />
+  </ShadowDomContainer>;
 };
 
 const EmptyJSX = () => <></>;
@@ -142,20 +145,6 @@ const RenderShell = (props: IInit) => {
       window.Jupiter.close();
     }
   };
-  const stylesheetUrls = useMemo(
-    () => [
-      `${scriptDomain}/${bundleName}-Tailwind.css`,
-      `${scriptDomain}/scoped-preflight.css`,
-      `${scriptDomain}/${bundleName}-Jupiter.css`,
-      'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
-    ],
-    [],
-  );
-  console.log({
-    stylesheetUrls,
-  });
-  const googleFontHref =
-    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap';
 
   return (
     <div className={displayClassName}>
@@ -166,9 +155,9 @@ const RenderShell = (props: IInit) => {
       ></link> */}
 
       <div style={{ ...defaultStyles, ...containerStyles }} className={contentClassName}>
-        <ShadowDomContainer stylesheetUrls={stylesheetUrls} fontHref={googleFontHref}>
+        {/* <ShadowDomContainer stylesheetUrls={stylesheetUrls} fontHref={googleFontHref}> */}
           <RenderLoadableJupiter {...props} />
-        </ShadowDomContainer>
+        {/* </ShadowDomContainer> */}
       </div>
 
       {!displayMode || displayMode === 'modal' ? (

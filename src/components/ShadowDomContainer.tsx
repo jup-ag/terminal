@@ -1,16 +1,12 @@
-// src/components/ShadowDomContainer.tsx
-
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 interface Props {
   children: React.ReactNode;
   stylesheetUrls: string[];
-  // Include the Google Font link to be injected into the shadow root
-  fontHref: string;
 }
 
-export const ShadowDomContainer: React.FC<Props> = ({ children, stylesheetUrls, fontHref }) => {
+export const ShadowDomContainer: React.FC<Props> = ({ children, stylesheetUrls }) => {
   const hostRef = useRef<HTMLDivElement>(null);
   const [shadowRoot, setShadowRoot] = useState<ShadowRoot | null>(null);
   const [stylesLoaded, setStylesLoaded] = useState(false);
@@ -57,7 +53,7 @@ export const ShadowDomContainer: React.FC<Props> = ({ children, stylesheetUrls, 
 
       setShadowRoot(newShadowRoot);
     }
-  }, [hostRef, shadowRoot, stylesheetUrls, fontHref]);
+  }, [hostRef, shadowRoot, stylesheetUrls]);
 
   const portalTarget = shadowRoot?.getElementById('portal-container');
 
