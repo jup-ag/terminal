@@ -10,7 +10,6 @@ import JupButton from './JupButton';
 
 import TokenIcon from './TokenIcon';
 
-import { UnifiedWalletButton } from '@jup-ag/wallet-adapter';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
@@ -27,6 +26,7 @@ import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';
 import { TokenInfo } from '@solana/spl-token-registry';
+import { useScreenState } from 'src/contexts/ScreenProvider';
 
 const FormInputContainer: React.FC<{
   tokenInfo?: TokenInfo;
@@ -121,7 +121,7 @@ const Form: React.FC<{
     onSubmit: onSubmitUltra,
   } = useSwapContext();
   const [hasExpired, timeDiff] = useTimeDiff();
-
+  const { setScreen } = useScreenState();
   useEffect(() => {
     if (hasExpired) {
       refresh();
@@ -248,10 +248,10 @@ const Form: React.FC<{
       if (window.Jupiter.enableWalletPassthrough && window.Jupiter.onRequestConnectWallet) {
         window.Jupiter.onRequestConnectWallet();
       } else {
-        setIsWalletModalOpen(true);
+        setScreen('Wallet');
       }
     },
-    [setIsWalletModalOpen],
+    [setScreen],
   );
 
   const shouldButtonDisabled = useMemo(() => {
@@ -346,14 +346,9 @@ const Form: React.FC<{
 
       <div className="w-full px-2">
         {!walletPublicKey ? (
-          <UnifiedWalletButton
-            buttonClassName="!bg-transparent"
-            overrideContent={
-              <JupButton size="lg" className="w-full mt-4 bg-v2-primary !text-uiv2-text/75" onClick={handleClick}>
-                Connect Wallet
-              </JupButton>
-            }
-          />
+          <JupButton size="lg" className="w-full mt-4 bg-v2-primary !text-uiv2-text/75" onClick={handleClick}>
+          Connect Wallet
+        </JupButton>
         ) : (
           <JupButton
             size="lg"
