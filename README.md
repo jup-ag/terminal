@@ -1,3 +1,6 @@
+<a href="https://www.readme-i18n.com/jup-ag/terminal">🌍 Available Translations</a>
+---
+
 # Jupiter Terminal
 
 Jupiter Terminal is an open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML.
