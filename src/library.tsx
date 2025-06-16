@@ -157,30 +157,36 @@ const RenderWidgetShell = (props: IInit) => {
 
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
+    const offsetX = props.widgetStyle?.offset?.x ?? 0;
+    const offsetY = props.widgetStyle?.offset?.y ?? 0;
 
-    let result: { containerClassName: string; contentClassName: string } | undefined = undefined;
+    let result: { containerClassName: string; contentClassName: string; style: React.CSSProperties } | undefined = undefined;
     if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
       result = {
         containerClassName: 'bottom-6 right-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
+        style: { transform: `translate(-${offsetX}px, -${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'bottom-left') {
       result = {
         containerClassName: 'bottom-6 left-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
+        style: { transform: `translate(${offsetX}px, -${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'top-left') {
       result = {
         containerClassName: 'top-6 left-6',
         contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
+        style: { transform: `translate(${offsetX}px, ${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'top-right') {
       result = {
         containerClassName: 'top-6 right-6',
         contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
+        style: { transform: `translate(-${offsetX}px, ${offsetY}px)` }
       };
     }
 
@@ -189,10 +195,10 @@ const RenderWidgetShell = (props: IInit) => {
       widgetContainerClassName: size === 'default' ? 'h-14 w-14' : 'h-10 w-10',
       widgetLogoSize: size === 'default' ? 42 : 32,
     };
-  }, [props.widgetStyle?.position, props.widgetStyle?.size]);
+  }, [props.widgetStyle?.position, props.widgetStyle?.size, props.widgetStyle?.offset]);
 
   return (
-    <div className={`fixed ${classes.containerClassName}`}>
+    <div className={`fixed ${classes.containerClassName}`} style={classes.style}>
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
@@ -220,9 +226,7 @@ const RenderWidgetShell = (props: IInit) => {
 
       <div
         id="integrated-terminal"
-        className={`absolute overflow-hidden ${
-          classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
+        className={`absolute overflow-hidden ${classes.contentClassName} flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >
