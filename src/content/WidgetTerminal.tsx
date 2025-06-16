@@ -15,6 +15,8 @@ const WidgetTerminal = (props: {
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
@@ -25,6 +27,10 @@ const WidgetTerminal = (props: {
       widgetStyle: {
         position,
         size,
+        offset: {
+          x: offsetX,
+          y: offsetY,
+        },
       },
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
@@ -41,6 +47,8 @@ const WidgetTerminal = (props: {
     setShowModal,
     simulateWalletPassthrough,
     size,
+    offsetX,
+    offsetY,
   ]);
 
   useEffect(() => {
@@ -158,6 +166,30 @@ const WidgetTerminal = (props: {
                   <div>Default</div>
                 </div>
               </JupButton>
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center mt-4">
+            <span className="text-sm font-semibold">Set Offset</span>
+            <div className="flex space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-white/50">X:</span>
+                <input
+                  type="number"
+                  value={offsetX}
+                  onChange={(e) => setOffsetX(Number(e.target.value))}
+                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-white"
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-white/50">Y:</span>
+                <input
+                  type="number"
+                  value={offsetY}
+                  onChange={(e) => setOffsetY(Number(e.target.value))}
+                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-white"
+                />
+              </div>
             </div>
           </div>
         </div>

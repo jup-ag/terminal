@@ -10,6 +10,7 @@ import ChevronDownIcon from './icons/ChevronDownIcon';
 import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
 import { cn } from './misc/cn';
+import { ShadowDomContainer } from './components/ShadowDomContainer';
 
 const containerId = 'jupiter-terminal-instance';
 const packageJson = require('../package.json');
@@ -58,14 +59,8 @@ async function loadJupiter() {
   }
 
   try {
-    // Load all the scripts and styles
-    await Promise.all([
-      loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript'),
-      loadRemote('jupiter-load-styles-tailwind', `${scriptDomain}/${bundleName}-Tailwind.css`, 'stylesheet'),
-      loadRemote('jupiter-load-styles-preflight', `${scriptDomain}/scoped-preflight.css`, 'stylesheet'),
-    ]);
-    // The sequence matters! the last imported Jupiter.css takes precendent
-    loadRemote('jupiter-load-styles-jupiter', `${scriptDomain}/${bundleName}-Jupiter.css`, 'stylesheet');
+    // Load all the scripts
+    await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
   } catch (error) {
     console.error(`Error loading Jupiter Terminal: ${error}`);
     throw new Error(`Error loading Jupiter Terminal: ${error}`);
@@ -103,7 +98,9 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return <RenderJupiter {...props} />;
+  return (
+    <RenderJupiter {...props} />   
+  );
 };
 
 const EmptyJSX = () => <></>;
@@ -117,9 +114,9 @@ const RenderShell = (props: IInit) => {
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50';
+      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50  z-10';
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
-      return 'flex items-center justify-center w-full h-full';
+      return 'flex items-center justify-center w-full h-full  z-10';
     }
   }, [displayMode]);
 
@@ -144,11 +141,6 @@ const RenderShell = (props: IInit) => {
   return (
     <div className={displayClassName}>
       {/* eslint-disable @next/next/no-page-custom-font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap"
-        rel="stylesheet"
-      ></link>
-
       <div style={{ ...defaultStyles, ...containerStyles }} className={contentClassName}>
         <RenderLoadableJupiter {...props} />
       </div>
@@ -165,30 +157,36 @@ const RenderWidgetShell = (props: IInit) => {
 
   const classes = useMemo(() => {
     const size = props.widgetStyle?.size || 'default';
+    const offsetX = props.widgetStyle?.offset?.x ?? 0;
+    const offsetY = props.widgetStyle?.offset?.y ?? 0;
 
-    let result: { containerClassName: string; contentClassName: string } | undefined = undefined;
+    let result: { containerClassName: string; contentClassName: string; style: React.CSSProperties } | undefined = undefined;
     if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
       result = {
         containerClassName: 'bottom-6 right-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
+        style: { transform: `translate(-${offsetX}px, -${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'bottom-left') {
       result = {
         containerClassName: 'bottom-6 left-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
+        style: { transform: `translate(${offsetX}px, -${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'top-left') {
       result = {
         containerClassName: 'top-6 left-6',
         contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
+        style: { transform: `translate(${offsetX}px, ${offsetY}px)` }
       };
     }
     if (props.widgetStyle?.position === 'top-right') {
       result = {
         containerClassName: 'top-6 right-6',
         contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
+        style: { transform: `translate(-${offsetX}px, ${offsetY}px)` }
       };
     }
 
@@ -197,10 +195,10 @@ const RenderWidgetShell = (props: IInit) => {
       widgetContainerClassName: size === 'default' ? 'h-14 w-14' : 'h-10 w-10',
       widgetLogoSize: size === 'default' ? 42 : 32,
     };
-  }, [props.widgetStyle?.position, props.widgetStyle?.size]);
+  }, [props.widgetStyle?.position, props.widgetStyle?.size, props.widgetStyle?.offset]);
 
   return (
-    <div className={`fixed ${classes.containerClassName}`}>
+    <div className={`fixed ${classes.containerClassName}`} style={classes.style}>
       <div
         className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
@@ -228,9 +226,7 @@ const RenderWidgetShell = (props: IInit) => {
 
       <div
         id="integrated-terminal"
-        className={`absolute overflow-hidden ${
-          classes.contentClassName
-        } flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
+        className={`absolute overflow-hidden ${classes.contentClassName} flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
       >
@@ -302,9 +298,15 @@ async function init(passedProps: IInit) {
   } else {
     element = <RenderShell {...props} />;
   }
+  const stylesheetUrls = [
+    `${scriptDomain}/${bundleName}-Tailwind.css`,
+    `${scriptDomain}/scoped-preflight.css`,
+    `${scriptDomain}/${bundleName}-Jupiter.css`,
+    'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
+  ];
 
   const root = createRoot(targetDiv);
-  root.render(element);
+  root.render(<ShadowDomContainer stylesheetUrls={stylesheetUrls}>{element}</ShadowDomContainer>);
   window.Jupiter.root = root;
   window.Jupiter._instance = element;
 

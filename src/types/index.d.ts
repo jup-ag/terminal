@@ -76,6 +76,10 @@ export interface IInit {
   widgetStyle?: {
     position?: WidgetPosition;
     size?: WidgetSize;
+    offset?: {
+      x?: number;
+      y?: number;
+    };
   };
   /** In case additional styling is needed for Terminal container */
   containerStyles?: CSSProperties;
