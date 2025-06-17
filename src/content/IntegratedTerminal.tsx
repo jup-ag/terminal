@@ -60,7 +60,7 @@ const IntegratedTerminal = (props: {
   }, [passthroughWalletContextState, props]);
 
   return (
-    <div className="min-h-[600px] h-[600px] w-full rounded-2xl text-white flex flex-col items-center p-2 lg:p-4 mb-4 overflow-hidden mt-9">
+    <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden mt-9">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
         <div className="w-full h-full rounded-xl overflow-hidden flex justify-center">
           {/* Loading state */}
@@ -72,7 +72,7 @@ const IntegratedTerminal = (props: {
 
           <div
             id="integrated-terminal"
-            className={`flex h-full w-full max-w-[384px] overflow-auto justify-center bg-black rounded-xl ${
+            className={`flex h-full overflow-auto justify-center bg-black rounded-xl ${
               !isLoaded ? 'hidden' : ''
             }`}
           />

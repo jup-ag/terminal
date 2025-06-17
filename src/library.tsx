@@ -122,11 +122,11 @@ const RenderShell = (props: IInit) => {
 
   const contentClassName = useMemo(() => {
     // Default Modal
-    if (!displayMode || displayMode === 'modal') {
+    if (!displayMode || displayMode === 'modal'||displayMode === 'integrated') {
       return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
-    } else if (displayMode === 'integrated' || displayMode === 'widget') {
+    } else if ( displayMode === 'widget') {
       return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar';
     }
   }, [containerClassName, displayMode]);
@@ -300,7 +300,7 @@ async function init(passedProps: IInit) {
   }
   const stylesheetUrls = [
     `${scriptDomain}/${bundleName}-Tailwind.css`,
-    `${scriptDomain}/scoped-preflight.css`,
+    `${scriptDomain}/scoped-preflight-v4.css`,
     `${scriptDomain}/${bundleName}-Jupiter.css`,
     'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins&display=swap',
   ];
