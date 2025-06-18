@@ -19,7 +19,8 @@ module.exports = {
         warning: '#FAA63C',
 
         // v2 colors
-        'v2-primary': 'rgba(199, 242, 132, 1)',
+        // 'v2-primary': 'rgba(199, 242, 132, 1)',
+        'v2-primary': 'var(--primary,rgba(199, 242, 132, 1))',
         'v2-background': '#304256',
         'v2-background-dark': '#19232D',
         'v2-lily': '#E8F9FF',
