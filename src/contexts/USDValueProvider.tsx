@@ -62,7 +62,7 @@ export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => 
 
   const getPriceFromJupAPI = useCallback(async (addresses: string[]) => {
     const { data }: { data: JupPriceResponse } = await fetch(
-      `https://api.jup.ag/price/v2?ids=${addresses.join(',')}`,
+      `https://lite-api.jup.ag/price/v2?ids=${addresses.join(',')}`,
     ).then((res) => res.json());
 
     const nowTimestamp = new Date().getTime();
