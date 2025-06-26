@@ -28,7 +28,7 @@ const SwitchPairButton = ({
       <div
         onClick={onClick}
         className={cn(
-          'border-[3px] border-black fill-current text-black bg-v3-input-background dark:text-white-35  dark:hover:border-v3-primary dark:border dark:border-white-35 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer',
+          'border-[3px] border-black fill-current text-black bg-v3-input-background dark:text-white-35  dark:hover:border-primary dark:border dark:border-white-35 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer',
           className,
           {
             'opacity-50 cursor-not-allowed': disabled,

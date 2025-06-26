@@ -202,7 +202,7 @@ const SwappingScreen = () => {
         <div className="mt-auto px-5 pb-4 flex space-x-2">
           <JupButton
             size="lg"
-            className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
+            className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-primary"
             onClick={onSwapMore}
           >
             <span>
@@ -211,7 +211,7 @@ const SwappingScreen = () => {
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14 text-white bg-v2-background-dark" onClick={onClose}>
+            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14 text-white bg-background" onClick={onClose}>
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}
@@ -233,7 +233,7 @@ const SwappingScreen = () => {
 
             <JupButton
               size="lg"
-              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-primary"
               onClick={onGoBack}
             >
               <span>Retry</span>
@@ -253,7 +253,7 @@ const SwappingScreen = () => {
 
             <JupButton
               size="lg"
-              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-v2-primary"
+              className="w-full mt-6 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-primary"
               onClick={onGoBack}
             >
               <span>Retry</span>

@@ -1,14 +1,11 @@
-import { TransactionFeeInfo, calculateFeeForSwap } from '@jup-ag/react-hook';
+import { TransactionFeeInfo } from '@jup-ag/react-hook';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
-import { useEffect, useMemo, useState } from 'react';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import { useAccounts } from 'src/contexts/accounts';
+import {  useMemo, useState } from 'react';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
 import Deposits from './Deposits';
-import Fees from './Fees';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';

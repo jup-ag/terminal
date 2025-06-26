@@ -6,8 +6,6 @@ import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import SearchIcon from 'src/icons/SearchIcon';
 import debounce from 'lodash.debounce';
 import { useTokenContext } from 'src/contexts/TokenContextProvider';
-import { useUSDValueProvider } from 'src/contexts/USDValueProvider';
-import { checkIsUnknownToken } from 'src/misc/tokenTags';
 import FormPairRow from './FormPairRow';
 import { useSortByValue } from './useSortByValue';
 import { useMutation, useQuery } from '@tanstack/react-query';

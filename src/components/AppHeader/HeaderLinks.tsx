@@ -26,7 +26,7 @@ const HeaderLink = ({
       className={cn(
         'flex items-center font-semibold text-white/50 hover:text-white fill-current h-[60px] px-4',
         {
-          'bg-v3-bg !text-v3-primary': isActive,
+          'bg-v3-bg !text-primary': isActive,
         },
         className,
       )}

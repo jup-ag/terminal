@@ -1,4 +1,4 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useRef } from 'react';
+import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
 import { useAccounts } from '../contexts/accounts';
@@ -42,7 +42,7 @@ const FormInputContainer: React.FC<{
       className={cn(
         'border border-transparent bg-v3-input-background rounded-xl transition-all',
         'py-3 px-4 flex flex-col dark:text-white  gap-y-2',
-        'group focus-within:border-v3-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
+        'group focus-within:border-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
       )}
     >
       <div className="flex justify-between items-center text-xs text-white">
@@ -346,13 +346,13 @@ const Form: React.FC<{
 
       <div className="w-full px-2">
         {!walletPublicKey ? (
-          <JupButton size="lg" className="w-full mt-4 bg-v2-primary !text-uiv2-text/75" onClick={handleClick}>
+          <JupButton size="lg" className="w-full mt-4 bg-primary !text-uiv2-text/75" onClick={handleClick}>
           Connect Wallet
         </JupButton>
         ) : (
           <JupButton
             size="lg"
-            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 !bg-v2-primary ')}
+            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 !bg-primary ')}
             onClick={() => {
               onSubmit();
               onSubmitUltra();
