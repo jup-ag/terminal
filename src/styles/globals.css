@@ -1,6 +1,8 @@
 @tailwind components;
 @tailwind utilities;
-
+:root {
+  --primary:rgba(199, 242, 132, 1);
+}
 #jupiter-terminal * {
   box-sizing: border-box;
   font-family: Inter, sans-serif;
