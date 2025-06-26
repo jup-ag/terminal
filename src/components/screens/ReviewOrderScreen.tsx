@@ -5,7 +5,6 @@ import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import useTimeDiff from '../useTimeDiff/useTimeDiff';
 import PriceInfo from '../PriceInfo/index';
 import JupButton from '../JupButton';
-import V2SexyChameleonText from '../SexyChameleonText/V2SexyChameleonText';
 import { cn } from 'src/misc/cn';
 
 const ConfirmationScreen = () => {

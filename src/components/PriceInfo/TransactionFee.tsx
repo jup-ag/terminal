@@ -1,12 +1,9 @@
-import React, { useMemo } from 'react';
-import { TransactionFeeInfo } from '@jup-ag/react-hook';
-import Tooltip from 'src/components/Tooltip';
-import { formatNumber } from 'src/misc/utils';
-import Decimal from 'decimal.js';
+import React from 'react';
 import { cn } from 'src/misc/cn';
 import { UltraIcon } from 'src/icons/UltraIcon';
 
 const TransactionFee = ({ gasFee, gasless }: { gasFee: number | undefined; gasless: boolean }) => {
+  if (!gasFee) return null;
   return (
     <div className="flex items-center justify-between text-xs">
       <div className="flex w-[50%] text-white/50">
@@ -22,7 +19,6 @@ const TransactionFee = ({ gasFee, gasless }: { gasFee: number | undefined; gasle
         <div
           className={cn('text-white', {
             'line-through': gasless,
-            hidden: !gasFee,
           })}
         >
           {gasFee} SOL

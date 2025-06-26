@@ -1,5 +1,4 @@
 import { TokenInfo } from '@solana/spl-token-registry';
-// import { TokenInfoTagsStructType } from 'src/types/staticProps';
 
 const BASE_URL = 'https://fe-api.jup.ag/api/v1/tokens';
 

@@ -7,7 +7,6 @@ import Form from '../../components/Form';
 import FormPairSelector from '../../components/FormPairSelector';
 import { useTokenContext } from '../../contexts/TokenContextProvider';
 import { useAccounts } from '../../contexts/accounts';
-import UnknownTokenModal from '../UnknownTokenModal/UnknownTokenModal';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import Decimal from 'decimal.js';
 import { cn } from 'src/misc/cn';
@@ -59,17 +58,10 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   }, [form, balance, quoteResponseMeta, loading, setErrors, getTokenInfo]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
-  const [showUnknownToken, setShowUnknownToken] = useState<TokenInfo | null>(null);
-
+  
   const onSelectMint = useCallback(
-    async (tokenInfo: TokenInfo, approved: boolean = false) => {
+    async (tokenInfo: TokenInfo) => {
       await requestTokenInfo([tokenInfo.address]);
-      const isUnknown = tokenInfo.tags?.length === 0;
-      if (isUnknown && approved === false) {
-        setShowUnknownToken(tokenInfo);
-        return;
-      }
-
       if (selectPairSelector === 'fromMint') {
         setForm((prev) => ({
           ...prev,
@@ -131,19 +123,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
             onSubmit={onSelectMint}
             tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
-          />
-        </div>
-      ) : null}
-
-      {showUnknownToken ? (
-        <div className="absolute top-0 h-full w-full flex justify-center items-center bg-black/50 rounded-lg overflow-hidden">
-          <UnknownTokenModal
-            tokensInfo={[showUnknownToken]}
-            onClickAccept={() => {
-              onSelectMint(showUnknownToken, true);
-              setShowUnknownToken(null);
-            }}
-            onClickReject={() => setShowUnknownToken(null)}
           />
         </div>
       ) : null}
