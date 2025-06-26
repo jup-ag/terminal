@@ -31,7 +31,7 @@ const ModalTerminal = (props: {
 
   return (
     <div
-      className="p-4 hover:bg-white/10 rounded-xl cursor-pointer flex h-full w-full flex-col items-center justify-center text-white"
+      className="p-4 hover:bg-white/10 rounded-xl cursor-pointer flex h-full w-full flex-col items-center justify-center text-primary-text"
       onClick={launchTerminal}
     >
       <WalletDisconnectedGraphic />

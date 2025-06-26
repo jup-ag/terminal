@@ -78,7 +78,7 @@ const Index = ({
   return (
     <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl p-3', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
-        <div className="text-white/50">{<span>Rate</span>}</div>
+        <div className="text-primary-text/50">{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) &&
         JSBI.greaterThan(rateParams.outAmount, JSBI.BigInt(0)) ? (
           <ExchangeRate
@@ -89,22 +89,22 @@ const Index = ({
             reversible={true}
           />
         ) : (
-          <span className="text-white/50">{'-'}</span>
+          <span className="text-primary-text/50">{'-'}</span>
         )}
       </div>
 
       {priceImpactText && (
-        <div className="flex items-center justify-between text-xs text-white/50">
+        <div className="flex items-center justify-between text-xs text-primary-text/50">
           <div>
             <span>Price Impact</span>
           </div>
-          <div className="text-white">{priceImpactText}</div>
+          <div className="text-primary-text">{priceImpactText}</div>
         </div>
       )}
 
       {router && (
         <div className="flex items-center justify-between text-xs">
-          <div className="text-white/50">
+          <div className="text-primary-text/50">
             <span>Router</span>
           </div>
 
@@ -113,17 +113,17 @@ const Index = ({
             {routerInfo && (
               <>
                 <img src={routerInfo.icon} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
-                <div className="text-white">{routerInfo.name}</div>
+                <div className="text-primary-text">{routerInfo.name}</div>
               </>
             )}
           </div>
         </div>
       )}
       <div className="flex items-center justify-between text-xs">
-        <div className="text-white/50">
+        <div className="text-primary-text/50">
           <span>Fee</span>
         </div>
-        <div className="text-white">{fee}%</div>
+        <div className="text-primary-text">{fee}%</div>
       </div>
       <TransactionFee gasFee={gasFee} gasless={quoteResponse?.quoteResponse.gasless} />
       {showFullDetails ? <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} /> : null}

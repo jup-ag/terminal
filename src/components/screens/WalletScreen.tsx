@@ -29,18 +29,18 @@ const WalletScreen = () => {
   }, [numberOfWallets]);
 
   return (
-    <div className="text-white p-2">
+    <div className="text-primary-text p-2">
       <div className="flex justify-between items-center mb-2 h-[28px] ">
         <h1 className="text-sm font-bold">Available Wallets ({numberOfWallets})</h1>
         <button
           onClick={() => setScreen('Initial')}
-          className="text-gray-400 hover:text-white transition-colors bg-[#1A2633]rounded-full p-1"
+          className="text-primary-text hover:text-primary-text/50 transition-colors bg-interactive rounded-full p-1"
         >
           <CloseIcon width={15} height={15} />
         </button>
       </div>
       {!hasWallet && (
-        <div className="text-sm font-medium text-gray-400 flex items-center justify-center h-full py-4">
+        <div className="text-sm font-medium text-primary-text flex items-center justify-center h-full py-4">
           No wallet found
         </div>
       )}
@@ -49,7 +49,7 @@ const WalletScreen = () => {
           <button
             key={wallet.adapter.name}
             onClick={(e) => handleConnect(e, wallet)}
-            className={`w-full text-left bg-[#1A2633] p-4 rounded-lg transition-colors ${'hover:bg-[#1A2633]/80 cursor-pointer'}`}
+            className={`w-full text-left bg-interactive p-4 rounded-lg transition-colors ${'hover:bg-interactive/80 cursor-pointer'}`}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">

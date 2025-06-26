@@ -213,7 +213,7 @@ const RenderWidgetShell = (props: IInit) => {
       >
         {isOpen ? (
           <div
-            className={cn('text-white fill-current pt-1', {
+            className={cn('text-primary-text fill-current pt-1', {
               'rotate-180': props.widgetStyle?.position === 'top-left' || props.widgetStyle?.position === 'top-right',
             })}
           >

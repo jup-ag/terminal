@@ -60,7 +60,7 @@ const IntegratedTerminal = (props: {
   }, [passthroughWalletContextState, props]);
 
   return (
-    <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden mt-9">
+    <div className=" w-full rounded-2xl text-primary-text flex flex-col items-center  mb-4 overflow-hidden mt-9">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
         <div className="w-full h-full rounded-xl overflow-hidden flex justify-center">
           {/* Loading state */}

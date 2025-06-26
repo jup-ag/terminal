@@ -25,7 +25,7 @@ const Tooltip: React.FC<React.PropsWithChildren<TooltipProps>> = ({
           className,
           {
             'bg-white text-black': variant === 'light',
-            'bg-black text-white': variant === 'dark',
+            'bg-black text-primary-text': variant === 'dark',
             'group-hover:visible group-hover:z-50': !disabled,
           },
         )}

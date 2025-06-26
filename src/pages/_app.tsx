@@ -151,7 +151,7 @@ export default function App() {
                 <ShouldWrapWalletProvider>
                   <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                     {watchAllFields.simulateWalletPassthrough ? (
-                      <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
+                      <div className="absolute right-6 top-8 text-primary-text flex flex-col justify-center text-center">
                         <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
                       </div>
@@ -168,7 +168,7 @@ export default function App() {
                           tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">
+                        <div className="flex items-center text-md text-primary-text">
                           {tab === 'modal' ? <V2SexyChameleonText>Modal</V2SexyChameleonText> : 'Modal'}
                         </div>
 
@@ -189,7 +189,7 @@ export default function App() {
                           tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">
+                        <div className="flex items-center text-md text-primary-text">
                           {tab === 'integrated' ? <V2SexyChameleonText>Integrated</V2SexyChameleonText> : 'Integrated'}
                         </div>
                         {tab === 'integrated' ? (
@@ -209,7 +209,7 @@ export default function App() {
                           tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-white">
+                        <div className="flex items-center text-md text-primary-text">
                           {tab === 'widget' ? <V2SexyChameleonText>Widget</V2SexyChameleonText> : 'Widget'}
                         </div>
 
@@ -229,7 +229,7 @@ export default function App() {
                         : null}
                     </span>
 
-                    <div className="flex flex-grow items-center justify-center text-white/75">
+                    <div className="flex flex-grow items-center justify-center text-primary-text/75">
                       {tab === 'modal' ? (
                         <ModalTerminal
                           formProps={watchAllFields.formProps}
