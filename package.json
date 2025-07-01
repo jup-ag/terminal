@@ -1,6 +1,6 @@
 {
   "name": "@jup-ag/terminal",
-  "version": "4.4.2",
+  "version": "4.4.3",
   "private": false,
   "license": "MIT",
   "scripts": {
@@ -47,7 +47,6 @@
     "bn.js": "5.2.1",
     "clsx": "^2.1.1",
     "decimal.js": "10.4.3",
-    "jazzicon": "^1.5.0",
     "jotai": "^2.8.3",
     "jsbi": "4.3.0",
     "lodash.debounce": "^4.0.8",

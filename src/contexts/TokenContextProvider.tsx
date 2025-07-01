@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { ENV as ChainID, TokenInfo, TokenListContainer } from '@solana/spl-token-registry';
 import { useLocalStorage } from '@jup-ag/wallet-adapter';
 import { IInit } from 'src/types';

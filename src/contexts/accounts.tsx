@@ -3,9 +3,9 @@ import { AccountLayout, TOKEN_PROGRAM_ID, AccountInfo as TokenAccountInfo, u64 }
 import { AccountInfo, PublicKey } from '@solana/web3.js';
 import { useQuery } from '@tanstack/react-query';
 import BN from 'bn.js';
-import React, { PropsWithChildren, useCallback, useContext, useMemo } from 'react';
+import React, {  useContext, useMemo } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { fromLamports, getAssociatedTokenAddressSync } from 'src/misc/utils';
+import {  getAssociatedTokenAddressSync } from 'src/misc/utils';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import Decimal from 'decimal.js';
 import { getTerminalInView } from 'src/stores/jotai-terminal-in-view';

@@ -7,7 +7,7 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import { getTerminalInView, setTerminalInView } from './stores/jotai-terminal-in-view';
+import {  setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
 import { cn } from './misc/cn';
 import { ShadowDomContainer } from './components/ShadowDomContainer';

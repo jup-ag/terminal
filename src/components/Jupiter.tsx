@@ -1,15 +1,11 @@
 
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { SwapContextProvider } from 'src/contexts/SwapContext';
 import { USDValueProvider } from 'src/contexts/USDValueProvider';
-import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import { ROUTE_CACHE_DURATION } from 'src/misc/constants';
 import { IInit } from 'src/types';
 
-import { PublicKey } from '@solana/web3.js';
-import CloseIcon from 'src/icons/CloseIcon';
 import Header from '../components/Header';
 import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';

@@ -130,7 +130,7 @@ export default function App() {
                     Jupiter Terminal
                   </V2SexyChameleonText>
 
-                  <div className="px-1 py-0.5 bg-v3-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
+                  <div className="px-1 py-0.5 bg-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
                     v4
                   </div>
                 </div>
@@ -173,7 +173,7 @@ export default function App() {
                         </div>
 
                         {tab === 'modal' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}
@@ -193,7 +193,7 @@ export default function App() {
                           {tab === 'integrated' ? <V2SexyChameleonText>Integrated</V2SexyChameleonText> : 'Integrated'}
                         </div>
                         {tab === 'integrated' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}
@@ -214,7 +214,7 @@ export default function App() {
                         </div>
 
                         {tab === 'widget' ? (
-                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-v3-primary to-[#00BEF0]" />
+                          <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
                         ) : (
                           <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
                         )}

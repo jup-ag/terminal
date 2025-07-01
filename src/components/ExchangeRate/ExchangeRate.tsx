@@ -93,7 +93,7 @@ const ExchangeRate = (props: ExchangeRateProps) => {
     <div
       className={cn(
         className,
-        'flex cursor-pointer text-black-35 dark:text-white-35 align-center hover:text-light-active-state dark:hover:text-v2-primary',
+        'flex cursor-pointer text-black-35 dark:text-white-35 align-center hover:text-light-active-state dark:hover:text-primary',
       )}
       onClick={onReverse}
     >

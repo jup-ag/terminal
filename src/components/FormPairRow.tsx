@@ -2,14 +2,14 @@ import React, { CSSProperties, useEffect, useMemo, useRef } from 'react';
 import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { checkIsStrictOrVerified, checkIsToken2022, checkIsUnknownToken } from 'src/misc/tokenTags';
+import { checkIsStrictOrVerified, checkIsToken2022 } from 'src/misc/tokenTags';
 import { useAccounts } from 'src/contexts/accounts';
 import { formatNumber, hasNumericValue } from 'src/misc/utils';
 import TokenIcon from './TokenIcon';
 import TokenLink from './TokenLink';
 import CoinBalance from './Coinbalance';
-import { useLstApyFetcher } from './SuggestionTags/hooks/useLstApy';
 import CheckedBadge from './CheckedBadge';
+import { useLstApyFetcher } from 'src/queries/useLstApy';
 
 export const PAIR_ROW_HEIGHT = 72;
 
@@ -46,7 +46,7 @@ const LSTTag: React.FC<{ mintAddress: string }> = ({ mintAddress }) => {
   }, [lstApy, mintAddress]);
 
   return (
-    <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary/50 border border-v3-primary/50 font-semibold">
+    <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-primary/50 border border-primary/50 font-semibold">
       LST {apy ? `${apy}%` : ''}
     </p>
   );
@@ -157,7 +157,7 @@ const FormPairRow = (props: IPairRow) => {
               <p className="text-sm font-medium text-white truncate">{item.symbol}</p>
 
               {checkIsStrictOrVerified(item) && (
-                <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-v3-primary">
+                <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-primary">
                   <CheckedBadge width={18} height={18} />
                 </p>
               )}
