@@ -39,6 +39,21 @@ export interface FormProps {
   referralAccount?: string;
   /** Referral fee to use for the swap */
   referralFee?: number;
+  /** Custom colors for the terminal */
+  colors?: {
+    /** Primary color (accent color) */
+    primary?: string;
+    /** Background color */
+    background?: string;
+    /** Primary text color */
+    primaryText?: string;
+    /** Warning color */
+    warning?: string;
+    /** Interactive elements color */
+    interactive?: string;
+    /** Module/component background color */
+    module?: string;
+  };
 }
 
 /** Built in support for these explorers */

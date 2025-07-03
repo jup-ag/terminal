@@ -21,9 +21,11 @@ const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ss
 const CodeBlocks = ({
   formConfigurator,
   displayMode,
+  colors,
 }: {
   formConfigurator: IFormConfigurator;
   displayMode: IInit['displayMode'];
+  colors: IFormConfigurator['formProps']['colors'];
 }) => {
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
@@ -31,9 +33,13 @@ const CodeBlocks = ({
     if (displayMode === 'widget') return { displayMode: 'widget' };
   })();
 
-  // Filter out the key that's not default
+  // Filter out the key that's not default, excluding colors
   const filteredFormProps = Object.keys(formConfigurator.formProps).reduce<Partial<FormProps>>((acc, key) => {
     const itemKey = key as keyof FormProps;
+    // Skip colors property entirely
+    if (itemKey === 'colors') {
+      return acc;
+    }
     if (formConfigurator.formProps[itemKey] !== INITIAL_FORM_CONFIG.formProps[itemKey]) {
       acc[itemKey] = formConfigurator.formProps[itemKey] as any;
     }
@@ -131,6 +137,24 @@ const CodeBlocks = ({
 
   const documentSnippet = useMemo(() => [headTag, bodyTag].filter(Boolean).join('\n'), [headTag, bodyTag]);
 
+  // Generate CSS variables snippet based on user's color selections
+  const cssVariablesSnippet = useMemo(() => {
+
+    if (!colors) return '';
+
+    const cssVars = Object.entries(colors)
+      .filter(([_, value]) => value && value.trim() !== '')
+      .map(([key, value]) => `  --jupiter-terminal-${key}: ${value};`)
+      .join('\n');
+
+    if (!cssVars) return '';
+
+    return `/* CSS Variables - Generated from user color selections */
+:root {
+${cssVars}
+}`;
+  }, [colors]);
+
   const [isCopied, setIsCopied] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -161,8 +185,8 @@ const CodeBlocks = ({
   return (
     <div className="flex flex-col items-center justify-center mt-12">
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
-        <p className="text-primary-text self-start pb-2 font-semibold">Setup HTML</p>
-        <p className="text-primary-text self-start pb-2 text-xs text-primary-text/50">
+        <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
+        <p className="text-white self-start pb-2 text-xs text-white/50">
           Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
         </p>
 
@@ -174,12 +198,12 @@ const CodeBlocks = ({
       <div className="my-4" />
 
       <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
-        <p className="text-primary-text self-start pb-2 font-semibold">Code snippet</p>
+        <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
         <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
           <button
             className={cn(
-              'text-xs text-primary-text border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
+              'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
               isCopied ? 'opacity-100 cursor-wait' : '',
             )}
             onClick={copyToClipboard}
@@ -189,7 +213,7 @@ const CodeBlocks = ({
 
           <button
             className={cn(
-              'text-xs text-primary-text border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
+              'text-xs text-white border rounded-xl px-2 py-1 opacity-50 hover:opacity-100',
               isCopiedShareLink ? 'opacity-100 cursor-wait' : '',
             )}
             onClick={copyShareLink}
@@ -207,7 +231,7 @@ const CodeBlocks = ({
             target="_blank"
             rel={'noopener noreferrer'}
             href={'https://github.com/jup-ag/terminal/tree/main/src/content'}
-            className="mt-2 flex items-center justify-center space-x-1 text-sm text-primary-text/50 hover:underline"
+            className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
           >
             <p>Open Example directory</p>
             <ExternalIcon />
@@ -216,22 +240,38 @@ const CodeBlocks = ({
             target="_blank"
             rel={'noopener noreferrer'}
             href={'https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts'}
-            className="mt-2 flex items-center justify-center space-x-1 text-sm text-primary-text/50 hover:underline"
+            className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
           >
             <p>Show fully typed API</p>
             <ExternalIcon />
           </Link>
         </div>
-
+ {/* CSS Variables Code Block */}
+ {cssVariablesSnippet && (
+          <>
+            <div className="mt-10">
+              <hr className="opacity-10 pt-10" />
+              <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
+             
+              <div>
+                <SyntaxHighlighter language="css" showLineNumbers style={vs2015}>
+                  {cssVariablesSnippet}
+                </SyntaxHighlighter>
+              </div>
+            </div>
+          </>
+        )}
         <div className="mt-10">
           <hr className="opacity-10 pt-10" />
-          <p className="text-primary-text self-start pb-2 font-semibold">Alternatively, install from NPM</p>
+          <p className="text-white self-start pb-2 font-semibold">Alternatively, install from NPM</p>
           <div>
             <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
               {npmSnippet}
             </SyntaxHighlighter>
           </div>
         </div>
+
+       
       </div>
     </div>
   );

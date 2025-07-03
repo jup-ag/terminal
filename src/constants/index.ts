@@ -37,6 +37,14 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
+    colors: {
+      primary: '199, 242, 132',
+      background: '0, 0, 0',
+      primaryText: '232, 249, 255',
+      warning: '251, 191, 36',
+      interactive: '33, 42, 54',
+      module: '16, 23, 31',
+    },
   },
 });
 

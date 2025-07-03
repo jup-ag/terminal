@@ -24,7 +24,7 @@ class MyDocument extends Document {
           />
         </Head>
         {/* Default to dark mode */}
-        <body className="text-black dark:text-primary-text">
+        <body className="text-black dark:text-white">
           <Main />
           <NextScript />
         </body>

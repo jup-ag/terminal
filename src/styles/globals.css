@@ -2,7 +2,7 @@
 @tailwind utilities;
 :root {
   --jupiter-terminal-primary: 199, 242, 132;
-  --jupiter-terminal-background: 25, 35, 45;
+  --jupiter-terminal-background: 0, 0, 0;
   --jupiter-terminal-primary-text: 232, 249, 255;
   --jupiter-terminal-warning: 251, 191, 36;
   --jupiter-terminal-interactive: 33, 42, 54;

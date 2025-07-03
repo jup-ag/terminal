@@ -362,7 +362,7 @@ const Form: React.FC<{
             {loading ? (
               <span>Loading</span>
             ) : errors.fromValue ? (
-              <span className="text-sm">{errors.fromValue.title}</span>
+              <span>{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}

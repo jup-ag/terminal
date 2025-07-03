@@ -1,6 +1,5 @@
 import { UnifiedWalletButton, UnifiedWalletProvider } from '@jup-ag/wallet-adapter';
 import { DefaultSeo } from 'next-seo';
-import type { AppProps } from 'next/app';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import 'tailwindcss/tailwind.css';
@@ -10,7 +9,7 @@ import AppHeader from 'src/components/AppHeader/AppHeader';
 import Footer from 'src/components/Footer/Footer';
 
 import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 import FormConfigurator from 'src/components/FormConfigurator';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
@@ -48,6 +47,37 @@ const queryClient = new QueryClient({
   },
 });
 
+
+function applyCustomColors(colors: {
+  primary?: string;
+  background?: string;
+  primaryText?: string;
+  warning?: string;
+  interactive?: string;
+  module?: string;
+}) {
+  const root = document.documentElement;
+
+  if (colors.primary) {
+    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
+  }
+  if (colors.background) {
+    root.style.setProperty('--jupiter-terminal-background', colors.background);
+  }
+  if (colors.primaryText) {
+    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
+  }
+  if (colors.warning) {
+    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
+  }
+  if (colors.interactive) {
+    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
+  }
+  if (colors.module) {
+    root.style.setProperty('--jupiter-terminal-module', colors.module);
+  }
+}
+
 export default function App() {
   const [tab, setTab] = useState<IInit['displayMode']>('integrated');
 
@@ -61,11 +91,19 @@ export default function App() {
   }, [tab]);
 
 
-  const { watch, reset, setValue, formState } = useForm<IFormConfigurator>({
+  const { watch, reset, setValue, formState, control } = useForm<IFormConfigurator>({
     defaultValues: INITIAL_FORM_CONFIG,
   });
 
   const watchAllFields = watch();
+  const colors = useWatch({ control: control, name: 'formProps.colors' });
+
+  // Apply custom colors when they change
+  useEffect(() => {
+    if (colors) {
+      applyCustomColors(colors);
+    }
+  }, [colors]);
 
   // Solflare wallet adapter comes with Metamask Snaps supports
   const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter(), new SolflareWalletAdapter()], []);
@@ -151,7 +189,7 @@ export default function App() {
                 <ShouldWrapWalletProvider>
                   <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
                     {watchAllFields.simulateWalletPassthrough ? (
-                      <div className="absolute right-6 top-8 text-primary-text flex flex-col justify-center text-center">
+                      <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
                         <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
                       </div>
@@ -168,7 +206,7 @@ export default function App() {
                           tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-primary-text">
+                        <div className="flex items-center text-md text-white">
                           {tab === 'modal' ? <V2SexyChameleonText>Modal</V2SexyChameleonText> : 'Modal'}
                         </div>
 
@@ -189,7 +227,7 @@ export default function App() {
                           tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-primary-text">
+                        <div className="flex items-center text-md text-white">
                           {tab === 'integrated' ? <V2SexyChameleonText>Integrated</V2SexyChameleonText> : 'Integrated'}
                         </div>
                         {tab === 'integrated' ? (
@@ -209,7 +247,7 @@ export default function App() {
                           tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
                         )}
                       >
-                        <div className="flex items-center text-md text-primary-text">
+                        <div className="flex items-center text-md text-white">
                           {tab === 'widget' ? <V2SexyChameleonText>Widget</V2SexyChameleonText> : 'Widget'}
                         </div>
 
@@ -229,7 +267,7 @@ export default function App() {
                         : null}
                     </span>
 
-                    <div className="flex flex-grow items-center justify-center text-primary-text/75">
+                    <div className="flex flex-grow items-center justify-center text-white/75">
                       {tab === 'modal' ? (
                         <ModalTerminal
                           formProps={watchAllFields.formProps}
@@ -266,7 +304,7 @@ export default function App() {
           </div>
         </div>
 
-        <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
+        <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} colors={colors} />
 
         <div className="w-full mt-12">
           <Footer />

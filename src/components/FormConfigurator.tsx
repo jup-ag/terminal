@@ -4,6 +4,7 @@ import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
+import ColorConfiguration from './ColorConfiguration';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG, WRAPPED_SOL_MINT } from 'src/constants';
 import { useRouter } from 'next/router';
@@ -128,8 +129,8 @@ const FormConfigurator = ({
   return (
     <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
       <div className="w-full">
-        <div className="relative inline-block text-left text-primary-text w-full">
-          <p className="text-primary-text text-sm font-semibold">Template</p>
+        <div className="relative inline-block text-left text-white w-full">
+          <p className="text-white text-sm font-semibold">Template</p>
 
           <div className="mt-4">
             <button
@@ -145,15 +146,15 @@ const FormConfigurator = ({
 
                 <Tooltip
                   variant="dark"
-                  content={<div className="text-primary-text text-xs">{templateOptions[active].description}</div>}
+                  content={<div className="text-white text-xs">{templateOptions[active].description}</div>}
                 >
-                  <div className="flex items-center text-primary-text-35 fill-current">
+                  <div className="flex items-center text-white-35 fill-current">
                     <InfoIconSVG width={12} height={12} />
                   </div>
                 </Tooltip>
 
                 {formState?.isDirty ? (
-                  <p className="text-[10px] text-primary-text/50 rounded-xl py-1 px-2 border border-white/50 leading-none">
+                  <p className="text-[10px] text-white/50 rounded-xl py-1 px-2 border border-white/50 leading-none">
                     Custom
                   </p>
                 ) : null}
@@ -189,15 +190,15 @@ const FormConfigurator = ({
         </div>
       </div>
       <div className="w-full border-b border-white/10 py-3" />
-      <p className="text-primary-text mt-6 text-sm font-semibold">Things you can configure</p>
+      <p className="text-white mt-6 text-sm font-semibold">Things you can configure</p>
 
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Initial input mint</p>
+          <p className="text-sm text-white/75">Initial input mint</p>
         </div>
       </div>
       <input
-        className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
         value={formProps.initialInputMint}
         inputMode="text"
         onChange={(e) => {
@@ -207,11 +208,11 @@ const FormConfigurator = ({
 
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Initial output mint</p>
+          <p className="text-sm text-white/75">Initial output mint</p>
         </div>
       </div>
       <input
-        className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
         value={formProps.initialOutputMint}
         inputMode="text"
         onChange={(e) => {
@@ -221,12 +222,12 @@ const FormConfigurator = ({
 
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Fixed Mint</p>
-          <p className="text-xs text-primary-text/50">Mint that fixed is fixed and cannot be changed</p>
+          <p className="text-sm text-white/75">Fixed Mint</p>
+          <p className="text-xs text-white/50">Mint that fixed is fixed and cannot be changed</p>
         </div>
       </div>
       <input
-        className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
         value={formProps.fixedMint}
         inputMode="text"
         onChange={(e) => {
@@ -240,9 +241,9 @@ const FormConfigurator = ({
       )}
 
       {/* Exact out */}
-      <div className="relative inline-block text-left text-primary-text w-full mt-5">
-        <p className="text-primary-text/75 text-sm font-semibold">Exact output mode</p>
-        <div className="text-xs text-primary-text/30">
+      <div className="relative inline-block text-left text-white w-full mt-5">
+        <p className="text-white/75 text-sm font-semibold">Exact output mode</p>
+        <div className="text-xs text-white/30">
           {formProps.swapMode === 'ExactInOrOut' && (
             <span>User can freely switch between ExactIn or ExactOut mode.</span>
           )}
@@ -297,8 +298,8 @@ const FormConfigurator = ({
       {/* Fixed amount */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Fixed amount</p>
-          <p className="text-xs text-primary-text/50">Depending on Exact In / Exact Out, the amount cannot be changed</p>
+          <p className="text-sm text-white/75">Fixed amount</p>
+          <p className="text-xs text-white/50">Depending on Exact In / Exact Out, the amount cannot be changed</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -310,12 +311,12 @@ const FormConfigurator = ({
       {/* Initial Amount */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Initial amount (Lamport)</p>
-          <p className="text-xs text-primary-text/50">Amount to be prefilled on first load</p>
+          <p className="text-sm text-white/75">Initial amount (Lamport)</p>
+          <p className="text-xs text-white/50">Amount to be prefilled on first load</p>
         </div>
       </div>
       <input
-        className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+        className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
         value={formProps.initialAmount}
         inputMode="numeric"
         onChange={(e) => {
@@ -330,20 +331,20 @@ const FormConfigurator = ({
 
       {/* Referral  */}
       <div className="flex justify-between flex-col gap-y-2">
-        <p className="text-primary-text text-sm font-semibold mt-5 ">Referral</p>
+        <p className="text-white text-sm font-semibold mt-5 ">Referral</p>
         <Link   
         target="_blank"
         shallow
           href="https://dev.jup.ag/docs/ultra-api/add-fees-to-ultra"
-          className="text-xs text-primary-text/40 underline hover:text-primary-text/50"
+          className="text-xs text-white/40 underline hover:text-white/50"
         >
           Guide to create Referral Account
         </Link>
 
         <div className="flex justify-between flex-col">
-          <p className="text-sm text-primary-text/75">Referral account</p>
+          <p className="text-sm text-white/75">Referral account</p>
           <input
-            className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
             value={formProps.referralAccount}
             inputMode="numeric"
             onChange={(e) => {
@@ -355,9 +356,9 @@ const FormConfigurator = ({
           )}
         </div>
         <div className="flex justify-between flex-col">
-          <p className="text-sm text-primary-text/75">Referral fee (bps)</p>
+          <p className="text-sm text-white/75">Referral fee (bps)</p>
           <input
-            className="mt-2 text-primary-text w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
+            className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
             value={formProps.referralFee}
             placeholder="Between 50 and 255"
             inputMode="numeric"
@@ -375,9 +376,9 @@ const FormConfigurator = ({
       {/* Wallet passthrough */}
       <div className="flex justify-between mt-5">
         <div>
-          <p className="text-sm text-primary-text/75">Simulate wallet passthrough</p>
-          <p className="text-xs text-primary-text/50">Simulate Terminal with a fake wallet passthrough</p>
-          <p className="text-xs text-primary-text/50">(Testing available on Desktop only)</p>
+          <p className="text-sm text-white/75">Simulate wallet passthrough</p>
+          <p className="text-xs text-white/50">Simulate Terminal with a fake wallet passthrough</p>
+          <p className="text-xs text-white/50">(Testing available on Desktop only)</p>
         </div>
         <Toggle
           className="min-w-[40px]"
@@ -388,8 +389,8 @@ const FormConfigurator = ({
       <div className="w-full border-b border-white/10 py-3" />
 
       {/* Preferred Explorer  */}
-      <div className="relative inline-block text-left text-primary-text w-full mt-5">
-        <p className="text-primary-text text-sm font-semibold">Preferred Explorer</p>
+      <div className="relative inline-block text-left text-white w-full mt-5">
+        <p className="text-white text-sm font-semibold">Preferred Explorer</p>
 
         <div className="mt-4">
           <button
@@ -435,6 +436,9 @@ const FormConfigurator = ({
           ) : null}
         </div>
       </div>
+      <div className="w-full border-b border-white/10 py-3" />
+
+      <ColorConfiguration colors={formProps.colors || {}} setValue={setValue} />
     </div>
   );
 };

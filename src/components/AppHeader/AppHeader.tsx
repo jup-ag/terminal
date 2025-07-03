@@ -23,12 +23,12 @@ const AppHeader: React.FC<{}> = () => {
     <>
       <div className="flex items-center justify-between w-full bg-black/[.35]">
         <div className="flex items-center flex-1 p-4">
-          <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-primary-text">
+          <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-white">
             {openMobileMenu ? <CloseIcon /> : <MenuIcon />}
           </button>
 
           <Link href="https://jup.ag" shallow className="flex-1">
-            <h1 className="flex items-center text-lg font-semibold text-primary-text">
+            <h1 className="flex items-center text-lg font-semibold text-white">
               <JupiterLogo />
               <span className="ml-3">Jupiter</span>
             </h1>

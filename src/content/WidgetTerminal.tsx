@@ -84,7 +84,7 @@ const WidgetTerminal = (props: {
         <div>
           <div className="relative mt-8 md:mt-0">
             <div className="bg-white/10 rounded-xl flex items-center justify-center w-full md:w-[384px] h-[216px]">
-              <span className="text-xs text-primary-text/50 text-center w-[70%]">
+              <span className="text-xs text-white/50 text-center w-[70%]">
                 Click on the arrows to see how the Jupiter Widget will appear on your web browser.
                 <br />
                 Click on the logo to view the Jupiter Swap Modal.
@@ -173,21 +173,21 @@ const WidgetTerminal = (props: {
             <span className="text-sm font-semibold">Set Offset</span>
             <div className="flex space-x-4">
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-primary-text/50">X:</span>
+                <span className="text-xs text-white/50">X:</span>
                 <input
                   type="number"
                   value={offsetX}
                   onChange={(e) => setOffsetX(Number(e.target.value))}
-                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-primary-text"
+                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-white"
                 />
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-xs text-primary-text/50">Y:</span>
+                <span className="text-xs text-white/50">Y:</span>
                 <input
                   type="number"
                   value={offsetY}
                   onChange={(e) => setOffsetY(Number(e.target.value))}
-                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-primary-text"
+                  className="w-16 px-2 py-1 bg-black/30 rounded text-xs text-white"
                 />
               </div>
             </div>
