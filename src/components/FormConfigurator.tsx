@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
+import { Control, FormState, useController, useForm, UseFormReset, UseFormSetValue, useFormState, useWatch } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
@@ -39,23 +39,27 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 ];
 
 const FormConfigurator = ({
-  simulateWalletPassthrough,
-  defaultExplorer,
-  formProps,
-  // Hook form
+  // // Hook form
   reset,
   setValue,
   formState,
-}: IFormConfigurator & {
+  control
+}: {
   // Hook form
   reset: UseFormReset<IFormConfigurator>;
   setValue: UseFormSetValue<IFormConfigurator>;
   formState: FormState<IFormConfigurator>;
+  control: Control<IFormConfigurator>;
 }) => {
   const currentTemplate = useRef('');
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
+  
+  const formProps = useWatch({control, name: 'formProps'});
+  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
+  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
+  const colors = useWatch({control, name: 'colors'});
 
   const onSelect = useCallback(
     (index: number) => {
@@ -438,7 +442,7 @@ const FormConfigurator = ({
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
-      <ColorConfiguration colors={formProps.colors || {}} setValue={setValue} />
+      <ColorConfiguration colors={colors} setValue={setValue} />
     </div>
   );
 };

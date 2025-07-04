@@ -95,8 +95,10 @@ export default function App() {
     defaultValues: INITIAL_FORM_CONFIG,
   });
 
-  const watchAllFields = watch();
-  const colors = useWatch({ control: control, name: 'formProps.colors' });
+  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
+  const formProps = useWatch({control, name: 'formProps'});
+  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
+  const colors = useWatch({ control: control, name: 'colors' });
 
   // Apply custom colors when they change
   useEffect(() => {
@@ -109,7 +111,7 @@ export default function App() {
   const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter(), new SolflareWalletAdapter()], []);
 
   const ShouldWrapWalletProvider = useMemo(() => {
-    return watchAllFields.simulateWalletPassthrough
+    return simulateWalletPassthrough
       ? ({ children }: { children: ReactNode }) => (
           <UnifiedWalletProvider
             wallets={wallets}
@@ -129,7 +131,7 @@ export default function App() {
           </UnifiedWalletProvider>
         )
       : React.Fragment;
-  }, [wallets, watchAllFields.simulateWalletPassthrough]);
+  }, [wallets, simulateWalletPassthrough]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -183,12 +185,14 @@ export default function App() {
               <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
                 {/* Desktop configurator */}
                 <div className="hidden md:flex">
-                  <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                  <FormConfigurator 
+                  control={control}
+                  reset={reset} setValue={setValue} formState={formState} />
                 </div>
 
                 <ShouldWrapWalletProvider>
                   <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
-                    {watchAllFields.simulateWalletPassthrough ? (
+                    {simulateWalletPassthrough ? (
                       <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
                         <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
@@ -270,26 +274,26 @@ export default function App() {
                     <div className="flex flex-grow items-center justify-center text-white/75">
                       {tab === 'modal' ? (
                         <ModalTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
   
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
 
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                       {tab === 'widget' ? (
                         <WidgetTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
 
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                     </div>
@@ -299,12 +303,14 @@ export default function App() {
             </div>
             {/* Mobile configurator */}
             <div className="flex md:hidden">
-              <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+              <FormConfigurator 
+              control={control}
+              reset={reset} setValue={setValue} formState={formState} />
             </div>
           </div>
         </div>
 
-        <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} colors={colors} />
+        <CodeBlocks control={control} displayMode={tab}  />
 
         <div className="w-full mt-12">
           <Footer />

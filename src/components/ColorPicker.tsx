@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import {  RgbColor, RgbColorPicker } from 'react-colorful';
-import { UseFormSetValue } from 'react-hook-form';
 
 interface ColorPickerProps {
   label: string;
   colorKey: string;
   currentColor: string;
-  setValue: UseFormSetValue<any>;
+  setValue:(rgb: string) => void;
+
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({
   label,
-  colorKey,
   currentColor,
   setValue,
 }) => {
@@ -32,11 +31,11 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
   }, [isActive]);
 
   const handleColorChange = (color: RgbColor) => {
-    setValue(`formProps.colors.${colorKey}`, `${color.r}, ${color.g}, ${color.b}`);
+    setValue(`${color.r}, ${color.g}, ${color.b}`);
   };
 
   const handleRgbInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(`formProps.colors.${colorKey}`, e.target.value);
+    setValue(e.target.value);
   };
 
  

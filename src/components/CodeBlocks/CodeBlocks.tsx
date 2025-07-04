@@ -15,18 +15,23 @@ import prettier from 'prettier/standalone';
 import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from 'src/misc/cn';
+import { Control, useWatch } from 'react-hook-form';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
 const CodeBlocks = ({
-  formConfigurator,
   displayMode,
-  colors,
+  control
 }: {
-  formConfigurator: IFormConfigurator;
   displayMode: IInit['displayMode'];
-  colors: IFormConfigurator['formProps']['colors'];
+  control: Control<IFormConfigurator>;
 }) => {
+
+  const formProps = useWatch({control, name: 'formProps'});
+  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
+  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
+  const colors = useWatch({control, name: 'colors'});
+
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
     if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
@@ -34,25 +39,22 @@ const CodeBlocks = ({
   })();
 
   // Filter out the key that's not default, excluding colors
-  const filteredFormProps = Object.keys(formConfigurator.formProps).reduce<Partial<FormProps>>((acc, key) => {
+  const filteredFormProps = Object.keys(formProps).reduce<Partial<FormProps>>((acc, key) => {
     const itemKey = key as keyof FormProps;
     // Skip colors property entirely
-    if (itemKey === 'colors') {
-      return acc;
-    }
-    if (formConfigurator.formProps[itemKey] !== INITIAL_FORM_CONFIG.formProps[itemKey]) {
-      acc[itemKey] = formConfigurator.formProps[itemKey] as any;
+    if (formProps[itemKey] !== INITIAL_FORM_CONFIG.formProps[itemKey]) {
+      acc[itemKey] = formProps[itemKey] as any;
     }
     return acc;
   }, {});
 
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
-    ...(formConfigurator.defaultExplorer !== 'Solana Explorer'
-      ? { defaultExplorer: formConfigurator.defaultExplorer }
+    ...(defaultExplorer !== 'Solana Explorer'
+      ? { defaultExplorer: defaultExplorer }
       : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
-    ...(formConfigurator.simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
+    ...(simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
@@ -88,7 +90,7 @@ const CodeBlocks = ({
   const INIT_SNIPPET = `
   window.Jupiter.init(${formPropsSnippet});
   `;
-  const unformattedSnippet = [formConfigurator.simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
+  const unformattedSnippet = [simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
     '\n',
   );
 
