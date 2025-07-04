@@ -285,7 +285,7 @@ const Form: React.FC<{
                 inputMode="decimal"
                 onValueChange={onChangeFromValue}
                 placeholder={'0.00'}
-                className={cn('w-full h-[40px] bg-transparent text-primary-text text-right font-semibold text-xl', {
+                className={cn('w-full h-[40px] bg-transparent text-primary-text text-right font-semibold text-xl placeholder:text-primary-text/50', {
                   'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
                 })}
                 onKeyDown={() => {
@@ -317,9 +317,7 @@ const Form: React.FC<{
                 allowNegative={false}
                 valueIsNumericString
                 onValueChange={onChangeToValue}
-                className={cn('h-[40px] w-full bg-transparent text-primary-text text-right font-semibold text-lg', {
-                  'placeholder:text-sm placeholder:font-normal placeholder:text-primary-text/20':
-                    swapMode === SwapMode.ExactOut,
+                className={cn('h-[40px] w-full bg-transparent text-primary-text text-right font-semibold text-lg placeholder:text-primary-text/50', {
                   'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
                 })}
                 placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
