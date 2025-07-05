@@ -1,21 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {  RgbColor, RgbColorPicker } from 'react-colorful';
 
 interface ColorPickerProps {
   label: string;
   colorKey: string;
   currentColor: string;
+  isActive: boolean;
+  setIsActive: (isActive: boolean) => void;
   setValue:(rgb: string) => void;
-
 }
 
 const ColorPicker: React.FC<ColorPickerProps> = ({
   label,
   currentColor,
+  isActive,
+  setIsActive,
   setValue,
 }) => {
-  const [isActive, setIsActive] = useState(false);
-
   // Close color picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,7 +29,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isActive]);
+  }, [isActive, setIsActive]);
 
   const handleColorChange = (color: RgbColor) => {
     setValue(`${color.r}, ${color.g}, ${color.b}`);
@@ -54,7 +55,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
       <div className="flex items-center space-x-2">
         <div className="relative color-picker-container">
           <div
-            className="w-8 h-8 rounded border border-white/20 cursor-pointer"
+            className="w-8 h-8 rounded border border-neutral-500 cursor-pointer"
             style={{ backgroundColor:`rgb(${r}, ${g}, ${b})`}}
             onClick={() => setIsActive(!isActive)}
           />

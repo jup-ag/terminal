@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { UseFormSetValue } from 'react-hook-form';
 import ColorPicker from './ColorPicker';
 import { IFormConfigurator } from 'src/constants';
@@ -16,6 +16,8 @@ interface ColorConfigurationProps {
 }
 
 const ColorConfiguration: React.FC<ColorConfigurationProps> = ({ colors, setValue }) => {
+  const [activeColorPicker, setActiveColorPicker] = useState<string | null>(null);
+
   const colorConfigs = [
     {
       key: 'primary',
@@ -54,7 +56,10 @@ const ColorConfiguration: React.FC<ColorConfigurationProps> = ({ colors, setValu
           label={config.label}
           colorKey={config.key}
           currentColor={colors[config.key as keyof typeof colors] || ''}
-
+          isActive={activeColorPicker === config.key}
+          setIsActive={(isActive: boolean) => {
+            setActiveColorPicker(isActive ? config.key : null);
+          }}
           setValue={
             (rgb: string) => {
               setValue('colors', {
