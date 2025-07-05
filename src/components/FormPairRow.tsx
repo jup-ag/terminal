@@ -99,14 +99,14 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
       )}
 
       {isToken2022 && (
-        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20">
+        <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-primary-text/20">
           Token2022
         </p>
       )}
       {remainingTags?.map((tag, idx) => (
         <div
           key={idx}
-          className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-white/20"
+          className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 bg-black/10 font-semibold text-primary-text/20"
         >
           {tag}
         </div>
@@ -140,7 +140,7 @@ const FormPairRow = (props: IPairRow) => {
 
   return (
     <li
-      className={`rounded cursor-pointer px-5 my-1 list-none flex w-full items-center bg-v3-input-background hover:bg-[#1A2633]`}
+      className={`rounded cursor-pointer px-5 my-1 list-none flex w-full items-center bg-interactive hover:bg-interactive/80`}
       style={{ maxHeight: PAIR_ROW_HEIGHT - 4, height: PAIR_ROW_HEIGHT - 4, ...style }}
       onClick={onClick}
       translate="no"
@@ -154,7 +154,7 @@ const FormPairRow = (props: IPairRow) => {
         <div className="flex-1 min-w-0">
           <div className="flex flex-col gap-y-px">
             <div className="flex items-center">
-              <p className="text-sm font-medium text-white truncate">{item.symbol}</p>
+              <p className="text-sm font-medium text-primary-text truncate">{item.symbol}</p>
 
               {checkIsStrictOrVerified(item) && (
                 <p className="rounded-md text-xxs leading-none transition-all py-0.5 px-1 text-primary">
@@ -163,7 +163,7 @@ const FormPairRow = (props: IPairRow) => {
               )}
             </div>
 
-            <p className="text-xs text-gray-500 dark:text-white-35 truncate">
+            <p className="text-xs text-primary-text/50 dark:text-primary-text-35 truncate">
               {item.address === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
             </p>
 
@@ -176,7 +176,7 @@ const FormPairRow = (props: IPairRow) => {
           </div>
         </div>
 
-        <div className="text-xs text-v2-lily/50 text-right h-full flex flex-col justify-evenly">
+        <div className="text-xs text-primary-text/50 text-right h-full flex flex-col justify-evenly">
           <CoinBalance mintAddress={item.address} hideZeroBalance />
           {usdValueDisplay ? <p>{usdValueDisplay}</p> : null}
           <MultiTags {...props} />

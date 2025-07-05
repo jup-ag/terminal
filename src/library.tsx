@@ -7,7 +7,7 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import {  setTerminalInView } from './stores/jotai-terminal-in-view';
+import { setTerminalInView } from './stores/jotai-terminal-in-view';
 import React from 'react';
 import { cn } from './misc/cn';
 import { ShadowDomContainer } from './components/ShadowDomContainer';
@@ -98,9 +98,7 @@ const RenderLoadableJupiter = (props: IInit) => {
     return EmptyJSX;
   }, [loaded]);
 
-  return (
-    <RenderJupiter {...props} />   
-  );
+  return <RenderJupiter {...props} />;
 };
 
 const EmptyJSX = () => <></>;
@@ -122,12 +120,12 @@ const RenderShell = (props: IInit) => {
 
   const contentClassName = useMemo(() => {
     // Default Modal
-    if (!displayMode || displayMode === 'modal'||displayMode === 'integrated') {
-      return `flex flex-col h-screen w-screen max-h-[90vh] md:max-h-[600px] max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
+    if (!displayMode || displayMode === 'modal' || displayMode === 'integrated') {
+      return `flex flex-col h-[550px] w-screen max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
-    } else if ( displayMode === 'widget') {
-      return 'flex flex-col h-full w-full overflow-auto text-black relative webkit-scrollbar';
+    } else if (displayMode === 'widget') {
+      return 'flex flex-col  h-[550px] w-full overflow-auto text-black relative webkit-scrollbar';
     }
   }, [containerClassName, displayMode]);
 
@@ -160,33 +158,34 @@ const RenderWidgetShell = (props: IInit) => {
     const offsetX = props.widgetStyle?.offset?.x ?? 0;
     const offsetY = props.widgetStyle?.offset?.y ?? 0;
 
-    let result: { containerClassName: string; contentClassName: string; style: React.CSSProperties } | undefined = undefined;
+    let result: { containerClassName: string; contentClassName: string; style: React.CSSProperties } | undefined =
+      undefined;
     if (!props.widgetStyle?.position || props.widgetStyle?.position === 'bottom-right') {
       result = {
         containerClassName: 'bottom-6 right-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -right-3' : 'bottom-[44px] -right-4',
-        style: { transform: `translate(-${offsetX}px, -${offsetY}px)` }
+        style: { transform: `translate(-${offsetX}px, -${offsetY}px)` },
       };
     }
     if (props.widgetStyle?.position === 'bottom-left') {
       result = {
         containerClassName: 'bottom-6 left-6',
         contentClassName: size === 'default' ? 'bottom-[60px] -left-3' : 'bottom-[44px] -left-4',
-        style: { transform: `translate(${offsetX}px, -${offsetY}px)` }
+        style: { transform: `translate(${offsetX}px, -${offsetY}px)` },
       };
     }
     if (props.widgetStyle?.position === 'top-left') {
       result = {
         containerClassName: 'top-6 left-6',
         contentClassName: size === 'default' ? 'top-[60px] -left-3' : 'top-[44px] -left-4',
-        style: { transform: `translate(${offsetX}px, ${offsetY}px)` }
+        style: { transform: `translate(${offsetX}px, ${offsetY}px)` },
       };
     }
     if (props.widgetStyle?.position === 'top-right') {
       result = {
         containerClassName: 'top-6 right-6',
         contentClassName: size === 'default' ? 'top-[60px] -right-3' : 'top-[44px] -right-4',
-        style: { transform: `translate(-${offsetX}px, ${offsetY}px)` }
+        style: { transform: `translate(-${offsetX}px, ${offsetY}px)` },
       };
     }
 

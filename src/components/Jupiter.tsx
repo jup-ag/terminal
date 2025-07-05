@@ -19,7 +19,7 @@ const Content = () => {
 
   // ID is required for scoped preflight by tailwind to work
   return (
-    <div id="jupiter-terminal" className="relative h-full">
+    <div id="jupiter-terminal" className="relative h-full bg-background">
       {screen === 'Initial' ? (
         <>
           <Header setIsWalletModalOpen={setIsWalletModalOpen} />

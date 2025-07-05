@@ -11,14 +11,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        warning: '#FAA63C',
+        // warning: '#FAA63C',
 
-
-        primary: '#c7f284',
-        'background': '#19232D',
-        
-        // v2 colors
-        'v2-lily': '#E8F9FF',
+        // Theming
+        primary: 'rgba(var(--jupiter-terminal-primary, 199, 242, 132), <alpha-value>)',
+        background: 'rgba(var(--jupiter-terminal-background,232, 249, 255), <alpha-value>)',
+        'primary-text': 'rgba(var(--jupiter-terminal-primary-text,232, 249, 255),<alpha-value>)',
+        warning: 'rgba(var(--jupiter-terminal-warning,251, 191, 36),<alpha-value>)',
+        interactive: 'rgba(var(--jupiter-terminal-interactive,33, 42, 54),<alpha-value>)',
+        module: 'rgba(var(--jupiter-terminal-module,16, 23, 31),<alpha-value>)',
 
         'v3-bg': 'rgba(28, 41, 54, 1)',
 
@@ -26,7 +27,6 @@ module.exports = {
         'utility-warning-300': '#B54708',
 
         'uiv2-text': '#07090F',
-        'v3-input-background': '#10171F',
       },
       fontSize: {
         xxs: ['0.625rem', '1rem'],

@@ -6,27 +6,26 @@ export const USDT_MINT = new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8Ben
 export const JLP_MINT = new PublicKey('27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4');
 
 export const WRAPPED_SOL_MINT = new PublicKey('So11111111111111111111111111111111111111112');
-export const SOL_MINT_TOKEN_INFO = {
-  chainId: 101,
-  address: 'So11111111111111111111111111111111111111112',
-  symbol: 'SOL',
-  name: 'Wrapped SOL',
-  decimals: 9,
-  logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-  tags: [],
-  extensions: {
-    website: 'https://solana.com/',
-    serumV3Usdc: '9wFFyRfZBsuAha4YcuxcXLKwMxJR43S7fPfQLusDBzvT',
-    serumV3Usdt: 'HWHvQhFmJB3NUcu1aihKmrKegfVxBEHzwVX6yZCKEsi1',
-    coingeckoId: 'solana',
-  },
-};
+
 
 export interface IFormConfigurator {
   simulateWalletPassthrough: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
   formProps: FormProps;
+  colors: {
+    /** Primary color (accent color) */
+    primary?: string;
+    /** Background color */
+    background?: string;
+    /** Primary text color */
+    primaryText?: string;
+    /** Warning color */
+    warning?: string;
+    /** Interactive elements color */
+    interactive?: string;
+    /** Module/component background color */
+    module?: string;
+  };
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
@@ -37,21 +36,14 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
+   
+  },
+  colors: {
+    primary: '199, 242, 132',
+    background: '0, 0, 0',
+    primaryText: '232, 249, 255',
+    warning: '251, 191, 36',
+    interactive: '33, 42, 54',
+    module: '16, 23, 31',
   },
 });
-
-export const TOKEN_2022_PROGRAM_ID = new PublicKey('TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb');
-
-export const FREEZE_AUTHORITY_LINK =
-  'https://station.jup.ag/guides/jupiter-swap/how-swap-works/how-swap-works#freeze-authority';
-
-export const JUPSOL_TOKEN_INFO = {
-  address: 'jupSoLaHXQiZZTSfEWMTRRgpnyFm8f6sZdosWBjx93v',
-  chainId: 101,
-  name: 'Jupiter Staked SOL',
-  symbol: 'JupSOL',
-  decimals: 9,
-  logoURI: 'https://static.jup.ag/jupSOL/icon.png',
-  tags: ['verified', 'community', 'strict', 'lst'],
-  freeze_authority: null,
-};
