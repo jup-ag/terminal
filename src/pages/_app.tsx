@@ -91,7 +91,7 @@ export default function App() {
   }, [tab]);
 
 
-  const { watch, reset, setValue, formState, control } = useForm<IFormConfigurator>({
+  const {  reset, setValue, formState, control } = useForm<IFormConfigurator>({
     defaultValues: INITIAL_FORM_CONFIG,
   });
 
@@ -284,7 +284,6 @@ export default function App() {
                         <IntegratedTerminal
                           formProps={formProps}
                           simulateWalletPassthrough={simulateWalletPassthrough}
-
                           defaultExplorer={defaultExplorer}
                         />
                       ) : null}
