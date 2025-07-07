@@ -17,7 +17,7 @@ const TokenLink: React.FC<TokenLinkProps> = ({ tokenInfo, className }) => {
       target="_blank"
       rel="noreferrer"
       className={cn(
-        'flex items-center bg-black/25 text-white/75 px-2 py-0.5 space-x-1 rounded cursor-pointer',
+        'flex items-center bg-black/25 text-primary-text/75 px-2 py-0.5 space-x-1 rounded cursor-pointer',
         className,
       )}
       href={getTokenExplorer(tokenInfo.address)}

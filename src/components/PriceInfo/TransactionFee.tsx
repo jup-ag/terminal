@@ -6,18 +6,18 @@ const TransactionFee = ({ gasFee, gasless }: { gasFee: number | undefined; gasle
   if (!gasFee) return null;
   return (
     <div className="flex items-center justify-between text-xs">
-      <div className="flex w-[50%] text-white/50">
+      <div className="flex w-[50%] text-primary-text/50">
         <span>Network Fee</span>
       </div>
       <div className="flex items-center gap-1">
         {gasless && (
           <>
             <UltraIcon color="#FDB022" width={12} height={12} />
-            <div className="text-xs text-white">Gasless</div>
+            <div className="text-xs text-primary-text">Gasless</div>
           </>
         )}
         <div
-          className={cn('text-white', {
+          className={cn('text-primary-text', {
             'line-through': gasless,
           })}
         >

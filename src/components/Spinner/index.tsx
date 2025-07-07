@@ -15,7 +15,7 @@ const Spinner = ({
 }) => (
   <div className={`rounded-full flex items-center justify-center ${className}`} style={{ width, height }}>
     <svg
-      className="animate-spin h-5 w-5 text-black dark:text-white"
+      className="animate-spin h-5 w-5 text-black dark:text-primary-text"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

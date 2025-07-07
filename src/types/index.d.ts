@@ -39,6 +39,7 @@ export interface FormProps {
   referralAccount?: string;
   /** Referral fee to use for the swap */
   referralFee?: number;
+
 }
 
 /** Built in support for these explorers */

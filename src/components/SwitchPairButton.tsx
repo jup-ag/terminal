@@ -24,11 +24,11 @@ const SwitchPairButton = ({
   disabled?: boolean;
 }) => {
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center bg-background rounded-full">
       <div
         onClick={onClick}
         className={cn(
-          'border-[3px] border-black fill-current text-black bg-v3-input-background dark:text-white-35  dark:hover:border-primary dark:border dark:border-white-35 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer',
+          'border-[3px] border-background fill-current text-black bg-interactive hover:bg-interactive/80 dark:text-primary-text-35  dark:hover:border-primary dark:border dark:border-white-35 h-8 w-8 rounded-full flex items-center justify-center cursor-pointer',
           className,
           {
             'opacity-50 cursor-not-allowed': disabled,

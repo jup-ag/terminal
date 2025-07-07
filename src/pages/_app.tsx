@@ -1,6 +1,5 @@
 import { UnifiedWalletButton, UnifiedWalletProvider } from '@jup-ag/wallet-adapter';
 import { DefaultSeo } from 'next-seo';
-import type { AppProps } from 'next/app';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import 'tailwindcss/tailwind.css';
@@ -10,7 +9,7 @@ import AppHeader from 'src/components/AppHeader/AppHeader';
 import Footer from 'src/components/Footer/Footer';
 
 import { SolflareWalletAdapter, UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import CodeBlocks from 'src/components/CodeBlocks/CodeBlocks';
 import FormConfigurator from 'src/components/FormConfigurator';
 import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
@@ -48,6 +47,37 @@ const queryClient = new QueryClient({
   },
 });
 
+
+function applyCustomColors(colors: {
+  primary?: string;
+  background?: string;
+  primaryText?: string;
+  warning?: string;
+  interactive?: string;
+  module?: string;
+}) {
+  const root = document.documentElement;
+
+  if (colors.primary) {
+    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
+  }
+  if (colors.background) {
+    root.style.setProperty('--jupiter-terminal-background', colors.background);
+  }
+  if (colors.primaryText) {
+    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
+  }
+  if (colors.warning) {
+    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
+  }
+  if (colors.interactive) {
+    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
+  }
+  if (colors.module) {
+    root.style.setProperty('--jupiter-terminal-module', colors.module);
+  }
+}
+
 export default function App() {
   const [tab, setTab] = useState<IInit['displayMode']>('integrated');
 
@@ -61,17 +91,27 @@ export default function App() {
   }, [tab]);
 
 
-  const { watch, reset, setValue, formState } = useForm<IFormConfigurator>({
+  const {  reset, setValue, formState, control } = useForm<IFormConfigurator>({
     defaultValues: INITIAL_FORM_CONFIG,
   });
 
-  const watchAllFields = watch();
+  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
+  const formProps = useWatch({control, name: 'formProps'});
+  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
+  const colors = useWatch({ control: control, name: 'colors' });
+
+  // Apply custom colors when they change
+  useEffect(() => {
+    if (colors) {
+      applyCustomColors(colors);
+    }
+  }, [colors]);
 
   // Solflare wallet adapter comes with Metamask Snaps supports
   const wallets = useMemo(() => [new UnsafeBurnerWalletAdapter(), new SolflareWalletAdapter()], []);
 
   const ShouldWrapWalletProvider = useMemo(() => {
-    return watchAllFields.simulateWalletPassthrough
+    return simulateWalletPassthrough
       ? ({ children }: { children: ReactNode }) => (
           <UnifiedWalletProvider
             wallets={wallets}
@@ -91,7 +131,7 @@ export default function App() {
           </UnifiedWalletProvider>
         )
       : React.Fragment;
-  }, [wallets, watchAllFields.simulateWalletPassthrough]);
+  }, [wallets, simulateWalletPassthrough]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -130,7 +170,7 @@ export default function App() {
                     Jupiter Terminal
                   </V2SexyChameleonText>
 
-                  <div className="px-1 py-0.5 bg-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
+                  <div className="px-1 py-0.5 bg-[#C7F284] rounded-md ml-2.5 font-semibold flex text-xs self-start">
                     v4
                   </div>
                 </div>
@@ -145,12 +185,14 @@ export default function App() {
               <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
                 {/* Desktop configurator */}
                 <div className="hidden md:flex">
-                  <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+                  <FormConfigurator 
+                  control={control}
+                  reset={reset} setValue={setValue} formState={formState} />
                 </div>
 
                 <ShouldWrapWalletProvider>
                   <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
-                    {watchAllFields.simulateWalletPassthrough ? (
+                    {simulateWalletPassthrough ? (
                       <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
                         <div className="text-xs mb-1">Simulate dApp Wallet</div>
                         <UnifiedWalletButton />
@@ -232,26 +274,25 @@ export default function App() {
                     <div className="flex flex-grow items-center justify-center text-white/75">
                       {tab === 'modal' ? (
                         <ModalTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
   
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                       {tab === 'integrated' ? (
                         <IntegratedTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
-
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                       {tab === 'widget' ? (
                         <WidgetTerminal
-                          formProps={watchAllFields.formProps}
-                          simulateWalletPassthrough={watchAllFields.simulateWalletPassthrough}
+                          formProps={formProps}
+                          simulateWalletPassthrough={simulateWalletPassthrough}
 
-                          defaultExplorer={watchAllFields.defaultExplorer}
+                          defaultExplorer={defaultExplorer}
                         />
                       ) : null}
                     </div>
@@ -261,12 +302,14 @@ export default function App() {
             </div>
             {/* Mobile configurator */}
             <div className="flex md:hidden">
-              <FormConfigurator {...watchAllFields} reset={reset} setValue={setValue} formState={formState} />
+              <FormConfigurator 
+              control={control}
+              reset={reset} setValue={setValue} formState={formState} />
             </div>
           </div>
         </div>
 
-        <CodeBlocks formConfigurator={watchAllFields} displayMode={tab} />
+        <CodeBlocks control={control} displayMode={tab}  />
 
         <div className="w-full mt-12">
           <Footer />

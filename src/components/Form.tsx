@@ -40,16 +40,16 @@ const FormInputContainer: React.FC<{
   return (
     <div
       className={cn(
-        'border border-transparent bg-v3-input-background rounded-xl transition-all',
-        'py-3 px-4 flex flex-col dark:text-white  gap-y-2',
+        'border border-transparent bg-module rounded-xl transition-all',
+        'py-3 px-4 flex flex-col dark:text-primary-text  gap-y-2',
         'group focus-within:border-primary/50 focus-within:shadow-swap-input-dark rounded-xl',
       )}
     >
-      <div className="flex justify-between items-center text-xs text-white">
+      <div className="flex justify-between items-center text-xs text-primary-text">
         <div>{title}</div>
         {tokenInfo && (
           <div
-            className={cn('flex  space-x-1 text-xs items-center text-white/50 fill-current cursor-pointer')}
+            className={cn('flex  space-x-1 text-xs items-center text-primary-text/50 fill-current cursor-pointer')}
             onClick={(e) => {
               onBalanceClick(e);
             }}
@@ -64,8 +64,8 @@ const FormInputContainer: React.FC<{
         <div>
           <button
             type="button"
-            className={cn('py-2 px-3 rounded-lg flex items-center bg-[#1A2633] text-white', {
-              'hover:bg-white/20': !pairSelectDisabled,
+            className={cn('py-2 px-3 rounded-lg flex items-center bg-interactive text-primary-text', {
+              'hover:bg-interactive/80': !pairSelectDisabled,
             })}
             disabled={pairSelectDisabled}
             onClick={onClickSelectPair}
@@ -77,7 +77,7 @@ const FormInputContainer: React.FC<{
               <div className="truncate">{tokenInfo?.symbol}</div>
             </div>
             {pairSelectDisabled ? null : (
-              <span className="text-white/25 fill-current">
+              <span className="text-primary-text/25 fill-current">
                 <ChevronDownIcon />
               </span>
             )}
@@ -89,7 +89,7 @@ const FormInputContainer: React.FC<{
         </div>
         <div className="flex flex-col items-end justify-between w-full">
           {children}
-          <span className="text-xs text-white/50">
+          <span className="text-xs text-primary-text/50">
             {tokenInfo && <CoinBalanceUSD tokenInfo={tokenInfo} amount={value} />}
           </span>
         </div>
@@ -285,7 +285,7 @@ const Form: React.FC<{
                 inputMode="decimal"
                 onValueChange={onChangeFromValue}
                 placeholder={'0.00'}
-                className={cn('w-full h-[40px] bg-transparent text-white text-right font-semibold text-xl', {
+                className={cn('w-full h-[40px] bg-transparent text-primary-text text-right font-semibold text-xl placeholder:text-primary-text/50', {
                   'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
                 })}
                 onKeyDown={() => {
@@ -317,9 +317,7 @@ const Form: React.FC<{
                 allowNegative={false}
                 valueIsNumericString
                 onValueChange={onChangeToValue}
-                className={cn('h-[40px] w-full bg-transparent text-white text-right font-semibold text-lg', {
-                  'placeholder:text-sm placeholder:font-normal placeholder:text-v2-lily/20':
-                    swapMode === SwapMode.ExactOut,
+                className={cn('h-[40px] w-full bg-transparent text-primary-text text-right font-semibold text-lg placeholder:text-primary-text/50', {
                   'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
                 })}
                 placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
@@ -362,7 +360,7 @@ const Form: React.FC<{
             {loading ? (
               <span>Loading</span>
             ) : errors.fromValue ? (
-              <span className="text-sm">{errors.fromValue.title}</span>
+              <span>{errors.fromValue.title}</span>
             ) : (
               <span>Swap</span>
             )}

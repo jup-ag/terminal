@@ -1,6 +1,13 @@
 @tailwind components;
 @tailwind utilities;
-
+:root {
+  --jupiter-terminal-primary: 199, 242, 132;
+  --jupiter-terminal-background: 0, 0, 0;
+  --jupiter-terminal-primary-text: 232, 249, 255;
+  --jupiter-terminal-warning: 251, 191, 36;
+  --jupiter-terminal-interactive: 33, 42, 54;
+  --jupiter-terminal-module: 16, 23, 31;
+}
 #jupiter-terminal * {
   box-sizing: border-box;
   font-family: Inter, sans-serif;
@@ -68,7 +75,7 @@
   /* Add tooltip functionality */
 .jupiter-tooltip {
   @apply invisible absolute;
-  @apply bg-black text-white p-2 rounded-lg;
+  @apply bg-black text-primary-text p-2 rounded-lg;
 }
 
 .jupiter-has-tooltip:hover .jupiter-tooltip {

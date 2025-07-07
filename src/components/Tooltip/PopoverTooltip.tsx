@@ -42,7 +42,7 @@ const PopoverTooltip: React.FC<React.PropsWithChildren<TooltipProps>> = ({
           <div
             className={cn('p-2 rounded-lg max-w-[360px] w-full text-xs', {
               'bg-white text-black': variant === 'light',
-              'bg-black text-white': variant === 'dark',
+              'bg-black text-primary-text': variant === 'dark',
               'group-hover:visible group-hover:z-50': !disabled,
             })}
           >
