@@ -15,7 +15,7 @@ module.exports = {
 
         // Theming
         primary: 'rgba(var(--jupiter-terminal-primary, 199, 242, 132), <alpha-value>)',
-        background: 'rgba(var(--jupiter-terminal-background,232, 249, 255), <alpha-value>)',
+        background: 'rgba(var(--jupiter-terminal-background,0, 0, 0), <alpha-value>)',
         'primary-text': 'rgba(var(--jupiter-terminal-primary-text,232, 249, 255),<alpha-value>)',
         warning: 'rgba(var(--jupiter-terminal-warning,251, 191, 36),<alpha-value>)',
         interactive: 'rgba(var(--jupiter-terminal-interactive,33, 42, 54),<alpha-value>)',
