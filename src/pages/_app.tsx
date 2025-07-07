@@ -170,7 +170,7 @@ export default function App() {
                     Jupiter Terminal
                   </V2SexyChameleonText>
 
-                  <div className="px-1 py-0.5 bg-primary rounded-md ml-2.5 font-semibold flex text-xs self-start">
+                  <div className="px-1 py-0.5 bg-[#C7F284] rounded-md ml-2.5 font-semibold flex text-xs self-start">
                     v4
                   </div>
                 </div>
