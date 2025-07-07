@@ -25,7 +25,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
 
   if ((!connected && !connecting) || !base58) {
     return (
-      <div onClick={() => setScreen('Wallet')} className="text-white">
+      <div onClick={() => setScreen('Wallet')} className="text-primary-text">
         <WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />
       </div>
     );
@@ -42,7 +42,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
           aria-label="dropdown-list"
           className={
             active
-              ? 'absolute block top-10 right-0 text-sm bg-black rounded-lg p-2 text-white dark:bg-white dark:text-black'
+              ? 'absolute block top-10 right-0 text-sm bg-black rounded-lg p-2 text-primary-text dark:bg-white dark:text-black'
               : 'hidden'
           }
           ref={ref}

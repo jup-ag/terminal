@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormState, UseFormReset, UseFormSetValue } from 'react-hook-form';
+import { Control, FormState, useController, useForm, UseFormReset, UseFormSetValue, useFormState, useWatch } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
+import ColorConfiguration from './ColorConfiguration';
 import { AVAILABLE_EXPLORER } from '../contexts/preferredExplorer/index';
 import { IFormConfigurator, INITIAL_FORM_CONFIG, WRAPPED_SOL_MINT } from 'src/constants';
 import { useRouter } from 'next/router';
@@ -38,23 +39,27 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
 ];
 
 const FormConfigurator = ({
-  simulateWalletPassthrough,
-  defaultExplorer,
-  formProps,
-  // Hook form
+  // // Hook form
   reset,
   setValue,
   formState,
-}: IFormConfigurator & {
+  control
+}: {
   // Hook form
   reset: UseFormReset<IFormConfigurator>;
   setValue: UseFormSetValue<IFormConfigurator>;
   formState: FormState<IFormConfigurator>;
+  control: Control<IFormConfigurator>;
 }) => {
   const currentTemplate = useRef('');
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
+  
+  const formProps = useWatch({control, name: 'formProps'});
+  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
+  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
+  const colors = useWatch({control, name: 'colors'});
 
   const onSelect = useCallback(
     (index: number) => {
@@ -164,7 +169,7 @@ const FormConfigurator = ({
 
             {isOpen ? (
               <div
-                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-zinc-700 w-full border border-white/20"
+                className="absolute left-0 z-10 ml-1 mt-1 origin-top-right rounded-md shadow-xl bg-interactive w-full border border-interactive/60"
                 role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="menu-button"
@@ -175,9 +180,9 @@ const FormConfigurator = ({
                     onClick={() => onSelect(index)}
                     type="button"
                     className={cn(
-                      'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
+                      'flex items-center w-full px-4 py-2 text-sm hover:bg-interactive/60 text-left',
                       active === index ? '' : '',
-                      index !== templateOptions.length - 1 ? 'border-b border-white/10' : '',
+                      index !== templateOptions.length - 1 ? 'border-b border-interactive/10' : '',
                     )}
                   >
                     <span>{item.name}</span>
@@ -282,7 +287,7 @@ const FormConfigurator = ({
                   }}
                   type="button"
                   className={cn(
-                    'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
+                    'flex items-center w-full px-4 py-2 text-sm hover:bg-interactive/60 text-left',
                     active === index ? '' : '',
                     'last:border-b last:border-white/10',
                   )}
@@ -423,7 +428,7 @@ const FormConfigurator = ({
                   }}
                   type="button"
                   className={cn(
-                    'flex items-center w-full px-4 py-2 text-sm hover:bg-white/20 text-left',
+                    'flex items-center w-full px-4 py-2 text-sm hover:bg-interactive/60 text-left',
                     active === index ? '' : '',
                     index !== AVAILABLE_EXPLORER.length - 1 ? 'border-b border-white/10' : '',
                   )}
@@ -435,6 +440,9 @@ const FormConfigurator = ({
           ) : null}
         </div>
       </div>
+      <div className="w-full border-b border-white/10 py-3" />
+
+      <ColorConfiguration colors={colors} setValue={setValue} />
     </div>
   );
 };

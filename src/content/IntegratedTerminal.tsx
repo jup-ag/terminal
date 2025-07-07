@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, memo } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 
-const IntegratedTerminal = (props: {
+const IntegratedTerminal = memo((props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
@@ -80,6 +80,8 @@ const IntegratedTerminal = (props: {
       </div>
     </div>
   );
-};
+});
+
+IntegratedTerminal.displayName = 'IntegratedTerminal';
 
 export default IntegratedTerminal;

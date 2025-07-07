@@ -1,11 +1,11 @@
 import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, memo } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import { cn } from 'src/misc/cn';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = (props: {
+const WidgetTerminal = memo((props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
 
@@ -200,6 +200,8 @@ const WidgetTerminal = (props: {
       </div>
     </div>
   );
-};
+});
+
+WidgetTerminal.displayName = 'WidgetTerminal';
 
 export default WidgetTerminal;

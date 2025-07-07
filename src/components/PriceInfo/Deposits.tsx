@@ -14,13 +14,13 @@ const Deposits = ({
   if (hasAtaDeposit) {
     return (
       <div className="flex items-start justify-between text-xs">
-        <div className="flex w-[50%] text-white/50">
+        <div className="flex w-[50%] text-primary-text/50">
           <span>Deposit</span>
           <Tooltip
             variant="dark"
             className="-mt-24"
             content={
-              <div className="max-w-xs p-2 rounded-lg text-white-75">
+              <div className="max-w-xs p-2 rounded-lg text-primary-text-75">
                 <ul className="pl-2">
                   {hasAtaDeposit && (
                     <li>
@@ -36,7 +36,7 @@ const Deposits = ({
             <span className="ml-1 cursor-pointer">[?]</span>
           </Tooltip>
         </div>
-        <div className="w-[50%] text-white/50 text-xs text-right">
+        <div className="w-[50%] text-primary-text/50 text-xs text-right">
           {(() => {
             if (!feeInformation) {
               return 'Unable to determine fees';

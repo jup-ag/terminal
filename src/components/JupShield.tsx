@@ -46,7 +46,7 @@ const Warnings = ({
     <div key={warning.type} className="flex gap-1">
       {children}
       <div className="flex flex-1 flex-col">
-        <span className={cn('text-neutral-300', isHighRisk && 'text-amber-400')}>{warningTitle(warning)}</span>
+        <span className={cn('text-neutral-300', isHighRisk && 'text-warning')}>{warningTitle(warning)}</span>
         <span className={cn('text-neutral-500', isHighRisk && 'text-amber-200')}>{warning.message}</span>
       </div>
     </div>
@@ -87,15 +87,15 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
       offset={[130, 5]}
       content={
         <div className="flex flex-col gap-y-2 p-0 ">
-          <div className="text-sm font-semibold text-amber-400">
+          <div className="text-sm font-semibold text-warning">
             {totalWarnings} JupShield <Plural one="Warning" other="Warnings" value={totalWarnings} />
           </div>
 
           {highRiskWarnings.length > 0 && (
-            <div className="flex flex-col gap-y-2 rounded-md bg-amber-400/[8%] p-2">
+            <div className="flex flex-col gap-y-2 rounded-md bg-warning/[8%] p-2">
               {highRiskWarnings.map((warning) => (
                 <Warnings key={warning.type} warning={warning} isHighRisk={true}>
-                  <InfoIcon width={15} height={15} className="text-amber-400" />
+                  <InfoIcon width={15} height={15} className="text-warning" />
                 </Warnings>
               ))}
             </div>
@@ -114,10 +114,10 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
       }
     >
       <div className={cn('mt-1 flex items-center gap-x-1', isFetching && 'blur-sm')}>
-        <JupShieldIcon width={15} height={15} className="text-amber-400" />
+        <JupShieldIcon width={15} height={15} className="text-warning" />
         <span
           className={cn(
-            '!text-xxs font-semibold text-amber-400 underline decoration-amber-400 decoration-dashed underline-offset-4',
+            '!text-xxs font-semibold text-warning underline decoration-warning decoration-dashed underline-offset-4',
           )}
         >
           {totalWarnings} Warnings
