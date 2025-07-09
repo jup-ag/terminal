@@ -4,14 +4,15 @@ import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import { cn } from 'src/misc/cn';
 import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
+import { IFormConfigurator } from 'src/constants';
 
 const WidgetTerminal = memo((props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
-
   defaultExplorer: DEFAULT_EXPLORER;
+  branding: IFormConfigurator['branding'];
 }) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -36,8 +37,8 @@ const WidgetTerminal = memo((props: {
       enableWalletPassthrough: simulateWalletPassthrough,
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
-
       defaultExplorer,
+      branding,
     });
   }, [
     defaultExplorer,
@@ -49,6 +50,7 @@ const WidgetTerminal = memo((props: {
     size,
     offsetX,
     offsetY,
+    branding,
   ]);
 
   useEffect(() => {

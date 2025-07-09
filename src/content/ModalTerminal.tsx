@@ -2,13 +2,15 @@ import React, { useEffect } from 'react';
 import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
+import { IFormConfigurator } from 'src/constants';
 
 const ModalTerminal = (props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
+  branding: IFormConfigurator['branding'];
 }) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
@@ -20,6 +22,7 @@ const ModalTerminal = (props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       defaultExplorer,
+      branding,
     });
   };
 

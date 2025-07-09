@@ -99,6 +99,7 @@ export default function App() {
   const formProps = useWatch({control, name: 'formProps'});
   const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
   const colors = useWatch({ control: control, name: 'colors' });
+  const branding = useWatch({ control: control, name: 'branding' });
 
   // Apply custom colors when they change
   useEffect(() => {
@@ -276,7 +277,7 @@ export default function App() {
                         <ModalTerminal
                           formProps={formProps}
                           simulateWalletPassthrough={simulateWalletPassthrough}
-  
+                          branding={branding}
                           defaultExplorer={defaultExplorer}
                         />
                       ) : null}
@@ -285,13 +286,14 @@ export default function App() {
                           formProps={formProps}
                           simulateWalletPassthrough={simulateWalletPassthrough}
                           defaultExplorer={defaultExplorer}
+                          branding={branding}
                         />
                       ) : null}
                       {tab === 'widget' ? (
                         <WidgetTerminal
                           formProps={formProps}
                           simulateWalletPassthrough={simulateWalletPassthrough}
-
+                          branding={branding}
                           defaultExplorer={defaultExplorer}
                         />
                       ) : null}

@@ -26,6 +26,10 @@ export interface IFormConfigurator {
     /** Module/component background color */
     module?: string;
   };
+  branding?: {
+    logoUri?: string;
+    name?: string;
+  };
 }
 
 export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({

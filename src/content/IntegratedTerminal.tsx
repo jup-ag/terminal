@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useState, memo } from 'react';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
+import { IFormConfigurator } from 'src/constants';
 
 const IntegratedTerminal = memo((props: {
   formProps: FormProps;
   simulateWalletPassthrough: boolean;
   defaultExplorer: DEFAULT_EXPLORER;
+  branding: IFormConfigurator['branding'];
 }) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer } = props;
+  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useUnifiedWallet();
@@ -23,6 +25,7 @@ const IntegratedTerminal = memo((props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       defaultExplorer,
+      branding
     });
   }, [
     defaultExplorer,
@@ -30,6 +33,7 @@ const IntegratedTerminal = memo((props: {
     passthroughWalletContextState,
     setShowModal,
     simulateWalletPassthrough,
+    branding
   ]);
 
   useEffect(() => {

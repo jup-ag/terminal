@@ -6,9 +6,9 @@ import JupButton from '../JupButton';
 import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
 import PriceInfo from '../PriceInfo/index';
-import { fromLamports } from 'src/misc/utils';
+import { readableValue } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
-import JupiterLogo from 'src/icons/JupiterLogo';
+import JupiterLogoV2 from 'src/icons/JupiterLogoV2';
 
 const ErrorIcon = () => {
   return (
@@ -108,7 +108,7 @@ const SwappingScreen = () => {
 
         <div className="flex w-full justify-center items-center mt-9">
           <div className="h-16 w-16 animate-hue duration-100">
-            <JupiterLogo width={64} height={64} />
+            <JupiterLogoV2 width={64} height={64} />
           </div>
         </div>
 
@@ -155,27 +155,26 @@ const SwappingScreen = () => {
 
     return (
       <>
-        <div className="flex justify-center mt-12">
-          <div className="absolute top-[52px] bg-[#23C1AA] bg-opacity-[15%] rounded-full w-20 h-20 flex justify-center items-center animate-pulse" />
-
-          <div className="h-[56px] w-[56px] bg-white rounded-full">
-            <SuccessIcon />
+        <div className="flex justify-center mt-8">
+          <div className=" flex justify-center relative  items-center">
+            <div className='bg-success bg-opacity-[15%]  animate-pulse  h-[60px] w-[60px] rounded-full'/>
+            <div className="rounded-full absolute  justify-center">
+              <SuccessIcon className="text-success" height={56} width={56} />
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col justify-center items-center">
-          <p className="mt-5 text-primary-text text-xl font-semibold">Swap successful</p>
+        <div className="flex flex-col justify-center items-center gap-y-2">
+          <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
+            <p className="text-xs font-semibold text-primary-text">
+              Swapped {readableValue(inputAmount, fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
+            </p>
+            <p className="text-2xl font-semibold text-primary-text">
+              {readableValue(outputAmount, toTokenInfo.decimals)} {toTokenInfo.symbol}
+            </p>
+          </div>
 
-          <div className="mt-4 bg-module rounded-xl overflow-y-auto w-full webkit-scrollbar py-4 max-h-[260px]">
-            <div className="mt-2 flex flex-col items-center justify-center text-center px-4">
-              <p className="text-xs font-semibold text-primary-text/75">
-                Swapped {fromLamports(inputAmount, fromTokenInfo.decimals).toFixed(fromTokenInfo.decimals)} {fromTokenInfo.symbol} to
-              </p>
-              <p className="text-2xl font-semibold text-primary-text/75">
-                {fromLamports(outputAmount, toTokenInfo.decimals).toFixed(toTokenInfo.decimals)} {toTokenInfo.symbol}
-              </p>
-            </div>
-
+          <div className=" bg-module rounded-xl overflow-y-auto w-full webkit-scrollbar py-3 max-h-[260px]  px-3">
             <PriceInfo
               quoteResponse={lastSwapResult?.quoteReponse}
               fromTokenInfo={fromTokenInfo}
@@ -184,21 +183,25 @@ const SwappingScreen = () => {
               showFullDetails
               containerClassName=" border-none mt-0"
             />
+            {explorerLink && (
+              <div className="flex items-center justify-between text-xs text-primary-text/50  mt-4">
+                <div>
+                  <span>Transaction</span>
+                </div>
+                <a
+                  href={explorerLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer text-primary-text ml-2 text-xs hover:underline"
+                >
+                  View on {explorer}
+                </a>
+              </div>
+            )}
           </div>
         </div>
 
-        {explorerLink ? (
-          <a
-            href={explorerLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer text-primary-text/50 mt-2 ml-2 text-xs hover:underline"
-          >
-            View on {explorer}
-          </a>
-        ) : null}
-
-        <div className="mt-auto px-5 pb-4 flex space-x-2">
+        <div className="pb-4 flex space-x-2">
           <JupButton
             size="lg"
             className="w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 leading-none !max-h-14 bg-primary"
@@ -210,7 +213,11 @@ const SwappingScreen = () => {
           </JupButton>
 
           {displayMode !== 'integrated' ? (
-            <JupButton size="lg" className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14 text-primary-text bg-background" onClick={onClose}>
+            <JupButton
+              size="lg"
+              className="w-full mt-4 disabled:opacity-50 leading-none !max-h-14 text-primary-text bg-interactive"
+              onClick={onClose}
+            >
               <span className="text-sm">Close</span>
             </JupButton>
           ) : null}
@@ -220,7 +227,7 @@ const SwappingScreen = () => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full py-4 px-2">
+    <div className="flex flex-col h-full w-full px-2">
       {errorMessage || txStatus?.status === 'fail' ? (
         <div className="">
           <div className="flex flex-col items-center justify-center text-center mt-12">
