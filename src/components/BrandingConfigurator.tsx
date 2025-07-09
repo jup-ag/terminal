@@ -19,10 +19,10 @@ export const BrandingConfigurator = ({ branding, setValue }: BrandingConfigurato
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-        value={branding?.logoUri?? ''}
+        value={branding?.logoUri ?? ''}
         inputMode="text"
         onChange={(e) => {
-          setValue('branding.logoUri', e.target.value?? undefined);
+          setValue('branding.logoUri', e.target.value);
         }}
       />
 
@@ -33,10 +33,10 @@ export const BrandingConfigurator = ({ branding, setValue }: BrandingConfigurato
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
-        value={branding?.name?? ''}
+        value={branding?.name ?? ''}
         inputMode="text"
         onChange={(e) => {
-          setValue('branding.name', e.target.value);  
+          setValue('branding.name', e.target.value);
         }}
       />
     </div>
