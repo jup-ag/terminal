@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import CloseIcon from 'src/icons/CloseIcon';
-import JupiterLogo from 'src/icons/JupiterLogo';
 import MenuIcon from 'src/icons/MenuIcon';
 import HeaderLinks from './HeaderLinks';
 import HeaderLinksMobile from './HeaderLinksMobile';
+import JupiterLogo from 'src/icons/JupiterLogo';
 
 const AppHeader: React.FC<{}> = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
@@ -29,7 +29,7 @@ const AppHeader: React.FC<{}> = () => {
 
           <Link href="https://jup.ag" shallow className="flex-1">
             <h1 className="flex items-center text-lg font-semibold text-white">
-              <JupiterLogo />
+              <JupiterLogo/>
               <span className="ml-3">Jupiter</span>
             </h1>
           </Link>

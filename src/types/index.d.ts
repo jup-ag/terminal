@@ -93,7 +93,11 @@ export interface IInit {
   passthroughWalletContextState?: WalletContextState;
   /** When enableWalletPassthrough is true, this allows Terminal to callback your dApp's wallet connection flow */
   onRequestConnectWallet?: () => void | Promise<void>;
-
+  /** Branding */
+  branding?: {
+    logoUri?: string;
+    name?: string;
+  };
   /** Callbacks */
   /** When an error has occured during swap */
   onSwapError?: ({

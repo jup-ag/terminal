@@ -11,7 +11,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // warning: '#FAA63C',
 
         // Theming
         primary: 'rgba(var(--jupiter-terminal-primary, 199, 242, 132), <alpha-value>)',
@@ -25,6 +24,8 @@ module.exports = {
 
         // #region V3 palette
         'utility-warning-300': '#B54708',
+
+        'success':'#23C1AA',
 
         'uiv2-text': '#07090F',
       },

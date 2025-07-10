@@ -2,31 +2,29 @@ import React, { useCallback, useMemo } from 'react';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import RefreshSVG from 'src/icons/RefreshSVG';
 
-import JupiterLogo from '../icons/JupiterLogo';
 
 import { WalletButton } from './WalletComponents';
 import { useAccounts } from 'src/contexts/accounts';
+import { useBranding } from 'src/contexts/BrandingProvider';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { form, refresh, enableWalletPassthrough } = useSwapContext();
   const { refresh: refreshAccounts } = useAccounts();
+  const { logoUri, name } = useBranding();
 
   const onRefresh = useCallback(() => {
     refreshAccounts();
     refresh();
   }, [refreshAccounts, refresh]);
 
-  const jupiterDirectLink = useMemo(() => {
-    return `https://jup.ag/swap/${form.fromMint}-${form.toMint}?inAmount=${form.fromValue}`;
-  }, [form]);
 
   return (
     <div className="mt-2 h-7 pl-3 pr-2">
       <div className="w-full flex items-center justify-between ">
-        <a href={jupiterDirectLink} target={'_blank'} rel="noreferrer noopener" className="flex items-center space-x-2">
-          <JupiterLogo width={24} height={24} />
-          <span className="font-bold text-sm text-primary-text">Jupiter</span>
-        </a>
+        <div className="flex items-center space-x-2">
+          <img src={logoUri}  alt="Terminal Branding"  className='w-6 h-6'/>
+          <span className="font-bold text-sm text-primary-text">{name}</span>
+        </div>
 
         <div className="flex space-x-1 items-center">
           <button

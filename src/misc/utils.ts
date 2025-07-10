@@ -43,6 +43,13 @@ export function shortenAddress(address: string, chars = 4): string {
   return `${address.slice(0, chars)}...${address.slice(-chars)}`;
 }
 
+export function readableValue(lamportsAmount: JSBI | BN | number | bigint, decimals: number): string {
+  return new Decimal(lamportsAmount.toString())
+    .div(10 ** decimals)
+    .toDP(decimals, Decimal.ROUND_DOWN)
+    .toFixed();
+}
+
 export function fromLamports(lamportsAmount: JSBI | BN | number | bigint, decimals: number): number {
   return new Decimal(lamportsAmount.toString())
     .div(10 ** decimals)

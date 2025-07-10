@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Control, FormState, useController, useForm, UseFormReset, UseFormSetValue, useFormState, useWatch } from 'react-hook-form';
+import {
+  Control,
+  FormState,
+  UseFormReset,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
@@ -12,6 +18,7 @@ import { base64ToJson, isValidSolanaAddress } from 'src/misc/utils';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import Link from 'next/link';
+import { BrandingConfigurator } from './BrandingConfigurator';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -43,7 +50,7 @@ const FormConfigurator = ({
   reset,
   setValue,
   formState,
-  control
+  control,
 }: {
   // Hook form
   reset: UseFormReset<IFormConfigurator>;
@@ -55,11 +62,12 @@ const FormConfigurator = ({
   const { query, replace } = useRouter();
 
   const [isImported, setIsImported] = useState(false);
-  
-  const formProps = useWatch({control, name: 'formProps'});
-  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
-  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
-  const colors = useWatch({control, name: 'colors'});
+
+  const formProps = useWatch({ control, name: 'formProps' });
+  const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
+  const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
+  const colors = useWatch({ control, name: 'colors' });
+  const branding = useWatch({ control, name: 'branding' });
 
   const onSelect = useCallback(
     (index: number) => {
@@ -336,9 +344,9 @@ const FormConfigurator = ({
       {/* Referral  */}
       <div className="flex justify-between flex-col gap-y-2">
         <p className="text-white text-sm font-semibold mt-5 ">Referral</p>
-        <Link   
-        target="_blank"
-        shallow
+        <Link
+          target="_blank"
+          shallow
           href="https://dev.jup.ag/docs/ultra-api/add-fees-to-ultra"
           className="text-xs text-white/40 underline hover:text-white/50"
         >
@@ -442,6 +450,8 @@ const FormConfigurator = ({
       </div>
       <div className="w-full border-b border-white/10 py-3" />
 
+      <BrandingConfigurator branding={branding} setValue={setValue} />
+      <div className="w-full border-b border-white/10 py-3" />
       <ColorConfiguration colors={colors} setValue={setValue} />
     </div>
   );
