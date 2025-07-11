@@ -10,8 +10,8 @@ import FormPairRow from './FormPairRow';
 import { useSortByValue } from './useSortByValue';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { searchService } from 'src/contexts/SearchService';
-import { useAccounts } from 'src/contexts/accounts';
 import { cn } from 'src/misc/cn';
+import { useBalances } from 'src/hooks/useBalances';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -52,14 +52,15 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const { accounts: userAccounts, loading: isInitialLoading } = useAccounts();
+  const { data: balances, isLoading: isBalancesLoading } = useBalances();
   const { data: userBalanceTokens } = useQuery({
-    queryKey: ['userBalanceTokens', userAccounts],
+    queryKey: ['userBalanceTokens', balances],
     queryFn: async () => {
-      const userMints = Object.keys(userAccounts).filter((key) => userAccounts[key].balanceLamports.gtn(0));
+      if (!balances) return [];
+      const userMints = Object.keys(balances).filter((key) => balances[key].uiAmount > 0);
       return searchService.getUserBalanceTokenInfo(userMints);
     },
-    enabled: Object.keys(userAccounts).length > 0,
+    enabled: !!balances,
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
@@ -101,10 +102,10 @@ const FormPairSelector = ({ onSubmit, tokenInfos, onClose }: IFormPairSelector) 
 
   // Initial call after loading is done, so balances and tokens are sorted properly
   useEffect(() => {
-    if (!isInitialLoading) {
+    if (!isBalancesLoading) {
       triggerSearch(searchValue.current);
     }
-  }, [triggerSearch, isInitialLoading]);
+  }, [triggerSearch, isBalancesLoading]);
 
   return (
     <div className="flex flex-col h-full w-full py-4 px-2 bg-black">

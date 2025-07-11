@@ -21,11 +21,11 @@ import { FormProps, IInit } from 'src/types';
 import { useScreenState } from './ScreenProvider';
 import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
-import { useAccounts } from './accounts';
 import { useQuoteQuery } from 'src/queries/useQuoteQuery';
 import { UltraQuoteResponse } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
+import { useBalances } from 'src/hooks/useBalances';
 
 export interface IForm {
   fromMint: string;
@@ -113,7 +113,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { screen } = useScreenState();
   const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
-  const { refresh: refreshAccount } = useAccounts();
+  const { refetch: refetchBalances } = useBalances();
   const isToPairFocused = useRef<boolean>(false);
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
@@ -321,9 +321,9 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
       setErrors({});
       setLastSwapResult(null);
       setTxStatus(undefined);
-      refreshAccount();
+      refetchBalances();
     },
-    [refreshAccount, setupInitialAmount],
+    [refetchBalances, setupInitialAmount],
   );
 
   // onFormUpdate callback

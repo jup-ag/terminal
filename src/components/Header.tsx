@@ -1,21 +1,21 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import RefreshSVG from 'src/icons/RefreshSVG';
 
 
 import { WalletButton } from './WalletComponents';
-import { useAccounts } from 'src/contexts/accounts';
 import { useBranding } from 'src/contexts/BrandingProvider';
+import { useBalances } from 'src/hooks/useBalances';
 
 const Header: React.FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
   const { form, refresh, enableWalletPassthrough } = useSwapContext();
-  const { refresh: refreshAccounts } = useAccounts();
+  const { refetch: refetchBalances } = useBalances();
   const { logoUri, name } = useBranding();
 
   const onRefresh = useCallback(() => {
-    refreshAccounts();
+    refetchBalances();
     refresh();
-  }, [refreshAccounts, refresh]);
+  }, [refetchBalances, refresh]);
 
 
   return (
