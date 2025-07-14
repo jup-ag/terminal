@@ -8,8 +8,8 @@ import FormPairRow from './FormPairRow';
 import { cn } from 'src/misc/cn';
 import { useBalances } from 'src/hooks/useBalances';
 import { useSearch } from 'src/hooks/useSearch';
-import { createSortedSearchResult } from 'src/utils/sortByUserBalance';
 import { Asset } from 'src/entity/SearchResponse';
+import { sortByUserBalance } from 'src/misc/utils';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -18,14 +18,7 @@ const SEARCH_BOX_HEIGHT = 56;
 const rowRenderer = memo((props: ListChildComponentProps) => {
   const { data, index, style } = props;
   const item = data.searchResult[index];
-  return (
-    <FormPairRow
-      key={item.address}
-      item={item}
-      style={style}
-      onSubmit={data.onSubmit}
-    />
-  );
+  return <FormPairRow key={item.address} item={item} style={style} onSubmit={data.onSubmit} />;
 }, areEqual);
 
 interface IFormPairSelector {
@@ -33,7 +26,6 @@ interface IFormPairSelector {
   onClose: () => void;
 }
 const FormPairSelector = ({ onSubmit, onClose }: IFormPairSelector) => {
-  
   const [search, setSearch] = useState<string>('');
   const { data: balances } = useBalances();
   useEffect(() => {
@@ -46,18 +38,17 @@ const FormPairSelector = ({ onSubmit, onClose }: IFormPairSelector) => {
   const { data: searchTokens, isLoading } = useSearch([search]);
 
   const searchResult = useMemo(() => {
-    if (!search){
-      return createSortedSearchResult([...(blueChipTokens || []), ...(searchTokens || [])], balances);
-    }else {
-      return createSortedSearchResult(searchTokens || [], balances);
+    if (!search) {
+      return sortByUserBalance([...(blueChipTokens || []), ...(searchTokens || [])], balances || {});
+    } else {
+      return sortByUserBalance(searchTokens || [], balances || {});
     }
-  }, [blueChipTokens, balances,searchTokens,search]);
+  }, [blueChipTokens, balances, searchTokens, search]);
 
   // Update triggerSearch to use cached user balance tokens
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const triggerSearch = useCallback(
     debounce(async (value: string) => {
-
       setSearch(value);
     }, 200),
     [blueChipTokens],
