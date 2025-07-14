@@ -1,8 +1,6 @@
 import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
-import { useAccounts } from '../contexts/accounts';
-
 import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE } from '../misc/constants';
 
 import CoinBalance from './Coinbalance';
@@ -13,7 +11,6 @@ import TokenIcon from './TokenIcon';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
-import { RoutesSVG } from 'src/icons/RoutesSVG';
 import WalletIcon from 'src/icons/WalletIcon';
 import { detectedSeparator } from 'src/misc/utils';
 import { WRAPPED_SOL_MINT } from '../constants';
@@ -27,6 +24,7 @@ import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';
 import { TokenInfo } from '@solana/spl-token-registry';
 import { useScreenState } from 'src/contexts/ScreenProvider';
+import { useBalances } from 'src/hooks/useBalances';
 
 const FormInputContainer: React.FC<{
   tokenInfo?: TokenInfo;
@@ -105,7 +103,8 @@ const Form: React.FC<{
   setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
   const { publicKey } = useWalletPassThrough();
-  const { accounts, nativeAccount } = useAccounts();
+
+  const { data: balances } = useBalances();
   const {
     form,
     setForm,
@@ -172,12 +171,12 @@ const Form: React.FC<{
   const balance: string | null = useMemo(() => {
     if (!fromTokenInfo?.address) return null;
 
-    const accBalanceObj =
-      fromTokenInfo?.address === WRAPPED_SOL_MINT.toString() ? nativeAccount : accounts[fromTokenInfo.address];
-    if (!accBalanceObj) return '';
+    if (!balances) return null;
+    const accBalanceObj = balances[fromTokenInfo.address];
+    if (!accBalanceObj) return null;
 
-    return accBalanceObj.balance;
-  }, [accounts, fromTokenInfo?.address, nativeAccount]);
+    return accBalanceObj.uiAmount.toString();
+  }, [balances, fromTokenInfo?.address]);
 
   const onClickMax = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
@@ -261,7 +260,6 @@ const Form: React.FC<{
     return false;
   }, [isDisabled, loading, errors.fromValue]);
 
-
   return (
     <div className="h-full flex flex-col items-center justify-center">
       <div className="w-full mt-2 rounded-xl flex flex-col px-2">
@@ -285,9 +283,12 @@ const Form: React.FC<{
                 inputMode="decimal"
                 onValueChange={onChangeFromValue}
                 placeholder={'0.00'}
-                className={cn('w-full h-[40px] bg-transparent text-primary-text text-right font-semibold text-xl placeholder:text-primary-text/50', {
-                  'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
-                })}
+                className={cn(
+                  'w-full h-[40px] bg-transparent text-primary-text text-right font-semibold text-xl placeholder:text-primary-text/50',
+                  {
+                    'cursor-not-allowed': inputAmountDisabled || swapMode === SwapMode.ExactOut,
+                  },
+                )}
                 onKeyDown={() => {
                   isToPairFocused.current = false;
                 }}
@@ -317,9 +318,12 @@ const Form: React.FC<{
                 allowNegative={false}
                 valueIsNumericString
                 onValueChange={onChangeToValue}
-                className={cn('h-[40px] w-full bg-transparent text-primary-text text-right font-semibold text-lg placeholder:text-primary-text/50', {
-                  'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
-                })}
+                className={cn(
+                  'h-[40px] w-full bg-transparent text-primary-text text-right font-semibold text-lg placeholder:text-primary-text/50',
+                  {
+                    'cursor-not-allowed': outputAmountDisabled || swapMode === SwapMode.ExactIn,
+                  },
+                )}
                 placeholder={swapMode === SwapMode.ExactOut ? 'Enter desired amount' : '0.00'}
                 decimalSeparator={detectedSeparator}
                 isAllowed={withValueLimit}
@@ -345,8 +349,8 @@ const Form: React.FC<{
       <div className="w-full px-2">
         {!walletPublicKey ? (
           <JupButton size="lg" className="w-full mt-4 bg-primary !text-uiv2-text/75" onClick={handleClick}>
-          Connect Wallet
-        </JupButton>
+            Connect Wallet
+          </JupButton>
         ) : (
           <JupButton
             size="lg"

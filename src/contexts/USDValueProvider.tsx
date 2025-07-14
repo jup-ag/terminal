@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { createContext, FC, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDebounce, useLocalStorage } from 'react-use';
 import { splitIntoChunks } from 'src/misc/utils';
-import { useAccounts } from './accounts';
 import { useSwapContext } from './SwapContext';
 import { useTokenContext } from './TokenContextProvider';
 import { IInit } from 'src/types';
 import { WRAPPED_SOL_MINT } from 'src/constants';
+import { useBalances } from 'src/hooks/useBalances';
 
 const MAXIMUM_PARAM_SUPPORT = 100;
 const CACHE_EXPIRE_TIME = 1000 * 60 * 1; // 1 min
@@ -44,7 +44,7 @@ const hasExpired = (timestamp: number) => {
 };
 
 export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => {
-  const { accounts } = useAccounts();
+  const { data: balances } = useBalances();
   const { getTokenInfo } = useTokenContext();
   const { fromTokenInfo, toTokenInfo } = useSwapContext();
 
@@ -193,9 +193,9 @@ export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => 
   }, []);
 
   useEffect(() => {
-    if (!Object.keys(accounts).length) return;
+    if (!balances) return;
 
-    const userAccountAddresses: string[] = Object.keys(accounts)
+    const userAccountAddresses: string[] = Object.keys(balances)
       .map((key) => {
         const token = getTokenInfo(key);
 
@@ -211,7 +211,7 @@ export const USDValueProvider: FC<PropsWithChildren<IInit>> = ({ children }) => 
     setAddresses((prev) => {
       return new Set([...prev, ...userAccountAddresses]);
     });
-  }, [accounts, getTokenInfo, getUSDValue]);
+  }, [balances, getTokenInfo, getUSDValue]);
 
   return (
     <USDValueProviderContext.Provider value={{ tokenPriceMap: priceMap, getUSDValue }}>

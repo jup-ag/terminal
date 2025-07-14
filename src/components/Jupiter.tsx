@@ -6,7 +6,6 @@ import { USDValueProvider } from 'src/contexts/USDValueProvider';
 import { IInit } from 'src/types';
 
 import Header from '../components/Header';
-import { AccountsProvider } from '../contexts/accounts';
 import InitialScreen from './screens/InitialScreen';
 import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
@@ -35,7 +34,8 @@ const Content = () => {
       <span className="text-primary-text/50 text-xs p-2 flex-row flex gap-1  justify-center">
         Powered by
         <a href={'https://jup.ag'} target={'_blank'} rel="noreferrer noopener" className="flex items-center gap-1 ">
-          <JupiterLogoV2 className="text-primary-text/50" width={15} height={15} />Jupiter
+          <JupiterLogoV2 className="text-primary-text/50" width={15} height={15} />
+          Jupiter
         </a>
       </span>
     </div>
@@ -44,15 +44,13 @@ const Content = () => {
 
 const JupiterApp = (props: IInit) => {
   return (
-    <AccountsProvider>
-      <SwapContextProvider {...props}>
-        <USDValueProvider {...props}>
-          <BrandingProvider {...props}>
-            <Content />
-          </BrandingProvider>
-        </USDValueProvider>
-      </SwapContextProvider>
-    </AccountsProvider>
+    <SwapContextProvider {...props}>
+      <USDValueProvider {...props}>
+        <BrandingProvider {...props}>
+          <Content />
+        </BrandingProvider>
+      </USDValueProvider>
+    </SwapContextProvider>
   );
 };
 
