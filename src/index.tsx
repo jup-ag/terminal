@@ -2,7 +2,6 @@ import { Provider, useAtom } from 'jotai';
 import JupiterApp from './components/Jupiter';
 import { ContextProvider } from './contexts/ContextProvider';
 import { ScreenProvider } from './contexts/ScreenProvider';
-import { TokenContextProvider } from './contexts/TokenContextProvider';
 import WalletPassthroughProvider from './contexts/WalletPassthroughProvider';
 import { appProps } from './library';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -17,11 +16,9 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ContextProvider {...props}>
         <WalletPassthroughProvider>
-          <TokenContextProvider {...props}>
-            <ScreenProvider>
-              <JupiterApp {...props} />
-            </ScreenProvider>
-          </TokenContextProvider>
+          <ScreenProvider>
+            <JupiterApp {...props} />
+          </ScreenProvider>
         </WalletPassthroughProvider>
       </ContextProvider>
     </QueryClientProvider>

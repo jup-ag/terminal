@@ -1,5 +1,4 @@
 import { TransactionFeeInfo } from '@jup-ag/react-hook';
-import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {  useMemo, useState } from 'react';
@@ -10,6 +9,7 @@ import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
 import { useUltraRouters } from 'src/queries/useUltraRouter';
+import { SearchAsset } from 'src/entity/SearchResponse';
 
 const Index = ({
   quoteResponse,
@@ -20,8 +20,8 @@ const Index = ({
   containerClassName,
 }: {
   quoteResponse: QuoteResponse;
-  fromTokenInfo: TokenInfo;
-  toTokenInfo: TokenInfo;
+  fromTokenInfo: SearchAsset;
+  toTokenInfo: SearchAsset;
   loading: boolean;
   showFullDetails?: boolean;
   containerClassName?: string;

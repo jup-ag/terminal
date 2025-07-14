@@ -1,8 +1,8 @@
-import React, { FC, MouseEvent, useCallback } from 'react';
+import React, {  MouseEvent, useCallback } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 
-export const WalletModalButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
+export const WalletModalButton = () => {
   const { connecting } = useWalletPassThrough();
   const { setScreen } = useScreenState();
   const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {

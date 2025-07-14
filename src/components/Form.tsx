@@ -22,12 +22,12 @@ import Decimal from 'decimal.js';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useBalances } from 'src/hooks/useBalances';
+import { SearchAsset } from 'src/entity/SearchResponse';
 
 const FormInputContainer: React.FC<{
-  tokenInfo?: TokenInfo;
+  tokenInfo?: SearchAsset;
   onBalanceClick: (e: React.MouseEvent<HTMLElement>) => void;
   title: string;
   pairSelectDisabled: boolean;
@@ -53,7 +53,7 @@ const FormInputContainer: React.FC<{
             }}
           >
             <WalletIcon width={10} height={10} />
-            <CoinBalance mintAddress={tokenInfo.address} hideZeroBalance={false} />
+            <CoinBalance mintAddress={tokenInfo.id} hideZeroBalance={false} />
             <span>{tokenInfo.symbol}</span>
           </div>
         )}
@@ -82,7 +82,7 @@ const FormInputContainer: React.FC<{
           </button>
 
           <div className="flex justify-between items-center h-[20px]">
-            {tokenInfo?.address && <JupShield tokenAddress={tokenInfo.address} />}
+            {tokenInfo?.id && <JupShield tokenAddress={tokenInfo.id} />}
           </div>
         </div>
         <div className="flex flex-col items-end justify-between w-full">
@@ -100,8 +100,7 @@ const Form: React.FC<{
   onSubmit: () => void;
   isDisabled: boolean;
   setSelectPairSelector: React.Dispatch<React.SetStateAction<'fromMint' | 'toMint' | null>>;
-  setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ onSubmit, isDisabled, setSelectPairSelector, setIsWalletModalOpen }) => {
+}> = ({ onSubmit, isDisabled, setSelectPairSelector }) => {
   const { publicKey } = useWalletPassThrough();
 
   const { data: balances } = useBalances();
@@ -129,18 +128,18 @@ const Form: React.FC<{
   }, [hasExpired]);
 
   const shouldDisabledFromSelector = useMemo(() => {
-    if (fromTokenInfo?.address === fixedMint) {
+    if (fromTokenInfo?.id === fixedMint) {
       return true;
     }
     return false;
-  }, [fixedMint, fromTokenInfo?.address]);
+  }, [fixedMint, fromTokenInfo?.id]);
 
   const shouldDisabledToSelector = useMemo(() => {
-    if (toTokenInfo?.address === fixedMint) {
+    if (toTokenInfo?.id === fixedMint) {
       return true;
     }
     return false;
-  }, [fixedMint, toTokenInfo?.address]);
+  }, [fixedMint, toTokenInfo?.id]);
 
   const walletPublicKey = useMemo(() => publicKey?.toString(), [publicKey]);
 
@@ -169,21 +168,21 @@ const Form: React.FC<{
   };
 
   const balance: string | null = useMemo(() => {
-    if (!fromTokenInfo?.address) return null;
+    if (!fromTokenInfo?.id) return null;
 
     if (!balances) return null;
-    const accBalanceObj = balances[fromTokenInfo.address];
+    const accBalanceObj = balances[fromTokenInfo.id];
     if (!accBalanceObj) return null;
 
     return accBalanceObj.uiAmount.toString();
-  }, [balances, fromTokenInfo?.address]);
+  }, [balances, fromTokenInfo?.id]);
 
   const onClickMax = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
       e.preventDefault();
 
       if (!balance) return;
-      if (fromTokenInfo?.address === WRAPPED_SOL_MINT.toBase58()) {
+      if (fromTokenInfo?.id === WRAPPED_SOL_MINT.toBase58()) {
         setForm((prev) => ({
           ...prev,
           fromValue: new Decimal(balance).gt(MINIMUM_SOL_BALANCE)
@@ -197,7 +196,7 @@ const Form: React.FC<{
         }));
       }
     },
-    [balance, fromTokenInfo?.address, setForm],
+    [balance, fromTokenInfo?.id, setForm],
   );
 
   const onClickSwitchPair = () => {

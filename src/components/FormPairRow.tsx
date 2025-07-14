@@ -1,5 +1,4 @@
 import React, { CSSProperties, useEffect, useMemo, useRef } from 'react';
-import { TokenInfo } from '@solana/spl-token-registry';
 import Decimal from 'decimal.js';
 import { WRAPPED_SOL_MINT } from 'src/constants';
 import { checkIsStrictOrVerified, checkIsToken2022 } from 'src/misc/tokenTags';
@@ -10,14 +9,16 @@ import CoinBalance from './Coinbalance';
 import CheckedBadge from './CheckedBadge';
 import { useLstApyFetcher } from 'src/queries/useLstApy';
 import { useBalances } from 'src/hooks/useBalances';
+import { SearchAsset } from 'src/entity/SearchResponse';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const PAIR_ROW_HEIGHT = 72;
 
 export interface IPairRow {
   usdValue?: Decimal;
-  item: TokenInfo;
+  item: SearchAsset;
   style: CSSProperties;
-  onSubmit(item: TokenInfo): void;
+  onSubmit(item: SearchAsset): void;
   suppressCloseModal?: boolean;
   showExplorer?: boolean;
   enableUnknownTokenWarning?: boolean;
@@ -53,7 +54,7 @@ const LSTTag: React.FC<{ mintAddress: string }> = ({ mintAddress }) => {
 };
 
 const MultiTags: React.FC<IPairRow> = ({ item }) => {
-  const { data: balances } = useBalances(); 
+  const { data: balances } = useBalances();
   const isLoading = useRef<boolean>(false);
   const isLoaded = useRef<boolean>(false);
   // It's cheaper to slightly delay and rendering once, than rendering everything all the time
@@ -75,7 +76,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
         isLST: Boolean(item.tags?.includes('lst')),
         // isUnknown: checkIsUnknownToken(item),
         isToken2022: Boolean(checkIsToken2022(item)),
-        isFrozen: balances?.[item.address]?.isFrozen || false,
+        isFrozen: balances?.[item.id]?.isFrozen || false,
       };
       setRenderedTag(result);
       isLoading.current = false;
@@ -112,7 +113,7 @@ const MultiTags: React.FC<IPairRow> = ({ item }) => {
         </div>
       ))}
 
-      {isLST && <LSTTag mintAddress={item.address} />}
+      {isLST && <LSTTag mintAddress={item.id} />}
     </div>
   );
 };
@@ -123,16 +124,21 @@ const FormPairRow = (props: IPairRow) => {
     style,
     onSubmit,
     suppressCloseModal,
-    usdValue,
+    // usdValue,
     showExplorer = true,
     enableUnknownTokenWarning = true,
   } = props;
+  const queryClient = useQueryClient();
   const onClick = React.useCallback(() => {
+    // Optimistically update for useAsset hook
+    queryClient.setQueryData(['search', 'assets', item.id], [item]);
     onSubmit(item);
 
     if (suppressCloseModal) return;
   }, [onSubmit, item, suppressCloseModal]);
-
+  const { data: balances } = useBalances();
+  const balance = balances?.[item.id]?.uiAmount;
+  const usdValue = balance ? new Decimal(balance).mul(item.usdPrice || 0) : undefined;
   const usdValueDisplay =
     usdValue && usdValue.gte(0.01) // If smaller than 0.01 cents, dont show
       ? `$${formatNumber.format(usdValue, 2)}` // USD value can hardcode to 2
@@ -164,7 +170,7 @@ const FormPairRow = (props: IPairRow) => {
             </div>
 
             <p className="text-xs text-primary-text/50 dark:text-primary-text-35 truncate">
-              {item.address === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
+              {item.id === WRAPPED_SOL_MINT.toBase58() ? 'Solana' : item.name}
             </p>
 
             {/* Intentionally higher z to be clickable */}
@@ -177,7 +183,7 @@ const FormPairRow = (props: IPairRow) => {
         </div>
 
         <div className="text-xs text-primary-text/50 text-right h-full flex flex-col justify-evenly">
-          <CoinBalance mintAddress={item.address} hideZeroBalance />
+          <CoinBalance mintAddress={item.id} hideZeroBalance />
           {usdValueDisplay ? <p>{usdValueDisplay}</p> : null}
           <MultiTags {...props} />
         </div>

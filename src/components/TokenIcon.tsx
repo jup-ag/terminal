@@ -1,11 +1,10 @@
-import { TokenInfo } from '@solana/spl-token-registry';
-import Image from 'next/image';
 import * as React from 'react';
+import { SearchAsset } from 'src/entity/SearchResponse';
 import WarningIcon from 'src/icons/WarningIcon';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 
 interface ITokenIconProps {
-  info: TokenInfo | null | undefined;
+  info: SearchAsset | null | undefined;
   width?: number;
   height?: number;
   enableUnknownTokenWarning?: boolean;
@@ -65,16 +64,16 @@ const TokenIcon: React.FunctionComponent<ITokenIconProps> = ({
 
   const imageUrl = React.useMemo(() => {
     try {
-      if (!info?.logoURI) return undefined;
+      if (!info?.icon) return undefined;
       // Locally hosted images on our project
-      if (typeof window !== 'undefined' && info?.logoURI?.startsWith('/'))
-        return new URL(window.location.origin + info.logoURI);
+      if (typeof window !== 'undefined' && info?.icon?.startsWith('/'))
+        return new URL(window.location.origin + info.icon);
 
-      return info?.logoURI ? new URL(info.logoURI) : undefined;
+      return info?.icon ? new URL(info.icon) : undefined;
     } catch (error) {
       return undefined;
     }
-  }, [info?.logoURI]);
+  }, [info?.icon]);
 
   const isUnknown = React.useMemo(() => {
     if (!enableUnknownTokenWarning) return false;
@@ -94,11 +93,11 @@ const TokenIcon: React.FunctionComponent<ITokenIconProps> = ({
       return (
         // eslint-disable-next-line
         <img
-          src={info.logoURI}
+          src={info.icon}
           alt={info.symbol}
           width={width}
           height={height}
-          style={{ maxWidth: width, maxHeight: height }}
+          style={{ maxWidth: width, maxHeight: height }}  
           className={`object-cover rounded-full`}
           onError={() => {
             setHasError(true);
@@ -111,7 +110,7 @@ const TokenIcon: React.FunctionComponent<ITokenIconProps> = ({
     return (
       // eslint-disable-next-line
       <img
-        src={genImageTransformURL(info.logoURI || '')}
+        src={genImageTransformURL(info.icon || '')}
         alt={info.symbol}
         width={width}
         height={height}

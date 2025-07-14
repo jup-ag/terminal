@@ -1,11 +1,12 @@
-import { TokenInfo } from '@solana/spl-token-registry';
+
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { cn } from 'src/misc/cn';
 import { shortenAddress } from 'src/misc/utils';
+import { SearchAsset } from 'src/entity/SearchResponse';
 
 interface TokenLinkProps {
-  tokenInfo: TokenInfo;
+  tokenInfo: SearchAsset;
   className?: string;
 }
 
@@ -20,10 +21,10 @@ const TokenLink: React.FC<TokenLinkProps> = ({ tokenInfo, className }) => {
         'flex items-center bg-black/25 text-primary-text/75 px-2 py-0.5 space-x-1 rounded cursor-pointer',
         className,
       )}
-      href={getTokenExplorer(tokenInfo.address)}
+      href={getTokenExplorer(tokenInfo.id)}
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="text-xxs">{shortenAddress(tokenInfo.address)}</div>
+      <div className="text-xxs">{shortenAddress(tokenInfo.id)}</div>
       <ExternalIcon />
     </a>
   );
