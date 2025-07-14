@@ -6,7 +6,7 @@ import * as React from 'react';
 import { formatNumber, fromLamports } from '../misc/utils';
 import PrecisionTickSize from './PrecisionTickSize';
 import { cn } from 'src/misc/cn';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 export interface IRateParams {
   inAmount: JSBI;
@@ -46,9 +46,9 @@ interface ExchangeRateProps {
   className?: string;
   textClassName?: string;
   loading?: boolean;
-  fromTokenInfo: SearchAsset;
+  fromTokenInfo: Asset;
   rateParams: IRateParams;
-  toTokenInfo: SearchAsset;
+  toTokenInfo: Asset;
   reversible?: boolean;
 }
 

@@ -1,10 +1,10 @@
 import Decimal from 'decimal.js';
 import { useEffect, useMemo } from 'react';
 import { formatNumber, hasNumericValue } from 'src/misc/utils';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 interface ComponentProps {
-  tokenInfo: SearchAsset;
+  tokenInfo: Asset;
   amount?: number | string;
   maxDecimals?: number;
   prefix?: string;

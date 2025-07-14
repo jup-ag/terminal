@@ -9,16 +9,16 @@ import CoinBalance from './Coinbalance';
 import CheckedBadge from './CheckedBadge';
 import { useLstApyFetcher } from 'src/queries/useLstApy';
 import { useBalances } from 'src/hooks/useBalances';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 import { useQueryClient } from '@tanstack/react-query';
 
 export const PAIR_ROW_HEIGHT = 72;
 
 export interface IPairRow {
   usdValue?: Decimal;
-  item: SearchAsset;
+  item: Asset;
   style: CSSProperties;
-  onSubmit(item: SearchAsset): void;
+  onSubmit(item: Asset): void;
   suppressCloseModal?: boolean;
   showExplorer?: boolean;
   enableUnknownTokenWarning?: boolean;

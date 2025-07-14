@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 
 interface BalanceData {
@@ -36,9 +36,9 @@ interface SortByUserBalanceOptions {
  * });
  */
 export const sortByUserBalance = (
-  searchResults: SearchAsset[],
+  searchResults: Asset[],
   options: SortByUserBalanceOptions = {}
-): SearchAsset[] => {
+): Asset[] => {
   const { balances = {}, prioritizeUserTokens = true, prioritizeKnownTokens = true } = options;
 
   // Create maps for efficient lookups
@@ -66,7 +66,7 @@ export const sortByUserBalance = (
 
   // Deduplicate tokens by ID
   const deduplicatedResults = (() => {
-    const map = new Map<string, SearchAsset>();
+    const map = new Map<string, Asset>();
     searchResults.forEach((item) => {
       if (!map.has(item.id)) {
         map.set(item.id, item);
@@ -143,9 +143,9 @@ export const sortByUserBalance = (
  * const sortedResults = createSortedSearchResult(searchResults, userBalances);
  */
 export const createSortedSearchResult = (
-  searchResults: SearchAsset[],
+  searchResults: Asset[],
   balances?: BalanceData
-): SearchAsset[] => {
+): Asset[] => {
   return sortByUserBalance(searchResults, {
     balances,
     prioritizeUserTokens: true,

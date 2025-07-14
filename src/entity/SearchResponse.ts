@@ -22,7 +22,7 @@ export type SwapStats = {
   numNetBuyers?: number | undefined;
 };
 
-export type SearchAsset = {
+export type Asset = {
   id: string;
   updatedAt: string;
   bondingCurve: number | undefined;
@@ -74,4 +74,4 @@ export type SearchAsset = {
   tags?: string[] | undefined;
 };
 
-export type SearchResponse = SearchAsset[];
+export type SearchResponse = Asset[];

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 import WarningIcon from 'src/icons/WarningIcon';
 import { checkIsUnknownToken } from 'src/misc/tokenTags';
 
 interface ITokenIconProps {
-  info: SearchAsset | null | undefined;
+  info: Asset | null | undefined;
   width?: number;
   height?: number;
   enableUnknownTokenWarning?: boolean;

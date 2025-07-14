@@ -9,7 +9,7 @@ import { cn } from 'src/misc/cn';
 import { useBalances } from 'src/hooks/useBalances';
 import { useSearch } from 'src/hooks/useSearch';
 import { createSortedSearchResult } from 'src/utils/sortByUserBalance';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 export const PAIR_ROW_HEIGHT = 72;
 const SEARCH_BOX_HEIGHT = 56;
@@ -29,7 +29,7 @@ const rowRenderer = memo((props: ListChildComponentProps) => {
 }, areEqual);
 
 interface IFormPairSelector {
-  onSubmit: (value: SearchAsset) => void;
+  onSubmit: (value: Asset) => void;
   onClose: () => void;
 }
 const FormPairSelector = ({ onSubmit, onClose }: IFormPairSelector) => {

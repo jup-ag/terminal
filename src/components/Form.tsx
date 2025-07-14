@@ -24,10 +24,10 @@ import { SwapMode } from 'src/types/constants';
 import JupShield from './JupShield';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useBalances } from 'src/hooks/useBalances';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 const FormInputContainer: React.FC<{
-  tokenInfo?: SearchAsset;
+  tokenInfo?: Asset;
   onBalanceClick: (e: React.MouseEvent<HTMLElement>) => void;
   title: string;
   pairSelectDisabled: boolean;

@@ -3,10 +3,10 @@ import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import ExternalIcon from 'src/icons/ExternalIcon';
 import { cn } from 'src/misc/cn';
 import { shortenAddress } from 'src/misc/utils';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 interface TokenLinkProps {
-  tokenInfo: SearchAsset;
+  tokenInfo: Asset;
   className?: string;
 }
 

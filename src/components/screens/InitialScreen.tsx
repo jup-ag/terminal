@@ -8,7 +8,7 @@ import FormPairSelector from '../../components/FormPairSelector';
 import Decimal from 'decimal.js';
 import { cn } from 'src/misc/cn';
 import { useBalances } from 'src/hooks/useBalances';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 import { useAsset } from 'src/hooks/useAsset';
 
 const InitialScreen = () => {
@@ -54,7 +54,7 @@ const InitialScreen = () => {
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
 
   const onSelectMint = useCallback(
-    async (tokenInfo: SearchAsset) => {
+    async (tokenInfo: Asset) => {
       if (selectPairSelector === 'fromMint') {
         setForm((prev) => ({
           ...prev,

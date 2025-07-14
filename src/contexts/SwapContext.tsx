@@ -24,7 +24,7 @@ import { UltraQuoteResponse } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
 import { useBalances } from 'src/hooks/useBalances';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 import { useAsset } from 'src/hooks/useAsset';
 
 export interface IForm {
@@ -56,8 +56,8 @@ export interface ISwapContext {
       >
     >
   >;
-  fromTokenInfo?: SearchAsset | null;
-  toTokenInfo?: SearchAsset | null;
+  fromTokenInfo?: Asset | null;
+  toTokenInfo?: Asset | null;
   quoteResponseMeta: QuoteResponse | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponse | null>>;
   onSubmit: VoidFunction;

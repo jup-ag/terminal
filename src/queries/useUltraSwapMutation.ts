@@ -1,5 +1,4 @@
 import { WalletSignTransactionError } from '@jup-ag/wallet-adapter';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { useMutation } from '@tanstack/react-query';
 import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
 import { ultraSwapService } from 'src/data/UltraSwapService';
@@ -7,11 +6,11 @@ import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
 import { TransactionError } from '@mercurial-finance/optimist';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
-import { SearchAsset } from 'src/entity/SearchResponse';
+import { Asset } from 'src/entity/SearchResponse';
 
 interface UltraSwapMutationProps {
-  fromTokenInfo: SearchAsset;
-  toTokenInfo: SearchAsset;
+  fromTokenInfo: Asset;
+  toTokenInfo: Asset;
   setTxStatus: (status: ISwapContext['swapping']['txStatus']) => void;
   setLastSwapResult: (result: ISwapContext['lastSwapResult']) => void;
   quoteResponseMeta: QuoteResponse;
