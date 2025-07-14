@@ -124,7 +124,6 @@ const FormPairRow = (props: IPairRow) => {
     style,
     onSubmit,
     suppressCloseModal,
-    // usdValue,
     showExplorer = true,
     enableUnknownTokenWarning = true,
   } = props;
@@ -135,7 +134,7 @@ const FormPairRow = (props: IPairRow) => {
     onSubmit(item);
 
     if (suppressCloseModal) return;
-  }, [onSubmit, item, suppressCloseModal]);
+  }, [onSubmit, item, suppressCloseModal, queryClient]);
   const { data: balances } = useBalances();
   const balance = balances?.[item.id]?.uiAmount;
   const usdValue = balance ? new Decimal(balance).mul(item.usdPrice || 0) : undefined;
