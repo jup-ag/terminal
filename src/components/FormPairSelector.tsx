@@ -27,23 +27,21 @@ interface IFormPairSelector {
 }
 const FormPairSelector = ({ onSubmit, onClose }: IFormPairSelector) => {
   const [search, setSearch] = useState<string>('');
-  const { data: balances } = useBalances();
-  useEffect(() => {
-    if (balances) {
-      setSearch(Object.keys(balances).join(','));
-    }
-  }, [balances]);
+  const { data: balances = {} } = useBalances();
 
-  const { data: blueChipTokens } = useSearch([]);
-  const { data: searchTokens, isLoading } = useSearch([search]);
+  const { data: blueChipTokens = [] } = useSearch([]);
+  const { data: searchTokens = [], isLoading } = useSearch([search]);
+
+  const { data: userBalanceTokens = [] } = useSearch([Object.keys(balances).join(',')]);
 
   const searchResult = useMemo(() => {
+    // if no search, return user balance tokens and blue chip tokens
     if (!search) {
-      return sortByUserBalance([...(blueChipTokens || []), ...(searchTokens || [])], balances || {});
+      return sortByUserBalance([...userBalanceTokens, ...blueChipTokens], balances);
     } else {
-      return sortByUserBalance(searchTokens || [], balances || {});
+      return sortByUserBalance(searchTokens, balances);
     }
-  }, [blueChipTokens, balances, searchTokens, search]);
+  }, [blueChipTokens, balances, searchTokens, search, userBalanceTokens]);
 
   // Update triggerSearch to use cached user balance tokens
   // eslint-disable-next-line react-hooks/exhaustive-deps
