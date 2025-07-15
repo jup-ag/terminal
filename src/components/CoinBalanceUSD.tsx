@@ -12,12 +12,12 @@ interface ComponentProps {
 
 export const CoinBalanceUSD = (props: ComponentProps) => {
   const { tokenInfo, amount, maxDecimals, prefix = '' } = props;
-  const cgPrice = tokenInfo.usdPrice || 0;
+  const tokenPrice = tokenInfo.usdPrice || 0;
 
   const amountInUSD = useMemo(() => {
     if (!amount || !hasNumericValue(amount)) return new Decimal(0);
-    return new Decimal(amount).mul(cgPrice);
-  }, [amount, cgPrice]);
+    return new Decimal(amount).mul(tokenPrice);
+  }, [amount, tokenPrice]);
 
   return (
     <>
