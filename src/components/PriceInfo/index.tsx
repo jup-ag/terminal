@@ -1,10 +1,8 @@
-import { TransactionFeeInfo } from '@jup-ag/react-hook';
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {  useMemo, useState } from 'react';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
-import Deposits from './Deposits';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
@@ -16,14 +14,12 @@ const Index = ({
   fromTokenInfo,
   toTokenInfo,
   loading,
-  showFullDetails = false,
   containerClassName,
 }: {
   quoteResponse: QuoteResponse;
   fromTokenInfo: Asset;
   toTokenInfo: Asset;
   loading: boolean;
-  showFullDetails?: boolean;
   containerClassName?: string;
 }) => {
   const rateParams = {
@@ -61,7 +57,6 @@ const Index = ({
     return quoteResponse.quoteResponse.router;
   }, [quoteResponse]);
 
-  const [feeInformation, setFeeInformation] = useState<TransactionFeeInfo>();
 
   const gasFee = useMemo(() => {
     if (quoteResponse) {
@@ -73,7 +68,7 @@ const Index = ({
     return 0;
   }, [quoteResponse]);
 
-  const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
+  // const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
 
   return (
     <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl', containerClassName)}>
@@ -126,7 +121,6 @@ const Index = ({
         <div className="text-primary-text">{fee}%</div>
       </div>
       <TransactionFee gasFee={gasFee} gasless={quoteResponse?.quoteResponse.gasless} />
-      {showFullDetails ? <Deposits hasAtaDeposit={hasAtaDeposit} feeInformation={feeInformation} /> : null}
     </div>
   );
 };

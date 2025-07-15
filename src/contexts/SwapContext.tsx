@@ -1,4 +1,4 @@
-import { SwapResult } from '@jup-ag/react-hook';
+
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -26,6 +26,8 @@ import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
 import { useBalances } from 'src/hooks/useBalances';
 import { Asset } from 'src/entity/SearchResponse';
 import { useAsset } from 'src/hooks/useAsset';
+import { PublicKey } from '@solana/web3.js';
+import { TransactionError } from 'src/types/TransactionError';
 
 export interface IForm {
   fromMint: string;
@@ -37,6 +39,16 @@ export interface IForm {
 export type QuoteResponse = {
   original: UltraQuoteResponse;
   quoteResponse: FormattedUltraQuoteResponse;
+};
+
+export type SwapResult = {
+  txid: string;
+  inputAddress: PublicKey;
+  outputAddress: PublicKey;
+  inputAmount: number;
+  outputAmount: number;
+} | {
+  error?: TransactionError;
 };
 
 export type SwappingStatus = 'loading' | 'pending-approval' | 'sending' | 'fail' | 'success' | 'timeout';

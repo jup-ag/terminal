@@ -49,7 +49,6 @@ const ConfirmationScreen = () => {
             fromTokenInfo={fromTokenInfo}
             toTokenInfo={toTokenInfo}
             loading={loading}
-            showFullDetails
             containerClassName="bg-modiu; border-none"
           />
         ) : null}

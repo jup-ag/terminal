@@ -4,9 +4,9 @@ import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
 import { ultraSwapService } from 'src/data/UltraSwapService';
 import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
-import { TransactionError } from '@mercurial-finance/optimist';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { Asset } from 'src/entity/SearchResponse';
+import { TransactionError } from 'src/entity/TransactionError';
 
 interface UltraSwapMutationProps {
   fromTokenInfo: Asset;
