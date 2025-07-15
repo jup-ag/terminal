@@ -17,10 +17,6 @@ export const useSearch = (mintAddresses: string[], options: SearchOptions = {}) 
   return useQuery({
     queryKey:['search',mintAddressesString],
     queryFn: async () => {
-      // If we have 100 or fewer addresses, make a single request
-      if (mintAddresses.length <= CHUNK_SIZE) {
-        return searchService.search(mintAddressesString);
-      }
 
       // Split into chunks of 100
       const chunks: string[][] = [];
@@ -33,9 +29,9 @@ export const useSearch = (mintAddresses: string[], options: SearchOptions = {}) 
       );
 
       // Wait for all requests to complete
-      const results: SearchResponse[] = await Promise.all(chunkPromises);
+      const results = await Promise.allSettled(chunkPromises);
 
-      return results.flat();
+      return results.flatMap(result => result.status === 'fulfilled' ? result.value : []);
     },
     enabled: options.enabled ?? true,
     staleTime: options.staleTime ?? Infinity,
