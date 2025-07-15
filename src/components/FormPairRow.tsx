@@ -11,6 +11,7 @@ import { useLstApyFetcher } from 'src/queries/useLstApy';
 import { useBalances } from 'src/hooks/useBalances';
 import { Asset } from 'src/entity/SearchResponse';
 import { useQueryClient } from '@tanstack/react-query';
+import { ASSET_QUERY_KEY } from 'src/hooks/useAsset';
 
 export const PAIR_ROW_HEIGHT = 72;
 
@@ -130,7 +131,7 @@ const FormPairRow = (props: IPairRow) => {
   const queryClient = useQueryClient();
   const onClick = React.useCallback(() => {
     // Optimistically update for useAsset hook
-    queryClient.setQueryData(['search', 'assets', item.id], [item]);
+    queryClient.setQueryData([...ASSET_QUERY_KEY, item.id], [item]);
     onSubmit(item);
 
     if (suppressCloseModal) return;

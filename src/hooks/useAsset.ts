@@ -1,12 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { searchService } from 'src/contexts/SearchService';
 
+export const ASSET_QUERY_KEY = ['search', 'assets'];
+
 export const useAsset = (mint: string) => {
   return useQuery({
-    queryKey: ['search', 'assets', mint],
+    queryKey: [...ASSET_QUERY_KEY, mint],
     queryFn: () => searchService.search(mint),
     enabled: !!mint,
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: Infinity,
     select: (data) => data[0],
   });
 };
