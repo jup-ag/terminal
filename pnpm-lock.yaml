@@ -30,9 +30,6 @@ importers:
       '@solana/spl-token-0.4':
         specifier: npm:@solana/spl-token@0.4.0
         version: '@solana/spl-token@0.4.0(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2)(utf-8-validate@5.0.10)'
-      '@solana/spl-token-registry':
-        specifier: ~0.2.4574
-        version: 0.2.4574
       '@solana/wallet-adapter-wallets':
         specifier: 0.19.33
         version: 0.19.33(@babel/runtime@7.24.7)(@react-native-async-storage/async-storage@1.19.3(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10)))(@solana/sysvars@2.1.0(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.2.2))(@solana/web3.js@1.87.6(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bs58@6.0.0)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(react-dom@18.3.1(react@18.3.1))(react-native@0.72.15(@babel/core@7.22.11)(@babel/preset-env@7.24.7(@babel/core@7.22.11))(bufferutil@4.0.8)(react@18.3.1)(utf-8-validate@5.0.10))(react@18.3.1)(tslib@2.6.2)(typescript@5.2.2)(utf-8-validate@5.0.10)(ws@7.5.9(bufferutil@4.0.8)(utf-8-validate@5.0.10))
