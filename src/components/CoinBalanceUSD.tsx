@@ -1,5 +1,5 @@
 import Decimal from 'decimal.js';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { formatNumber, hasNumericValue } from 'src/misc/utils';
 import { Asset } from 'src/entity/SearchResponse';
 
