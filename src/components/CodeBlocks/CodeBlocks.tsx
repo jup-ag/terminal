@@ -15,22 +15,55 @@ import prettier from 'prettier/standalone';
 import dynamic from 'next/dynamic';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from 'src/misc/cn';
-import { Control, useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
-const CodeBlocks = ({
-  displayMode,
-  control
-}: {
-  displayMode: IInit['displayMode'];
-  control: Control<IFormConfigurator>;
-}) => {
 
-  const formProps = useWatch({control, name: 'formProps'});
-  const defaultExplorer = useWatch({control, name: 'defaultExplorer'});
-  const simulateWalletPassthrough = useWatch({control, name: 'simulateWalletPassthrough'});
-  const colors = useWatch({control, name: 'colors'});
+function applyCustomColors(colors: {
+  primary?: string;
+  background?: string;
+  primaryText?: string;
+  warning?: string;
+  interactive?: string;
+  module?: string;
+}) {
+  const root = document.documentElement;
+
+  if (colors.primary) {
+    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
+  }
+  if (colors.background) {
+    root.style.setProperty('--jupiter-terminal-background', colors.background);
+  }
+  if (colors.primaryText) {
+    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
+  }
+  if (colors.warning) {
+    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
+  }
+  if (colors.interactive) {
+    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
+  }
+  if (colors.module) {
+    root.style.setProperty('--jupiter-terminal-module', colors.module);
+  }
+}
+
+
+const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
+  const { control } = useFormContext<IFormConfigurator>();
+
+  const formProps = useWatch({ control, name: 'formProps' });
+  const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
+  const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
+  const colors = useWatch({ control, name: 'colors' });
+  // Apply custom colors when they change
+  useEffect(() => {
+    if (colors) {
+      applyCustomColors(colors);
+    }
+  }, [colors]);
 
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
@@ -50,9 +83,7 @@ const CodeBlocks = ({
 
   const valuesToFormat = {
     ...DISPLAY_MODE_VALUES,
-    ...(defaultExplorer !== 'Solana Explorer'
-      ? { defaultExplorer: defaultExplorer }
-      : undefined),
+    ...(defaultExplorer !== 'Solana Explorer' ? { defaultExplorer: defaultExplorer } : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
     ...(simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
   };
@@ -90,9 +121,7 @@ const CodeBlocks = ({
   const INIT_SNIPPET = `
   window.Jupiter.init(${formPropsSnippet});
   `;
-  const unformattedSnippet = [simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join(
-    '\n',
-  );
+  const unformattedSnippet = [simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join('\n');
 
   const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
     ['npmSnippet'],
@@ -141,7 +170,6 @@ const CodeBlocks = ({
 
   // Generate CSS variables snippet based on user's color selections
   const cssVariablesSnippet = useMemo(() => {
-
     if (!colors) return '';
 
     const cssVars = Object.entries(colors)
@@ -248,13 +276,13 @@ ${cssVars}
             <ExternalIcon />
           </Link>
         </div>
- {/* CSS Variables Code Block */}
- {cssVariablesSnippet && (
+        {/* CSS Variables Code Block */}
+        {cssVariablesSnippet && (
           <>
             <div className="mt-10">
               <hr className="opacity-10 pt-10" />
               <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
-             
+
               <div>
                 <SyntaxHighlighter language="css" showLineNumbers style={vs2015}>
                   {cssVariablesSnippet}
@@ -272,8 +300,6 @@ ${cssVars}
             </SyntaxHighlighter>
           </div>
         </div>
-
-       
       </div>
     </div>
   );

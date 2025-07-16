@@ -3,16 +3,16 @@ import React, { useCallback, useEffect, useState, memo } from 'react';
 import JupButton from 'src/components/JupButton';
 import LeftArrowIcon from 'src/icons/LeftArrowIcon';
 import { cn } from 'src/misc/cn';
-import { DEFAULT_EXPLORER, FormProps, WidgetPosition, WidgetSize } from 'src/types';
-import { IFormConfigurator } from 'src/constants';
+import { WidgetPosition, WidgetSize } from 'src/types';
 
-const WidgetTerminal = memo((props: {
-  formProps: FormProps;
-  simulateWalletPassthrough: boolean;
-  defaultExplorer: DEFAULT_EXPLORER;
-  branding: IFormConfigurator['branding'];
-}) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
+import { useFormContext, useWatch } from 'react-hook-form';
+
+const WidgetTerminal = memo(() => {
+  const { control } = useFormContext();
+  const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
+  const formProps = useWatch({ control, name: 'formProps' });
+  const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
+  const branding = useWatch({ control: control, name: 'branding' });
   const [isLoaded, setIsLoaded] = useState(false);
   const [position, setPosition] = useState<WidgetPosition>('bottom-right');
   const [size, setSize] = useState<WidgetSize>('default');
@@ -72,13 +72,13 @@ const WidgetTerminal = memo((props: {
         launchTerminal();
       }
     }, 200);
-  }, [isLoaded, props, position, size, launchTerminal]);
+  }, [isLoaded, position, size, launchTerminal]);
 
   // To make sure passthrough wallet are synced
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
     window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState, props]);
+  }, [passthroughWalletContextState]);
 
   return (
     <div className="flex flex-col items-center">
