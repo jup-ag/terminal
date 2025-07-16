@@ -1,15 +1,13 @@
 import React, { useCallback, useEffect, useState, memo } from 'react';
-import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
-import { IFormConfigurator } from 'src/constants';
+import { useFormContext, useWatch } from 'react-hook-form';
 
-const IntegratedTerminal = memo((props: {
-  formProps: FormProps;
-  simulateWalletPassthrough: boolean;
-  defaultExplorer: DEFAULT_EXPLORER;
-  branding: IFormConfigurator['branding'];
-}) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
+const IntegratedTerminal = memo(() => {
+  const { control } = useFormContext();
+  const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
+  const formProps = useWatch({ control, name: 'formProps' });
+  const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
+  const branding = useWatch({ control: control, name: 'branding' });
   const [isLoaded, setIsLoaded] = useState(false);
 
   const passthroughWalletContextState = useUnifiedWallet();
@@ -25,16 +23,9 @@ const IntegratedTerminal = memo((props: {
       passthroughWalletContextState: simulateWalletPassthrough ? passthroughWalletContextState : undefined,
       onRequestConnectWallet: () => setShowModal(true),
       defaultExplorer,
-      branding
+      branding,
     });
-  }, [
-    defaultExplorer,
-    formProps,
-    passthroughWalletContextState,
-    setShowModal,
-    simulateWalletPassthrough,
-    branding
-  ]);
+  }, [defaultExplorer, formProps, passthroughWalletContextState, setShowModal, simulateWalletPassthrough, branding]);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout | undefined = undefined;
@@ -55,13 +46,13 @@ const IntegratedTerminal = memo((props: {
         launchTerminal();
       }
     }, 200);
-  }, [isLoaded, simulateWalletPassthrough, props, launchTerminal]);
+  }, [isLoaded, simulateWalletPassthrough, launchTerminal]);
 
   // To make sure passthrough wallet are synced
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
     window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState, props]);
+  }, [passthroughWalletContextState]);
 
   return (
     <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden mt-9">
@@ -76,9 +67,7 @@ const IntegratedTerminal = memo((props: {
 
           <div
             id="integrated-terminal"
-            className={`flex h-full overflow-auto justify-center bg-black rounded-xl ${
-              !isLoaded ? 'hidden' : ''
-            }`}
+            className={`flex h-full overflow-auto justify-center bg-black rounded-xl ${!isLoaded ? 'hidden' : ''}`}
           />
         </div>
       </div>

@@ -1,9 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Control,
-  FormState,
-  UseFormReset,
-  UseFormSetValue,
+  useFormContext,
   useWatch,
 } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
@@ -45,19 +42,8 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
   },
 ];
 
-const FormConfigurator = ({
-  // // Hook form
-  reset,
-  setValue,
-  formState,
-  control,
-}: {
-  // Hook form
-  reset: UseFormReset<IFormConfigurator>;
-  setValue: UseFormSetValue<IFormConfigurator>;
-  formState: FormState<IFormConfigurator>;
-  control: Control<IFormConfigurator>;
-}) => {
+const FormConfigurator = () => {
+  const { control , reset, setValue, formState} = useFormContext<IFormConfigurator>();
   const currentTemplate = useRef('');
   const { query, replace } = useRouter();
 

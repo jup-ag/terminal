@@ -3,14 +3,14 @@ import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapte
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
 import { IFormConfigurator } from 'src/constants';
+import { useFormContext, useWatch } from 'react-hook-form';
 
-const ModalTerminal = (props: {
-  formProps: FormProps;
-  simulateWalletPassthrough: boolean;
-  defaultExplorer: DEFAULT_EXPLORER;
-  branding: IFormConfigurator['branding'];
-}) => {
-  const { formProps, simulateWalletPassthrough, defaultExplorer, branding } = props;
+const ModalTerminal = () => {
+  const { control } = useFormContext();
+  const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
+  const formProps = useWatch({ control, name: 'formProps' });
+  const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
+  const branding = useWatch({ control: control, name: 'branding' });
 
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
@@ -30,7 +30,7 @@ const ModalTerminal = (props: {
   useEffect(() => {
     if (!window.Jupiter.syncProps) return;
     window.Jupiter.syncProps({ passthroughWalletContextState });
-  }, [passthroughWalletContextState, props]);
+  }, [passthroughWalletContextState]);
 
   return (
     <div
