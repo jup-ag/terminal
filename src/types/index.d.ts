@@ -2,11 +2,11 @@ import { CSSProperties } from 'react';
 import { Root } from 'react-dom/client';
 import { createStore } from 'jotai';
 import { Wallet } from '@jup-ag/wallet-adapter';
-import { Connection, PublicKey, TransactionError } from '@solana/web3.js';
-import { SwapResult } from '@jup-ag/react-hook';
+import { Connection, PublicKey } from '@solana/web3.js';
 import { WalletContextState } from '@jup-ag/wallet-adapter';
 import EventEmitter from 'events';
-import { QuoteResponse } from 'src/contexts/SwapContext';
+import { QuoteResponse, SwapResult } from 'src/contexts/SwapContext';
+import { TransactionError } from './TransactionError';
 
 declare global {
   interface Window {

@@ -1,4 +1,3 @@
-import { TokenInfo } from '@solana/spl-token-registry';
 
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
@@ -7,6 +6,7 @@ import * as React from 'react';
 import { formatNumber, fromLamports } from '../misc/utils';
 import PrecisionTickSize from './PrecisionTickSize';
 import { cn } from 'src/misc/cn';
+import { Asset } from 'src/entity/SearchResponse';
 
 export interface IRateParams {
   inAmount: JSBI;
@@ -46,9 +46,9 @@ interface ExchangeRateProps {
   className?: string;
   textClassName?: string;
   loading?: boolean;
-  fromTokenInfo: TokenInfo;
+  fromTokenInfo: Asset;
   rateParams: IRateParams;
-  toTokenInfo: TokenInfo;
+  toTokenInfo: Asset;
   reversible?: boolean;
 }
 

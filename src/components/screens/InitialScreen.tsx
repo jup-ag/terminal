@@ -1,30 +1,24 @@
-import { TokenInfo } from '@solana/spl-token-registry';
+
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import Form from '../../components/Form';
 import FormPairSelector from '../../components/FormPairSelector';
-import { useTokenContext } from '../../contexts/TokenContextProvider';
 import Decimal from 'decimal.js';
 import { cn } from 'src/misc/cn';
 import { useBalances } from 'src/hooks/useBalances';
+import { Asset } from 'src/entity/SearchResponse';
+import { useAsset } from 'src/hooks/useAsset';
 
-interface Props {
-  isWalletModalOpen: boolean;
-  setIsWalletModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
+const InitialScreen = () => {
   const { data: balances } = useBalances();
 
-  const { tokenMap,getTokenInfo, requestTokenInfo } = useTokenContext();
   const {
     form,
     setForm,
     setErrors,
     quoteResponseMeta,
-    formProps: { initialOutputMint,fixedMint },
     loading,
   } = useSwapContext();
   const { setScreen } = useScreenState();
@@ -35,6 +29,9 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
   }, [balances, form.fromMint]);
 
   const [isDisabled, setIsDisabled] = useState(false);
+
+  const { data: asset } = useAsset(form.fromMint);
+
   useEffect(() => {
     if (!form.fromValue || !form.fromMint || !form.toMint || !form.toValue || !quoteResponseMeta || loading) {
       setErrors({});
@@ -42,11 +39,9 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
       return;
     }
 
-    const tokenInfo = getTokenInfo(form.fromMint);
-
     if (new Decimal(form.fromValue).gt(balance)) {
       setErrors({
-        fromValue: { title: `Insufficient ${tokenInfo?.symbol}`, message: '' },
+        fromValue: { title: `Insufficient ${asset?.symbol}`, message: '' },
       });
       setIsDisabled(true);
       return;
@@ -54,47 +49,35 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
 
     setErrors({});
     setIsDisabled(false);
-  }, [form, balance, quoteResponseMeta, loading, setErrors, getTokenInfo]);
+  }, [form, asset, balance, quoteResponseMeta, loading, setErrors]);
 
   const [selectPairSelector, setSelectPairSelector] = useState<'fromMint' | 'toMint' | null>(null);
-  
+
   const onSelectMint = useCallback(
-    async (tokenInfo: TokenInfo) => {
-      await requestTokenInfo([tokenInfo.address]);
+    async (tokenInfo: Asset) => {
       if (selectPairSelector === 'fromMint') {
         setForm((prev) => ({
           ...prev,
-          fromMint: tokenInfo.address,
+          fromMint: tokenInfo.id,
           fromValue: '',
-
           // Prevent same token to same token;
-          ...(prev.toMint === tokenInfo.address ? { toMint: prev.fromMint } : undefined),
+          ...(prev.toMint === tokenInfo.id ? { toMint: prev.fromMint } : undefined),
         }));
       } else {
         setForm((prev) => ({
           ...prev,
-          toMint: tokenInfo.address,
+          toMint: tokenInfo.id,
           toValue: '',
-
           // Prevent same token to same token;
-          ...(prev.fromMint === tokenInfo.address ? { fromMint: prev.toMint } : undefined),
+          ...(prev.fromMint === tokenInfo.id ? { fromMint: prev.toMint } : undefined),
         }));
       }
       setSelectPairSelector(null);
     },
-    [selectPairSelector, setForm, requestTokenInfo],
+    [selectPairSelector, setForm],
   );
 
-  const availableMints: TokenInfo[] = useMemo(() => {
-    let result = [...tokenMap.values()];
-    // On fixedOutputMint, prevent user from selecting the same token as output
-    if (fixedMint) {
-      result = result.filter((item) => item.address !== initialOutputMint);
-    }
-
-    return result;
-  }, [tokenMap, fixedMint, initialOutputMint]);
-
+  
   const onSubmitToConfirmation = useCallback(() => {
     setScreen('Swapping');
   }, [setScreen]);
@@ -112,7 +95,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
           onSubmit={onSubmitToConfirmation}
           isDisabled={isDisabled}
           setSelectPairSelector={setSelectPairSelector}
-          setIsWalletModalOpen={setIsWalletModalOpen}
         />
       </form>
 
@@ -120,7 +102,6 @@ const InitialScreen = ({ setIsWalletModalOpen, isWalletModalOpen }: Props) => {
         <div className="absolute top-0 left-0 h-full w-full bg-black rounded-lg overflow-hidden">
           <FormPairSelector
             onSubmit={onSelectMint}
-            tokenInfos={availableMints}
             onClose={() => setSelectPairSelector(null)}
           />
         </div>

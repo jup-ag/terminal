@@ -179,8 +179,7 @@ const SwappingScreen = () => {
               quoteResponse={lastSwapResult?.quoteReponse}
               fromTokenInfo={fromTokenInfo}
               toTokenInfo={toTokenInfo}
-              loading={false}
-              showFullDetails
+              loading={false}              
               containerClassName=" border-none mt-0"
             />
             {explorerLink && (

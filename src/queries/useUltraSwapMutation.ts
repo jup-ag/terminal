@@ -1,16 +1,16 @@
 import { WalletSignTransactionError } from '@jup-ag/wallet-adapter';
-import { TokenInfo } from '@solana/spl-token-registry';
 import { useMutation } from '@tanstack/react-query';
 import { ISwapContext, QuoteResponse } from 'src/contexts/SwapContext';
 import { ultraSwapService } from 'src/data/UltraSwapService';
 import { Buffer } from 'buffer';
 import { PublicKey, VersionedTransaction } from '@solana/web3.js';
-import { TransactionError } from '@mercurial-finance/optimist';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
+import { Asset } from 'src/entity/SearchResponse';
+import { TransactionError } from 'src/entity/TransactionError';
 
 interface UltraSwapMutationProps {
-  fromTokenInfo: TokenInfo;
-  toTokenInfo: TokenInfo;
+  fromTokenInfo: Asset;
+  toTokenInfo: Asset;
   setTxStatus: (status: ISwapContext['swapping']['txStatus']) => void;
   setLastSwapResult: (result: ISwapContext['lastSwapResult']) => void;
   quoteResponseMeta: QuoteResponse;
@@ -89,8 +89,8 @@ export function useUltraSwapMutation() {
       setLastSwapResult({
         swapResult: {
           txid: signature,
-          inputAddress: new PublicKey(fromTokenInfo.address),
-          outputAddress: new PublicKey(toTokenInfo.address),
+          inputAddress: new PublicKey(fromTokenInfo.id),
+          outputAddress: new PublicKey(toTokenInfo.id),
           inputAmount: Number(inputAmountResult),
           outputAmount: Number(outputAmountResult),
         },

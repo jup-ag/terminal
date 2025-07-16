@@ -1,8 +1,5 @@
-import { useState } from 'react';
-
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { SwapContextProvider } from 'src/contexts/SwapContext';
-import { USDValueProvider } from 'src/contexts/USDValueProvider';
 import { IInit } from 'src/types';
 
 import Header from '../components/Header';
@@ -15,7 +12,6 @@ import { BrandingProvider } from 'src/contexts/BrandingProvider';
 
 const Content = () => {
   const { screen } = useScreenState();
-  const [isWalletModalOpen, setIsWalletModalOpen] = useState(false);
 
   // ID is required for scoped preflight by tailwind to work
   return (
@@ -23,8 +19,8 @@ const Content = () => {
       <div>
         {screen === 'Initial' ? (
           <>
-            <Header setIsWalletModalOpen={setIsWalletModalOpen} />
-            <InitialScreen isWalletModalOpen={isWalletModalOpen} setIsWalletModalOpen={setIsWalletModalOpen} />
+            <Header />
+            <InitialScreen />
           </>
         ) : null}
         {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
@@ -45,11 +41,9 @@ const Content = () => {
 const JupiterApp = (props: IInit) => {
   return (
     <SwapContextProvider {...props}>
-      <USDValueProvider {...props}>
-        <BrandingProvider {...props}>
-          <Content />
-        </BrandingProvider>
-      </USDValueProvider>
+      <BrandingProvider {...props}>
+        <Content />
+      </BrandingProvider>
     </SwapContextProvider>
   );
 };

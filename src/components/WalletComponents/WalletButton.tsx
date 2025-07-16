@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useRef, useState } from 'react';
+import React, {  useMemo, useRef, useState } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { useOutsideClick } from 'src/misc/utils';
@@ -6,8 +6,8 @@ import { CurrentUserBadge } from '../CurrentUserBadge';
 
 import { WalletModalButton } from './components/WalletModalButton';
 
-export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> = ({ setIsWalletModalOpen }) => {
-  const { publicKey, connected, connecting, disconnect, wallets } = useWalletPassThrough();
+export const WalletButton = () => {
+  const { publicKey, connected, connecting, disconnect } = useWalletPassThrough();
   const [active, setActive] = useState(false);
   const ref = useRef<HTMLUListElement>(null);
   const { screen, setScreen } = useScreenState();
@@ -26,7 +26,7 @@ export const WalletButton: FC<{ setIsWalletModalOpen(toggle: boolean): void }> =
   if ((!connected && !connecting) || !base58) {
     return (
       <div onClick={() => setScreen('Wallet')} className="text-primary-text">
-        <WalletModalButton setIsWalletModalOpen={setIsWalletModalOpen} />
+        <WalletModalButton />
       </div>
     );
   }

@@ -1,5 +1,4 @@
-import { SwapResult } from '@jup-ag/react-hook';
-import { TokenInfo } from '@solana/spl-token-registry';
+
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -19,13 +18,16 @@ import { WRAPPED_SOL_MINT } from 'src/constants';
 import {  hasNumericValue, useDebounce } from 'src/misc/utils';
 import { FormProps, IInit } from 'src/types';
 import { useScreenState } from './ScreenProvider';
-import { useTokenContext } from './TokenContextProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useQuoteQuery } from 'src/queries/useQuoteQuery';
 import { UltraQuoteResponse } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
 import { useBalances } from 'src/hooks/useBalances';
+import { Asset } from 'src/entity/SearchResponse';
+import { useAsset } from 'src/hooks/useAsset';
+import { PublicKey } from '@solana/web3.js';
+import { TransactionError } from 'src/types/TransactionError';
 
 export interface IForm {
   fromMint: string;
@@ -37,6 +39,16 @@ export interface IForm {
 export type QuoteResponse = {
   original: UltraQuoteResponse;
   quoteResponse: FormattedUltraQuoteResponse;
+};
+
+export type SwapResult = {
+  txid: string;
+  inputAddress: PublicKey;
+  outputAddress: PublicKey;
+  inputAmount: number;
+  outputAmount: number;
+} | {
+  error?: TransactionError;
 };
 
 export type SwappingStatus = 'loading' | 'pending-approval' | 'sending' | 'fail' | 'success' | 'timeout';
@@ -56,8 +68,8 @@ export interface ISwapContext {
       >
     >
   >;
-  fromTokenInfo?: TokenInfo | null;
-  toTokenInfo?: TokenInfo | null;
+  fromTokenInfo?: Asset | null;
+  toTokenInfo?: Asset | null;
   quoteResponseMeta: QuoteResponse | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponse | null>>;
   onSubmit: VoidFunction;
@@ -111,7 +123,6 @@ const INITIAL_FORM = {
 export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { displayMode, scriptDomain, formProps: originalFormProps, children, enableWalletPassthrough } = props;
   const { screen } = useScreenState();
-  const { isLoaded, getTokenInfo } = useTokenContext();
   const { wallet } = useWalletPassThrough();
   const { refetch: refetchBalances } = useBalances();
   const isToPairFocused = useRef<boolean>(false);
@@ -124,6 +135,8 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     fromValue: '',
     toValue: '',
   });
+  const { data: fromTokenInfo } = useAsset(form.fromMint);
+  const { data: toTokenInfo } = useAsset(form.toMint);
 
   useEffect(() => {
     if (formProps.fixedMint) {
@@ -135,36 +148,24 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
 
-  const fromTokenInfo = useMemo(() => {
-    if (!isLoaded) return null;
-    const tokenInfo = form.fromMint ? getTokenInfo(form.fromMint) : null;
-    return tokenInfo;
-  }, [form.fromMint, isLoaded, getTokenInfo]);
 
-  const toTokenInfo = useMemo(() => {
-    if (!isLoaded) return null;
-    const tokenInfo = form.toMint ? getTokenInfo(form.toMint) : null;
-    return tokenInfo;
-  }, [form.toMint, getTokenInfo, isLoaded]);
 
   // Set value given initial amount
   const setupInitialAmount = useCallback(() => {
     if (!formProps?.initialAmount || !fromTokenInfo || !toTokenInfo) return;
-
-    const toUiAmount = (mint: string) => {
-      const tokenInfo = mint ? getTokenInfo(mint) : undefined;
-
-      if (!tokenInfo) return;
+    const toUiAmount = () => {
       if (!formProps.initialAmount) {
         return;
       }
-      const value = new Decimal(formProps.initialAmount).div(Math.pow(10, tokenInfo.decimals)).toFixed();
+
+      if (!fromTokenInfo) return;
+      const value = new Decimal(formProps.initialAmount).div(Math.pow(10, fromTokenInfo.decimals)).toFixed();
       return value;
     };
     setTimeout(() => {
-      setForm((prev) => ({ ...prev, fromValue: toUiAmount(prev.fromMint) ?? '' }));
+      setForm((prev) => ({ ...prev, fromValue: toUiAmount() ?? '' }));
     }, 0);
-  }, [formProps.initialAmount, fromTokenInfo, getTokenInfo, toTokenInfo]);
+  }, [formProps.initialAmount, fromTokenInfo, toTokenInfo]);
 
   useEffect(() => {
     setupInitialAmount();
