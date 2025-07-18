@@ -179,7 +179,7 @@ export default function App() {
             <AppHeader isSideDrawerOpen={isSideDrawerOpen} setIsSideDrawerOpen={setIsSideDrawerOpen} />
 
             <div className="">
-              <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
+              <div className="flex flex-col items-center h-full w-full mt-4 md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
                     <V2SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
@@ -190,9 +190,8 @@ export default function App() {
                       v4
                     </div>
                   </div>
-                  <p className="text-[#9D9DA6] max-w-[100%] md:max-w-[60%] text-md mt-4 heading-[24px]">
-                    An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your
-                    HTML. Check out the visual demo for the various integration modes below.
+                  <p className="text-[#9D9DA6] text-md mt-4 heading-[24px]">
+                  Seamlessly embed a full Jupiter Ultra Swap directly in your application
                   </p>
                 </div>
               </div>
