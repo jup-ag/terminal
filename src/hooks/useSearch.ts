@@ -18,11 +18,16 @@ export const useSearch = (mintAddresses: string[], options: SearchOptions = {}) 
     queryKey:['search',mintAddressesString],
     queryFn: async () => {
 
+      if (mintAddresses.length === 0) {
+        return searchService.search('');
+      }
+
       // Split into chunks of 100
       const chunks: string[][] = [];
       for (let i = 0; i < mintAddresses.length; i += CHUNK_SIZE) {
         chunks.push(mintAddresses.slice(i, i + CHUNK_SIZE));
       }
+
       // Make requests for each chunk
       const chunkPromises = chunks.map(chunk => 
         searchService.search(chunk.join(','))
