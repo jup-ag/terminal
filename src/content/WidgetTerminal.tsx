@@ -82,7 +82,7 @@ const WidgetTerminal = memo(() => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex mt-9 px-2 md:px-0">
+      <div className="flex ">
         <div>
           <div className="relative mt-8 md:mt-0">
             <div className="bg-white/10 rounded-xl flex items-center justify-center w-full md:w-[384px] h-[216px]">
@@ -197,7 +197,7 @@ const WidgetTerminal = memo(() => {
         </div>
       </div>
 
-      <div className="mt-8 py-4">
+      <div className="py-4">
         <div className="border-b border-white/10" />
       </div>
     </div>
