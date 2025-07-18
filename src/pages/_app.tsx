@@ -19,6 +19,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
 import { cn } from 'src/misc/cn';
 import { TerminalGroup } from 'src/content/TerminalGroup';
+import SideDrawer from 'src/components/SideDrawer/SideDrawer';
+import JupiterLogo from 'src/icons/JupiterLogo';
+import CloseIcon from 'src/icons/CloseIcon';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -45,8 +48,25 @@ const queryClient = new QueryClient({
   },
 });
 
+const TERMINAL_MODE: { label: string; value: IInit['displayMode'] }[] = [
+  {
+    label: 'Modal',
+    value: 'modal',
+  },
+  {
+    label: 'Integrated',
+    value: 'integrated',
+  },
+  {
+    label: 'Widget',
+    value: 'widget',
+  },
+]
+
 export default function App() {
-  const [tab, setTab] = useState<IInit['displayMode']>('integrated');
+  const [displayMode, setDisplayMode] = useState<IInit['displayMode']>('integrated');
+  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
+  const [sideDrawerTab, setSideDrawerTab] = useState<'config' | 'snippet'>('config');
 
   // Cleanup on tab change
   useEffect(() => {
@@ -55,7 +75,7 @@ export default function App() {
     }
 
     setTerminalInView(false);
-  }, [tab]);
+  }, [displayMode]);
 
   const methods = useForm<IFormConfigurator>({
     defaultValues: INITIAL_FORM_CONFIG,
@@ -91,35 +111,72 @@ export default function App() {
   }, [wallets, simulateWalletPassthrough]);
 
   return (
-    <FormProvider {...methods}>
-      <QueryClientProvider client={queryClient}>
-        <DefaultSeo
-          title={'Jupiter Terminal'}
-          openGraph={{
-            type: 'website',
-            locale: 'en',
-            title: 'Jupiter Terminal',
-            description:
-              'Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
-            url: 'https://terminal.jup.ag/',
-            site_name: 'Jupiter Terminal',
-            images: [
-              {
-                url: `https://static.jup.ag/static/jupiter-meta-main.jpg`,
-                alt: 'Jupiter Aggregator',
-              },
-            ],
-          }}
-          twitter={{
-            cardType: 'summary_large_image',
-            site: 'jup.ag',
-            handle: '@JupiterExchange',
-          }}
-        />
+    <QueryClientProvider client={queryClient}>
+      <DefaultSeo
+        title={'Jupiter Terminal'}
+        openGraph={{
+          type: 'website',
+          locale: 'en',
+          title: 'Jupiter Terminal',
+          description: 'Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
+          url: 'https://terminal.jup.ag/',
+          site_name: 'Jupiter Terminal',
+          images: [
+            {
+              url: `https://static.jup.ag/static/jupiter-meta-main.jpg`,
+              alt: 'Jupiter Aggregator',
+            },
+          ],
+        }}
+        twitter={{
+          cardType: 'summary_large_image',
+          site: 'jup.ag',
+          handle: '@JupiterExchange',
+        }}
+      />
+      <FormProvider {...methods}>
+        <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
+          <SideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}>
+            <div className="flex flex-col h-full">
+              <div className="flex justify-between items-center py-4 px-4 text-white gap-2 border-b border-white/10">
+                <h1 className="flex items-center text-lg font-semibold text-white">
+                  <JupiterLogo />
+                  <span className="ml-3">Jupiter</span>
+                </h1>
+                <button
+                  className="p-2 text-white/50 hover:text-gray-300 transition-colors"
+                  onClick={() => setIsSideDrawerOpen(false)}
+                  aria-label="Close drawer"
+                >
+                  <CloseIcon width={20} height={20} />
+                </button>
+              </div>
 
-        <div className="bg-v3-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
+              <div className="flex justify-between items-center my-4 mx-4 text-white gap-2 border border-white/10 rounded-full">
+                <button
+                  className={cn('flex-1 p-2 rounded-full text-landing-primary', {
+                    'bg-landing-primary/20 ': sideDrawerTab === 'config',
+                  })}
+                  onClick={() => setSideDrawerTab('config')}
+                >
+                  Config
+                </button>
+                <button
+                  className={cn('flex-1 p-2 rounded-full text-landing-primary', {
+                    'bg-landing-primary/20 ': sideDrawerTab === 'snippet',
+                  })}
+                  onClick={() => setSideDrawerTab('snippet')}
+                >
+                  Snippet
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto px-4 py-2">
+                {sideDrawerTab === 'config' ? <FormConfigurator /> : <CodeBlocks displayMode={'integrated'} />}
+              </div>
+            </div>
+          </SideDrawer>
           <div>
-            <AppHeader />
+            <AppHeader isSideDrawerOpen={isSideDrawerOpen} setIsSideDrawerOpen={setIsSideDrawerOpen} />
 
             <div className="">
               <div className="flex flex-col items-center h-full w-full mt-4 md:mt-14">
@@ -141,14 +198,10 @@ export default function App() {
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-6xl bg-black/25 mt-12 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
-                  {/* Desktop configurator */}
-                  <div className="hidden md:flex">
-                    <FormConfigurator />
-                  </div>
+                <div className="max-w-6xl  mt-3 rounded-xl flex flex-col md:flex-row w-full md:p-4 relative">
 
                   <ShouldWrapWalletProvider>
-                    <div className="mt-8 md:mt-0 md:ml-4 h-full w-full bg-black/40 rounded-xl flex flex-col">
+                    <div className="mt-8 md:mt-0 md:ml-4 h-full w-full rounded-xl flex flex-col">
                       {simulateWalletPassthrough ? (
                         <div className="absolute right-6 top-8 text-white flex flex-col justify-center text-center">
                           <div className="text-xs mb-1">Simulate dApp Wallet</div>
@@ -157,102 +210,61 @@ export default function App() {
                       ) : null}
 
                       <div className="mt-4 flex justify-center ">
-                        <button
-                          onClick={() => {
-                            setTab('modal');
-                          }}
-                          type="button"
-                          className={cn(
-                            '!bg-none relative px-4 justify-center',
-                            tab === 'modal' ? '' : 'opacity-20 hover:opacity-70',
-                          )}
-                        >
-                          <div className="flex items-center text-md text-white">
-                            {tab === 'modal' ? <V2SexyChameleonText>Modal</V2SexyChameleonText> : 'Modal'}
-                          </div>
 
-                          {tab === 'modal' ? (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
-                          ) : (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
-                          )}
-                        </button>
-
-                        <button
-                          onClick={() => {
-                            setTab('integrated');
-                          }}
-                          type="button"
-                          className={cn(
-                            '!bg-none relative px-4 justify-center',
-                            tab === 'integrated' ? '' : 'opacity-20 hover:opacity-70',
-                          )}
-                        >
-                          <div className="flex items-center text-md text-white">
-                            {tab === 'integrated' ? (
-                              <V2SexyChameleonText>Integrated</V2SexyChameleonText>
-                            ) : (
-                              'Integrated'
+                        {TERMINAL_MODE.map((mode) => (
+                          <button
+                            key={mode.value}
+                            onClick={() => setDisplayMode(mode.value)}
+                            type="button"
+                            className={cn(
+                              '!bg-none relative px-4 justify-center',
+                              displayMode === mode.value ? '' : 'opacity-20 hover:opacity-70',
                             )}
-                          </div>
-                          {tab === 'integrated' ? (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
-                          ) : (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
-                          )}
-                        </button>
+                          >
+                            <div className="flex items-center text-md text-white">
+                              {displayMode === mode.value ? <V2SexyChameleonText>{mode.label}</V2SexyChameleonText> : mode.label}
+                            </div>
+                            {displayMode === mode.value ? (
+                              <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
+                            ) : (
+                              <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
+                            )}
+                          </button>
+                        ))}
 
-                        <button
-                          onClick={() => {
-                            setTab('widget');
-                          }}
-                          type="button"
-                          className={cn(
-                            '!bg-none relative px-4 justify-center',
-                            tab === 'widget' ? '' : 'opacity-20 hover:opacity-70',
-                          )}
-                        >
-                          <div className="flex items-center text-md text-white">
-                            {tab === 'widget' ? <V2SexyChameleonText>Widget</V2SexyChameleonText> : 'Widget'}
-                          </div>
-
-                          {tab === 'widget' ? (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-0.5 bg-gradient-to-r from-primary to-[#00BEF0]" />
-                          ) : (
-                            <div className="absolute left-0 bottom-[-8px] w-full h-[1px] bg-white/50" />
-                          )}
-                        </button>
                       </div>
 
                       <span className="flex justify-center text-center text-xs text-[#9D9DA6] mt-4">
-                        {tab === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
-                        {tab === 'integrated' ? 'Jupiter renders as a part of your dApp.' : null}
-                        {tab === 'widget'
+                        {displayMode === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
+                        {displayMode === 'integrated' ? 'Jupiter renders as a part of your dApp.' : null}
+                        {displayMode === 'widget'
                           ? 'Jupiter renders as part of a widget that can be placed at different positions on your dApp.'
                           : null}
                       </span>
 
+
                       <div className="flex flex-grow items-center justify-center text-white/75">
-                        <TerminalGroup tab={tab} />
+                        <TerminalGroup tab={displayMode} />
+                      </div>
+
+                      <div className="flex justify-center mt-2">
+                        <button className="relative border border-landing-primary/20 text-sm text-landing-primary font-semibold px-4 py-2 rounded-lg hover:bg-landing-primary/10 transition-colors" onClick={() => setIsSideDrawerOpen(true)}>
+                          Customize
+                          <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-landing-primary animate-pulse"></span>
+                        </button>
                       </div>
                     </div>
                   </ShouldWrapWalletProvider>
                 </div>
               </div>
-              {/* Mobile configurator */}
-              <div className="flex md:hidden">
-                <FormConfigurator />
-              </div>
             </div>
           </div>
-
-          <CodeBlocks displayMode={tab} />
 
           <div className="w-full mt-12">
             <Footer />
           </div>
         </div>
-      </QueryClientProvider>
-    </FormProvider>
+      </FormProvider>
+    </QueryClientProvider>
   );
 }

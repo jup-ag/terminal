@@ -28,6 +28,10 @@ module.exports = {
         'success':'#23C1AA',
 
         'uiv2-text': '#07090F',
+        'landing-bg': '#0b0e13',
+        'landing-gradient-start': '#0f111a',
+        'landing-gradient-end': '#181b27',
+        'landing-primary': '#C7F284',
       },
       fontSize: {
         xxs: ['0.625rem', '1rem'],
@@ -49,10 +53,19 @@ module.exports = {
             '-webkit-filter': 'hue-rotate(-360deg)',
           },
         },
+        pulse: {
+          '0%, 100%': {
+            opacity: '1',
+          },
+          '50%': {
+            opacity: '.5',
+          },
+        },
       },
       animation: {
         shine: 'shine 3.5s linear infinite',
         hue: 'hue 10s infinite linear',
+        pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       boxShadow: {
         'swap-input-dark': '0px 2px 16px rgba(199, 242, 132, 0.25)',

@@ -55,7 +55,7 @@ const IntegratedTerminal = memo(() => {
   }, [passthroughWalletContextState]);
 
   return (
-    <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden mt-9">
+    <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden mt-4 ">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
         <div className="w-full h-full rounded-xl overflow-hidden flex justify-center">
           {/* Loading state */}
@@ -67,7 +67,7 @@ const IntegratedTerminal = memo(() => {
 
           <div
             id="integrated-terminal"
-            className={`flex h-full overflow-auto justify-center bg-black rounded-xl ${!isLoaded ? 'hidden' : ''}`}
+            className={`flex h-full overflow-auto justify-center bg-black rounded-xl border border-white/10 ${!isLoaded ? 'hidden' : ''}`}
           />
         </div>
       </div>
