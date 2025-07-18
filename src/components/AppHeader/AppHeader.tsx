@@ -6,7 +6,12 @@ import HeaderLinks from './HeaderLinks';
 import HeaderLinksMobile from './HeaderLinksMobile';
 import JupiterLogo from 'src/icons/JupiterLogo';
 
-const AppHeader: React.FC<{}> = () => {
+interface AppHeaderProps {
+  isSideDrawerOpen?: boolean;
+  setIsSideDrawerOpen?: (isOpen: boolean) => void;
+}
+
+const AppHeader: React.FC<AppHeaderProps> = () => {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
   const handleToggleMenu = () => setOpenMobileMenu(!openMobileMenu);
 
@@ -19,14 +24,11 @@ const AppHeader: React.FC<{}> = () => {
     }
   }, [openMobileMenu]);
 
+
   return (
     <>
-      <div className="flex items-center justify-between w-full bg-black/[.35]">
-        <div className="flex items-center flex-1 p-4">
-          <button onClick={handleToggleMenu} type="button" className="w-6 mr-3 md:hidden text-white">
-            {openMobileMenu ? <CloseIcon /> : <MenuIcon />}
-          </button>
-
+      <div className="flex items-center justify-between w-full bg-landing-bg">
+        <div className="flex items-center p-4">
           <Link href="https://jup.ag" shallow className="flex-1">
             <h1 className="flex items-center text-lg font-semibold text-white">
               <JupiterLogo/>
@@ -40,17 +42,7 @@ const AppHeader: React.FC<{}> = () => {
         <div className="flex-1" />
       </div>
 
-      {openMobileMenu && (
-        <div
-          style={{
-            height: 'calc(100vh - 70px)',
-          }}
-          className="z-[60] md:hidden fixed top-[60px] left-0 w-full bg-[rgba(62,62,69,0.85)] backdrop-blur-[20px]"
-          onClick={handleToggleMenu}
-        >
-          <HeaderLinksMobile />
-        </div>
-      )}
+   
     </>
   );
 };
