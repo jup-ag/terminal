@@ -121,7 +121,7 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal' || displayMode === 'integrated') {
-      return `flex flex-col h-[550px] w-screen max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
+      return `flex flex-col h-[550px] w-full max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
     } else if (displayMode === 'widget') {

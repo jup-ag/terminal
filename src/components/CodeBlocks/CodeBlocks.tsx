@@ -20,35 +20,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
 
-function applyCustomColors(colors: {
-  primary?: string;
-  background?: string;
-  primaryText?: string;
-  warning?: string;
-  interactive?: string;
-  module?: string;
-}) {
-  const root = document.documentElement;
-
-  if (colors.primary) {
-    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
-  }
-  if (colors.background) {
-    root.style.setProperty('--jupiter-terminal-background', colors.background);
-  }
-  if (colors.primaryText) {
-    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
-  }
-  if (colors.warning) {
-    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
-  }
-  if (colors.interactive) {
-    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
-  }
-  if (colors.module) {
-    root.style.setProperty('--jupiter-terminal-module', colors.module);
-  }
-}
 
 
 const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
@@ -58,12 +29,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const colors = useWatch({ control, name: 'colors' });
-  // Apply custom colors when they change
-  useEffect(() => {
-    if (colors) {
-      applyCustomColors(colors);
-    }
-  }, [colors]);
+
 
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
@@ -213,8 +179,8 @@ ${cssVars}
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-12">
-      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
+    <div className="flex flex-col items-center justify-center py-2">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
         <p className="text-white self-start pb-2 text-xs text-white/50">
           Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
@@ -227,7 +193,7 @@ ${cssVars}
 
       <div className="my-4" />
 
-      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
         <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
