@@ -135,7 +135,7 @@ export default function App() {
         }}
       />
       <FormProvider {...methods}>
-        <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
+        <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between gap-y-4">
           <SideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}>
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center py-4 px-4 text-white gap-2 border-b border-white/10">
@@ -178,7 +178,7 @@ export default function App() {
           <div>
             <AppHeader isSideDrawerOpen={isSideDrawerOpen} setIsSideDrawerOpen={setIsSideDrawerOpen} />
 
-            <div className="">
+            <div className="px-2">
               <div className="flex flex-col items-center h-full w-full mt-4 md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
@@ -218,7 +218,7 @@ export default function App() {
                         ))}
                       </div>
 
-                      <div className="flex flex-grow  justify-center text-white/75 flex-col px-5  w-[400px] max-w-[400px] mx-auto">
+                      <div className="flex flex-grow  justify-center text-white/75 flex-col mx-auto px-2 "  >
                         <div className="flex flex-row justify-between  min-h-[57px] items-center">
                           <div className="flex justify-between flex-row">
                             <button
@@ -254,6 +254,35 @@ export default function App() {
             </div>
           </div>
 
+          <div className="text-white grid  md:grid-cols-2 gap-4 px-2 mt-2 max-w-[700px] mx-auto">
+            <div className="bg-[#182220] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2 ">
+              <div className='text-xl font-semibold'>Swap fees</div>
+              <div className='text-white/60 text-sm'>Earn swap fees easily.</div>
+
+              <img src="/upsell/swap_fee.svg" alt="swap-fees" className="absolute top-0 right-0" />
+            </div>
+            <div className="bg-[#151E31] rounded-xl p-4 relative gap-y-2 flex flex-col h-[160px]">
+              <div className='text-xl font-semibold w-[80%]'>Customizable Options</div>
+              <div className='text-white/60 w-[80%] text-sm'>Multiple display options and other configurations to match your application&apos;s needs.</div>
+
+              <img src="/upsell/customizable_options.svg" alt="swap-fees" className="absolute top-0 right-0" />
+            </div>
+            <div className="bg-[#002F25] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2" >
+              <div className='text-xl font-semibold w-[80%]'>Seamless end to end swap integration</div>
+              <div className='text-white/60 w-[80%] text-sm'>
+                Integrate the exact swap experience on jup.ag into your own application and get all Ultra mode features
+              </div>
+              <img src="/upsell/seemless_integration.svg" alt="swap-fees" className="absolute top-0 right-0" />
+            </div>
+            <div className="bg-[#231B32] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2">
+              <div className='text-xl font-semibold w-[80%]'>RPC-less</div>
+              <div className='text-white/60 w-[80%] text-sm'>
+                Integrate Terminal without any RPCs, Ultra handles transaction sending, wallet balances and token
+                information.
+              </div>
+              <img src="/upsell/rpc_less.svg" alt="swap-fees" className="absolute top-0 right-0" />
+            </div>
+          </div>
           <div className="w-full mt-12">
             <Footer />
           </div>
