@@ -19,7 +19,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
-
 function applyCustomColors(colors: {
   primary?: string;
   background?: string;
@@ -50,7 +49,6 @@ function applyCustomColors(colors: {
   }
 }
 
-
 const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const { control } = useFormContext<IFormConfigurator>();
 
@@ -58,6 +56,8 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const colors = useWatch({ control, name: 'colors' });
+  const branding = useWatch({ control, name: 'branding' });
+
   // Apply custom colors when they change
   useEffect(() => {
     if (colors) {
@@ -86,6 +86,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
     ...(defaultExplorer !== 'Solana Explorer' ? { defaultExplorer: defaultExplorer } : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
     ...(simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
+    ...(branding ? { branding: branding } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
@@ -172,9 +173,11 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const cssVariablesSnippet = useMemo(() => {
     if (!colors) return '';
 
+    const toKebabCase = (str: string) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
     const cssVars = Object.entries(colors)
       .filter(([_, value]) => value && value.trim() !== '')
-      .map(([key, value]) => `  --jupiter-terminal-${key}: ${value};`)
+      .map(([key, value]) => `  --jupiter-terminal-${toKebabCase(key)}: ${value};`)
       .join('\n');
 
     if (!cssVars) return '';
@@ -214,7 +217,7 @@ ${cssVars}
 
   return (
     <div className="flex flex-col items-center justify-center mt-12">
-      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0 lg:max-w-[80%] xl:max-w-[70%]">
         <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
         <p className="text-white self-start pb-2 text-xs text-white/50">
           Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
@@ -227,7 +230,7 @@ ${cssVars}
 
       <div className="my-4" />
 
-      <div className="relative w-full max-w-full lg:max-w-[80%] xl:max-w-[70%] overflow-hidden px-4 md:px-0">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0 lg:max-w-[80%] xl:max-w-[70%] ">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
         <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
