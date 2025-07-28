@@ -20,8 +20,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
 
-
-
 const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const { control } = useFormContext<IFormConfigurator>();
 
@@ -29,7 +27,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const colors = useWatch({ control, name: 'colors' });
-
+  const branding = useWatch({ control, name: 'branding' });
 
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
@@ -52,6 +50,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
     ...(defaultExplorer !== 'Solana Explorer' ? { defaultExplorer: defaultExplorer } : undefined),
     ...(Object.keys(filteredFormProps || {}).length > 0 ? { formProps: filteredFormProps } : undefined),
     ...(simulateWalletPassthrough ? { enableWalletPassthrough: true } : undefined),
+    ...(branding ? { branding: branding } : undefined),
   };
 
   const formPropsSnippet = Object.keys(valuesToFormat).length > 0 ? JSON.stringify(valuesToFormat, null, 4) : '';
@@ -138,9 +137,11 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const cssVariablesSnippet = useMemo(() => {
     if (!colors) return '';
 
+    const toKebabCase = (str: string) => str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+
     const cssVars = Object.entries(colors)
       .filter(([_, value]) => value && value.trim() !== '')
-      .map(([key, value]) => `  --jupiter-terminal-${key}: ${value};`)
+      .map(([key, value]) => `  --jupiter-terminal-${toKebabCase(key)}: ${value};`)
       .join('\n');
 
     if (!cssVars) return '';
