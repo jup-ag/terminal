@@ -29,12 +29,10 @@ const AppHeader: React.FC<AppHeaderProps> = () => {
     <>
       <div className="flex items-center justify-between w-full bg-landing-bg">
         <div className="flex items-center p-4">
-          <Link href="https://jup.ag" shallow className="flex-1">
-            <h1 className="flex items-center text-lg font-semibold text-white">
+          <h1 className="flex items-center text-lg font-semibold text-white">
               <JupiterLogo/>
-              <span className="ml-3">Jupiter</span>
+              <span className="ml-3">Jupiter Plugin</span>
             </h1>
-          </Link>
         </div>
 
         <HeaderLinks />

@@ -21,7 +21,7 @@ export const SideDrawer: React.FC<SideDrawerProps> = ({
   return (
     <div
     className={cn(
-      'fixed top-0 h-full bg-module border-r border-interactive z-[60] transition-transform duration-300 ease-in-out',
+      'fixed top-0 h-full bg-[#151E31] border-r border-interactive z-[60] transition-transform duration-300 ease-in-out',
       'w-full md:w-[600px]', // Responsive width: full on mobile, w-100 on desktop
       position === 'left' ? 'left-0' : 'right-0',
       isOpen ? 'transform translate-x-0' : position === 'left' ? '-translate-x-full' : 'translate-x-full',

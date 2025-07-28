@@ -65,7 +65,7 @@ const TERMINAL_MODE: { label: string; value: IInit['displayMode'] }[] = [
 
 export default function App() {
   const [displayMode, setDisplayMode] = useState<IInit['displayMode']>('integrated');
-  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
+  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(true);
   const [sideDrawerTab, setSideDrawerTab] = useState<'config' | 'snippet'>('config');
 
   // Cleanup on tab change
@@ -183,12 +183,8 @@ export default function App() {
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
                     <V2SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
-                      Jupiter Terminal
+                      Jupiter Plugin
                     </V2SexyChameleonText>
-
-                    <div className="px-1 py-0.5 bg-[#C7F284] rounded-md ml-2.5 font-semibold flex text-xs self-start">
-                      v4
-                    </div>
                   </div>
                   <p className="text-[#9D9DA6] text-md mt-4 heading-[24px]">
                     Seamlessly embed a full Jupiter Ultra Swap directly in your application
@@ -197,10 +193,10 @@ export default function App() {
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-[420px] mt-8 rounded-xl flex flex-col md:flex-row w-full relative border border-white/20">
+                <div className="max-w-[420px] mt-8 rounded-xl flex flex-col md:flex-row w-full relative border border-white/10">
                   <ShouldWrapWalletProvider>
                     <div className=" h-full w-full rounded-xl flex flex-col b">
-                      <div className="flex flex-row justify-between py-3 px-2 border-b border-white/20">
+                      <div className="flex flex-row justify-between py-3 px-2 border-b border-white/10">
                         {TERMINAL_MODE.map((mode) => (
                           <button
                             key={mode.value}

@@ -160,7 +160,7 @@ const FormConfigurator = () => {
   const isFixedMintIsInAndOut =
     formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
   return (
-    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0  overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
+    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/10 rounded-xl p-4">
       <div className="w-full">
         <div className="relative inline-block text-left text-white w-full">
           <p className="text-white text-sm font-semibold">Template</p>

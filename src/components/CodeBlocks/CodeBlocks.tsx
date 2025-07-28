@@ -19,7 +19,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
-
 const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const { control } = useFormContext<IFormConfigurator>();
 
@@ -187,7 +186,7 @@ ${cssVars}
           Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
         </p>
 
-        <SyntaxHighlighter language="html" showLineNumbers style={vs2015}>
+        <SyntaxHighlighter language="html" showLineNumbers style={vs2015} className="text-xs">
           {documentSnippet}
         </SyntaxHighlighter>
       </div>
@@ -219,10 +218,23 @@ ${cssVars}
           </button>
         </div>
 
-        <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
+        <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015} className="text-xs">
           {snippet}
         </SyntaxHighlighter>
+        {/* CSS Variables Code Block */}
+        {cssVariablesSnippet && (
+          <>
+            <div className="mt-10">
+              <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
 
+              <div>
+                <SyntaxHighlighter language="css" showLineNumbers style={vs2015} className="text-xs">
+                  {cssVariablesSnippet}
+                </SyntaxHighlighter>
+              </div>
+            </div>
+          </>
+        )}
         <div className="flex w-full justify-between">
           <Link
             target="_blank"
@@ -243,26 +255,12 @@ ${cssVars}
             <ExternalIcon />
           </Link>
         </div>
-        {/* CSS Variables Code Block */}
-        {cssVariablesSnippet && (
-          <>
-            <div className="mt-10">
-              <hr className="opacity-10 pt-10" />
-              <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
 
-              <div>
-                <SyntaxHighlighter language="css" showLineNumbers style={vs2015}>
-                  {cssVariablesSnippet}
-                </SyntaxHighlighter>
-              </div>
-            </div>
-          </>
-        )}
         <div className="mt-10">
           <hr className="opacity-10 pt-10" />
           <p className="text-white self-start pb-2 font-semibold">Alternatively, install from NPM</p>
           <div>
-            <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
+            <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015} className="text-xs">
               {npmSnippet}
             </SyntaxHighlighter>
           </div>
