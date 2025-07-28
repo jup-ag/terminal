@@ -218,7 +218,7 @@ export default function App() {
                         ))}
                       </div>
 
-                      <div className="flex flex-grow  justify-center text-white/75 flex-col mx-auto px-2 "  >
+                      <div className="flex flex-grow  justify-center text-white/75 flex-col mx-auto px-2 ">
                         <div className="flex flex-row justify-between  min-h-[57px] items-center">
                           <div className="flex justify-between flex-row">
                             <button
@@ -256,27 +256,29 @@ export default function App() {
 
           <div className="text-white grid  md:grid-cols-2 gap-4 px-2 mt-2 max-w-[700px] mx-auto">
             <div className="bg-[#182220] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2 ">
-              <div className='text-xl font-semibold'>Swap fees</div>
-              <div className='text-white/60 text-sm'>Earn swap fees easily.</div>
+              <div className="text-xl font-semibold">Swap fees</div>
+              <div className="text-white/60 text-sm">Earn swap fees easily.</div>
 
               <img src="/upsell/swap_fee.svg" alt="swap-fees" className="absolute top-0 right-0" />
             </div>
             <div className="bg-[#151E31] rounded-xl p-4 relative gap-y-2 flex flex-col h-[160px]">
-              <div className='text-xl font-semibold w-[80%]'>Customizable Options</div>
-              <div className='text-white/60 w-[80%] text-sm'>Multiple display options and other configurations to match your application&apos;s needs.</div>
+              <div className="text-xl font-semibold w-[80%]">Customizable Options</div>
+              <div className="text-white/60 w-[80%] text-sm">
+                Multiple display options and other configurations to match your application&apos;s needs.
+              </div>
 
               <img src="/upsell/customizable_options.svg" alt="swap-fees" className="absolute top-0 right-0" />
             </div>
-            <div className="bg-[#002F25] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2" >
-              <div className='text-xl font-semibold w-[80%]'>Seamless end to end swap integration</div>
-              <div className='text-white/60 w-[80%] text-sm'>
-                Integrate the exact swap experience on jup.ag into your own application and get all Ultra mode features
+            <div className="bg-[#002F25] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2">
+              <div className="text-xl font-semibold w-[80%]">Ultra Swap</div>
+              <div className="text-white/60 w-[80%] text-sm">
+                Seamlessly integrate end to end jup.ag swap experience with all Ultra features
               </div>
               <img src="/upsell/seemless_integration.svg" alt="swap-fees" className="absolute top-0 right-0" />
             </div>
             <div className="bg-[#231B32] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2">
-              <div className='text-xl font-semibold w-[80%]'>RPC-less</div>
-              <div className='text-white/60 w-[80%] text-sm'>
+              <div className="text-xl font-semibold w-[80%]">RPC-less</div>
+              <div className="text-white/60 w-[80%] text-sm">
                 Integrate Terminal without any RPCs, Ultra handles transaction sending, wallet balances and token
                 information.
               </div>
