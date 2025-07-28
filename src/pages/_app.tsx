@@ -22,6 +22,7 @@ import { TerminalGroup } from 'src/content/TerminalGroup';
 import SideDrawer from 'src/components/SideDrawer/SideDrawer';
 import JupiterLogo from 'src/icons/JupiterLogo';
 import CloseIcon from 'src/icons/CloseIcon';
+import { Upsell } from 'src/components/Upsell';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -176,13 +177,12 @@ export default function App() {
             </div>
           </SideDrawer>
           <div>
-            <AppHeader isSideDrawerOpen={isSideDrawerOpen} setIsSideDrawerOpen={setIsSideDrawerOpen} />
-
             <div className="px-2">
-              <div className="flex flex-col items-center h-full w-full mt-4 md:mt-5">
+              <div className="flex flex-col items-center h-full w-full md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
-                    <V2SexyChameleonText className="text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0">
+          
+                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 mt-4 flex flex-row items-center gap-x-2">
                       Jupiter Plugin
                     </V2SexyChameleonText>
                   </div>
@@ -250,37 +250,11 @@ export default function App() {
             </div>
           </div>
 
-          <div className="text-white grid  md:grid-cols-2 gap-4 px-2 mt-4 max-w-[700px] mx-auto">
-            <div className="bg-[#182220] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2 ">
-              <div className="text-xl font-semibold">Swap fees</div>
-              <div className="text-white/60 text-sm">Earn swap fees easily.</div>
-
-              <img src="/upsell/swap_fee.svg" alt="swap-fees" className="absolute top-0 right-0" />
-            </div>
-            <div className="bg-[#151E31] rounded-xl p-4 relative gap-y-2 flex flex-col h-[160px]">
-              <div className="text-xl font-semibold w-[80%]">Customizable Options</div>
-              <div className="text-white/60 w-[80%] text-sm">
-                Multiple display options and other configurations to match your application&apos;s needs.
-              </div>
-
-              <img src="/upsell/customizable_options.svg" alt="swap-fees" className="absolute top-0 right-0" />
-            </div>
-            <div className="bg-[#002F25] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2">
-              <div className="text-xl font-semibold w-[80%]">Ultra Swap</div>
-              <div className="text-white/60 w-[80%] text-sm">
-                Seamlessly integrate end to end jup.ag swap experience with all Ultra features
-              </div>
-              <img src="/upsell/seemless_integration.svg" alt="swap-fees" className="absolute top-0 right-0" />
-            </div>
-            <div className="bg-[#231B32] rounded-xl p-4 relative h-[160px] flex flex-col gap-y-2">
-              <div className="text-xl font-semibold w-[80%]">RPC-less</div>
-              <div className="text-white/60 w-[80%] text-sm">
-              All the Ultra goodness without any RPCs - we handle everything for you, including transaction sending
-              </div>
-              <img src="/upsell/rpc_less.svg" alt="swap-fees" className="absolute top-0 right-0" />
-            </div>
+          {/* Desktop: Upsell below TerminalGroup */}
+          <div >
+            <Upsell/>
           </div>
-          <div className="w-full mt-12">
+          <div className="w-full">
             <Footer />
           </div>
         </div>
