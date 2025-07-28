@@ -65,7 +65,7 @@ const TERMINAL_MODE: { label: string; value: IInit['displayMode'] }[] = [
 
 export default function App() {
   const [displayMode, setDisplayMode] = useState<IInit['displayMode']>('integrated');
-  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(true);
+  const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const [sideDrawerTab, setSideDrawerTab] = useState<'config' | 'snippet'>('config');
 
   // Cleanup on tab change
