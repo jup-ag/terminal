@@ -97,7 +97,7 @@ export default function App() {
               env: 'mainnet-beta',
               autoConnect: true,
               metadata: {
-                name: 'Jupiter Terminal',
+                name: 'Jupiter Plugin',
                 description: '',
                 url: 'https://terminal.jup.ag',
                 iconUrls: [''],
@@ -114,14 +114,14 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <DefaultSeo
-        title={'Jupiter Terminal'}
+        title={'Jupiter Plugin'}
         openGraph={{
           type: 'website',
           locale: 'en',
-          title: 'Jupiter Terminal',
-          description: 'Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
+          title: 'Jupiter Plugin',
+          description: 'Jupiter Plugin: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
           url: 'https://terminal.jup.ag/',
-          site_name: 'Jupiter Terminal',
+          site_name: 'Jupiter Plugin',
           images: [
             {
               url: `https://static.jup.ag/static/jupiter-meta-main.jpg`,
