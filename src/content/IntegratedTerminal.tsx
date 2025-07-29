@@ -61,7 +61,7 @@ const IntegratedTerminal = memo(() => {
           {/* Loading state */}
           {!isLoaded ? (
             <div className="h-full animate-pulse mt-4 lg:mt-0 lg:ml-4 flex items-center justify-center rounded-xl">
-              <p className="">Loading...</p>
+              <p>Loading...</p>
             </div>
           ) : null}
 

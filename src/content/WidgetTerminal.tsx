@@ -195,7 +195,7 @@ const WidgetTerminal = memo(() => {
           </div>
       </div>
 
-      <div className="">
+      <div>
         <div className="border-b border-white/10" />
       </div>
     </div>
