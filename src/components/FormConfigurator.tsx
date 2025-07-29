@@ -157,6 +157,17 @@ const FormConfigurator = () => {
     return isValidSolanaAddress(formProps.referralAccount);
   }, [formProps.referralAccount]);
 
+  const isValidInputMint = useMemo(() => {
+    if (!formProps.initialInputMint) return false;
+    return isValidSolanaAddress(formProps.initialInputMint);
+  }, [formProps.initialInputMint]);
+  
+  
+  const isValidOutputMint = useMemo(() => {
+    if (!formProps.initialOutputMint) return false;
+    return isValidSolanaAddress(formProps.initialOutputMint);
+  }, [formProps.initialOutputMint]);
+
   const isFixedMintIsInAndOut =
     formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
   return (
@@ -229,6 +240,7 @@ const FormConfigurator = () => {
         <div>
           <p className="text-sm text-white/75">Initial input mint</p>
         </div>
+      
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
@@ -238,11 +250,14 @@ const FormConfigurator = () => {
           setValue('formProps.initialInputMint', e.target.value);
         }}
       />
-
+  {!isValidInputMint && (
+          <p className="text-xs text-utility-warning-300 mt-2">Invalid input mint</p>
+        )}
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Initial output mint</p>
         </div>
+
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
@@ -252,7 +267,9 @@ const FormConfigurator = () => {
           setValue('formProps.initialOutputMint', e.target.value);
         }}
       />
-
+        {!isValidOutputMint && (
+          <p className="text-xs text-utility-warning-300 mt-2">Invalid output mint</p>
+        )}
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Fixed Mint</p>
