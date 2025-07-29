@@ -32,7 +32,7 @@ const IntegratedTerminal = memo(() => {
     if (!isLoaded || !window.Jupiter.init) {
       intervalId = setInterval(() => {
         setIsLoaded(Boolean(window.Jupiter.init));
-      }, 500);
+      }, 100);
     }
 
     if (intervalId) {
@@ -45,7 +45,7 @@ const IntegratedTerminal = memo(() => {
       if (isLoaded && Boolean(window.Jupiter.init)) {
         launchTerminal();
       }
-    }, 200);
+    }, 100);
   }, [isLoaded, simulateWalletPassthrough, launchTerminal]);
 
   // To make sure passthrough wallet are synced
@@ -57,7 +57,7 @@ const IntegratedTerminal = memo(() => {
   return (
     <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden  ">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
-        <div className="w-full h-full rounded-xl overflow-hidden flex justify-center">
+        <div className=" rounded-xl overflow-hidden flex justify-center  h-[550px] w-[360px]">
           {/* Loading state */}
           {!isLoaded ? (
             <div className="h-full animate-pulse mt-4 lg:mt-0 lg:ml-4 flex items-center justify-center rounded-xl">
@@ -67,7 +67,7 @@ const IntegratedTerminal = memo(() => {
 
           <div
             id="integrated-terminal"
-            className={`flex h-full overflow-auto justify-center bg-black rounded-xl border border-white/10 ${!isLoaded ? 'hidden' : ''}`}
+            className={`flex h-full w-full overflow-auto justify-center bg-black rounded-xl border border-white/10 ${!isLoaded ? 'hidden' : ''}`}
           />
         </div>
       </div>

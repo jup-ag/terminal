@@ -194,7 +194,7 @@ export default function App() {
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-[420px] mt-8 rounded-3xl flex flex-col md:flex-row w-full relative border border-white/10">
+                <div className="w-[420px] mt-8 rounded-3xl flex flex-col md:flex-row w-full relative border border-white/10">
                   <ShouldWrapWalletProvider>
                     <div className=" h-full w-full rounded-xl flex flex-col b">
                       <div className="flex flex-row justify-between py-3 px-2 border-b border-white/10">

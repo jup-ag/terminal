@@ -81,11 +81,10 @@ const WidgetTerminal = memo(() => {
   }, [passthroughWalletContextState]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex ">
-        <div>
-          <div className="relative mt-8 md:mt-0">
-            <div className="bg-white/10 rounded-xl flex items-center justify-center w-full md:w-[384px] h-[216px]">
+    <div className="flex flex-col items-center justify-center">
+      <div className="flex flex-col ">
+        <div className="relative mt-8 md:mt-0">
+            <div className="bg-white/10 rounded-xl flex items-center justify-center w-full h-[216px]">
               <span className="text-xs text-white/50 text-center w-[70%]">
                 Click on the arrows to see how the Jupiter Widget will appear on your web browser.
                 <br />
@@ -194,10 +193,9 @@ const WidgetTerminal = memo(() => {
               </div>
             </div>
           </div>
-        </div>
       </div>
 
-      <div className="py-4">
+      <div className="">
         <div className="border-b border-white/10" />
       </div>
     </div>
