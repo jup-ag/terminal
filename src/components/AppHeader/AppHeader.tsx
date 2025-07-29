@@ -35,7 +35,7 @@ const AppHeader: React.FC<AppHeaderProps> = () => {
             </h1>
         </div>
 
-        <HeaderLinks />
+        {/* <HeaderLinks /> */}
 
         <div className="flex-1" />
       </div>

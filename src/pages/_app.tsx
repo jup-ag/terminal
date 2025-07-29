@@ -136,7 +136,7 @@ export default function App() {
         }}
       />
       <FormProvider {...methods}>
-        <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between gap-y-4">
+        <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between gap-y-10">
           <SideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}>
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center py-4 px-4 text-white gap-2 border-b border-white/10">
@@ -176,13 +176,14 @@ export default function App() {
               </div>
             </div>
           </SideDrawer>
+          <AppHeader/>
           <div>
             <div className="px-2">
               <div className="flex flex-col items-center h-full w-full md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
           
-                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 mt-4 flex flex-row items-center gap-x-2">
+                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 md:mt-0 mt-5 flex flex-row items-center gap-x-2">
                       Jupiter Plugin
                     </V2SexyChameleonText>
                   </div>
@@ -193,7 +194,7 @@ export default function App() {
               </div>
 
               <div className="flex justify-center">
-                <div className="max-w-[420px] mt-8 rounded-xl flex flex-col md:flex-row w-full relative border border-white/10">
+                <div className="max-w-[420px] mt-8 rounded-3xl flex flex-col md:flex-row w-full relative border border-white/10">
                   <ShouldWrapWalletProvider>
                     <div className=" h-full w-full rounded-xl flex flex-col b">
                       <div className="flex flex-row justify-between py-3 px-2 border-b border-white/10">
