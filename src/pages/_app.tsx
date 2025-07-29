@@ -137,6 +137,7 @@ export default function App() {
       />
       <FormProvider {...methods}>
         <div className="bg-landing-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between gap-y-10">
+          {/* Side Drawer */}
           <SideDrawer isOpen={isSideDrawerOpen} setIsOpen={setIsSideDrawerOpen}>
             <div className="flex flex-col h-full">
               <div className="flex justify-between items-center py-4 px-4 text-white gap-2 border-b border-white/10">
@@ -182,8 +183,7 @@ export default function App() {
               <div className="flex flex-col items-center h-full w-full md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
-          
-                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 md:mt-0 mt-5 flex flex-row items-center gap-x-2">
+                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 md:mt-0 flex flex-row items-center gap-x-2">
                       Jupiter Plugin
                     </V2SexyChameleonText>
                   </div>
@@ -250,14 +250,8 @@ export default function App() {
               </div>
             </div>
           </div>
-
-          {/* Desktop: Upsell below TerminalGroup */}
-          <div >
-            <Upsell/>
-          </div>
-          <div className="w-full">
-            <Footer />
-          </div>
+          <Upsell/>
+          <Footer />
         </div>
       </FormProvider>
     </QueryClientProvider>

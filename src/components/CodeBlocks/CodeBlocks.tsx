@@ -73,7 +73,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
 
   const bodyTag = useMemo(() => {
     if (displayMode === 'integrated') {
-      return `<!-- Prepare a div in your <body> for Terminal to render -->
+      return `<!-- Prepare a div in your <body> for Plugin to render -->
 <!-- Adjust the width and height to suit your requirements -->
 <div id="integrated-terminal" style="width: 400px; height: 568px;"></div>
 `;
@@ -183,7 +183,7 @@ ${cssVars}
       <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
         <p className="text-white self-start pb-2 text-xs text-white/50">
-          Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
+          Plugin is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
         </p>
 
         <SyntaxHighlighter language="html" showLineNumbers style={vs2015} className="text-xs">

@@ -20,7 +20,7 @@ const Header = () => {
     <div className="mt-2 h-7 pl-3 pr-2">
       <div className="w-full flex items-center justify-between ">
         <div className="flex items-center space-x-2">
-          <img src={logoUri} alt="Terminal Branding" className="w-6 h-6" />
+          <img src={logoUri} alt="Plugin Branding" className="w-6 h-6" />
           <span className="font-bold text-sm text-primary-text">{name}</span>
         </div>
 

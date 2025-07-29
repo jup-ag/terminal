@@ -1,9 +1,4 @@
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
-import CloseIcon from 'src/icons/CloseIcon';
-import MenuIcon from 'src/icons/MenuIcon';
-import HeaderLinks from './HeaderLinks';
-import HeaderLinksMobile from './HeaderLinksMobile';
 import JupiterLogo from 'src/icons/JupiterLogo';
 
 interface AppHeaderProps {
@@ -34,10 +29,6 @@ const AppHeader: React.FC<AppHeaderProps> = () => {
               <span className="ml-3">Jupiter Plugin</span>
             </h1>
         </div>
-
-        {/* <HeaderLinks /> */}
-
-        <div className="flex-1" />
       </div>
 
    

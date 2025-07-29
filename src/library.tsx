@@ -62,8 +62,8 @@ async function loadJupiter() {
     // Load all the scripts
     await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
   } catch (error) {
-    console.error(`Error loading Jupiter Terminal: ${error}`);
-    throw new Error(`Error loading Jupiter Terminal: ${error}`);
+    console.error(`Error loading Jupiter Plugin: ${error}`);
+    throw new Error(`Error loading Jupiter Plugin: ${error}`);
   }
 }
 
@@ -276,7 +276,7 @@ async function init(passedProps: IInit) {
   if (restProps.displayMode === 'integrated') {
     const target = document.getElementById(integratedTargetId!);
     if (!target) {
-      throw new Error(`Jupiter Terminal: document.getElementById cannot find ${integratedTargetId}`);
+      throw new Error(`Jupiter Plugin: document.getElementById cannot find ${integratedTargetId}`);
     }
     target?.appendChild(targetDiv);
   } else {
@@ -329,8 +329,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && attribut
     if (loadComplete && shouldPreload) {
       setTimeout(() => {
         loadJupiter().catch((error) => {
-          console.error(`Error pre-loading Jupiter Terminal: ${error}`);
-          throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
+          console.error(`Error pre-loading Jupiter Plugin: ${error}`);
+          throw new Error(`Error pre-loading Jupiter Plugin: ${error}`);
         });
       }, 2000);
     }

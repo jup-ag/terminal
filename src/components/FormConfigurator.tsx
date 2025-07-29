@@ -20,7 +20,7 @@ import { BrandingConfigurator } from './BrandingConfigurator';
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
     name: 'Default',
-    description: 'Full functionality and swap experience of Terminal.',
+    description: 'Full functionality and swap experience of Plugin.',
     values: {
       ...INITIAL_FORM_CONFIG,
       formProps: { ...INITIAL_FORM_CONFIG.formProps },
@@ -410,7 +410,7 @@ const FormConfigurator = () => {
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Simulate wallet passthrough</p>
-          <p className="text-xs text-white/50">Simulate Terminal with a fake wallet passthrough</p>
+          <p className="text-xs text-white/50">Simulate Plugin with a fake wallet passthrough</p>
           <p className="text-xs text-white/50">(Testing available on Desktop only)</p>
         </div>
         <Toggle
