@@ -84,9 +84,9 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
       placement="bottom"
       drawShades
       buttonContentClassName="!cursor-help"
-      offset={[130, 5]}
+      offset={[120, 5]}
       content={
-        <div className="flex flex-col gap-y-2 p-0 ">
+        <div className="flex flex-col gap-y-2 p-0 w-[260px]">
           <div className="text-sm font-semibold text-warning">
             {totalWarnings} JupShield <Plural one="Warning" other="Warnings" value={totalWarnings} />
           </div>

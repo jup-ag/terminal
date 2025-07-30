@@ -112,7 +112,7 @@ const RenderShell = (props: IInit) => {
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50  z-10';
+      return 'fixed top-0 w-full h-full flex items-center justify-center bg-black/50  z-10';
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex items-center justify-center w-full h-full  z-10';
     }
@@ -199,7 +199,7 @@ const RenderWidgetShell = (props: IInit) => {
   return (
     <div className={`fixed ${classes.containerClassName}`} style={classes.style}>
       <div
-        className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
+        className={`${classes.widgetContainerClassName}  rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
           if (isOpen) {
             setIsOpen(false);
