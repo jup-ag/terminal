@@ -30,7 +30,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
 
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
-    if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
+    if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'target-container' };
     if (displayMode === 'widget') return { displayMode: 'widget' };
   })();
 
@@ -75,7 +75,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
     if (displayMode === 'integrated') {
       return `<!-- Prepare a div in your <body> for Plugin to render -->
 <!-- Adjust the width and height to suit your requirements -->
-<div id="integrated-terminal" style="width: 400px; height: 568px;"></div>
+<div id="target-container" style="width: 400px; height: 568px;"></div>
 `;
     }
 

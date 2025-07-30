@@ -16,7 +16,7 @@ const IntegratedTerminal = memo(() => {
   const launchTerminal = useCallback(async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
-      integratedTargetId: 'integrated-terminal',
+      integratedTargetId: 'target-container',
 
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
@@ -66,7 +66,7 @@ const IntegratedTerminal = memo(() => {
           ) : null}
 
           <div
-            id="integrated-terminal"
+            id="target-container"
             className={`flex h-full w-full overflow-auto justify-center bg-black rounded-xl border border-white/10 ${!isLoaded ? 'hidden' : ''}`}
           />
         </div>

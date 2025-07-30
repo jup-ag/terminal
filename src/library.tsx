@@ -224,7 +224,7 @@ const RenderWidgetShell = (props: IInit) => {
       </div>
 
       <div
-        id="integrated-terminal"
+        id="target-container"
         className={`absolute overflow-hidden ${classes.contentClassName} flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
