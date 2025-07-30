@@ -120,6 +120,10 @@ const INITIAL_FORM = {
   toValue: '',
 };
 
+const DEFAULT_FORM_PROPS: FormProps = {
+  swapMode: 'ExactIn',
+};
+
 export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { displayMode, scriptDomain, formProps: originalFormProps, children, enableWalletPassthrough } = props;
   const { screen } = useScreenState();
@@ -127,7 +131,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { refetch: refetchBalances } = useBalances();
   const isToPairFocused = useRef<boolean>(false);
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
-  const formProps: FormProps = useMemo(() => ({ ...INITIAL_FORM, ...originalFormProps }), [originalFormProps]);
+  const formProps: FormProps = useMemo(() => ({ ...DEFAULT_FORM_PROPS, ...originalFormProps }), [originalFormProps]);
 
   const [form, setForm] = useState<IForm>({
     fromMint: formProps?.initialInputMint ?? 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',

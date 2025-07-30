@@ -57,7 +57,7 @@ const IntegratedTerminal = memo(() => {
   return (
     <div className=" w-full rounded-2xl text-white flex flex-col items-center  mb-4 overflow-hidden  ">
       <div className="flex flex-col lg:flex-row h-full w-full overflow-auto">
-        <div className=" rounded-xl overflow-hidden flex justify-center  h-[550px] w-[360px]">
+        <div className=" rounded-xl overflow-hidden flex justify-center  h-[555px] w-[360px]">
           {/* Loading state */}
           {!isLoaded ? (
             <div className="h-full animate-pulse mt-4 lg:mt-0 lg:ml-4 flex items-center justify-center rounded-xl">
