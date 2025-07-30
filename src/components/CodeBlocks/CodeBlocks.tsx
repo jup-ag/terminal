@@ -19,36 +19,6 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 const SyntaxHighlighter = dynamic(() => import('react-syntax-highlighter'), { ssr: false });
 
-function applyCustomColors(colors: {
-  primary?: string;
-  background?: string;
-  primaryText?: string;
-  warning?: string;
-  interactive?: string;
-  module?: string;
-}) {
-  const root = document.documentElement;
-
-  if (colors.primary) {
-    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
-  }
-  if (colors.background) {
-    root.style.setProperty('--jupiter-terminal-background', colors.background);
-  }
-  if (colors.primaryText) {
-    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
-  }
-  if (colors.warning) {
-    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
-  }
-  if (colors.interactive) {
-    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
-  }
-  if (colors.module) {
-    root.style.setProperty('--jupiter-terminal-module', colors.module);
-  }
-}
-
 const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const { control } = useFormContext<IFormConfigurator>();
 
@@ -58,16 +28,9 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const colors = useWatch({ control, name: 'colors' });
   const branding = useWatch({ control, name: 'branding' });
 
-  // Apply custom colors when they change
-  useEffect(() => {
-    if (colors) {
-      applyCustomColors(colors);
-    }
-  }, [colors]);
-
   const DISPLAY_MODE_VALUES = (() => {
     if (displayMode === 'modal') return {};
-    if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'integrated-terminal' };
+    if (displayMode === 'integrated') return { displayMode: 'integrated', integratedTargetId: 'target-container' };
     if (displayMode === 'widget') return { displayMode: 'widget' };
   })();
 
@@ -110,9 +73,9 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
 
   const bodyTag = useMemo(() => {
     if (displayMode === 'integrated') {
-      return `<!-- Prepare a div in your <body> for Terminal to render -->
+      return `<!-- Prepare a div in your <body> for Plugin to render -->
 <!-- Adjust the width and height to suit your requirements -->
-<div id="integrated-terminal" style="width: 400px; height: 568px;"></div>
+<div id="target-container" style="width: 400px; height: 568px;"></div>
 `;
     }
 
@@ -216,21 +179,21 @@ ${cssVars}
   };
 
   return (
-    <div className="flex flex-col items-center justify-center mt-12">
-      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0 lg:max-w-[80%] xl:max-w-[70%]">
+    <div className="flex flex-col items-center justify-center py-2">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Setup HTML</p>
         <p className="text-white self-start pb-2 text-xs text-white/50">
-          Terminal is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
+          Plugin is designed to work anywhere the web runs, including React, Plain HTML/JS, and many other frameworks.
         </p>
 
-        <SyntaxHighlighter language="html" showLineNumbers style={vs2015}>
+        <SyntaxHighlighter language="html" showLineNumbers style={vs2015} className="text-xs">
           {documentSnippet}
         </SyntaxHighlighter>
       </div>
 
       <div className="my-4" />
 
-      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0 lg:max-w-[80%] xl:max-w-[70%] ">
+      <div className="relative w-full max-w-full overflow-hidden px-4 md:px-0">
         <p className="text-white self-start pb-2 font-semibold">Code snippet</p>
 
         <div className="absolute flex space-x-2 top-0 right-4 md:right-2 ">
@@ -255,10 +218,23 @@ ${cssVars}
           </button>
         </div>
 
-        <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
+        <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015} className="text-xs">
           {snippet}
         </SyntaxHighlighter>
+        {/* CSS Variables Code Block */}
+        {cssVariablesSnippet && (
+          <>
+            <div className="mt-10">
+              <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
 
+              <div>
+                <SyntaxHighlighter language="css" showLineNumbers style={vs2015} className="text-xs">
+                  {cssVariablesSnippet}
+                </SyntaxHighlighter>
+              </div>
+            </div>
+          </>
+        )}
         <div className="flex w-full justify-between">
           <Link
             target="_blank"
@@ -279,26 +255,12 @@ ${cssVars}
             <ExternalIcon />
           </Link>
         </div>
-        {/* CSS Variables Code Block */}
-        {cssVariablesSnippet && (
-          <>
-            <div className="mt-10">
-              <hr className="opacity-10 pt-10" />
-              <p className="text-white self-start pb-2 font-semibold">CSS Variables</p>
 
-              <div>
-                <SyntaxHighlighter language="css" showLineNumbers style={vs2015}>
-                  {cssVariablesSnippet}
-                </SyntaxHighlighter>
-              </div>
-            </div>
-          </>
-        )}
         <div className="mt-10">
           <hr className="opacity-10 pt-10" />
           <p className="text-white self-start pb-2 font-semibold">Alternatively, install from NPM</p>
           <div>
-            <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015}>
+            <SyntaxHighlighter language="typescript" showLineNumbers style={vs2015} className="text-xs">
               {npmSnippet}
             </SyntaxHighlighter>
           </div>

@@ -38,7 +38,7 @@ const ModalTerminal = () => {
       onClick={launchTerminal}
     >
       <WalletDisconnectedGraphic />
-      <span className="text-xs mt-4">Launch Terminal Modal</span>
+      <span className="text-xs mt-4">Launch Plugin Modal</span>
     </div>
   );
 };

@@ -11,7 +11,7 @@ class MyDocument extends Document {
 
           <meta
             name="description"
-            content="Jupiter Terminal: An open-sourced, lite version of Jupiter that provides end-to-end swap flow."
+            content="Jupiter Plugin: An open-sourced, lite version of Jupiter that provides end-to-end swap flow."
           />
 
           <link rel="manifest" href="/manifest.json" crossOrigin="use-credentials" />

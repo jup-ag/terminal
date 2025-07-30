@@ -42,7 +42,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
               env: 'mainnet-beta',
               autoConnect: typeof autoConnect !== 'undefined' ? autoConnect : true,
               metadata: {
-                name: 'Jupiter Terminal',
+                name: 'Jupiter Plugin',
                 url: 'https://terminal.jup.ag',
                 description:
                   'An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML. Check out the visual demo for the various integration modes below.          ',
