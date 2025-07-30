@@ -183,7 +183,7 @@ export default function App() {
               <div className="flex flex-col items-center h-full w-full md:mt-5">
                 <div className="flex flex-col justify-center items-center text-center">
                   <div className="flex space-x-2">
-                    <V2SexyChameleonText animate={false} className=" text-4xl md:text-[52px] font-semibold px-4 pb-2 md:px-0 md:mt-0 flex flex-row items-center gap-x-2">
+                    <V2SexyChameleonText animate={false} className="text-4xl md:text-[60px] md:h-[66px] font-semibold flex flex-row items-center ">
                       Jupiter Plugin
                     </V2SexyChameleonText>
                   </div>
