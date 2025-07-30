@@ -9,6 +9,7 @@ import PriceInfo from '../PriceInfo/index';
 import { readableValue } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
 import JupiterLogoV2 from 'src/icons/JupiterLogoV2';
+import JupiterLogo from 'src/icons/JupiterLogo';
 
 const ErrorIcon = () => {
   return (
@@ -108,7 +109,7 @@ const SwappingScreen = () => {
 
         <div className="flex w-full justify-center items-center mt-9">
           <div className="h-16 w-16 animate-hue duration-100">
-            <JupiterLogoV2 width={64} height={64} />
+            <JupiterLogo width={64} height={64} />
           </div>
         </div>
 
