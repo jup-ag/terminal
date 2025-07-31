@@ -1,21 +1,21 @@
 import { atom } from 'jotai';
 
-const terminalInViewAtom = atom<boolean>(false);
+const pluginInViewAtom = atom<boolean>(false);
 
-export const getTerminalInView = (): boolean => {
+export const getPluginInView = (): boolean => {
   const store = window.Jupiter?.store;
   if (!store) {
     console.warn('Jupiter store is not available.');
     return false;
   }
-  return store.get(terminalInViewAtom);
+  return store.get(pluginInViewAtom);
 };
 
-export const setTerminalInView = (value: boolean): void => {
+export const setPluginInView = (value: boolean): void => {
   const store = window.Jupiter?.store;
   if (!store) {
     console.warn('Jupiter store is not available.');
     return;
   }
-  store.set(terminalInViewAtom, value);
+  store.set(pluginInViewAtom, value);
 };

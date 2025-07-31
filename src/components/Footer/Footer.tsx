@@ -17,11 +17,11 @@ const Footer = () => {
       <Link href="https://discord.gg/jup" target="_blank" className="items-center justify-center  w-5 h-5">
         <DiscordIcon width={20} height={20} />
       </Link>
-      <Link href="https://github.com/jup-ag/terminal" target="_blank" className="items-center justify-center  w-5 h-5">
+      <Link href="https://github.com/jup-ag/plugin" target="_blank" className="items-center justify-center  w-5 h-5">
         <GithubIcon width={20} height={20} />
       </Link>
       <Link
-        href="https://dev.jup.ag/docs/tool-kits/terminal"
+        href="https://dev.jup.ag/docs/tool-kits/plugin"
         target="_blank"
         className="items-center justify-center  w-5 h-5"
       >

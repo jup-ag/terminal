@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState, memo } from 'react';
 import { useUnifiedWallet, useUnifiedWalletContext } from '@jup-ag/wallet-adapter';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-const IntegratedTerminal = memo(() => {
+const IntegratedPlugin = memo(() => {
   const { control } = useFormContext();
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const formProps = useWatch({ control, name: 'formProps' });
@@ -13,7 +13,7 @@ const IntegratedTerminal = memo(() => {
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
-  const launchTerminal = useCallback(async () => {
+  const launchPlugin = useCallback(async () => {
     window.Jupiter.init({
       displayMode: 'integrated',
       integratedTargetId: 'target-container',
@@ -43,10 +43,10 @@ const IntegratedTerminal = memo(() => {
   useEffect(() => {
     setTimeout(() => {
       if (isLoaded && Boolean(window.Jupiter.init)) {
-        launchTerminal();
+        launchPlugin();
       }
     }, 100);
-  }, [isLoaded, simulateWalletPassthrough, launchTerminal]);
+  }, [isLoaded, simulateWalletPassthrough, launchPlugin]);
 
   // To make sure passthrough wallet are synced
   useEffect(() => {
@@ -75,6 +75,6 @@ const IntegratedTerminal = memo(() => {
   );
 });
 
-IntegratedTerminal.displayName = 'IntegratedTerminal';
+IntegratedPlugin.displayName = 'IntegratedPlugin';
 
-export default IntegratedTerminal;
+export default IntegratedPlugin;

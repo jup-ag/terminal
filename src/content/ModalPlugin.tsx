@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { useUnifiedWalletContext, useUnifiedWallet } from '@jup-ag/wallet-adapter';
-import { DEFAULT_EXPLORER, FormProps } from 'src/types';
 import WalletDisconnectedGraphic from 'src/icons/WalletDisconnectedGraphic';
-import { IFormConfigurator } from 'src/constants';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-const ModalTerminal = () => {
+const ModalPlugin = () => {
   const { control } = useFormContext();
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const formProps = useWatch({ control, name: 'formProps' });
@@ -15,7 +13,7 @@ const ModalTerminal = () => {
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
-  const launchTerminal = () => {
+  const launchPlugin = () => {
     window.Jupiter.init({
       formProps,
       enableWalletPassthrough: simulateWalletPassthrough,
@@ -35,7 +33,7 @@ const ModalTerminal = () => {
   return (
     <div
       className="p-4 hover:bg-white/10 rounded-xl cursor-pointer flex h-full w-full flex-col items-center justify-center text-white"
-      onClick={launchTerminal}
+      onClick={launchPlugin}
     >
       <WalletDisconnectedGraphic />
       <span className="text-xs mt-4">Launch Plugin Modal</span>
@@ -43,4 +41,4 @@ const ModalTerminal = () => {
   );
 };
 
-export default ModalTerminal;
+export default ModalPlugin;
