@@ -43,7 +43,7 @@ const WalletContextProvider: React.FC<PropsWithChildren<IInit>> = ({
               autoConnect: typeof autoConnect !== 'undefined' ? autoConnect : true,
               metadata: {
                 name: 'Jupiter Plugin',
-                url: 'https://terminal.jup.ag',
+                url: 'https://plugin.jup.ag',
                 description:
                   'An open-sourced, lite version of Jupiter that provides end-to-end swap flow by linking it in your HTML. Check out the visual demo for the various integration modes below.          ',
                 iconUrls: [],

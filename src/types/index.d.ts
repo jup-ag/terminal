@@ -10,7 +10,7 @@ import { TransactionError } from './TransactionError';
 
 declare global {
   interface Window {
-    Jupiter: JupiterTerminal;
+    Jupiter: JupiterPlugin;
   }
 }
 
@@ -56,12 +56,7 @@ export interface TransactionInstruction {
 }
 
 export interface IInit {
-  /** Settings saved in local storage will be prefixed with this
-   * You can reset your user's local storage by changing this value
-   */
-  localStoragePrefix?: string;
-
-  /** Configure Terminal's behaviour and allowed actions for your user */
+  /** Configure Plugin's behaviour and allowed actions for your user */
   formProps?: FormProps;
   /** Default explorer for your user */
   defaultExplorer?: DEFAULT_EXPLORER;
@@ -82,9 +77,9 @@ export interface IInit {
       y?: number;
     };
   };
-  /** In case additional styling is needed for Terminal container */
+  /** In case additional styling is needed for Plugin container */
   containerStyles?: CSSProperties;
-  /** In case additional styling is needed for Terminal container */
+  /** In case additional styling is needed for Plugin container */
   containerClassName?: string;
 
   /** When true, wallet connection are handled by your dApp, and use `syncProps()` to syncronise wallet state with Plugin */
@@ -128,7 +123,7 @@ export interface IInit {
   scriptDomain?: string;
 }
 
-export interface JupiterTerminal {
+export interface JupiterPlugin {
   _instance: JSX.Element | null;
   init: (props: IInit) => void;
   resume: () => void;
@@ -147,6 +142,4 @@ export interface JupiterTerminal {
   onFormUpdate: IInit['onFormUpdate'];
   onScreenUpdate: IInit['onScreenUpdate'];
 
-  /** Special props */
-  localStoragePrefix: string;
 }

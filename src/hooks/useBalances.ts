@@ -3,7 +3,7 @@ import { BalanceResponse, ultraSwapService } from 'src/data/UltraSwapService';
 import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import { useMemo } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import { getTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { getPluginInView } from 'src/stores/jotai-plugin-in-view';
 
 const ULTRA_NATIVESOL_ID = 'SOL';
 const WSOL_ID = WRAPPED_SOL_MINT.toString();
@@ -46,7 +46,7 @@ export const useBalances = () => {
     queryFn: async ({ signal }) => {
       return await ultraSwapService.getBalance(address, signal);
     },
-    enabled: !!address && getTerminalInView(),
+    enabled: !!address && getPluginInView(),
     cacheTime: 20_000,
     staleTime: 20_000,
     refetchOnWindowFocus: false,

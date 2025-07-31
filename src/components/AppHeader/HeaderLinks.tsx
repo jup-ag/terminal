@@ -47,14 +47,14 @@ const HeaderLinks = () => {
   return (
     <div className="flex-1 justify-start hidden md:!flex text-sm h-full">
       <HeaderLink
-        href="https://github.com/jup-ag/terminal"
+        href="https://github.com/jup-ag/plugin"
         isActive={false}
         external
         title={'Repo'}
         icon={<RepoLogo width="20" height="20" />}
       />
       <HeaderLink
-        href="https://station.jup.ag/docs/tool-kits/terminal-walkthrough"
+        href="https://station.jup.ag/docs/tool-kits/plugin-walkthrough"
         isActive={false}
         external
         title={'Docs'}

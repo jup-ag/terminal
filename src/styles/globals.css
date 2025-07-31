@@ -1,24 +1,24 @@
 @tailwind components;
 @tailwind utilities;
 :root {
-  --jupiter-terminal-primary: 199, 242, 132;
-  --jupiter-terminal-background: 0, 0, 0;
-  --jupiter-terminal-primary-text: 232, 249, 255;
-  --jupiter-terminal-warning: 251, 191, 36;
-  --jupiter-terminal-interactive: 33, 42, 54;
-  --jupiter-terminal-module: 16, 23, 31;
+  --jupiter-plugin-primary: 199, 242, 132;
+  --jupiter-plugin-background: 0, 0, 0;
+  --jupiter-plugin-primary-text: 232, 249, 255;
+  --jupiter-plugin-warning: 251, 191, 36;
+  --jupiter-plugin-interactive: 33, 42, 54;
+  --jupiter-plugin-module: 16, 23, 31;
 }
-#jupiter-terminal * {
+#jupiter-plugin * {
   box-sizing: border-box;
   font-family: Inter, sans-serif;
 }
 
-#jupiter-terminal *:focus {
+#jupiter-plugin *:focus {
   outline: none;
 }
 
 /* JupButton border gradient */
-#jupiter-terminal .jup-gradient::before {
+#jupiter-plugin .jup-gradient::before {
   content: '';
   position: absolute;
   top: 0;
@@ -57,7 +57,7 @@
   background: #979797;
 }
 
-#jupiter-terminal .jup-gradient::before {
+#jupiter-plugin .jup-gradient::before {
   content: '';
   position: absolute;
   top: 0;

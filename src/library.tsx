@@ -7,14 +7,14 @@ import { IInit } from './types';
 import 'tailwindcss/tailwind.css';
 import JupiterLogo from './icons/JupiterLogo';
 import ChevronDownIcon from './icons/ChevronDownIcon';
-import { setTerminalInView } from './stores/jotai-terminal-in-view';
+import { setPluginInView } from './stores/jotai-plugin-in-view';
 import React from 'react';
 import { cn } from './misc/cn';
 import { ShadowDomContainer } from './components/ShadowDomContainer';
 
-const containerId = 'jupiter-terminal-instance';
+const containerId = 'jupiter-plugin-instance';
 const packageJson = require('../package.json');
-const bundleName = `main-${packageJson.version}`;
+const bundleName = `plugin-${packageJson.version}`;
 
 const scriptDomain =
   (() => {
@@ -25,7 +25,7 @@ const scriptDomain =
       return new URL(url).origin;
     }
     return '';
-  })() || 'https://terminal.jup.ag';
+  })() || 'https://plugin.jup.ag';
 
 async function loadRemote(id: string, href: string, type: 'text/javascript' | 'stylesheet') {
   return new Promise((res, rej) => {
@@ -107,7 +107,7 @@ const RenderShell = (props: IInit) => {
   const containerStyles = props.containerStyles;
   const containerClassName = props.containerClassName;
 
-  useEffect(() => setTerminalInView(true), []);
+  useEffect(() => setPluginInView(true), []);
 
   const displayClassName = useMemo(() => {
     // Default Modal
@@ -131,7 +131,7 @@ const RenderShell = (props: IInit) => {
 
   const onClose = () => {
     if (window.Jupiter) {
-      setTerminalInView(false);
+      setPluginInView(false);
       window.Jupiter.close();
     }
   };
@@ -203,10 +203,10 @@ const RenderWidgetShell = (props: IInit) => {
         onClick={() => {
           if (isOpen) {
             setIsOpen(false);
-            setTerminalInView(false);
+            setPluginInView(false);
           } else {
             setIsOpen(true);
-            setTerminalInView(true);
+            setPluginInView(true);
           }
         }}
       >
@@ -260,7 +260,7 @@ async function init(passedProps: IInit) {
   const instanceExist = document.getElementById(containerId);
   window.Jupiter.store = store;
   store.set(appProps, { ...props, scriptDomain });
-  setTerminalInView(false);
+  setPluginInView(false);
 
   // Remove previous instance
   if (instanceExist) {
@@ -315,8 +315,6 @@ async function init(passedProps: IInit) {
   window.Jupiter.onFormUpdate = onFormUpdate;
   window.Jupiter.onScreenUpdate = onScreenUpdate;
 
-  // Special props
-  window.Jupiter.localStoragePrefix = passedProps.localStoragePrefix || 'jupiter-terminal';
 }
 
 const attributes =

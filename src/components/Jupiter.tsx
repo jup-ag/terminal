@@ -15,7 +15,7 @@ const Content = () => {
 
   // ID is required for scoped preflight by tailwind to work
   return (
-    <div id="jupiter-terminal" className=" h-full bg-background relative flex flex-col justify-between">
+    <div id="jupiter-plugin" className=" h-full bg-background relative flex flex-col justify-between">
       <div>
         {screen === 'Initial' ? (
           <>

@@ -10,7 +10,7 @@ export const BrandingConfigurator = ({ branding, setValue }: BrandingConfigurato
   return (
     <div className="relative inline-block text-left text-white w-full mt-5">
       <p className="text-white text-sm font-semibold">Branding Configuration</p>
-      <p className="text-xs text-white/50 mt-1">Customize the terminal&apos;s branding</p>
+      <p className="text-xs text-white/50 mt-1">Customize the Plugin&apos;s branding</p>
 
       <div className="flex justify-between mt-2">
         <div>

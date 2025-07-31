@@ -16,9 +16,9 @@ import { IFormConfigurator, INITIAL_FORM_CONFIG } from 'src/constants';
 import { IInit } from 'src/types';
 import V2SexyChameleonText from 'src/components/SexyChameleonText/V2SexyChameleonText';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
+import { setPluginInView } from 'src/stores/jotai-plugin-in-view';
 import { cn } from 'src/misc/cn';
-import { TerminalGroup } from 'src/content/TerminalGroup';
+import { PluginGroup } from 'src/content/PluginGroup';
 import SideDrawer from 'src/components/SideDrawer/SideDrawer';
 import JupiterLogo from 'src/icons/JupiterLogo';
 import CloseIcon from 'src/icons/CloseIcon';
@@ -49,7 +49,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const TERMINAL_MODE: { label: string; value: IInit['displayMode'] }[] = [
+const PLUGIN_MODE: { label: string; value: IInit['displayMode'] }[] = [
   {
     label: 'Modal',
     value: 'modal',
@@ -75,7 +75,7 @@ export default function App() {
       window.Jupiter._instance = null;
     }
 
-    setTerminalInView(false);
+    setPluginInView(false);
   }, [displayMode]);
 
   const methods = useForm<IFormConfigurator>({
@@ -99,7 +99,7 @@ export default function App() {
               metadata: {
                 name: 'Jupiter Plugin',
                 description: '',
-                url: 'https://terminal.jup.ag',
+                url: 'https://plugin.jup.ag',
                 iconUrls: [''],
               },
               theme: 'jupiter',
@@ -120,7 +120,7 @@ export default function App() {
           locale: 'en',
           title: 'Jupiter Plugin',
           description: 'Jupiter Plugin: An open-sourced, lite version of Jupiter that provides end-to-end swap flow.',
-          url: 'https://terminal.jup.ag/',
+          url: 'https://plugin.jup.ag/',
           site_name: 'Jupiter Plugin',
           images: [
             {
@@ -198,7 +198,7 @@ export default function App() {
                   <ShouldWrapWalletProvider>
                     <div className=" h-full w-full rounded-xl flex flex-col">
                       <div className="flex flex-row justify-between py-3 px-2 border-b border-white/10">
-                        {TERMINAL_MODE.map((mode) => (
+                        {PLUGIN_MODE.map((mode) => (
                           <button
                             key={mode.value}
                             onClick={() => setDisplayMode(mode.value)}
@@ -235,7 +235,7 @@ export default function App() {
                             <UnifiedWalletButton />
                           </div>
                         </div>
-                        <TerminalGroup tab={displayMode} />
+                        <PluginGroup tab={displayMode} />
                       </div>
                       <span className="flex justify-center text-center text-xs text-[#9D9DA6] mb-2">
                         {displayMode === 'modal' ? 'Jupiter renders as a modal and takes up the whole screen.' : null}
