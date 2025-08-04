@@ -265,7 +265,10 @@ const Form: React.FC<{
         <div className="flex-col">
           <FormInputContainer
             tokenInfo={fromTokenInfo!}
-            onBalanceClick={onClickMax}
+            onBalanceClick={(e) => {
+              onClickMax(e);
+              isToPairFocused.current = false;
+            }}
             title="Selling"
             pairSelectDisabled={shouldDisabledFromSelector}
             onClickSelectPair={onClickSelectFromMint}
