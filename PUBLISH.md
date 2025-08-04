@@ -2,7 +2,7 @@
 - Bump version
 - pnpm i
 - pnpm build-widget
-- BUNDLE_NAME=plugin-$(node -e "console.log(require('./package.json').version);") && cp ./public/$BUNDLE_NAME.js ./public/plugin.js
+- BUNDLE_NAME=plugin-$(node -e "console.log(require('./package.json').version);") && cp ./public/$BUNDLE_NAME.js ./public/plugin-v1.js
 - Publish by merging
 - Reminder to clear cloudflare cache
 
