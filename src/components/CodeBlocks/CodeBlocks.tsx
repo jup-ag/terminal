@@ -68,7 +68,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
 
   const headTag = `<!-- Attach the loading script in your <head /> -->
-<script src='${origin}/plugin-v4.js'></script>
+<script src='${origin}/plugin-v1.js'></script>
 `;
 
   const bodyTag = useMemo(() => {
