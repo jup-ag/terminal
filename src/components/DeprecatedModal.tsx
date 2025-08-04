@@ -59,7 +59,7 @@ export default function DeprecatedModal() {
             
             <button
               onClick={() => {
-                window.open('https://station.jup.ag/docs/jupiter-plugins', '_blank');
+                window.open('https://plugin.jup.ag', '_blank');
                 handleClose();
               }}
               className="flex-1 bg-primary/30 text-primary hover:bg-primary/60 px-6 py-2 rounded-lg font-medium transition-all duration-200 shadow-lg hover:shadow-xl text-sm"
