@@ -9,10 +9,10 @@ interface TerminalGroupProps {
 
 export const TerminalGroup = ({ tab }: TerminalGroupProps) => {
   return (
-    <>
+    <div className='min-h-[550px] w-[360px]'>
       {tab === 'modal' ? <ModalTerminal /> : null}
       {tab === 'integrated' ? <IntegratedTerminal /> : null}
       {tab === 'widget' ? <WidgetTerminal /> : null}
-    </>
+    </div>
   );
 };

@@ -20,7 +20,7 @@ import { BrandingConfigurator } from './BrandingConfigurator';
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
     name: 'Default',
-    description: 'Full functionality and swap experience of Terminal.',
+    description: 'Full functionality and swap experience of Plugin.',
     values: {
       ...INITIAL_FORM_CONFIG,
       formProps: { ...INITIAL_FORM_CONFIG.formProps },
@@ -42,6 +42,36 @@ const templateOptions: { name: string; description: string; values: IFormConfigu
   },
 ];
 
+function applyCustomColors(colors: {
+  primary?: string;
+  background?: string;
+  primaryText?: string;
+  warning?: string;
+  interactive?: string;
+  module?: string;
+}) {
+  const root = document.documentElement;
+
+  if (colors.primary) {
+    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
+  }
+  if (colors.background) {
+    root.style.setProperty('--jupiter-terminal-background', colors.background);
+  }
+  if (colors.primaryText) {
+    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
+  }
+  if (colors.warning) {
+    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
+  }
+  if (colors.interactive) {
+    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
+  }
+  if (colors.module) {
+    root.style.setProperty('--jupiter-terminal-module', colors.module);
+  }
+}
+
 const FormConfigurator = () => {
   const { control , reset, setValue, formState} = useFormContext<IFormConfigurator>();
   const currentTemplate = useRef('');
@@ -54,7 +84,12 @@ const FormConfigurator = () => {
   const defaultExplorer = useWatch({ control, name: 'defaultExplorer' });
   const colors = useWatch({ control, name: 'colors' });
   const branding = useWatch({ control, name: 'branding' });
-
+  // Apply custom colors when they change
+  useEffect(() => {
+    if (colors) {
+      applyCustomColors(colors);
+    }
+  }, [colors]);
   const onSelect = useCallback(
     (index: number) => {
       reset(templateOptions[index].values);
@@ -122,10 +157,21 @@ const FormConfigurator = () => {
     return isValidSolanaAddress(formProps.referralAccount);
   }, [formProps.referralAccount]);
 
+  const isValidInputMint = useMemo(() => {
+    if (!formProps.initialInputMint) return false;
+    return isValidSolanaAddress(formProps.initialInputMint);
+  }, [formProps.initialInputMint]);
+  
+  
+  const isValidOutputMint = useMemo(() => {
+    if (!formProps.initialOutputMint) return false;
+    return isValidSolanaAddress(formProps.initialOutputMint);
+  }, [formProps.initialOutputMint]);
+
   const isFixedMintIsInAndOut =
     formProps.fixedMint === formProps.initialInputMint || formProps.fixedMint === formProps.initialOutputMint;
   return (
-    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 md:max-w-[340px] max-h-[700px] overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/5 rounded-xl p-4">
+    <div className="w-full max-w-full border border-white/10 md:border-none md:mx-0 overflow-y-scroll overflow-x-hidden webkit-scrollbar bg-white/10 rounded-xl p-4">
       <div className="w-full">
         <div className="relative inline-block text-left text-white w-full">
           <p className="text-white text-sm font-semibold">Template</p>
@@ -194,6 +240,7 @@ const FormConfigurator = () => {
         <div>
           <p className="text-sm text-white/75">Initial input mint</p>
         </div>
+      
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
@@ -203,11 +250,14 @@ const FormConfigurator = () => {
           setValue('formProps.initialInputMint', e.target.value);
         }}
       />
-
+  {!isValidInputMint && (
+          <p className="text-xs text-utility-warning-300 mt-2">Invalid input mint</p>
+        )}
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Initial output mint</p>
         </div>
+
       </div>
       <input
         className="mt-2 text-white w-full flex justify-between items-center space-x-2 text-left rounded-md bg-white/10 px-4 py-2 text-sm font-medium shadow-sm border border-white/10"
@@ -217,7 +267,9 @@ const FormConfigurator = () => {
           setValue('formProps.initialOutputMint', e.target.value);
         }}
       />
-
+        {!isValidOutputMint && (
+          <p className="text-xs text-utility-warning-300 mt-2">Invalid output mint</p>
+        )}
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Fixed Mint</p>
@@ -375,7 +427,7 @@ const FormConfigurator = () => {
       <div className="flex justify-between mt-5">
         <div>
           <p className="text-sm text-white/75">Simulate wallet passthrough</p>
-          <p className="text-xs text-white/50">Simulate Terminal with a fake wallet passthrough</p>
+          <p className="text-xs text-white/50">Simulate Plugin with a fake wallet passthrough</p>
           <p className="text-xs text-white/50">(Testing available on Desktop only)</p>
         </div>
         <Toggle

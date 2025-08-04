@@ -1,5 +1,6 @@
 import { PublicKey } from '@solana/web3.js';
 import { DEFAULT_EXPLORER, FormProps } from 'src/types';
+import { SwapMode } from 'src/types/constants';
 
 export const USDC_MINT = new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v');
 export const USDT_MINT = new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
@@ -40,7 +41,7 @@ export const INITIAL_FORM_CONFIG: IFormConfigurator = Object.freeze({
     initialAmount: '',
     initialInputMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     initialOutputMint: WRAPPED_SOL_MINT.toString(),
-   
+    swapMode:SwapMode.ExactIn,  
   },
   colors: {
     primary: '199, 242, 132',

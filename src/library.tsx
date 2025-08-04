@@ -62,8 +62,8 @@ async function loadJupiter() {
     // Load all the scripts
     await loadRemote('jupiter-load-script-app', `${scriptDomain}/${bundleName}-app.js`, 'text/javascript');
   } catch (error) {
-    console.error(`Error loading Jupiter Terminal: ${error}`);
-    throw new Error(`Error loading Jupiter Terminal: ${error}`);
+    console.error(`Error loading Jupiter Plugin: ${error}`);
+    throw new Error(`Error loading Jupiter Plugin: ${error}`);
   }
 }
 
@@ -112,7 +112,7 @@ const RenderShell = (props: IInit) => {
   const displayClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal') {
-      return 'fixed top-0 w-screen h-screen flex items-center justify-center bg-black/50  z-10';
+      return 'fixed top-0 w-full h-full flex items-center justify-center bg-black/50  z-10';
     } else if (displayMode === 'integrated' || displayMode === 'widget') {
       return 'flex items-center justify-center w-full h-full  z-10';
     }
@@ -121,7 +121,7 @@ const RenderShell = (props: IInit) => {
   const contentClassName = useMemo(() => {
     // Default Modal
     if (!displayMode || displayMode === 'modal' || displayMode === 'integrated') {
-      return `flex flex-col h-[550px] w-screen max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
+      return `flex flex-col h-[550px] w-full max-w-[360px] overflow-auto text-black relative bg-black rounded-lg webkit-scrollbar ${
         containerClassName || ''
       }`;
     } else if (displayMode === 'widget') {
@@ -199,7 +199,7 @@ const RenderWidgetShell = (props: IInit) => {
   return (
     <div className={`fixed ${classes.containerClassName}`} style={classes.style}>
       <div
-        className={`${classes.widgetContainerClassName} rounded-full bg-black flex items-center justify-center cursor-pointer`}
+        className={`${classes.widgetContainerClassName}  rounded-full bg-black flex items-center justify-center cursor-pointer`}
         onClick={() => {
           if (isOpen) {
             setIsOpen(false);
@@ -224,7 +224,7 @@ const RenderWidgetShell = (props: IInit) => {
       </div>
 
       <div
-        id="integrated-terminal"
+        id="target-container"
         className={`absolute overflow-hidden ${classes.contentClassName} flex flex-col w-[90vw] h-[600px] max-w-[384px] max-h-[75vh] rounded-2xl bg-black transition-opacity duration-300 shadow-2xl ${
           !isOpen ? '!h-0 !w-0 opacity-0' : 'opacity-100'
         }`}
@@ -276,7 +276,7 @@ async function init(passedProps: IInit) {
   if (restProps.displayMode === 'integrated') {
     const target = document.getElementById(integratedTargetId!);
     if (!target) {
-      throw new Error(`Jupiter Terminal: document.getElementById cannot find ${integratedTargetId}`);
+      throw new Error(`Jupiter Plugin: document.getElementById cannot find ${integratedTargetId}`);
     }
     target?.appendChild(targetDiv);
   } else {
@@ -329,8 +329,8 @@ if (typeof window !== 'undefined' && typeof document !== 'undefined' && attribut
     if (loadComplete && shouldPreload) {
       setTimeout(() => {
         loadJupiter().catch((error) => {
-          console.error(`Error pre-loading Jupiter Terminal: ${error}`);
-          throw new Error(`Error pre-loading Jupiter Terminal: ${error}`);
+          console.error(`Error pre-loading Jupiter Plugin: ${error}`);
+          throw new Error(`Error pre-loading Jupiter Plugin: ${error}`);
         });
       }, 2000);
     }

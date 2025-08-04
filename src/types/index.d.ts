@@ -20,7 +20,7 @@ export type WidgetPosition = 'bottom-left' | 'bottom-right' | 'top-left' | 'top-
 /** The size of the widget */
 export type WidgetSize = 'sm' | 'default';
 
-export type SwapMode = "ExactInOrOut" | "ExactIn" | "ExactOut";
+export type SwapMode = 'ExactInOrOut' | 'ExactIn' | 'ExactOut';
 
 export interface FormProps {
   /** Default to `ExactInOrOut`. ExactOut can be used to get an exact output of a token (e.g. for Payments) */
@@ -87,11 +87,11 @@ export interface IInit {
   /** In case additional styling is needed for Terminal container */
   containerClassName?: string;
 
-  /** When true, wallet connection are handled by your dApp, and use `syncProps()` to syncronise wallet state with Terminal */
+  /** When true, wallet connection are handled by your dApp, and use `syncProps()` to syncronise wallet state with Plugin */
   enableWalletPassthrough?: boolean;
   /** Optional, if wallet state is ready, you can pass it in here, or just use `syncProps()` */
   passthroughWalletContextState?: WalletContextState;
-  /** When enableWalletPassthrough is true, this allows Terminal to callback your dApp's wallet connection flow */
+  /** When enableWalletPassthrough is true, this allows Plugin to callback your dApp's wallet connection flow */
   onRequestConnectWallet?: () => void | Promise<void>;
   /** Branding */
   branding?: {

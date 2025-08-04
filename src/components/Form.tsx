@@ -28,7 +28,7 @@ import { Asset } from 'src/entity/SearchResponse';
 
 const FormInputContainer: React.FC<{
   tokenInfo?: Asset;
-  onBalanceClick: (e: React.MouseEvent<HTMLElement>) => void;
+  onBalanceClick?: (e: React.MouseEvent<HTMLElement>) => void;
   title: string;
   pairSelectDisabled: boolean;
   onClickSelectPair: () => void;
@@ -47,9 +47,11 @@ const FormInputContainer: React.FC<{
         <div>{title}</div>
         {tokenInfo && (
           <div
-            className={cn('flex  space-x-1 text-xs items-center text-primary-text/50 fill-current cursor-pointer')}
+            className={cn('flex  space-x-1 text-xs items-center text-primary-text/50 fill-current ',{
+              'cursor-pointer': onBalanceClick,
+            })}
             onClick={(e) => {
-              onBalanceClick(e);
+              onBalanceClick?.(e);
             }}
           >
             <WalletIcon width={10} height={10} />
@@ -176,6 +178,7 @@ const Form: React.FC<{
 
     return accBalanceObj.uiAmount.toString();
   }, [balances, fromTokenInfo?.id]);
+
 
   const onClickMax = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
@@ -304,7 +307,6 @@ const Form: React.FC<{
           </div>
           <FormInputContainer
             tokenInfo={toTokenInfo!}
-            onBalanceClick={onClickMax}
             title="Buying"
             pairSelectDisabled={shouldDisabledToSelector}
             onClickSelectPair={onClickSelectToMint}
