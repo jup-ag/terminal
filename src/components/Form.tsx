@@ -266,8 +266,8 @@ const Form: React.FC<{
           <FormInputContainer
             tokenInfo={fromTokenInfo!}
             onBalanceClick={(e) => {
-              onClickMax(e);
               isToPairFocused.current = false;
+              onClickMax(e);
             }}
             title="Selling"
             pairSelectDisabled={shouldDisabledFromSelector}
