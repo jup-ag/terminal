@@ -68,7 +68,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   const origin = typeof window !== 'undefined' && window.location.origin ? window.location.origin : '';
 
   const headTag = `<!-- Attach the loading script in your <head /> -->
-<script src='${origin}/main-v4.js'></script>
+<script src='${origin}/plugin-v1.js'></script>
 `;
 
   const bodyTag = useMemo(() => {
@@ -92,13 +92,13 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
     async () => {
       const formatted = prettier.format(
         `
-        // npm install @jup-ag/terminal
-        import '@jup-ag/terminal/css';
+        // npm install @jup-ag/plugin
+        import '@jup-ag/plugin/css';
 
         const walletProps = useWallet();
         useEffect(() => {
           if (typeof window !== "undefined") {
-            import("@jup-ag/terminal").then((mod) => {
+            import("@jup-ag/plugin").then((mod) => {
               const init = mod.init;
               init(${formPropsSnippet});
             });
@@ -140,7 +140,7 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
 
     const cssVars = Object.entries(colors)
       .filter(([_, value]) => value && value.trim() !== '')
-      .map(([key, value]) => `  --jupiter-terminal-${toKebabCase(key)}: ${value};`)
+      .map(([key, value]) => `  --jupiter-plugin-${toKebabCase(key)}: ${value};`)
       .join('\n');
 
     if (!cssVars) return '';
@@ -239,7 +239,7 @@ ${cssVars}
           <Link
             target="_blank"
             rel={'noopener noreferrer'}
-            href={'https://github.com/jup-ag/terminal/tree/main/src/content'}
+            href={'https://github.com/jup-ag/plugin/tree/main/src/content'}
             className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
           >
             <p>Open Example directory</p>
@@ -248,7 +248,7 @@ ${cssVars}
           <Link
             target="_blank"
             rel={'noopener noreferrer'}
-            href={'https://github.com/jup-ag/terminal/blob/main/src/types/index.d.ts'}
+            href={'https://github.com/jup-ag/plugin/blob/main/src/types/index.d.ts'}
             className="mt-2 flex items-center justify-center space-x-1 text-sm text-white/50 hover:underline"
           >
             <p>Show fully typed API</p>

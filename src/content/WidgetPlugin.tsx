@@ -7,7 +7,7 @@ import { WidgetPosition, WidgetSize } from 'src/types';
 
 import { useFormContext, useWatch } from 'react-hook-form';
 
-const WidgetTerminal = memo(() => {
+const WidgetPlugin = memo(() => {
   const { control } = useFormContext();
   const simulateWalletPassthrough = useWatch({ control, name: 'simulateWalletPassthrough' });
   const formProps = useWatch({ control, name: 'formProps' });
@@ -22,7 +22,7 @@ const WidgetTerminal = memo(() => {
   const passthroughWalletContextState = useUnifiedWallet();
   const { setShowModal } = useUnifiedWalletContext();
 
-  const launchTerminal = useCallback(() => {
+  const launchPlugin = useCallback(() => {
     window.Jupiter.init({
       displayMode: 'widget',
       widgetStyle: {
@@ -69,10 +69,10 @@ const WidgetTerminal = memo(() => {
   useEffect(() => {
     setTimeout(() => {
       if (isLoaded && Boolean(window.Jupiter.init)) {
-        launchTerminal();
+        launchPlugin();
       }
     }, 200);
-  }, [isLoaded, position, size, launchTerminal]);
+  }, [isLoaded, position, size, launchPlugin]);
 
   // To make sure passthrough wallet are synced
   useEffect(() => {
@@ -202,6 +202,6 @@ const WidgetTerminal = memo(() => {
   );
 });
 
-WidgetTerminal.displayName = 'WidgetTerminal';
+WidgetPlugin.displayName = 'WidgetPlugin';
 
-export default WidgetTerminal;
+export default WidgetPlugin;

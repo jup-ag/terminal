@@ -53,22 +53,22 @@ function applyCustomColors(colors: {
   const root = document.documentElement;
 
   if (colors.primary) {
-    root.style.setProperty('--jupiter-terminal-primary', colors.primary);
+    root.style.setProperty('--jupiter-plugin-primary', colors.primary);
   }
   if (colors.background) {
-    root.style.setProperty('--jupiter-terminal-background', colors.background);
+    root.style.setProperty('--jupiter-plugin-background', colors.background);
   }
   if (colors.primaryText) {
-    root.style.setProperty('--jupiter-terminal-primary-text', colors.primaryText);
+    root.style.setProperty('--jupiter-plugin-primary-text', colors.primaryText);
   }
   if (colors.warning) {
-    root.style.setProperty('--jupiter-terminal-warning', colors.warning);
+    root.style.setProperty('--jupiter-plugin-warning', colors.warning);
   }
   if (colors.interactive) {
-    root.style.setProperty('--jupiter-terminal-interactive', colors.interactive);
+    root.style.setProperty('--jupiter-plugin-interactive', colors.interactive);
   }
   if (colors.module) {
-    root.style.setProperty('--jupiter-terminal-module', colors.module);
+    root.style.setProperty('--jupiter-plugin-module', colors.module);
   }
 }
 

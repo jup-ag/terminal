@@ -48,7 +48,7 @@ const ColorConfiguration: React.FC<ColorConfigurationProps> = ({ colors, setValu
   return (
     <div className="relative inline-block text-left text-white w-full mt-5">
       <p className="text-white text-sm font-semibold">Color Configuration</p>
-      <p className="text-xs text-white/50 mt-1">Customize the terminal&apos;s color scheme</p>
+      <p className="text-xs text-white/50 mt-1">Customize the Plugin&apos;s color scheme</p>
 
       {colorConfigs.map((config) => (
         <ColorPicker
