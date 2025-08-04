@@ -24,6 +24,9 @@ const IntegratedTerminal = memo(() => {
       onRequestConnectWallet: () => setShowModal(true),
       defaultExplorer,
       branding,
+      containerStyles:{
+        zIndex: 20,
+      }
     });
   }, [defaultExplorer, formProps, passthroughWalletContextState, setShowModal, simulateWalletPassthrough, branding]);
 

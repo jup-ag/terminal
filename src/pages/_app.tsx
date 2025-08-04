@@ -20,6 +20,7 @@ import { setTerminalInView } from 'src/stores/jotai-terminal-in-view';
 import { cn } from 'src/misc/cn';
 import { TerminalGroup } from 'src/content/TerminalGroup';
 import DeprecatedBanner from 'src/components/DeprecatedBanner';
+import DeprecatedModal from 'src/components/DeprecatedModal';
 
 const isDevNodeENV = process.env.NODE_ENV === 'development';
 const isDeveloping = isDevNodeENV && typeof window !== 'undefined';
@@ -117,7 +118,7 @@ export default function App() {
             handle: '@JupiterExchange',
           }}
         />
-
+        <DeprecatedModal/>
         <div className="bg-v3-bg h-screen w-screen max-w-screen overflow-x-hidden flex flex-col justify-between">
           <div>
             <AppHeader />
