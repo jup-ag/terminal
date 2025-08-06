@@ -18,12 +18,12 @@ const bundleName = `plugin-${packageJson.version}`;
 
 const scriptDomain =
   (() => {
-    console.log({window})
+    if (!process.env.NEXT_PUBLIC_IS_PLUGIN_DEV) {
+         return ''
+    }
     if (typeof window === 'undefined' || typeof document === 'undefined') return '';
     
     const url = (document.currentScript as HTMLScriptElement)?.src;
-
-    console.log({document})
     if (url) {
       return new URL(url).origin;
     }
