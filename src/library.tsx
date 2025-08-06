@@ -18,14 +18,18 @@ const bundleName = `plugin-${packageJson.version}`;
 
 const scriptDomain =
   (() => {
+    console.log({window})
     if (typeof window === 'undefined' || typeof document === 'undefined') return '';
-
+    
     const url = (document.currentScript as HTMLScriptElement)?.src;
+
+    console.log({document})
     if (url) {
       return new URL(url).origin;
     }
     return '';
   })() || 'https://plugin.jup.ag';
+  console.log({scriptDomain})
 
 async function loadRemote(id: string, href: string, type: 'text/javascript' | 'stylesheet') {
   return new Promise((res, rej) => {
