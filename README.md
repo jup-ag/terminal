@@ -5,3 +5,7 @@ Jupiter Plugin is an open-sourced, lite version of Jupiter that provides end-to-
 Visit our Demo / Playground over at https://plugin.jup.ag
 
 With several templates to get you started, and auto generated code snippets.
+
+## Local Development
+
+If you are running the project locally, you will need to set `NEXT_PUBLIC_IS_PLUGIN_DEV=true` in your `.env` file.
