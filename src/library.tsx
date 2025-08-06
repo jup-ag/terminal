@@ -19,7 +19,7 @@ const bundleName = `plugin-${packageJson.version}`;
 const scriptDomain =
   (() => {
     if (!process.env.NEXT_PUBLIC_IS_PLUGIN_DEV) {
-         return ''
+         return null
     }
     if (typeof window === 'undefined' || typeof document === 'undefined') return '';
     
@@ -27,9 +27,8 @@ const scriptDomain =
     if (url) {
       return new URL(url).origin;
     }
-    return '';
+    return null;
   })() || 'https://plugin.jup.ag';
-  console.log({scriptDomain})
 
 async function loadRemote(id: string, href: string, type: 'text/javascript' | 'stylesheet') {
   return new Promise((res, rej) => {
