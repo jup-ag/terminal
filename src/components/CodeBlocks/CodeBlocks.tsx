@@ -87,9 +87,10 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
   `;
   const unformattedSnippet = [simulateWalletPassthrough ? USE_WALLET_SNIPPET : '', INIT_SNIPPET].join('\n');
 
-  const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
-    ['npmSnippet'],
-    async () => {
+
+  const { data: npmSnippet, refetch: refetchNpmSnippet } =useQuery({
+    queryKey: ['npmSnippet'],
+    queryFn: () => {
       const formatted = prettier.format(
         `
         // npm install @jup-ag/plugin
@@ -112,10 +113,37 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
       );
       return formatted;
     },
-    {
-      initialData: '',
-    },
-  );
+    initialData: ''
+  })
+  // const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
+  //   ['npmSnippet'],
+  //   async () => {
+  //     const formatted = prettier.format(
+  //       `
+  //       // npm install @jup-ag/plugin
+  //       import '@jup-ag/plugin/css';
+
+  //       const walletProps = useWallet();
+  //       useEffect(() => {
+  //         if (typeof window !== "undefined") {
+  //           import("@jup-ag/plugin").then((mod) => {
+  //             const init = mod.init;
+  //             init(${formPropsSnippet});
+  //           });
+  //         }
+  //       }, []);
+  //       `,
+  //       {
+  //         parser: 'typescript',
+  //         plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
+  //       },
+  //     );
+  //     return formatted;
+  //   },
+  //   {
+  //     initialData: '',
+  //   },
+  // );
 
   const [snippet, setSnippet] = useState(``);
   useEffect(() => {

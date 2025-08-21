@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { UltraSwapQuoteParams, ultraSwapService } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
 import { create } from 'superstruct';
@@ -29,9 +29,7 @@ export const useQuoteQuery = (params: UltraSwapQuoteParams, shouldRefetch: boole
     refetchInterval: shouldRefetch ? 5_000 : false,
     retry: 0,
     enabled: Number(amount) > 0,
-    keepPreviousData: Number(amount) > 0,
-    onError: (error) => {
-      console.error('useQuoteQuery', error);
-    },
+    gcTime: 0,
+    staleTime: 0,
   });
 };

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { Severity, ultraSwapService, Warning } from 'src/data/UltraSwapService';
 import { useMobile } from 'src/hooks/useMobile';
 import PopoverTooltip from './Tooltip/PopoverTooltip';
@@ -57,9 +57,9 @@ const JupShield = ({ tokenAddress }: { tokenAddress: string }) => {
   const { data, isFetching } = useQuery({
     queryKey: ['shield', tokenAddress],
     queryFn: () => ultraSwapService.getShield([tokenAddress]),
-    cacheTime: 5 * 60_000,
+    gcTime: 5 * 60_000,
     staleTime: 5 * 60_000,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
     select: (data) => {
       const warnings = data.warnings[tokenAddress];
       return {

@@ -91,6 +91,7 @@ const FormInputContainer: React.FC<{
         <div className="flex flex-col items-end justify-between w-full">
           {children}
           <span className="text-xs text-primary-text/50">
+
             {tokenInfo && <CoinBalanceUSD tokenInfo={tokenInfo} amount={value} />}
           </span>
         </div>
