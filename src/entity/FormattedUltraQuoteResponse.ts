@@ -56,6 +56,7 @@ export const FormattedUltraQuoteResponse = type({
   prioritizationFeeLamports: optional(number()),
   feeBps: number(),
   router: string(),
+  errorMessage: optional(string()),
 });
 
 export type FormattedUltraQuoteResponse = Infer<typeof FormattedUltraQuoteResponse>;

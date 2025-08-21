@@ -1,4 +1,3 @@
-
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
 import {
@@ -15,7 +14,7 @@ import {
   useState,
 } from 'react';
 import { WRAPPED_SOL_MINT } from 'src/constants';
-import {  hasNumericValue, useDebounce } from 'src/misc/utils';
+import { hasNumericValue, useDebounce } from 'src/misc/utils';
 import { FormProps, IInit } from 'src/types';
 import { useScreenState } from './ScreenProvider';
 import { useWalletPassThrough } from './WalletPassthroughProvider';
@@ -41,15 +40,17 @@ export type QuoteResponse = {
   quoteResponse: FormattedUltraQuoteResponse;
 };
 
-export type SwapResult = {
-  txid: string;
-  inputAddress: PublicKey;
-  outputAddress: PublicKey;
-  inputAmount: number;
-  outputAmount: number;
-} | {
-  error?: TransactionError;
-};
+export type SwapResult =
+  | {
+      txid: string;
+      inputAddress: PublicKey;
+      outputAddress: PublicKey;
+      inputAmount: number;
+      outputAmount: number;
+    }
+  | {
+      error?: TransactionError;
+    };
 
 export type SwappingStatus = 'loading' | 'pending-approval' | 'sending' | 'fail' | 'success' | 'timeout';
 export interface ISwapContext {
@@ -72,8 +73,9 @@ export interface ISwapContext {
   toTokenInfo?: Asset | null;
   quoteResponseMeta: QuoteResponse | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponse | null>>;
-  onSubmit: VoidFunction;
+  // onSubmit: VoidFunction;
   lastSwapResult: { swapResult: SwapResult; quoteReponse: QuoteResponse | null } | null;
+  setLastSwapResult: Dispatch<SetStateAction<{ swapResult: SwapResult; quoteReponse: QuoteResponse | null } | null>>;
   formProps: FormProps;
   displayMode: IInit['displayMode'];
   scriptDomain: IInit['scriptDomain'];
@@ -85,6 +87,7 @@ export interface ISwapContext {
         }
       | undefined;
   };
+  setTxStatus: Dispatch<SetStateAction<{ txid: string; status: SwappingStatus } | undefined>>;
   reset: (props?: { resetValues: boolean }) => void;
   refresh: () => void;
   loading: boolean;
@@ -108,11 +111,6 @@ export function useSwapContext() {
   return context;
 }
 
-export const PRIORITY_NONE = 0; // No additional fee
-export const PRIORITY_HIGH = 0.000_005; // Additional fee of 1x base fee
-export const PRIORITY_TURBO = 0.000_5; // Additional fee of 100x base fee
-export const PRIORITY_MAXIMUM_SUGGESTED = 0.01;
-
 const INITIAL_FORM = {
   fromMint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
   toMint: WRAPPED_SOL_MINT.toString(),
@@ -128,7 +126,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   const { displayMode, scriptDomain, formProps: originalFormProps, children, enableWalletPassthrough } = props;
   const { screen } = useScreenState();
   const { wallet } = useWalletPassThrough();
-  const { refetch: refetchBalances } = useBalances();
+  const { data: balances, refetch: refetchBalances } = useBalances();
   const isToPairFocused = useRef<boolean>(false);
   const walletPublicKey = useMemo(() => wallet?.adapter.publicKey?.toString(), [wallet?.adapter.publicKey]);
   const formProps: FormProps = useMemo(() => ({ ...DEFAULT_FORM_PROPS, ...originalFormProps }), [originalFormProps]);
@@ -151,8 +149,6 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   }, [formProps.fixedMint, formProps.initialInputMint, formProps.initialOutputMint]);
 
   const [errors, setErrors] = useState<Record<string, { title: string; message: string }>>({});
-
-
 
   // Set value given initial amount
   const setupInitialAmount = useCallback(() => {
@@ -220,22 +216,33 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
     !txStatus,
   );
 
+  const balance = useMemo(() => {
+    if (!balances) return 0;
+    return balances[form.fromMint]?.uiAmount || 0;
+  }, [balances, form.fromMint]);
+
   useEffect(() => {
     if (quoteError) {
       if (typeof quoteError === 'string') {
         setErrors({
           fromValue: { title: quoteError, message: '' },
         });
-        return ;
+        return;
       }
 
       setErrors({
         fromValue: { title: 'Error fetching route. Try changing your input', message: '' },
       });
-      return ;
+      return;
+    }
+    if (form.fromValue && new Decimal(form.fromValue).gt(balance)) {
+      setErrors({
+        fromValue: { title: `Insufficient ${fromTokenInfo?.symbol}`, message: '' },
+      });
+      return;
     }
     setErrors({});
-  }, [quoteError]);
+  }, [quoteError, balance, form.fromValue, fromTokenInfo]);
 
   const lastRefreshTimestamp = useMemo(() => {
     if (loading) {
@@ -285,34 +292,6 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
 
   const [lastSwapResult, setLastSwapResult] = useState<ISwapContext['lastSwapResult']>(null);
 
-  const { mutateAsync: ultraSwapMutation } = useUltraSwapMutation();
-
-  // const executeTransaction = useExecuteTransaction();
-  const onSubmit = useCallback(async () => {
-    if (!walletPublicKey || !wallet?.adapter || !quoteResponseMeta) {
-      return null;
-    }
-
-    setTxStatus({
-      txid: '',
-      status: 'loading',
-    });
-
-    try {
-      if (!fromTokenInfo) throw new Error('Missing fromTokenInfo');
-      if (!toTokenInfo) throw new Error('Missing toTokenInfo');
-      await ultraSwapMutation({
-        quoteResponseMeta,
-        fromTokenInfo,
-        toTokenInfo,
-        setTxStatus,
-        setLastSwapResult,
-      });
-    } catch (error) {
-      console.log('Swap error', error);
-    }
-  }, [walletPublicKey, wallet?.adapter, quoteResponseMeta, ultraSwapMutation, fromTokenInfo, toTokenInfo]);
-
   const reset = useCallback(
     ({ resetValues } = { resetValues: false }) => {
       if (resetValues) {
@@ -356,8 +335,9 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         toTokenInfo,
         quoteResponseMeta,
         setQuoteResponseMeta,
-        onSubmit,
+        // onSubmit,
         lastSwapResult,
+        setLastSwapResult,
         reset,
         refresh,
         loading,
@@ -370,6 +350,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         swapping: {
           txStatus,
         },
+        setTxStatus,
         enableWalletPassthrough,
       }}
     >

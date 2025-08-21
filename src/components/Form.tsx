@@ -17,7 +17,6 @@ import { WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
 import SwitchPairButton from './SwitchPairButton';
-import useTimeDiff from './useTimeDiff/useTimeDiff';
 import Decimal from 'decimal.js';
 import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
@@ -25,6 +24,8 @@ import JupShield from './JupShield';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useBalances } from 'src/hooks/useBalances';
 import { Asset } from 'src/entity/SearchResponse';
+import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
+import { SubmitButton } from './SubmitButton';
 
 const FormInputContainer: React.FC<{
   tokenInfo?: Asset;
@@ -47,7 +48,7 @@ const FormInputContainer: React.FC<{
         <div>{title}</div>
         {tokenInfo && (
           <div
-            className={cn('flex  space-x-1 text-xs items-center text-primary-text/50 fill-current ',{
+            className={cn('flex  space-x-1 text-xs items-center text-primary-text/50 fill-current ', {
               'cursor-pointer': onBalanceClick,
             })}
             onClick={(e) => {
@@ -99,11 +100,10 @@ const FormInputContainer: React.FC<{
 };
 
 const Form: React.FC<{
-  onSubmit: () => void;
   isDisabled: boolean;
   setSelectPairSelector: React.Dispatch<React.SetStateAction<'fromMint' | 'toMint' | null>>;
-}> = ({ onSubmit, isDisabled, setSelectPairSelector }) => {
-  const { publicKey } = useWalletPassThrough();
+}> = ({  setSelectPairSelector }) => {
+  const { publicKey, wallet } = useWalletPassThrough();
 
   const { data: balances } = useBalances();
   const {
@@ -114,20 +114,35 @@ const Form: React.FC<{
     quoteResponseMeta,
     formProps: { fixedAmount, swapMode, fixedMint },
     loading,
-    refresh,
-    quoteError,
-    errors,
     isToPairFocused,
-    onSubmit: onSubmitUltra,
+    setTxStatus,
+    setLastSwapResult,
   } = useSwapContext();
-  const [hasExpired, timeDiff] = useTimeDiff();
   const { setScreen } = useScreenState();
-  useEffect(() => {
-    if (hasExpired) {
-      refresh();
+  const { mutateAsync: ultraSwapMutation } = useUltraSwapMutation();
+
+  const onSubmit = useCallback(async () => {
+    if (!wallet || !wallet.adapter.publicKey || !quoteResponseMeta) {
+      return null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasExpired]);
+
+    try {
+      if (!fromTokenInfo) throw new Error('Missing fromTokenInfo');
+      if (!toTokenInfo) throw new Error('Missing toTokenInfo');
+      await ultraSwapMutation({
+        quoteResponseMeta,
+        fromTokenInfo,
+        toTokenInfo,
+        setTxStatus,
+        setLastSwapResult,
+      });
+    } catch (error) {
+      console.log('Swap error', error);
+    } finally{
+      setScreen('Swapping');
+    }
+  }, [wallet, quoteResponseMeta, ultraSwapMutation, fromTokenInfo, toTokenInfo, setTxStatus, setLastSwapResult,setScreen]);
+
 
   const shouldDisabledFromSelector = useMemo(() => {
     if (fromTokenInfo?.id === fixedMint) {
@@ -178,7 +193,6 @@ const Form: React.FC<{
 
     return accBalanceObj.uiAmount.toString();
   }, [balances, fromTokenInfo?.id]);
-
 
   const onClickMax = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
@@ -254,13 +268,6 @@ const Form: React.FC<{
     },
     [setScreen],
   );
-
-  const shouldButtonDisabled = useMemo(() => {
-    if (isDisabled || loading || !!errors.fromValue) {
-      return true;
-    }
-    return false;
-  }, [isDisabled, loading, errors.fromValue]);
 
   return (
     <div className="h-full flex flex-col items-center justify-center">
@@ -356,23 +363,7 @@ const Form: React.FC<{
             Connect Wallet
           </JupButton>
         ) : (
-          <JupButton
-            size="lg"
-            className={cn('w-full mt-4 disabled:opacity-50 !text-uiv2-text/75 !bg-primary ')}
-            onClick={() => {
-              onSubmit();
-              onSubmitUltra();
-            }}
-            disabled={shouldButtonDisabled}
-          >
-            {loading ? (
-              <span>Loading</span>
-            ) : errors.fromValue ? (
-              <span>{errors.fromValue.title}</span>
-            ) : (
-              <span>Swap</span>
-            )}
-          </JupButton>
+          <SubmitButton onSubmit={onSubmit} />
         )}
 
         {quoteResponseMeta && fromTokenInfo && toTokenInfo ? (

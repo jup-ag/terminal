@@ -4,7 +4,6 @@ import { IInit } from 'src/types';
 
 import Header from '../components/Header';
 import InitialScreen from './screens/InitialScreen';
-import ReviewOrderScreen from './screens/ReviewOrderScreen';
 import SwappingScreen from './screens/SwappingScreen';
 import WalletScreen from './screens/WalletScreen';
 import JupiterLogoV2 from 'src/icons/JupiterLogoV2';
@@ -23,7 +22,6 @@ const Content = () => {
             <InitialScreen />
           </>
         ) : null}
-        {screen === 'Confirmation' ? <ReviewOrderScreen /> : null}
         {screen === 'Swapping' ? <SwappingScreen /> : null}
         {screen === 'Wallet' ? <WalletScreen /> : null}
       </div>

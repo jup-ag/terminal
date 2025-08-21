@@ -2,8 +2,6 @@ import { PublicKey } from '@solana/web3.js';
 
 export const MINIMUM_SOL_BALANCE = 0.01;
 
-export const ROUTE_CACHE_DURATION = 20_000;
-
 
 export const MAX_INPUT_LIMIT = 100_000_000_000_000;
 

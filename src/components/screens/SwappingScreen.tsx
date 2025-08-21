@@ -3,13 +3,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useScreenState } from 'src/contexts/ScreenProvider';
 import { useSwapContext } from 'src/contexts/SwapContext';
 import JupButton from '../JupButton';
-import Spinner from '../Spinner';
 import SuccessIcon from 'src/icons/SuccessIcon';
 import PriceInfo from '../PriceInfo/index';
 import { readableValue } from 'src/misc/utils';
 import { usePreferredExplorer } from 'src/contexts/preferredExplorer';
-import JupiterLogoV2 from 'src/icons/JupiterLogoV2';
-import JupiterLogo from 'src/icons/JupiterLogo';
 
 const ErrorIcon = () => {
   return (
@@ -97,40 +94,6 @@ const SwappingScreen = () => {
   };
 
   const { explorer, getExplorer } = usePreferredExplorer();
-
-  const isLoading =
-    txStatus?.status === 'loading' || txStatus?.status === 'pending-approval' || txStatus?.status === 'sending';
-  const Content = () => {
-    return (
-      <>
-        <div className="flex w-full justify-center">
-          <div className="text-primary-text">{'Swapping'}</div>
-        </div>
-
-        <div className="flex w-full justify-center items-center mt-9">
-          <div className="h-16 w-16 animate-hue duration-100">
-            <JupiterLogo width={64} height={64} />
-          </div>
-        </div>
-
-        <div className="flex flex-col w-full justify-center items-center px-5 mt-7">
-          {isLoading && (
-            <div className="flex items-center w-full rounded-xl p-4 bg-module mb-2">
-              <Spinner spinnerColor={'white'} />
-
-              <div className="ml-4 flex w-full justify-between">
-                <span className="text-primary-text text-sm">
-                  {txStatus.status === 'loading' && 'Preparing transactions'}
-                  {txStatus.status === 'pending-approval' && 'Pending Approval'}
-                  {txStatus.status === 'sending' && 'Swapping'}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </>
-    );
-  };
 
   const SuccessContent = () => {
     const { inputAmount, outputAmount, explorerLink } = useMemo(() => {
@@ -267,7 +230,6 @@ const SwappingScreen = () => {
           </div>
         </div>
       ) : null}
-      {!errorMessage && isLoading ? <Content /> : null}
       {!errorMessage && txStatus?.status === 'success' ? <SuccessContent /> : null}
     </div>
   );

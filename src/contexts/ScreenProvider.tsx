@@ -1,6 +1,6 @@
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from 'react';
 
-export type Screens = 'Initial' | 'Confirmation' | 'Swapping' | 'Success' | 'Error' | 'Wallet';
+export type Screens = 'Initial' | 'Swapping' | 'Success' | 'Error' | 'Wallet';
 
 export interface ScreenProvider {
   screen: Screens;
