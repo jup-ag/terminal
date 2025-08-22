@@ -6,8 +6,9 @@ import ExchangeRate from '../ExchangeRate';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
-import { useUltraRouters } from 'src/queries/useUltraRouter';
 import { Asset } from 'src/entity/SearchResponse';
+import { useQuery } from '@tanstack/react-query';
+import { UltraQueries } from 'src/queries/queries';
 
 const Index = ({
   quoteResponse,
@@ -29,14 +30,16 @@ const Index = ({
     outputDecimal: toTokenInfo.decimals,
   };
 
-  const { data: routerInfo } = useUltraRouters({
+  const { data: routerInfo } =  useQuery({
+    ...UltraQueries.routers,
     select: (data) => {
       if (!quoteResponse) {
         return null;
       }
       return data.find((router) => router.id === quoteResponse.quoteResponse.router);
     },
-  });
+  })
+
 
   const priceImpact = formatNumber.format(
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
