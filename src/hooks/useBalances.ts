@@ -47,7 +47,7 @@ export const useBalances = () => {
       return await ultraSwapService.getBalance(address, signal);
     },
     enabled: !!address && getPluginInView(),
-    cacheTime: 20_000,
+    gcTime: 20_000,
     staleTime: 20_000,
     refetchOnWindowFocus: false,
     refetchIntervalInBackground: false,

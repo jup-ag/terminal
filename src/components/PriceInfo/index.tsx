@@ -68,10 +68,8 @@ const Index = ({
     return 0;
   }, [quoteResponse]);
 
-  // const hasAtaDeposit = (feeInformation?.ataDeposits.length ?? 0) > 0;
-
   return (
-    <div className={cn('mt-4 space-y-4 border border-white/5 rounded-xl', containerClassName)}>
+    <div className={cn('mt-4 space-y-4 ', containerClassName)}>
       <div className="flex items-center justify-between text-xs">
         <div className="text-primary-text/50">{<span>Rate</span>}</div>
         {JSBI.greaterThan(rateParams.inAmount, JSBI.BigInt(0)) &&

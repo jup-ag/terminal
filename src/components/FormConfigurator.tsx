@@ -4,7 +4,6 @@ import {
   useWatch,
 } from 'react-hook-form';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
-import InfoIconSVG from 'src/icons/InfoIconSVG';
 import Toggle from './Toggle';
 import Tooltip from './Tooltip';
 import ColorConfiguration from './ColorConfiguration';
@@ -16,6 +15,7 @@ import { cn } from 'src/misc/cn';
 import { SwapMode } from 'src/types/constants';
 import Link from 'next/link';
 import { BrandingConfigurator } from './BrandingConfigurator';
+import InfoIcon from 'src/icons/InfoIcon';
 
 const templateOptions: { name: string; description: string; values: IFormConfigurator }[] = [
   {
@@ -193,7 +193,7 @@ const FormConfigurator = () => {
                   content={<div className="text-white text-xs">{templateOptions[active].description}</div>}
                 >
                   <div className="flex items-center text-white-35 fill-current">
-                    <InfoIconSVG width={12} height={12} />
+                    <InfoIcon width={12} height={12} />
                   </div>
                 </Tooltip>
 

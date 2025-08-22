@@ -8,7 +8,7 @@ export const useUltraRouters = <TQueryData = RouterResponse, TData = TQueryData>
   return useQuery<TQueryData, unknown, TData>({
     queryKey: ['routers'],
     queryFn: () => ultraSwapService.getRouters() as TQueryData,
-    cacheTime: Infinity,
+    gcTime: Infinity,
     staleTime: Infinity,
     ...options,
   });
