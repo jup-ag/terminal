@@ -73,7 +73,6 @@ export interface ISwapContext {
   toTokenInfo?: Asset | null;
   quoteResponseMeta: QuoteResponse | null;
   setQuoteResponseMeta: Dispatch<SetStateAction<QuoteResponse | null>>;
-  // onSubmit: VoidFunction;
   lastSwapResult: { swapResult: SwapResult; quoteReponse: QuoteResponse | null } | null;
   setLastSwapResult: Dispatch<SetStateAction<{ swapResult: SwapResult; quoteReponse: QuoteResponse | null } | null>>;
   formProps: FormProps;
