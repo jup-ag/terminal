@@ -115,35 +115,6 @@ const CodeBlocks = ({ displayMode }: { displayMode: IInit['displayMode'] }) => {
     },
     initialData: ''
   })
-  // const { data: npmSnippet, refetch: refetchNpmSnippet } = useQuery<string>(
-  //   ['npmSnippet'],
-  //   async () => {
-  //     const formatted = prettier.format(
-  //       `
-  //       // npm install @jup-ag/plugin
-  //       import '@jup-ag/plugin/css';
-
-  //       const walletProps = useWallet();
-  //       useEffect(() => {
-  //         if (typeof window !== "undefined") {
-  //           import("@jup-ag/plugin").then((mod) => {
-  //             const init = mod.init;
-  //             init(${formPropsSnippet});
-  //           });
-  //         }
-  //       }, []);
-  //       `,
-  //       {
-  //         parser: 'typescript',
-  //         plugins: [prettierPluginBabel, prettierPluginEstree, prettierPluginTypescript],
-  //       },
-  //     );
-  //     return formatted;
-  //   },
-  //   {
-  //     initialData: '',
-  //   },
-  // );
 
   const [snippet, setSnippet] = useState(``);
   useEffect(() => {
