@@ -21,7 +21,6 @@ import { useWalletPassThrough } from './WalletPassthroughProvider';
 import { useQuoteQuery } from 'src/queries/useQuoteQuery';
 import { UltraQuoteResponse } from 'src/data/UltraSwapService';
 import { FormattedUltraQuoteResponse } from 'src/entity/FormattedUltraQuoteResponse';
-import { useUltraSwapMutation } from 'src/queries/useUltraSwapMutation';
 import { useBalances } from 'src/hooks/useBalances';
 import { Asset } from 'src/entity/SearchResponse';
 import { useAsset } from 'src/hooks/useAsset';
@@ -171,6 +170,10 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
   }, [formProps.initialAmount, setupInitialAmount]);
 
   const debouncedForm = useDebounce(form, 250);
+  const debouncePending = useMemo(
+    () => JSON.stringify(form) !== JSON.stringify(debouncedForm),
+    [form, debouncedForm],
+  );
 
   const amount = useMemo(() => {
     if (!fromTokenInfo || !toTokenInfo) {
@@ -339,7 +342,7 @@ export const SwapContextProvider = (props: PropsWithChildren<IInit>) => {
         setLastSwapResult,
         reset,
         refresh,
-        loading,
+        loading: loading || debouncePending,
         quoteError,
         lastRefreshTimestamp,
         isToPairFocused,

@@ -1,7 +1,6 @@
-import { MouseEvent, useCallback, useEffect, useMemo } from 'react';
+import { MouseEvent, useCallback, useMemo } from 'react';
 import { NumberFormatValues, NumericFormat } from 'react-number-format';
 
-import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE } from '../misc/constants';
 
 import CoinBalance from './Coinbalance';
 import JupButton from './JupButton';
@@ -13,7 +12,7 @@ import { useWalletPassThrough } from 'src/contexts/WalletPassthroughProvider';
 import ChevronDownIcon from 'src/icons/ChevronDownIcon';
 import WalletIcon from 'src/icons/WalletIcon';
 import { detectedSeparator } from 'src/misc/utils';
-import { WRAPPED_SOL_MINT } from '../constants';
+import { MAX_INPUT_LIMIT, MINIMUM_SOL_BALANCE, WRAPPED_SOL_MINT } from '../constants';
 import { CoinBalanceUSD } from './CoinBalanceUSD';
 import PriceInfo from './PriceInfo/index';
 import SwitchPairButton from './SwitchPairButton';
@@ -91,6 +90,7 @@ const FormInputContainer: React.FC<{
         <div className="flex flex-col items-end justify-between w-full">
           {children}
           <span className="text-xs text-primary-text/50">
+
             {tokenInfo && <CoinBalanceUSD tokenInfo={tokenInfo} amount={value} />}
           </span>
         </div>

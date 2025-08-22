@@ -13,6 +13,7 @@ export const SubmitButton = ({ onSubmit }: SubmitButtonProps) => {
     loading,
     errors,
     swapping: { txStatus },
+    form
   } = useSwapContext();
   const shouldButtonDisabled = useMemo(() => {
     if (
