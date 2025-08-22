@@ -1,14 +1,12 @@
 import Decimal from 'decimal.js';
 import JSBI from 'jsbi';
-import {  useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { formatNumber } from 'src/misc/utils';
 import ExchangeRate from '../ExchangeRate';
 import TransactionFee from './TransactionFee';
 import { QuoteResponse } from 'src/contexts/SwapContext';
 import { cn } from 'src/misc/cn';
 import { Asset } from 'src/entity/SearchResponse';
-import { useQuery } from '@tanstack/react-query';
-import { UltraQueries } from 'src/queries/queries';
 
 const Index = ({
   quoteResponse,
@@ -30,17 +28,6 @@ const Index = ({
     outputDecimal: toTokenInfo.decimals,
   };
 
-  const { data: routerInfo } =  useQuery({
-    ...UltraQueries.routers,
-    select: (data) => {
-      if (!quoteResponse) {
-        return null;
-      }
-      return data.find((router) => router.id === quoteResponse.quoteResponse.router);
-    },
-  })
-
-
   const priceImpact = formatNumber.format(
     new Decimal(quoteResponse?.quoteResponse.priceImpactPct || 0).mul(100).toDP(2),
   );
@@ -59,7 +46,6 @@ const Index = ({
     }
     return quoteResponse.quoteResponse.router;
   }, [quoteResponse]);
-
 
   const gasFee = useMemo(() => {
     if (quoteResponse) {
@@ -98,23 +84,6 @@ const Index = ({
         </div>
       )}
 
-      {router && (
-        <div className="flex items-center justify-between text-xs">
-          <div className="text-primary-text/50">
-            <span>Router</span>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {/* eslint-disable @next/next/no-img-element */}
-            {routerInfo && (
-              <>
-                <img src={routerInfo.icon} alt={quoteResponse.quoteResponse.router} width={10} height={10} />
-                <div className="text-primary-text">{routerInfo.name}</div>
-              </>
-            )}
-          </div>
-        </div>
-      )}
       <div className="flex items-center justify-between text-xs">
         <div className="text-primary-text/50">
           <span>Fee</span>
