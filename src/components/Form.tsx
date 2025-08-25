@@ -165,7 +165,10 @@ const Form: React.FC<{
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
       return;
     }
-
+    if (value === '.') {
+      setForm((form) => ({ ...form,  fromValue: '0.' }));
+      return;
+    }
     const isInvalid = Number.isNaN(value);
     if (isInvalid) return;
 
@@ -175,6 +178,10 @@ const Form: React.FC<{
   const onChangeToValue = ({ value }: NumberFormatValues) => {
     if (value === '') {
       setForm((form) => ({ ...form, fromValue: '', toValue: '' }));
+      return;
+    }
+    if (value === '.') {
+      setForm((form) => ({ ...form,  toValue: '0.' }));
       return;
     }
 
